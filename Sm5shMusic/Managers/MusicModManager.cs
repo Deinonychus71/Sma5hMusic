@@ -85,7 +85,7 @@ namespace Sm5shMusic.Managers
 
         public string GetMusicModMetadataFile()
         {
-            return Path.Combine(_musicModPath, Constants.MusicModFiles.MusicModMetadataFile);
+            return Path.Combine(_musicModPath, Constants.MusicModFiles.MusicModMetadataJsonFile);
         }
 
         public string GetMusicModAudioFile(string songFileName)

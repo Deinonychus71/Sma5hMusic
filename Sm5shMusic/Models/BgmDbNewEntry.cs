@@ -1,4 +1,5 @@
 ﻿using Sm5shMusic.Helpers;
+using System.Collections.Generic;
 
 namespace Sm5shMusic.Models
 {
@@ -26,6 +27,6 @@ namespace Sm5shMusic.Models
         public string DataName0 { get { return ToneName; } }
 
         //Playlist
-        public string PlaylistId { get; set; }
+        public List<PlaylistInfo> Playlists { get; set; }
     }
 }

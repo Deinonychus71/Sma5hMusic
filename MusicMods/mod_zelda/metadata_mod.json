@@ -5,9 +5,8 @@
 	"songs": [
 		{
 			"file_name": "c49_cad_overworld.idsp",
-			"series_id": "zelda",
-			"playlist_id": "bgmzelda",
 			"game_title": {
+				"series_id": "zelda",
 				"id": "cadence_of_hyrule",
 				"title": {
 					"en_US": "Cadence of Hyrule"
@@ -15,6 +14,8 @@
 			},
 			"song_info": {
 				"id": "overworld",
+				"rarity": "bgm_rarity_0",
+				"record_type": "record_arrange",
 				"title": {
 					"en_US": "Overworld (Combat)"
 				},
@@ -23,11 +24,12 @@
 				},
 				"author": {
 					"en_US": "FamilyJules"
-				}
-			},
-			"song_flags": {
-				"rarity": "bgm_rarity_0",
-				"record_type": "record_arrange"
+				},
+				"playlists": [
+					{
+						"id": "bgmzelda"
+					}
+				]
 			}
 		}
 	]

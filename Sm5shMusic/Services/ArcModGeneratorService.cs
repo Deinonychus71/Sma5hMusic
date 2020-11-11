@@ -62,7 +62,7 @@ namespace Sm5shMusic.Services
             var newGameTitleDbEntries = newGameTitleIds.Select(p => new GameTitleDbNewEntry()
             {
                 GameTitleId = p.Song.GameTitle.Id,
-                SeriesId = p.Song.SeriesId
+                SeriesId = p.Song.GameTitle.SeriesId
             }).GroupBy(p => p.NameId).Select(p => p.First()).ToList();
             _paracobService.GenerateGameTitlePrcFile(newGameTitleDbEntries, _workspace.GetWorkspaceOutputForUiGameTitleDbFile());
 
@@ -70,11 +70,11 @@ namespace Sm5shMusic.Services
             var newBgmEntries = bgmEntries.Select(p => new BgmDbNewEntry()
             {
                 ToneName = p.InternalToneName,
-                Rarity = p.Song.SongFlags.Rarity,
-                RecordType = p.Song.SongFlags.RecordType,
+                Rarity = p.Song.SongInfo.Rarity,
+                RecordType = p.Song.SongInfo.RecordType,
                 GameTitleId = p.Song.GameTitle.Id,
                 NameId = p.NameId,
-                PlaylistId = p.Song.PlaylistId
+                Playlists = p.Song.SongInfo.Playlists
             }).ToList();
             _paracobService.GenerateBgmPrcFile(newBgmEntries, _workspace.GetWorkspaceOutputForUiBgmDbFile());
 

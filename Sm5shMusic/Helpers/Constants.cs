@@ -6,7 +6,8 @@ namespace Sm5shMusic.Helpers
     {
         public class MusicModFiles
         {
-            public const string MusicModMetadataFile = "metadata_mod.json";
+            public const string MusicModMetadataJsonFile = "metadata_mod.json";
+            public const string MusicModMetadataCsvFile = "metadata_mod.csv";
         }
 
         public class ResourcesFiles

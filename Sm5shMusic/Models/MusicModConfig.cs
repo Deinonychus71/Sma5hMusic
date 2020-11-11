@@ -22,16 +22,10 @@ namespace Sm5shMusic.Models
     {
         [JsonProperty("file_name")]
         public string FileName { get; set; }
-        [JsonProperty("series_id")]
-        public string SeriesId { get; set; }
-        [JsonProperty("playlist_id")]
-        public string PlaylistId { get; set; }
         [JsonProperty("game_title")]
         public GameTitle GameTitle { get; set; }
         [JsonProperty("song_info")]
         public SongInfo SongInfo { get; set; }
-        [JsonProperty("song_flags")]
-        public SongFlags SongFlags { get; set; }
         [JsonProperty("song_cue_points_override")]
         public MusicModAudioCuePoints SongCuePointsOverride { get; set; }
     }
@@ -42,6 +36,8 @@ namespace Sm5shMusic.Models
         public string Id { get; set; }
         [JsonProperty("title")]
         public Dictionary<string,string> Title { get; set; }
+        [JsonProperty("series_id")]
+        public string SeriesId { get; set; }
 
         public string GetDefaultTitle()
         {
@@ -61,6 +57,12 @@ namespace Sm5shMusic.Models
         public Dictionary<string, string> Copyright { get; set; }
         [JsonProperty("author")]
         public Dictionary<string, string> Author { get; set; }
+        [JsonProperty("rarity")]
+        public string Rarity { get; set; }
+        [JsonProperty("record_type")]
+        public string RecordType { get; set; }
+        [JsonProperty("playlists")]
+        public List<PlaylistInfo> Playlists { get; set; }
 
         public string GetDefaultTitle()
         {
@@ -84,11 +86,9 @@ namespace Sm5shMusic.Models
         }
     }
 
-    public class SongFlags
+    public class PlaylistInfo
     {
-        [JsonProperty("rarity")]
-        public string Rarity { get; set; }
-        [JsonProperty("record_type")]
-        public string RecordType { get; set; }
+        [JsonProperty("id")]
+        public string Id { get; set; }
     }
 }
