@@ -64,7 +64,10 @@ namespace Sm5shMusic.Managers
                 var audioFilePath = GetMusicModAudioFile(song.FileName);
                 var audioCuePoints = _audioMetadataService.GetCuePoints(audioFilePath);
 
-                var toneName = $"{_musicModConfig.Prefix}{index}_{song.SongInfo.Id}";
+                var toneName = song.SongInfo.Id;
+                if(!string.IsNullOrEmpty(_musicModConfig.Prefix))
+                    toneName = $"{_musicModConfig.Prefix}{index}_{song.SongInfo.Id}";
+
                 _bgmEntries.Add(toneName, new MusicModBgmEntry()
                 {
                     NameId = _paracobService.GetNewBgmId(),
