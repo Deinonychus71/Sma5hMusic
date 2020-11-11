@@ -46,6 +46,7 @@ namespace Sm5shMusic.Services
         private readonly string HEX_START_POINT_TRANSITION = "start_point_transition";
         private readonly string HEX_ORDERNBR = "order{0}";
         private readonly string HEX_INCIDENCENBR = "incidence{0}";
+        private readonly string HEX_PLAYLIST_EXAMPLE = "bgmzelda";
 
         public ParacobService(IResourceService resourceService, ILogger<IParacobService> logger)
         {
@@ -211,19 +212,43 @@ namespace Sm5shMusic.Services
             //BGM PLAYLIST (QUICK & DIRTY)
             foreach (var bgmEntry in bgmEntries)
             {
-                var hexValue = _paramLabels.FirstOrDefault(p => p.Value == bgmEntry.PlaylistId).Key;
-                if (hexValue == 0)
+                if(!bgmEntry.PlaylistId.StartsWith("bgm"))
+                {
+                    _logger.LogWarning("The playlist_id for song '{Song}' must start with 'bgm', skipping...", bgmEntry.ToneName);
                     continue;
+                }
 
-                var bgmPlaylist = t.Root.Nodes[hexValue] as ParamList;
-                var newEntry = bgmPlaylist.Nodes[0].Clone() as ParamStruct;
+                var hexValue = Hash40Util.StringToHash40(bgmEntry.PlaylistId);
+
+                ParamList bgmPlaylist = null;
+                ParamStruct newEntry = null;
+                //If the playlist doesn't exist...
+                if (!t.Root.Nodes.ContainsKey(hexValue))
+                {
+                    var playlistToClone = t.Root.Nodes[HEX_PLAYLIST_EXAMPLE] as ParamList;
+                    bgmPlaylist = playlistToClone.Clone() as ParamList;
+                    
+                    t.Root.Nodes.Add(hexValue, bgmPlaylist);
+                    if (bgmPlaylist.Nodes.Count > 1)
+                    {
+                        bgmPlaylist.Nodes.RemoveRange(1, bgmPlaylist.Nodes.Count - 1);
+                        newEntry = bgmPlaylist.Nodes[0] as ParamStruct;
+                    }
+                }
+                else
+                {
+                    bgmPlaylist = t.Root.Nodes[hexValue] as ParamList;
+                    newEntry = bgmPlaylist.Nodes[0].Clone() as ParamStruct;
+                    bgmPlaylist.Nodes.Add(newEntry);
+                }
+
+                //Add song
                 SetNodeParamValue(newEntry, HEX_UI_BGM_ID, bgmEntry.UiBgmId);
                 for (int i = 0; i <= 15; i++)
                 {
                     SetNodeParamValue(newEntry, string.Format(HEX_ORDERNBR, i), (short)(bgmPlaylist.Nodes.Count));
                     SetNodeParamValue(newEntry, string.Format(HEX_INCIDENCENBR, i), (ushort)500);
                 }
-                bgmPlaylist.Nodes.Add(newEntry);
             }
 
             t.Save(outputFilePath);
