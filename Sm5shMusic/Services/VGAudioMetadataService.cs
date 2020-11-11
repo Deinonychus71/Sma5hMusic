@@ -42,13 +42,13 @@ namespace Sm5shMusic.Services
             };
 
             if (audioCuePoints.TotalSamples == 0)
-                _logger.LogWarning("{FilePath}: Total Samples was 0!");
+                _logger.LogWarning("{FilePath}: Total Samples was 0! Use song_cue_points_override property in the payload to override these values.");
 
             if (audioCuePoints.Frequency == 0)
-                _logger.LogWarning("{FilePath}: Frequency was 0!");
+                _logger.LogWarning("{FilePath}: Frequency was 0! Use song_cue_points_override property in the payload to override these values.");
 
             if (audioCuePoints.LoopEndSample == 0)
-                _logger.LogWarning("{FilePath}: Loop end sample was 0!");
+                _logger.LogWarning("{FilePath}: Loop end sample was 0! Use song_cue_points_override property in the payload to override these values.");
 
             return audioCuePoints;
         }
@@ -56,7 +56,7 @@ namespace Sm5shMusic.Services
         private ulong ReadValueUInt64Safe(string searchString, string parsingStartIndex, string parsingEndIndex = " ")
         {
             var output = searchString.Split(parsingStartIndex);
-            if(output.Length > 0)
+            if(output.Length > 1)
             {
                 var foundValue = output[1].Split(parsingEndIndex)[0];
                 if(ulong.TryParse(foundValue, out ulong result))
@@ -70,7 +70,7 @@ namespace Sm5shMusic.Services
         private uint ReadValueUInt32Safe(string searchString, string parsingStartIndex, string parsingEndIndex = " ")
         {
             var output = searchString.Split(parsingStartIndex);
-            if (output.Length > 0)
+            if (output.Length > 1)
             {
                 var foundValue = output[1].Split(parsingEndIndex)[0];
                 if (uint.TryParse(foundValue, out uint result))
@@ -84,7 +84,7 @@ namespace Sm5shMusic.Services
         private ushort ReadValueUInt16Safe(string searchString, string parsingStartIndex, string parsingEndIndex = " ")
         {
             var output = searchString.Split(parsingStartIndex);
-            if (output.Length > 0)
+            if (output.Length > 1)
             {
                 var foundValue = output[1].Split(parsingEndIndex)[0];
                 if (ushort.TryParse(foundValue, out ushort result))

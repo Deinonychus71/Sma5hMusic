@@ -16,9 +16,9 @@
                 TotalSample = audioCuePoints.TotalSamples,
                 LoopStartSample = audioCuePoints.LoopStartSample,
                 LoopEndSample = audioCuePoints.LoopEndSample,
-                TotalTimeMs = audioCuePoints.TotalSamples * 1000 / audioCuePoints.Frequency,
-                LoopStartMs = audioCuePoints.LoopStartSample * 1000 / audioCuePoints.Frequency,
-                LoopEndMs = audioCuePoints.LoopEndSample * 1000 / audioCuePoints.Frequency
+                TotalTimeMs = audioCuePoints.Frequency > 0 ? audioCuePoints.TotalSamples * 1000 / audioCuePoints.Frequency : 0,
+                LoopStartMs = audioCuePoints.Frequency > 0 ? audioCuePoints.LoopStartSample * 1000 / audioCuePoints.Frequency : 0,
+                LoopEndMs = audioCuePoints.Frequency > 0 ? audioCuePoints.LoopEndSample * 1000 / audioCuePoints.Frequency : 0
             };
         }
     }
