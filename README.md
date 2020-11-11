@@ -19,7 +19,7 @@ This is highly experimental! Bugs may happen.
 4.  In the "Resources" folder, extract any nus3bank from Ultimate in /nus3bank and rename 'template.nus3bank'
 
 ## Mods
-1.  Create a folder in /MusicMods. This folder can contains several audio files and a metadata file 'metadata_mod.json'. An example is provided.
+1.  Create a folder in /MusicMods. This folder can contains several audio files (only idsp tested so far) and a metadata file 'metadata_mod.json'. An example is provided.
 2.  The 'prefix' value will be used to give an unique internal id to songs. Keep it short (3 characters top)
 2.  Only the data within 'songs' matters.
 3.  Keep all non localized fields lowercase.
