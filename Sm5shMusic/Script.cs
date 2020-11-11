@@ -45,6 +45,7 @@ namespace Sm5shMusic
             _logger.LogInformation("--------------------");
 
             await Task.Delay(1000);
+            _logger.LogInformation("AudioCache: {AudioCache}", _settings.EnableAudioCaching ? "Enabled" : "Disabled");
             _logger.LogInformation("MusicModPath: {MusicModPath}", _settings.MusicModPath);
 
             //Check proper resources exist
@@ -70,6 +71,9 @@ namespace Sm5shMusic
             _logger.LogInformation("Starting Arc Mod Generation");
             var bgmEntries = musicMods.SelectMany(p => p.BgmEntries).ToDictionary(p => p.Key, p => p.Value);
             _arcModGeneratorService.GenerateArcMod(bgmEntries.Values.ToList());
+
+            _logger.LogInformation("COMPLETE - Please check the logs for any error.");
+            _logger.LogInformation("--------------------");
         }
 
         private bool CheckApplicationFolders()

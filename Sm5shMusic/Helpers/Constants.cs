@@ -50,6 +50,8 @@ namespace Sm5shMusic.Helpers
             public const string WorkspaceBgmPropertyTempFile = "bgm_property.yml";
             public const string WorkspaceMsgBgm = "msg_bgm+{0}.msbt";
             public const string WorkspaceMsgTitle = "msg_title+{0}.msbt";
+
+            public const string AudioCachePath = "nus3audio";
         }
 
         public class ExternalTools

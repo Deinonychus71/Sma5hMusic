@@ -51,19 +51,33 @@ namespace Sm5shMusic.Services
             var newGameTitleIds = bgmEntries.Where(p => !coreGameTitleIds.Contains(p.Song.GameTitle.Id));
 
             //Generate NUS3AUDIO and NUS3BANK
-            _logger.LogInformation("Generate Nus3Audio and Nus3Bank - {NbrFiles} files", bgmEntries.Count * 2);
+            _logger.LogInformation("Generate/Copy Nus3Audio and Nus3Bank - {NbrFiles} files", bgmEntries.Count * 2);
             foreach (var bgmEntry in bgmEntries)
             {
-                _nus3AudioService.GenerateNus3Audio(bgmEntry.InternalToneName, bgmEntry.AudioFilePath, _workspace.GetWorkspaceOutputForNus3Audio(bgmEntry.InternalToneName));
+                //We always generate a new Nus3Bank as the internal ID might change
                 _nus3AudioService.GenerateNus3Bank(bgmEntry.InternalToneName, _resourceService.GetNusBankTemplateResource(), _workspace.GetWorkspaceOutputForNus3Bank(bgmEntry.InternalToneName));
+
+                //Test for audio cache
+                if (_workspace.IsAudioCacheEnabled)
+                {
+                    var cachedAudioFile = _workspace.GetCacheForNus3Audio(bgmEntry.InternalToneName);
+                    if (!File.Exists(cachedAudioFile))
+                        _nus3AudioService.GenerateNus3Audio(bgmEntry.InternalToneName, bgmEntry.AudioFilePath, cachedAudioFile);
+                    File.Copy(cachedAudioFile, _workspace.GetWorkspaceOutputForNus3Audio(bgmEntry.InternalToneName));
+                }
+                else
+                {
+                    _nus3AudioService.GenerateNus3Audio(bgmEntry.InternalToneName, bgmEntry.AudioFilePath, _workspace.GetWorkspaceOutputForNus3Audio(bgmEntry.InternalToneName));
+                }
             }
-            
+
             //Generate PRC UI Title
             var newGameTitleDbEntries = newGameTitleIds.Select(p => new GameTitleDbNewEntry()
             {
                 GameTitleId = p.Song.GameTitle.Id,
                 SeriesId = p.Song.GameTitle.SeriesId
             }).GroupBy(p => p.NameId).Select(p => p.First()).ToList();
+            _logger.LogInformation("Generate Game Title DB - {Entries} new entries", newGameTitleDbEntries.Count);
             _paracobService.GenerateGameTitlePrcFile(newGameTitleDbEntries, _workspace.GetWorkspaceOutputForUiGameTitleDbFile());
 
             //Generate PRC UI BGM
@@ -76,9 +90,11 @@ namespace Sm5shMusic.Services
                 NameId = p.NameId,
                 Playlists = p.Song.SongInfo.Playlists
             }).ToList();
+            _logger.LogInformation("Generate BGM DB - {Entries} new entries", newBgmEntries.Count);
             _paracobService.GenerateBgmPrcFile(newBgmEntries, _workspace.GetWorkspaceOutputForUiBgmDbFile());
 
             //Generate BGM_Property
+            _logger.LogInformation("Generate BGM Property - {Entries} new entries", bgmEntries.Count);
             _bgmPropertyService.GenerateBgmProperty(bgmEntries);
 
             //Generate MSBT Title Files
@@ -94,8 +110,9 @@ namespace Sm5shMusic.Services
                     var inputMsbtFile = _resourceService.GetMsbtTitleResource(locale);
                     if (File.Exists(inputMsbtFile))
                     {
+                        _logger.LogInformation("Generate MSBT GameTitle - {Entries} new entries - {Path}", newMsbtGameTitles.Count, inputMsbtFile);
                         var outputMsbtFile = _workspace.GetWorkspaceOutputForMsbtTitleResource(locale);
-                        _msbtService.GenerateNewEntries(newMsbtGameTitles.ToList(), inputMsbtFile, outputMsbtFile);
+                        _msbtService.GenerateNewEntries(newMsbtGameTitles, inputMsbtFile, outputMsbtFile);
                     }
                 }
             }
@@ -124,11 +141,13 @@ namespace Sm5shMusic.Services
                 var inputMsbtFile = _resourceService.GetMsbtBgmResource(locale);
                 if (File.Exists(inputMsbtFile))
                 {
+                    _logger.LogInformation("Generate MSBT BGM - {Entries} new entries - {Path}", newMsbtBgms.Count, inputMsbtFile);
                     var outputMsbtFile = _workspace.GetWorkspaceOutputForMsbtBgmResource(locale);
                     _msbtService.GenerateNewEntries(newMsbtBgms, inputMsbtFile, outputMsbtFile);
                 }
             }
-           
+
+            _logger.LogInformation("Output Folder: {OutputFolder}", _workspace.GetWorkspaceDirectory());
 
             return true;
         }

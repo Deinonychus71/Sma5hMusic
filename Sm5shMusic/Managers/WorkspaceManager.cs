@@ -12,10 +12,13 @@ namespace Sm5shMusic.Managers
         private readonly Settings _settings;
         private readonly ILogger _logger;
 
+        public bool IsAudioCacheEnabled { get; private set; }
+
         public WorkspaceManager(IOptions<Settings> settings, ILogger<IWorkspaceManager> logger)
         {
             _settings = settings.Value;
             _logger = logger;
+            IsAudioCacheEnabled = settings.Value.EnableAudioCaching;
         }
 
         public bool Init()
@@ -35,19 +38,30 @@ namespace Sm5shMusic.Managers
                 var existingFiles = Directory.GetFiles(_settings.WorkspacePath, "*", SearchOption.AllDirectories);
                 if (existingFiles.Length > 0)
                 {
-                    _logger.LogWarning("Files found in the workspace folder, delete? Y/N (Default: N)");
-                    var response = Console.ReadKey();
-                    if (response.KeyChar == 'y' || response.KeyChar == 'Y')
+                    if (!_settings.SkipWorkspaceCleanupConfirmation)
                     {
-                        _logger.LogDebug("Cleaning Working folder...");
-                        foreach (var fileToDelete in existingFiles)
+                        _logger.LogWarning("Files found in the workspace folder, delete? Y/N (Default: N)");
+                        var response = Console.ReadKey();
+                        if (response.KeyChar == 'y' || response.KeyChar == 'Y')
                         {
-                            File.Delete(fileToDelete);
+                            _logger.LogDebug("Cleaning Working folder...");
+                            foreach (var fileToDelete in existingFiles)
+                            {
+                                File.Delete(fileToDelete);
+                            }
+                        }
+                        else
+                        {
+                            return false;
                         }
                     }
                     else
                     {
-                        return false;
+                        _logger.LogInformation("Cleaning up workspace folder");
+                        foreach (var fileToDelete in existingFiles)
+                        {
+                            File.Delete(fileToDelete);
+                        }
                     }
                 }
 
@@ -56,6 +70,8 @@ namespace Sm5shMusic.Managers
                 Directory.CreateDirectory(GetWorkspaceOutputForUiDb());
                 Directory.CreateDirectory(GetWorkspaceOutputForUiMessage());
                 Directory.CreateDirectory(GetWorkspaceOutputForSoundConfig());
+                if(IsAudioCacheEnabled)
+                    Directory.CreateDirectory(GetAudioCacheDirectory());
 
                 return true;
             }
@@ -69,6 +85,21 @@ namespace Sm5shMusic.Managers
         public string GetWorkspaceDirectory()
         {
             return _settings.WorkspacePath;
+        }
+
+        public string GetCacheDirectory()
+        {
+            return _settings.CachePath;
+        }
+
+        public string GetAudioCacheDirectory()
+        {
+            return Path.Combine(_settings.CachePath, Constants.WorkspacePaths.AudioCachePath);
+        }
+
+        public string GetCacheForNus3Audio(string toneName)
+        {
+            return Path.Combine(GetAudioCacheDirectory(), string.Format(Constants.WorkspacePaths.WorkspaceNus3AudioFile, toneName));
         }
 
         public string GetWorkspaceOutputForNus3Audio()
