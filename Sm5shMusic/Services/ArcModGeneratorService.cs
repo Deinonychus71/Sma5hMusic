@@ -90,7 +90,7 @@ namespace Sm5shMusic.Services
                     {
                         Label = $"{Constants.InternalIds.MsbtTitPrefix}{p.Song.GameTitle.Id}",
                         Value = p.Song.GameTitle.Title.ContainsKey(locale) ? p.Song.GameTitle.Title[locale] : p.Song.GameTitle.Title.ContainsKey(Constants.DefaultLocale) ? p.Song.GameTitle.Title[Constants.DefaultLocale] : "MISSING"
-                    });
+                    }).GroupBy(p => p.Label).Select(p => p.First()).ToList();
                     var inputMsbtFile = _resourceService.GetMsbtTitleResource(locale);
                     if (File.Exists(inputMsbtFile))
                     {
