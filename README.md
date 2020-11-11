@@ -24,5 +24,5 @@ This is highly experimental! Bugs may happen.
 2.  Only the data within 'songs' matters.
 3.  Keep all non localized fields lowercase.
 4.  Make sure the series_id value exists within the game (will provide enum later)!
-5.  Make sure the bgm playlist (playlist_id) exists within the game (will provide enum later). The script will be updated to support new playlists.
+5.  Make sure the bgm playlist (playlist_id) starts with "bgm". If this is a new playlist, you must edit the stage db manually.
 6.  Make sure the fields values for "rarity" and "record_type" exist within the game (will provide enum later).
