@@ -8,20 +8,12 @@ namespace Sm5shMusic.Models
 {
     public class MusicModConfig
     {
-        [JsonProperty("id")]
-        public Guid Id { get; set; }
-        [JsonProperty("icon")]
-        public string Icon { get; set; }
         [JsonProperty("prefix")]
         public string Prefix { get; set; }
         [JsonProperty("name")]
         public string Name { get; set; }
-        [JsonProperty("series")]
-        public string Series { get; set; }
         [JsonProperty("author")]
         public string Author { get; set; }
-        [JsonProperty("date")]
-        public DateTimeOffset Date { get; set; }
         [JsonProperty("songs")]
         public List<Song> Songs { get; set; }
     }

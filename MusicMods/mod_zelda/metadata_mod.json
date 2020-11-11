@@ -1,11 +1,7 @@
 {
-	"id": "50f03a47-b7ec-4389-b5fa-afef0a857c24",
-	"icon": "cod.jpg",
 	"author": "superme",
 	"name": "Cadence of Hyrule Pack",
-	"series": "The Legend of Zelda",
 	"prefix": "cad",
-	"date": "2020-11-08T17:22Z",
 	"songs": [
 		{
 			"file_name": "c49_cad_overworld.idsp",
