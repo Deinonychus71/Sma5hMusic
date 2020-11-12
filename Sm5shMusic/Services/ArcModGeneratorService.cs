@@ -99,10 +99,10 @@ namespace Sm5shMusic.Services
             {
                 ToneName = p.InternalToneName,
                 Rarity = p.Song.SongInfo.Rarity,
-                RecordType = p.Song.SongInfo.RecordType,
+                RecordType = $"{Constants.InternalIds.RecordTypePrefix}{p.Song.SongInfo.RecordType}",
                 GameTitleId = p.Song.GameTitle.Id,
                 NameId = p.NameId,
-                Playlists = p.Song.SongInfo.Playlists
+                Playlists = p.Song.SongInfo.Playlists.Select(p => { p.Id = $"{Constants.InternalIds.PlaylistPrefix}{p.Id}"; return p; }).ToList()
             }).ToList();
             _logger.LogInformation("Generate BGM DB - {Entries} new entries", newBgmEntries.Count);
             _paracobService.GenerateBgmPrcFile(newBgmEntries, _workspace.GetWorkspaceOutputForUiBgmDbFile());

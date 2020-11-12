@@ -21,7 +21,7 @@ namespace Sm5shMusic.Helpers
             public const string ParamsPath = "params";
             public const string UiBgmDbFile = "ui_bgm_db.prc";
             public const string UiGameTitleDbFile = "ui_gametitle_db.prc";
-            
+
 
             public const string NusBankTemplatePath = "nus3bank";
             public const string NusBankTemplateFile = "template.nus3bank";
@@ -83,6 +83,57 @@ namespace Sm5shMusic.Helpers
             public const string PlaylistPrefix = "bgm";
             public const string RarityDefault = "bgm_rarity_0";
         }
+
+        public static string[] ValidSeries = new string[]
+        {
+            "none",
+            "mario",
+            "mariokart",
+            "wreckingcrew",
+            "etc",
+            "donkeykong",
+            "zelda",
+            "metroid",
+            "yoshi",
+            "kirby",
+            "starfox",
+            "pokemon",
+            "fzero",
+            "mother",
+            "fireemblem",
+            "gamewatch",
+            "palutena",
+            "wario",
+            "pikmin",
+            "famicomrobot",
+            "doubutsu",
+            "wiifit",
+            "punchout",
+            "xenoblade",
+            "metalgear",
+            "sonic",
+            "rockman",
+            "pacman",
+            "streetfighter",
+            "finalfantasy",
+            "bayonetta",
+            "splatoon",
+            "castlevania",
+            "smashbros",
+            "arms",
+            "persona",
+            "dragonquest",
+            "banjokazooie",
+            "fatalfury",
+            "minecraft"
+        };
+
+        public static string[] ValidRecordTypes = new string[]
+        {
+            "arrange",
+            "new_arrange",
+            "original"
+        };
 
         public const string DefaultLocale = "en_US";
     }

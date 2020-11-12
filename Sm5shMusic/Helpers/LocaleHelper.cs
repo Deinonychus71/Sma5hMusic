@@ -1,4 +1,6 @@
-﻿namespace Sm5shMusic.Helpers
+﻿using System.Linq;
+
+namespace Sm5shMusic.Helpers
 {
     public class LocaleHelper
     {
@@ -19,5 +21,13 @@
             "zh_cn",
             "zh_tw"
         };
+
+        public static string GetPascalCaseLocale(string gameLocale)
+        {
+            if (!ValidLocales.Contains(gameLocale))
+                return gameLocale;
+
+            return $"{char.ToUpper(gameLocale[0])}{gameLocale[1]}{char.ToUpper(gameLocale[3])}{gameLocale[4]}";
+        }
     }
 }

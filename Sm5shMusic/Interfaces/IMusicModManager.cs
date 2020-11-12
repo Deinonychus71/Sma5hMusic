@@ -9,8 +9,6 @@ namespace Sm5shMusic.Interfaces
 
         bool Init();
 
-        string GetMusicModMetadataFile();
-
         string GetMusicModAudioFile(string songFileName);
     }
 }
