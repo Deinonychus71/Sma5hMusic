@@ -144,14 +144,21 @@ namespace Sm5shMusic.Managers
                 }
 
                 //Record type
-                if(song.SongInfo.RecordType != "record_original" && song.SongInfo.RecordType != "record_new_arrange" && song.SongInfo.RecordType != "record_arrange")
+                if (!song.SongInfo.RecordType.StartsWith(Constants.InternalIds.RecordTypePrefix))
+                    song.SongInfo.RecordType = $"{Constants.InternalIds.RecordTypePrefix}{song.SongInfo.RecordType}";
+                if (song.SongInfo.RecordType != "record_original" && song.SongInfo.RecordType != "record_new_arrange" && song.SongInfo.RecordType != "record_arrange")
                 {
-                    _logger.LogWarning("MusicModFile {MusicMod} - Song {SongId} is invalid. The record type is invalid. It should be either 'record_original', 'record_arrange' or 'record_new_arrange'. Skipping...", _musicModConfig.Name, song.SongInfo.Id);
+                    _logger.LogWarning("MusicModFile {MusicMod} - Song {SongId} is invalid. The record type is invalid. It should be either 'original', 'arrange' or 'new_arrange'. Skipping...", _musicModConfig.Name, song.SongInfo.Id);
                     continue;
                 }
 
+                //Rarity
+                //TODO: Figure out
+                if (string.IsNullOrEmpty(song.SongInfo.Rarity))
+                    song.SongInfo.Rarity = Constants.InternalIds.RarityDefault;
+
                 //Gametitle ID
-                    if (string.IsNullOrEmpty(song.GameTitle?.Id))
+                if (string.IsNullOrEmpty(song.GameTitle?.Id))
                 {
                     _logger.LogWarning("MusicModFile {MusicMod} - Song {SongId} is invalid. It does not have a Game Title Id. Skipping...", _musicModConfig.Name, song.SongInfo.Id);
                     continue;
@@ -169,9 +176,11 @@ namespace Sm5shMusic.Managers
                     foreach(var playlist in song.SongInfo.Playlists)
                     {
                         playlist.Id = playlist.Id.ToLower();
-                        if (!playlist.Id.StartsWith("bgm"))
+                        if (!playlist.Id.StartsWith(Constants.InternalIds.PlaylistPrefix))
                         {
-                            _logger.LogWarning("MusicModFile {MusicMod} - Song {SongId}'s playlist {Playlist} is invalid. It should start with 'bgm'.", _musicModConfig.Name, song.SongInfo.Id, playlist.Id);
+                            var newPlaylistId = $"{Constants.InternalIds.PlaylistPrefix}{playlist.Id}";
+                            _logger.LogDebug("MusicModFile {MusicMod} - Song {SongId}'s playlist {Playlist} was renamed {RenamedPlaylist}", _musicModConfig.Name, song.SongInfo.Id, playlist.Id, newPlaylistId);
+                            playlist.Id = newPlaylistId;
                         }
                     }
                 }

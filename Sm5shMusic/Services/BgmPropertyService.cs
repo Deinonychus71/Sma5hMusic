@@ -48,16 +48,27 @@ namespace Sm5shMusic.Services
             }
             else
             {
+                _logger.LogDebug("File {BgmPropertyYml} does not exist. It will be generated", templateBgmPropertyYml);
                 if (!ExtractBgmPropertyYml(bgmPropertyExecPath, tempBgmPropertyYml))
                     return false;
+                _logger.LogDebug("File {BgmPropertyYml} generated", templateBgmPropertyYml);
             }
 
             //Deserialize
             var yamlStr = File.ReadAllText(tempBgmPropertyYml);
             var yamlEntries = _yamlDeserializer.Deserialize<List<BgmPropertyModel>>(yamlStr);
+            _logger.LogDebug("{NbrBgmEntries} bgm entries found in the yml", yamlEntries.Count);
 
-            foreach(var bgmEntry in bgmEntries)
+            foreach (var bgmEntry in bgmEntries)
             {
+                _logger.LogDebug("Adding bgm entry in the yml for {ToneName} - TotalSamples: {TotalSamples}, TotalTimeMs: {TotalTimeMs}, LoopStartMs: {LoopStartMs}, LoopStartSample: {LoopStartSample}, LoopEndMs: {LoopEndMs}, LoopEndSample: {LoopEndSample}", 
+                    bgmEntry.InternalToneName,
+                    bgmEntry.CuePoints.TotalSample,
+                    bgmEntry.CuePoints.TotalTimeMs,
+                    bgmEntry.CuePoints.LoopStartMs,
+                    bgmEntry.CuePoints.LoopStartSample,
+                    bgmEntry.CuePoints.LoopEndMs,
+                    bgmEntry.CuePoints.LoopEndSample);
                 yamlEntries.Add(new BgmPropertyModel()
                 {
                     NameId = bgmEntry.InternalToneName,

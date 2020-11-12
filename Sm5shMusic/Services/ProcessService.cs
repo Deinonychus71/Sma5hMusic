@@ -16,7 +16,7 @@ namespace Sm5shMusic.Services
 
         public void RunProcess(string executablePath, string arguments, Action<object, DataReceivedEventArgs> standardRedirect = null, Action<object, DataReceivedEventArgs> errorRedirect = null)
         {
-            _logger.LogDebug("Launching {Executable} with arguments {Arguments}", executablePath, arguments);
+            _logger.LogDebug($"Launching {executablePath} {arguments}");
 
             using (var process = new Process())
             {
@@ -29,8 +29,9 @@ namespace Sm5shMusic.Services
                     _logger.LogError("Error while running {Executable} with arguments {Arguments} - {Error}", executablePath, arguments, data.Data);
                     errorRedirect?.Invoke(sender, data);
                 };
-                process.StartInfo.RedirectStandardOutput = standardRedirect != null;
+                process.StartInfo.RedirectStandardOutput = true;
                 process.OutputDataReceived += (sender, data) => {
+                    _logger.LogDebug("{Executable}: {Data}", executablePath, data.Data);
                     standardRedirect?.Invoke(sender, data);
                 };
                 process.Start();

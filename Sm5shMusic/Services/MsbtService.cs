@@ -22,10 +22,12 @@ namespace Sm5shMusic.Services
         {
             try
             {
+                _logger.LogDebug("MSBT: {NrbEntries} entries, InputFile: {InputFile}, OutputFile: {OutputFile}", newMsbtEntries.Count, inputMsbtFile, outputMsbtFile);
                 File.Copy(inputMsbtFile, outputMsbtFile);
                 var msbtFile = new MSBT(outputMsbtFile);
                 foreach (var newMsbtEntry in newMsbtEntries)
                 {
+                    _logger.LogDebug("MSBT: Adding {Label}:{Value}", newMsbtEntry.Label, newMsbtEntry.Value);
                     var newEntry = msbtFile.AddLabel(newMsbtEntry.Label);
                     newEntry.Value = Encoding.Unicode.GetBytes(newMsbtEntry.Value + "\0");
                 }

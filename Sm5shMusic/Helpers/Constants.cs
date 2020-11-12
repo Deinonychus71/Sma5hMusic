@@ -78,6 +78,10 @@ namespace Sm5shMusic.Helpers
             public const string MsbtBgmTitlePrefix = "bgm_title_";
 
             public const string GameSeriesIdDefault = "ui_series_none";
+
+            public const string RecordTypePrefix = "record_";
+            public const string PlaylistPrefix = "bgm";
+            public const string RarityDefault = "bgm_rarity_0";
         }
 
         public const string DefaultLocale = "en_US";

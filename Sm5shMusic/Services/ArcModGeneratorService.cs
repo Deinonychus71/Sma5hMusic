@@ -52,22 +52,36 @@ namespace Sm5shMusic.Services
 
             //Generate NUS3AUDIO and NUS3BANK
             _logger.LogInformation("Generate/Copy Nus3Audio and Nus3Bank - {NbrFiles} files", bgmEntries.Count * 2);
+            var nusBankTemplate = _resourceService.GetNusBankTemplateResource();
             foreach (var bgmEntry in bgmEntries)
             {
+                var nusBankOutputFile = _workspace.GetWorkspaceOutputForNus3Bank(bgmEntry.InternalToneName);
+                var nusAudioOutputFile = _workspace.GetWorkspaceOutputForNus3Audio(bgmEntry.InternalToneName);
+
                 //We always generate a new Nus3Bank as the internal ID might change
-                _nus3AudioService.GenerateNus3Bank(bgmEntry.InternalToneName, _resourceService.GetNusBankTemplateResource(), _workspace.GetWorkspaceOutputForNus3Bank(bgmEntry.InternalToneName));
+                _logger.LogDebug("Generate nus3bank {InternalToneName} from {Nus3BankInputFile} to {Nus3BankOutputFile}", bgmEntry.InternalToneName, nusBankTemplate, nusBankOutputFile);
+                _nus3AudioService.GenerateNus3Bank(bgmEntry.InternalToneName, nusBankTemplate, nusBankOutputFile);
 
                 //Test for audio cache
                 if (_workspace.IsAudioCacheEnabled)
                 {
                     var cachedAudioFile = _workspace.GetCacheForNus3Audio(bgmEntry.InternalToneName);
                     if (!File.Exists(cachedAudioFile))
+                    {
+                        _logger.LogDebug("Generate nus3audio {InternalToneName} from {Nus3BankInputFile} to {Nus3BankOutputFile}", bgmEntry.InternalToneName, bgmEntry.AudioFilePath, cachedAudioFile);
                         _nus3AudioService.GenerateNus3Audio(bgmEntry.InternalToneName, bgmEntry.AudioFilePath, cachedAudioFile);
-                    File.Copy(cachedAudioFile, _workspace.GetWorkspaceOutputForNus3Audio(bgmEntry.InternalToneName));
+                    }
+                    else
+                    {
+                        _logger.LogDebug("Retrieving nus3audio {InternalToneName} from cache {CacheFile}", bgmEntry.InternalToneName, cachedAudioFile);
+                    }
+                    _logger.LogDebug("Copy nus3audio {InternalToneName} from cache {CacheFile} to {Nus3AudioOutputFile}", bgmEntry.InternalToneName, cachedAudioFile, nusAudioOutputFile);
+                    File.Copy(cachedAudioFile, nusAudioOutputFile);
                 }
                 else
                 {
-                    _nus3AudioService.GenerateNus3Audio(bgmEntry.InternalToneName, bgmEntry.AudioFilePath, _workspace.GetWorkspaceOutputForNus3Audio(bgmEntry.InternalToneName));
+                    _logger.LogDebug("Generate nus3audio {InternalToneName} from {Nus3BankInputFile} to {Nus3AudioOutputFile}", bgmEntry.InternalToneName, bgmEntry.AudioFilePath, nusAudioOutputFile);
+                    _nus3AudioService.GenerateNus3Audio(bgmEntry.InternalToneName, bgmEntry.AudioFilePath, nusAudioOutputFile);
                 }
             }
 

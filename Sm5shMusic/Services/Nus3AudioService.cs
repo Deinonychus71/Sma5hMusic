@@ -30,10 +30,12 @@ namespace Sm5shMusic.Services
         {
             var output = new Dictionary<string, ushort>();
 
-            if (!File.Exists(_resourceService.GetNusBankIdsCsvResource()))
+            var nusBankResourceFile = _resourceService.GetNusBankIdsCsvResource();
+            if (!File.Exists(nusBankResourceFile))
                 return output;
 
-            using (var reader = new StreamReader(_resourceService.GetNusBankIdsCsvResource()))
+            _logger.LogDebug("Retrieving NusBankIds from CSV {CSVResource}", nusBankResourceFile);
+            using (var reader = new StreamReader(nusBankResourceFile))
             {
                 using (var csv = new CsvReader(reader, CultureInfo.InvariantCulture))
                 {

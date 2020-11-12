@@ -48,6 +48,13 @@ namespace Sm5shMusic.Services
         private readonly string HEX_INCIDENCENBR = "incidence{0}";
         private readonly string HEX_PLAYLIST_EXAMPLE = "bgmzelda";
 
+        private readonly string LOG_NEW_GAMETITLE_ENTRY_DB_ROOT;
+        private readonly string LOG_NEW_BGM_ENTRY_DB_ROOT;
+        private readonly string LOG_NEW_BGM_ENTRY_STREAM_SET;
+        private readonly string LOG_NEW_BGM_ENTRY_ASSIGNED_INFO;
+        private readonly string LOG_NEW_BGM_ENTRY_STREAM_PROPERTY;
+        private readonly string LOG_NEW_BGM_ENTRY_PLAYLIST;
+
         public ParacobService(IResourceService resourceService, ILogger<IParacobService> logger)
         {
             _logger = logger;
@@ -56,14 +63,23 @@ namespace Sm5shMusic.Services
             _coreBgmDb = GetCoreDbRootBgmEntries();
             _coreGameTitleDb = GetCoreDbRootGameTitleEntries();
             _lastNameId = _coreBgmDb.Where(p => p.NameId != "random" && !string.IsNullOrEmpty(p.NameId)).OrderByDescending(p => Base36IncrementHelper.ToInt(p.NameId)).FirstOrDefault()?.NameId;
+            LOG_NEW_GAMETITLE_ENTRY_DB_ROOT = $"Generating new Game Title DB - db_root entry: {HEX_UI_GAMETITLE_ID}: {{UI_GAMETITLE_ID}}, {HEX_UI_SERIES_ID}: {{HEX_UI_SERIES_ID}}, {HEX_NAME_ID}: {{HEX_NAME_ID}}, {HEX_RELEASE}: {{HEX_RELEASE}}";
+            LOG_NEW_BGM_ENTRY_DB_ROOT = $"Generating new BGM DB - db_root: {HEX_UI_BGM_ID}: {{HEX_UI_BGM_ID}}, {HEX_STREAM_SET_ID}: {{HEX_STREAM_SET_ID}}, {HEX_RARITY}: {{HEX_RARITY}}, {HEX_RECORD_TYPE}: {{HEX_RECORD_TYPE}}, {HEX_UI_GAMETITLE_ID}: {{HEX_UI_GAMETITLE_ID}}, {HEX_NAME_ID}: {{HEX_NAME_ID}}, {HEX_TEST_DISP_ORDER}: {{HEX_TEST_DISP_ORDER}}, {HEX_MENU_VALUE}: {{HEX_MENU_VALUE}}, {HEX_SHOP_PRICE}: {{HEX_SHOP_PRICE}}";
+            LOG_NEW_BGM_ENTRY_STREAM_SET = $"Generating new BGM DB - stream_set entry: {HEX_STREAM_SET_ID}: {{HEX_STREAM_SET_ID}}, {HEX_INFO0}: {{HEX_INFO0}}";
+            LOG_NEW_BGM_ENTRY_ASSIGNED_INFO = $"Generating new BGM DB - assigned_info entry: {HEX_INFO_ID}: {{HEX_INFO_ID}}, {HEX_STREAM_ID}: {{HEX_STREAM_ID}}";
+            LOG_NEW_BGM_ENTRY_STREAM_PROPERTY = $"Generating new BGM DB - stream_property entry: {HEX_STREAM_ID}: {{HEX_STREAM_ID}}, {HEX_DATA_NAME0}: {{HEX_DATA_NAME0}}";
+            LOG_NEW_BGM_ENTRY_PLAYLIST = $"Generating new BGM DB - playlist {{PlaylistId}} entry : {HEX_UI_BGM_ID}: {{HEX_UI_BGM_ID}}, order: {{HEX_ORDERNBR}}, incidence: {{HEX_INCIDENCENBR}}";
         }
 
         public List<GameTitleDbEntry> GetCoreDbRootGameTitleEntries()
         {
             var output = new List<GameTitleDbEntry>();
 
-            if (!File.Exists(_resourceService.GetGameTitleDbResource()))
+            var gameTitleDbResource = _resourceService.GetGameTitleDbResource();
+            if (!File.Exists(gameTitleDbResource))
                 return output;
+
+            _logger.LogDebug("Retrieving Game Title DB Core entries from {GameTitleDbFile}", gameTitleDbResource);
 
             var t = new ParamFile();
             t.Open(_resourceService.GetGameTitleDbResource());
@@ -83,6 +99,8 @@ namespace Sm5shMusic.Services
                 });
             }
 
+            _logger.LogDebug("{NbrEntries} entries retrieved from Game Title DB", output.Count);
+
             return output;
         }
 
@@ -90,8 +108,11 @@ namespace Sm5shMusic.Services
         {
             var output = new List<BgmDbRootEntry>();
 
-            if (!File.Exists(_resourceService.GetBgmDbResource()))
+            var bgmDbResource = _resourceService.GetGameTitleDbResource();
+            if (!File.Exists(bgmDbResource))
                 return output;
+
+            _logger.LogDebug("Retrieving BGM DB Core entries from {BgmDbFile}", bgmDbResource);
 
             var t = new ParamFile();
             t.Open(_resourceService.GetBgmDbResource());
@@ -116,6 +137,8 @@ namespace Sm5shMusic.Services
                 });
             }
 
+            _logger.LogDebug("{NbrEntries} entries retrieved from BGM DB", output.Count);
+
             return output;
         }
 
@@ -134,6 +157,8 @@ namespace Sm5shMusic.Services
                 if (!coreGameSeries.Contains(gameTitleEntry.UiSeriesId))
                     uiSeriesId = Constants.InternalIds.GameSeriesIdDefault;
 
+                _logger.LogDebug(LOG_NEW_GAMETITLE_ENTRY_DB_ROOT, gameTitleEntry.UiGameTitleId, uiSeriesId, gameTitleEntry.NameId, releaseIndex);
+
                 var newEntry = dbRoot.Nodes[0].Clone() as ParamStruct;
                 SetNodeParamValue(newEntry, HEX_UI_GAMETITLE_ID, gameTitleEntry.UiGameTitleId);
                 SetNodeParamValue(newEntry, HEX_UI_SERIES_ID, uiSeriesId);
@@ -142,6 +167,8 @@ namespace Sm5shMusic.Services
                 dbRoot.Nodes.Add(newEntry);
                 releaseIndex++;
             }
+
+            _logger.LogDebug("{NbrEntries} entries added in Game Title DB - db_root", gameTitleEntries.Count);
 
             t.Save(outputFilePath);
 
@@ -161,6 +188,8 @@ namespace Sm5shMusic.Services
             var dbRoot = t.Root.Nodes[HEX_CAT_DBROOT] as ParamList;
             foreach (var bgmEntry in bgmEntries)
             {
+                _logger.LogDebug(LOG_NEW_BGM_ENTRY_DB_ROOT, bgmEntry.UiBgmId, bgmEntry.StreamSetId, bgmEntry.Rarity, bgmEntry.RecordType, bgmEntry.UiGameTitleId, bgmEntry.NameId, testDispOrderIndex, menuValueIndex, 0);
+
                 var newEntry = dbRoot.Nodes[1].Clone() as ParamStruct;
                 SetNodeParamValue(newEntry, HEX_UI_BGM_ID, bgmEntry.UiBgmId);
                 SetNodeParamValue(newEntry, HEX_STREAM_SET_ID, bgmEntry.StreamSetId);
@@ -176,38 +205,47 @@ namespace Sm5shMusic.Services
                 saveNoIndex++;
                 testDispOrderIndex++;
                 menuValueIndex++;
-
             }
+            _logger.LogDebug("{NbrEntries} entries added in BGM DB - db_root", bgmEntries.Count);
 
             //STREAM_SET
             var streamSet = t.Root.Nodes[HEX_CAT_STREAM_SET] as ParamList;
             foreach (var bgmEntry in bgmEntries)
             {
+                _logger.LogDebug(LOG_NEW_BGM_ENTRY_STREAM_SET, bgmEntry.StreamSetId, bgmEntry.Info0);
+
                 var newEntry = streamSet.Nodes[0].Clone() as ParamStruct;
                 SetNodeParamValue(newEntry, HEX_STREAM_SET_ID, bgmEntry.StreamSetId);
                 SetNodeParamValue(newEntry, HEX_INFO0, bgmEntry.Info0);
                 streamSet.Nodes.Add(newEntry);
             }
+            _logger.LogDebug("{NbrEntries} entries added in BGM DB - stream_set", bgmEntries.Count);
 
             //ASSIGNED_INFO
             var assignedInfo = t.Root.Nodes[HEX_CAT_ASSIGNED_INFO] as ParamList;
             foreach (var bgmEntry in bgmEntries)
             {
+                _logger.LogDebug(LOG_NEW_BGM_ENTRY_ASSIGNED_INFO, bgmEntry.InfoId, bgmEntry.StreamId);
+
                 var newEntry = assignedInfo.Nodes[0].Clone() as ParamStruct;
                 SetNodeParamValue(newEntry, HEX_INFO_ID, bgmEntry.InfoId);
                 SetNodeParamValue(newEntry, HEX_STREAM_ID, bgmEntry.StreamId);
                 assignedInfo.Nodes.Add(newEntry);
             }
+            _logger.LogDebug("{NbrEntries} entries added in BGM DB - assigned_info", bgmEntries.Count);
 
             //STREAM_PROPERTY
             var streamProperty = t.Root.Nodes[HEX_CAT_STREAM_PROPERTY] as ParamList;
             foreach (var bgmEntry in bgmEntries)
             {
+                _logger.LogDebug(LOG_NEW_BGM_ENTRY_STREAM_PROPERTY, bgmEntry.StreamId, bgmEntry.DataName0);
+
                 var newEntry = streamProperty.Nodes[0].Clone() as ParamStruct;
                 SetNodeParamValue(newEntry, HEX_STREAM_ID, bgmEntry.StreamId);
                 SetNodeParamValue(newEntry, HEX_DATA_NAME0, bgmEntry.DataName0);
                 streamProperty.Nodes.Add(newEntry);
             }
+            _logger.LogDebug("{NbrEntries} entries added in BGM DB - stream_property", bgmEntries.Count);
 
             //BGM PLAYLIST (QUICK & DIRTY)
             foreach (var bgmEntry in bgmEntries)
@@ -224,12 +262,15 @@ namespace Sm5shMusic.Services
                     }
 
                     var hexValue = Hash40Util.StringToHash40(playlistId);
+                    _logger.LogDebug("Playlist {PlaylistName}:0x{PlaylistId:X}", playlistId, hexValue);
 
                     ParamList bgmPlaylist = null;
                     ParamStruct newEntry = null;
                     //If the playlist doesn't exist...
                     if (!t.Root.Nodes.ContainsKey(hexValue))
                     {
+                        _logger.LogDebug("Playlist {PlaylistName}:0x{PlaylistId:X} doesn't exist and will be created", playlistId, hexValue);
+
                         var playlistToClone = t.Root.Nodes[HEX_PLAYLIST_EXAMPLE] as ParamList;
                         bgmPlaylist = playlistToClone.Clone() as ParamList;
 
@@ -239,6 +280,8 @@ namespace Sm5shMusic.Services
                             bgmPlaylist.Nodes.RemoveRange(1, bgmPlaylist.Nodes.Count - 1);
                             newEntry = bgmPlaylist.Nodes[0] as ParamStruct;
                         }
+
+                        _logger.LogDebug("Playlist {PlaylistName}:0x{PlaylistId:X} was created", playlistId, hexValue);
                     }
                     else
                     {
@@ -248,6 +291,7 @@ namespace Sm5shMusic.Services
                     }
 
                     //Add song
+                    _logger.LogDebug(LOG_NEW_BGM_ENTRY_PLAYLIST, playlistId, bgmEntry.UiBgmId, bgmPlaylist.Nodes.Count, 500);
                     SetNodeParamValue(newEntry, HEX_UI_BGM_ID, bgmEntry.UiBgmId);
                     for (int i = 0; i <= 15; i++)
                     {
@@ -322,8 +366,11 @@ namespace Sm5shMusic.Services
         private void SetNodeParamValue(ParamStruct root, string hex40, object value)
         {
             var paramValue = ((ParamValue)root.Nodes[hex40]);
-            if(paramValue.TypeKey == ParamType.hash40)
+            if (paramValue.TypeKey == ParamType.hash40)
+            {
                 paramValue.Value = Hash40Util.StringToHash40(value.ToString());
+                _logger.LogDebug("Hash40: Field {Field} - {Hash40String}:0x{Hash40Hex:X}", hex40, value, paramValue.Value);
+            }
             else
                 paramValue.Value = value;
         }
@@ -332,7 +379,10 @@ namespace Sm5shMusic.Services
         {
             var paramValue = ((ParamValue)root.Nodes[hex40]);
             if (paramValue.TypeKey == ParamType.hash40)
+            {
                 paramValue.Value = Hash40Util.StringToHash40(value.ToString());
+                _logger.LogDebug("Hash40: Field 0x{Field:X} - {Hash40String}:0x{Hash40Hex:X}", hex40, value, paramValue.Value);
+            }
             else
                 paramValue.Value = value;
         }

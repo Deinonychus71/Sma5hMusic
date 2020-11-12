@@ -14,8 +14,7 @@
 			},
 			"song_info": {
 				"id": "overworld",
-				"rarity": "bgm_rarity_0",
-				"record_type": "record_arrange",
+				"record_type": "arrange",
 				"title": {
 					"en_US": "Overworld (Combat)"
 				},
@@ -27,7 +26,7 @@
 				},
 				"playlists": [
 					{
-						"id": "bgmzelda"
+						"id": "zelda"
 					}
 				]
 			}

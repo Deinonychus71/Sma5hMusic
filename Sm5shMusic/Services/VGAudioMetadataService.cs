@@ -40,15 +40,14 @@ namespace Sm5shMusic.Services
                 LoopEndSample = ReadValueUInt64Safe(output, "Loop end: "),
                 Frequency = ReadValueUInt32Safe(output, "Sample rate: "),
             };
+            _logger.LogDebug("VGAudio Metadata for {FilePath}: TotalSamples: {TotalSamples}, LoopStartSample: {LoopStartSample}, LoopEndSample: {LoopEndSample}, Frequency: {Frequency}",
+                filePath, audioCuePoints.TotalSamples, audioCuePoints.LoopStartSample, audioCuePoints.LoopEndSample, audioCuePoints.Frequency);
 
-            if (audioCuePoints.TotalSamples == 0)
-                _logger.LogWarning("{FilePath}: Total Samples was 0! Use song_cue_points_override property in the payload to override these values.");
-
-            if (audioCuePoints.Frequency == 0)
-                _logger.LogWarning("{FilePath}: Frequency was 0! Use song_cue_points_override property in the payload to override these values.");
-
-            if (audioCuePoints.LoopEndSample == 0)
-                _logger.LogWarning("{FilePath}: Loop end sample was 0! Use song_cue_points_override property in the payload to override these values.");
+            if (audioCuePoints.TotalSamples == 0 || audioCuePoints.Frequency == 0 || audioCuePoints.LoopEndSample == 0)
+            {
+                _logger.LogWarning("VGAudio Metadata for {FilePath}: Total Samples, Frequency or/and loop end sample was 0! Check the logs for more information. Use song_cue_points_override property in the payload to override these values.", filePath);
+                _logger.LogDebug("VGAudio Metadata for {FilePath}: {Data}", filePath, output);
+            }
 
             return audioCuePoints;
         }
