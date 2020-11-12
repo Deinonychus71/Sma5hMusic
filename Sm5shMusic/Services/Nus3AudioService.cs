@@ -51,11 +51,13 @@ namespace Sm5shMusic.Services
             return output;
         }
 
-        public bool GenerateNus3Audio(string toneId, string inputMediaPath, string outputMediaPath)
+        public bool GenerateNus3Audio(string toneId, string inputMediaFile, string outputMediaFile)
         {
-            if (!File.Exists(inputMediaPath))
+            _logger.LogDebug("Generate nus3audio {InternalToneName} from {AudioInputFile} to {Nus3AudioOutputFile}", toneId, inputMediaFile, outputMediaFile);
+
+            if (!File.Exists(inputMediaFile))
             {
-                _logger.LogError("File {mediaPath} does not exist....", inputMediaPath);
+                _logger.LogError("File {mediaPath} does not exist....", inputMediaFile);
                 return false;
             }
 
@@ -68,8 +70,8 @@ namespace Sm5shMusic.Services
 
             try
             {
-                _processService.RunProcess(nus3AudioCliPath, $"-n -w \"{outputMediaPath}\"");
-                _processService.RunProcess(nus3AudioCliPath, $"-A {toneId} \"{inputMediaPath}\" -w \"{outputMediaPath}\"");
+                _processService.RunProcess(nus3AudioCliPath, $"-n -w \"{outputMediaFile}\"");
+                _processService.RunProcess(nus3AudioCliPath, $"-A {toneId} \"{inputMediaFile}\" -w \"{outputMediaFile}\"");
             }
             catch(Exception e)
             {
@@ -80,18 +82,20 @@ namespace Sm5shMusic.Services
             return true;
         }
 
-        public bool GenerateNus3Bank(string toneId, string inputMediaPath, string outputMediaPath)
+        public bool GenerateNus3Bank(string toneId, string inputMediaFile, string outputMediaFile)
         {
-            if (!File.Exists(inputMediaPath))
+            _logger.LogDebug("Generate nus3bank {InternalToneName} from {Nus3BankInputFile} to {Nus3BankOutputFile}", toneId, inputMediaFile, outputMediaFile);
+
+            if (!File.Exists(inputMediaFile))
             {
-                _logger.LogError("File {mediaPath} does not exist....", inputMediaPath);
+                _logger.LogError("File {mediaPath} does not exist....", inputMediaFile);
                 return false;
             }
 
             //TODO Rough implementation, to fix
             using (var memoryStream = new MemoryStream())
             {
-                using (var fileStream = File.Open(inputMediaPath, FileMode.Open, FileAccess.Read))
+                using (var fileStream = File.Open(inputMediaFile, FileMode.Open, FileAccess.Read))
                 {
                     fileStream.CopyTo(memoryStream);
                 }
@@ -100,7 +104,7 @@ namespace Sm5shMusic.Services
                     w.BaseStream.Position = 0xc8;
                     w.Write(GetNewNus3BankId());
                 }
-                File.WriteAllBytes(outputMediaPath, memoryStream.ToArray());
+                File.WriteAllBytes(outputMediaFile, memoryStream.ToArray());
             }
 
             return true;

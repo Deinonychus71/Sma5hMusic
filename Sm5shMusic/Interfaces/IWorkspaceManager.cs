@@ -19,7 +19,6 @@
         string GetWorkspaceOutputForUiGameTitleDbFile();
         string GetWorkspaceOutputForUiBgmDbFile();
         string GetWorkspaceOutputForBgmPropertyFile();
-        string GetWorkspaceOutputForBgmPropertyTempFile();
         string GetWorkspaceOutputForMsbtTitleResource(string locale);
         string GetWorkspaceOutputForMsbtBgmResource(string locale);
     }

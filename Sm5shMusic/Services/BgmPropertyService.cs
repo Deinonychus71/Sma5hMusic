@@ -38,7 +38,7 @@ namespace Sm5shMusic.Services
                 return false;
             }
 
-            var tempBgmPropertyYml = _workspace.GetWorkspaceOutputForBgmPropertyTempFile();
+            var tempBgmPropertyYml = _resourceService.GetTemporaryBgmPropertiesYmlFile();
             var templateBgmPropertyYml = _resourceService.GetBgmPropertyYmlResource();
 
             //Pick either bgm_property.yml or bgm_property.bin if yml doesn't exist

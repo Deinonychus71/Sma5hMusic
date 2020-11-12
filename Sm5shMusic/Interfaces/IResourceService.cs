@@ -29,5 +29,10 @@
         string GetMsbtTitleResource(string locale);
 
         string GetMsbtBgmResource(string locale);
+
+        //Temp
+        string GetTemporaryAudioConversionFile();
+
+        string GetTemporaryBgmPropertiesYmlFile();
     }
 }

@@ -355,5 +355,6 @@ Temp/
 *.prc
 *.nus3audio
 *.nus3bank
+*.brstm
 *.idsp
 *.lopus

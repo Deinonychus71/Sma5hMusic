@@ -75,5 +75,16 @@ namespace Sm5shMusic.Services
         {
             return Path.Combine(_settings.ResourcesPath, Constants.ResourcesFiles.MsbtPath, string.Format(Constants.ResourcesFiles.MsbtBgmFile, locale));
         }
+
+        //Temp
+        public string GetTemporaryAudioConversionFile()
+        {
+            return Path.Combine(_settings.TempPath, string.Format(Constants.ResourcesFiles.TemporaryAudioFile, _settings.AudioConversionFormat));
+        }
+
+        public string GetTemporaryBgmPropertiesYmlFile()
+        {
+            return Path.Combine(_settings.TempPath, Constants.ResourcesFiles.TemporaryBgmPropertyFile);
+        }
     }
 }

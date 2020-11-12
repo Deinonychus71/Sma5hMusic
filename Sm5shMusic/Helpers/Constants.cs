@@ -29,6 +29,9 @@ namespace Sm5shMusic.Helpers
             public const string MsbtPath = "msbt";
             public const string MsbtBgmFile = "msg_bgm+{0}.msbt";
             public const string MsbtTitleFile = "msg_title+{0}.msbt";
+
+            public const string TemporaryAudioFile = "temp.{0}";
+            public const string TemporaryBgmPropertyFile = "bgm_property.yml";
         }
 
         public class WorkspacePaths
@@ -47,7 +50,6 @@ namespace Sm5shMusic.Helpers
             public const string WorkspaceUiGameTitleDb = "ui_gametitle_db.prc";
             public const string WorkspaceUiBgmDb = "ui_bgm_db.prc";
             public const string WorkspaceBgmPropertyFile = "bgm_property.bin";
-            public const string WorkspaceBgmPropertyTempFile = "bgm_property.yml";
             public const string WorkspaceMsgBgm = "msg_bgm+{0}.msbt";
             public const string WorkspaceMsgTitle = "msg_title+{0}.msbt";
 
@@ -133,6 +135,18 @@ namespace Sm5shMusic.Helpers
             "arrange",
             "new_arrange",
             "original"
+        };
+
+        public static string[] ValidExtensions = new string[]
+        {
+            ".idsp",
+            ".lotus",
+            ".brstm"
+        };
+
+        public static string[] ExtensionsNeedConversion = new string[]
+        {
+            ".brstm"
         };
 
         public const string DefaultLocale = "en_US";

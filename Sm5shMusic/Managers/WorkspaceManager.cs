@@ -44,11 +44,7 @@ namespace Sm5shMusic.Managers
                         var response = Console.ReadKey();
                         if (response.KeyChar == 'y' || response.KeyChar == 'Y')
                         {
-                            _logger.LogDebug("Cleaning Working folder...");
-                            foreach (var fileToDelete in existingFiles)
-                            {
-                                File.Delete(fileToDelete);
-                            }
+                            CleaningWorkspaceFolder(existingFiles);
                         }
                         else
                         {
@@ -57,11 +53,7 @@ namespace Sm5shMusic.Managers
                     }
                     else
                     {
-                        _logger.LogInformation("Cleaning up workspace folder");
-                        foreach (var fileToDelete in existingFiles)
-                        {
-                            File.Delete(fileToDelete);
-                        }
+                        CleaningWorkspaceFolder(existingFiles);
                     }
                 }
 
@@ -152,11 +144,6 @@ namespace Sm5shMusic.Managers
             return Path.Combine(GetWorkspaceOutputForSoundConfig(), Constants.WorkspacePaths.WorkspaceBgmPropertyFile);
         }
 
-        public string GetWorkspaceOutputForBgmPropertyTempFile()
-        {
-            return Path.Combine(GetWorkspaceOutputForSoundConfig(), Constants.WorkspacePaths.WorkspaceBgmPropertyTempFile);
-        }
-
         public string GetWorkspaceOutputForMsbtTitleResource(string locale)
         {
             return Path.Combine(GetWorkspaceOutputForUiMessage(), string.Format(Constants.ResourcesFiles.MsbtTitleFile, locale));
@@ -165,6 +152,15 @@ namespace Sm5shMusic.Managers
         public string GetWorkspaceOutputForMsbtBgmResource(string locale)
         {
             return Path.Combine(GetWorkspaceOutputForUiMessage(), string.Format(Constants.ResourcesFiles.MsbtBgmFile, locale));
+        }
+
+        private void CleaningWorkspaceFolder(string[] existingFiles)
+        {
+            _logger.LogInformation("Cleaning up workspace folder");
+            foreach (var fileToDelete in existingFiles)
+            {
+                File.Delete(fileToDelete);
+            }
         }
     }
 }

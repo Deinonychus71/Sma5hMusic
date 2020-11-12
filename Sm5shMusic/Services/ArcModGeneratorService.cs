@@ -13,18 +13,20 @@ namespace Sm5shMusic.Services
         private readonly IResourceService _resourceService;
         private readonly IParacobService _paracobService;
         private readonly INus3AudioService _nus3AudioService;
+        private readonly IAudioMetadataService _audioMetadataService;
         private readonly IBgmPropertyService _bgmPropertyService;
         private readonly IMsbtService _msbtService;
         private readonly IWorkspaceManager _workspace;
         private readonly ILogger _logger;
 
-        public ArcModGeneratorService(IResourceService resourceService, IParacobService paracobService, INus3AudioService nus3AudioService,
+        public ArcModGeneratorService(IResourceService resourceService, IParacobService paracobService, INus3AudioService nus3AudioService, IAudioMetadataService audioMetadataService,
             IMsbtService msbtService, IBgmPropertyService bgmPropertyService, IWorkspaceManager workspace, ILogger<IArcModGeneratorService> logger)
         {
             _logger = logger;
             _resourceService = resourceService;
             _workspace = workspace;
             _nus3AudioService = nus3AudioService;
+            _audioMetadataService = audioMetadataService;
             _msbtService = msbtService;
             _bgmPropertyService = bgmPropertyService;
             _paracobService = paracobService;
@@ -56,10 +58,10 @@ namespace Sm5shMusic.Services
             foreach (var bgmEntry in bgmEntries)
             {
                 var nusBankOutputFile = _workspace.GetWorkspaceOutputForNus3Bank(bgmEntry.InternalToneName);
+                var audioInputFile = bgmEntry.AudioFilePath;
                 var nusAudioOutputFile = _workspace.GetWorkspaceOutputForNus3Audio(bgmEntry.InternalToneName);
 
                 //We always generate a new Nus3Bank as the internal ID might change
-                _logger.LogDebug("Generate nus3bank {InternalToneName} from {Nus3BankInputFile} to {Nus3BankOutputFile}", bgmEntry.InternalToneName, nusBankTemplate, nusBankOutputFile);
                 _nus3AudioService.GenerateNus3Bank(bgmEntry.InternalToneName, nusBankTemplate, nusBankOutputFile);
 
                 //Test for audio cache
@@ -68,8 +70,7 @@ namespace Sm5shMusic.Services
                     var cachedAudioFile = _workspace.GetCacheForNus3Audio(bgmEntry.InternalToneName);
                     if (!File.Exists(cachedAudioFile))
                     {
-                        _logger.LogDebug("Generate nus3audio {InternalToneName} from {Nus3BankInputFile} to {Nus3BankOutputFile}", bgmEntry.InternalToneName, bgmEntry.AudioFilePath, cachedAudioFile);
-                        _nus3AudioService.GenerateNus3Audio(bgmEntry.InternalToneName, bgmEntry.AudioFilePath, cachedAudioFile);
+                        GenerateNus3Audio(bgmEntry.InternalToneName, audioInputFile, cachedAudioFile);
                     }
                     else
                     {
@@ -80,8 +81,7 @@ namespace Sm5shMusic.Services
                 }
                 else
                 {
-                    _logger.LogDebug("Generate nus3audio {InternalToneName} from {Nus3BankInputFile} to {Nus3AudioOutputFile}", bgmEntry.InternalToneName, bgmEntry.AudioFilePath, nusAudioOutputFile);
-                    _nus3AudioService.GenerateNus3Audio(bgmEntry.InternalToneName, bgmEntry.AudioFilePath, nusAudioOutputFile);
+                    GenerateNus3Audio(bgmEntry.InternalToneName, audioInputFile, nusAudioOutputFile);
                 }
             }
 
@@ -164,6 +164,27 @@ namespace Sm5shMusic.Services
             _logger.LogInformation("Output Folder: {OutputFolder}", _workspace.GetWorkspaceDirectory());
 
             return true;
+        }
+
+        private bool GenerateNus3Audio(string toneId, string audioInputFile, string nusAudioOutputFile)
+        {
+            //Check if conversion if necessary
+            bool needConversion = false;
+            if (Constants.ExtensionsNeedConversion.Contains(Path.GetExtension(audioInputFile).ToLower()))
+            {
+                _audioMetadataService.ConvertAudio(audioInputFile, _resourceService.GetTemporaryAudioConversionFile());
+                audioInputFile = _resourceService.GetTemporaryAudioConversionFile();
+                needConversion = true;
+            }
+
+            var result = _nus3AudioService.GenerateNus3Audio(toneId, audioInputFile, nusAudioOutputFile);
+
+            if (needConversion)
+            {
+                File.Delete(_resourceService.GetTemporaryAudioConversionFile());
+            }
+
+            return result;
         }
 
         private bool ValidateUniqueToneNames(List<MusicModBgmEntry> bgmEntries)

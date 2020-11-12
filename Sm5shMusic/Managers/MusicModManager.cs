@@ -85,6 +85,13 @@ namespace Sm5shMusic.Managers
 
         private MusicModConfig LoadMusicModConfig()
         {
+            //Check if disabled
+            if (Path.GetFileName(_musicModPath).StartsWith("."))
+            {
+                _logger.LogDebug("{MusicModFile} is disabled.");
+                return null;
+            }
+
             //Attempt JSON
             var metadataJsonFile = Path.Combine(_musicModPath, Constants.MusicModFiles.MusicModMetadataJsonFile);
             if (File.Exists(metadataJsonFile))
@@ -158,7 +165,6 @@ namespace Sm5shMusic.Managers
                 }
 
                 //Sanitize
-
                 _musicModConfig.Prefix = _musicModConfig.Prefix.ToLower();
                 if (!IsLegalId(_musicModConfig.Prefix))
                 {
@@ -174,6 +180,14 @@ namespace Sm5shMusic.Managers
                 if (!File.Exists(Path.Combine(_musicModPath, song.FileName)))
                 {
                     _logger.LogWarning("MusicModFile {MusicMod} - Audio file {AudioFile} does not exist. Skipping...", _musicModConfig.Name, song.FileName);
+                    continue;
+                }
+
+                //Filename extensions test
+                if (!Constants.ValidExtensions.Contains(Path.GetExtension(song.FileName).ToLower()))
+                {
+                    _logger.LogWarning("MusicModFile {MusicMod} - Song {SongId} is invalid. The audio file extension is incompatible. Skipping...", _musicModConfig.Name, song.SongInfo.Id);
+                    _logger.LogDebug("MusicModFile {MusicMod} - Valid Extensions: {RecordTypes}", _musicModConfig.Name, string.Join(", ", Constants.ValidExtensions));
                     continue;
                 }
 

@@ -13,10 +13,13 @@ namespace Sm5shMusic
         public string WorkspacePath { get; set; }
 
         public string CachePath { get; set; }
+        public string TempPath { get; set; }
 
         public bool EnableAudioCaching { get; set; }
 
         public bool SkipWorkspaceCleanupConfirmation { get; set; }
+
+        public string AudioConversionFormat { get; set; }
 
         public string DefaultLocale { get; set; }
     }

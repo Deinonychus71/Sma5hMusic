@@ -5,5 +5,6 @@ namespace Sm5shMusic.Interfaces
     public interface IAudioMetadataService
     {
         AudioCuePoints GetCuePoints(string filePath);
+        bool ConvertAudio(string inputMediaFile, string outputMediaFile);
     }
 }

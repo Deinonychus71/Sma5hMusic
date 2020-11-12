@@ -7,8 +7,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using System.Linq;
-using System.Text.RegularExpressions;
-using Sm5shMusic.Helpers;
 
 namespace Sm5shMusic
 {
@@ -79,6 +77,7 @@ namespace Sm5shMusic
         private bool CheckApplicationFolders()
         {
             Directory.CreateDirectory(_settings.WorkspacePath);
+            Directory.CreateDirectory(_settings.TempPath);
 
             //Check if MusicModPath exists
             if (!Directory.Exists(_settings.MusicModPath))

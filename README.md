@@ -20,7 +20,7 @@ This is highly experimental! Bugs may happen.
 
 ## Mods
 1.  Create a folder in /MusicMods. This folder can contains several audio files and a metadata file 'metadata_mod.json' or 'metadata_mod.csv'. An example is provided.
-2.  IDSP and LOPUS support (maybe more)
+2.  IDSP and LOPUS support. BRSTM support through on the fly conversion.
 3.  The 'prefix' can be used to give an unique internal id to songs in case of multiple mods. Keep it short/lowercase (3 characters top). This parameter is optional. If you leave it blank, the id of the song will be used instead.
 4.  Keep all non localized fields lowercase.
 5.  Make sure the series_id value exists within the game (check 'valid_series.txt' in Resources)!

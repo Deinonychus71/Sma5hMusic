@@ -52,6 +52,45 @@ namespace Sm5shMusic.Services
             return audioCuePoints;
         }
 
+        public bool ConvertAudio(string inputMediaFile, string outputMediaFile)
+        {
+            _logger.LogDebug("Convert BRSTM from {AudioMediaFile} to {AudioOutputFile}", inputMediaFile, outputMediaFile);
+
+            if (!File.Exists(inputMediaFile))
+            {
+                _logger.LogError("File {mediaPath} does not exist....", inputMediaFile);
+                return false;
+            }
+
+            if (File.Exists(outputMediaFile))
+            {
+                _logger.LogDebug("The conversion from {InputMediaFile} to {OutputMediaFile} was skipped. The file already exists.", inputMediaFile, outputMediaFile);
+                return true;
+            }
+
+            var builder = new StringBuilder();
+
+            var oldValue = Console.Out;
+            using (var writer = new StringWriter(builder))
+            {
+                Console.SetOut(writer);
+                Converter.RunConverterCli(new string[] { "-i", inputMediaFile, "-o", outputMediaFile });
+            }
+            Console.SetOut(oldValue);
+
+            var output = builder.ToString();
+
+            _logger.LogDebug("VGAudio Convert for {OutputMediaFile}: {Data}", outputMediaFile, output);
+
+            if (!File.Exists(outputMediaFile))
+            {
+                _logger.LogError("VGAudio Error - The conversion from {InputMediaFile} to {OutputMediaFile} failed.", inputMediaFile, outputMediaFile);
+                return false;
+            }
+
+            return true;
+        }
+
         private ulong ReadValueUInt64Safe(string searchString, string parsingStartIndex, string parsingEndIndex = " ")
         {
             var output = searchString.Split(parsingStartIndex);
