@@ -15,8 +15,7 @@ This is highly experimental! Bugs may happen.
 ## Setup
 1.  In the "Resources" folder, extract the msbt files in the /msbt using CrossArc
 2.  In the "Resources" folder, extract ui_bgm_db.prc and ui_gametitle_db.prc in /params
-3.  In the "Resources" folder, extract ui_bgm_db.prc and ui_gametitle_db.prc in /params
-4.  In the "Resources" folder, extract any nus3bank from Ultimate in /nus3bank and rename 'template.nus3bank'
+3.  In the "Resources" folder, extract any nus3bank from Ultimate in /nus3bank and rename 'template.nus3bank'
 
 ## Mods
 1.  Create a folder in /MusicMods. This folder can contains several audio files and a metadata file 'metadata_mod.json' or 'metadata_mod.csv'. An example is provided.
