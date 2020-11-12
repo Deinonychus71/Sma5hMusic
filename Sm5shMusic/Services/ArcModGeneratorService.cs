@@ -50,7 +50,7 @@ namespace Sm5shMusic.Services
             //Get new Game Titles
             var coreGameTitleEntries = _paracobService.GetCoreDbRootGameTitleEntries();
             var coreGameTitleIds = coreGameTitleEntries.Select(p => p.UiGameTitleId).Distinct().ToList();
-            var newGameTitleIds = bgmEntries.Where(p => !coreGameTitleIds.Contains(p.Song.GameTitle.Id));
+            var newGameTitleIds = bgmEntries.Where(p => !coreGameTitleIds.Contains(p.Game.Id));
 
             //Generate NUS3AUDIO and NUS3BANK
             _logger.LogInformation("Generate/Copy Nus3Audio and Nus3Bank - {NbrFiles} files", bgmEntries.Count * 2);
@@ -88,8 +88,8 @@ namespace Sm5shMusic.Services
             //Generate PRC UI Title
             var newGameTitleDbEntries = newGameTitleIds.Select(p => new GameTitleDbNewEntry()
             {
-                GameTitleId = p.Song.GameTitle.Id,
-                SeriesId = p.Song.GameTitle.SeriesId
+                GameTitleId = p.Game.Id,
+                SeriesId = p.Game.SeriesId
             }).GroupBy(p => p.NameId).Select(p => p.First()).ToList();
             _logger.LogInformation("Generate Game Title DB - {Entries} new entries", newGameTitleDbEntries.Count);
             _paracobService.GenerateGameTitlePrcFile(newGameTitleDbEntries, _workspace.GetWorkspaceOutputForUiGameTitleDbFile());
@@ -98,11 +98,11 @@ namespace Sm5shMusic.Services
             var newBgmEntries = bgmEntries.Select(p => new BgmDbNewEntry()
             {
                 ToneName = p.InternalToneName,
-                Rarity = p.Song.SongInfo.Rarity,
-                RecordType = $"{Constants.InternalIds.RecordTypePrefix}{p.Song.SongInfo.RecordType}",
-                GameTitleId = p.Song.GameTitle.Id,
+                Rarity = p.Song.Rarity,
+                RecordType = $"{Constants.InternalIds.RecordTypePrefix}{p.Song.RecordType}",
+                GameTitleId = p.Game.Id,
                 NameId = p.NameId,
-                Playlists = p.Song.SongInfo.Playlists.Select(p => { p.Id = $"{Constants.InternalIds.PlaylistPrefix}{p.Id}"; return p; }).ToList()
+                Playlists = p.Song.Playlists.Select(p => { p.Id = $"{Constants.InternalIds.PlaylistPrefix}{p.Id}"; return p; }).ToList()
             }).ToList();
             _logger.LogInformation("Generate BGM DB - {Entries} new entries", newBgmEntries.Count);
             _paracobService.GenerateBgmPrcFile(newBgmEntries, _workspace.GetWorkspaceOutputForUiBgmDbFile());
@@ -118,8 +118,8 @@ namespace Sm5shMusic.Services
                 {
                     var newMsbtGameTitles = newGameTitleIds.Select(p => new MsbtNewEntryModel()
                     {
-                        Label = $"{Constants.InternalIds.MsbtTitPrefix}{p.Song.GameTitle.Id}",
-                        Value = p.Song.GameTitle.Title.ContainsKey(locale) ? p.Song.GameTitle.Title[locale] : p.Song.GameTitle.Title.ContainsKey(Constants.DefaultLocale) ? p.Song.GameTitle.Title[Constants.DefaultLocale] : "MISSING"
+                        Label = $"{Constants.InternalIds.MsbtTitPrefix}{p.Game.Id}",
+                        Value = p.Game.Title.ContainsKey(locale) ? p.Game.Title[locale] : p.Game.Title.ContainsKey(Constants.DefaultLocale) ? p.Game.Title[Constants.DefaultLocale] : "MISSING"
                     }).GroupBy(p => p.Label).Select(p => p.First()).ToList();
                     var inputMsbtFile = _resourceService.GetMsbtTitleResource(locale);
                     if (File.Exists(inputMsbtFile))
@@ -137,17 +137,17 @@ namespace Sm5shMusic.Services
                 var newMsbtTitleBgms = bgmEntries.Select(p => new MsbtNewEntryModel()
                 {
                     Label = $"{Constants.InternalIds.MsbtBgmTitlePrefix}{p.NameId}",
-                    Value = p.Song.SongInfo.Title.ContainsKey(locale) ? p.Song.SongInfo.Title[locale] : p.Song.SongInfo.Title.ContainsKey(Constants.DefaultLocale) ? p.Song.SongInfo.Title[Constants.DefaultLocale] : "MISSING"
+                    Value = p.Song.Title.ContainsKey(locale) ? p.Song.Title[locale] : p.Song.Title.ContainsKey(Constants.DefaultLocale) ? p.Song.Title[Constants.DefaultLocale] : "MISSING"
                 }).ToList();
                 var newMsbtAuthorBgms = bgmEntries.Select(p => new MsbtNewEntryModel()
                 {
                     Label = $"{Constants.InternalIds.MsbtBgmAuthorPrefix}{p.NameId}",
-                    Value = p.Song.SongInfo.Author.ContainsKey(locale) ? p.Song.SongInfo.Author[locale] : p.Song.SongInfo.Author.ContainsKey(Constants.DefaultLocale) ? p.Song.SongInfo.Author[Constants.DefaultLocale] : "MISSING"
+                    Value = p.Song.Author.ContainsKey(locale) ? p.Song.Author[locale] : p.Song.Author.ContainsKey(Constants.DefaultLocale) ? p.Song.Author[Constants.DefaultLocale] : "MISSING"
                 });
                 var newMsbtCopyrightBgms = bgmEntries.Select(p => new MsbtNewEntryModel()
                 {
                     Label = $"{Constants.InternalIds.MsbtBgmCopyrightPrefix}{p.NameId}",
-                    Value = p.Song.SongInfo.Copyright.ContainsKey(locale) ? p.Song.SongInfo.Copyright[locale] : p.Song.SongInfo.Copyright.ContainsKey(Constants.DefaultLocale) ? p.Song.SongInfo.Copyright[Constants.DefaultLocale] : "MISSING"
+                    Value = p.Song.Copyright.ContainsKey(locale) ? p.Song.Copyright[locale] : p.Song.Copyright.ContainsKey(Constants.DefaultLocale) ? p.Song.Copyright[Constants.DefaultLocale] : "MISSING"
                 });
                 var newMsbtBgms = newMsbtTitleBgms;
                 newMsbtBgms.AddRange(newMsbtAuthorBgms);

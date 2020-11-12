@@ -1,6 +1,8 @@
 ﻿using Sm5shMusic.Models;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Runtime.CompilerServices;
 
 namespace Sm5shMusic.Helpers
 {
@@ -12,32 +14,46 @@ namespace Sm5shMusic.Helpers
             {
                 Name = Path.GetFileName(modPath),
                 Author = "CSV",
-                Songs = new List<Song>()
+                Games = new List<Game>()
             };
 
             if(csvEntries != null)
             {
                 foreach(var csvEntry in csvEntries)
                 {
-                    var newSong = new Song()
+                    var gameId = csvEntry.GameId;
+
+                    var game = output.Games.FirstOrDefault(p => p.Id == gameId);
+                    if (game == null)
                     {
-                        FileName = csvEntry.FileName,
-                        GameTitle = new GameTitle()
+                        game = new Game()
                         {
                             Id = csvEntry.GameId,
                             SeriesId = csvEntry.GameSeriesId,
-                            Title = new Dictionary<string, string>()
-                        },
-                        SongInfo = new SongInfo()
+                            Title = new Dictionary<string, string>(),
+                            Songs = new List<Song>()
+                        };
+
+                        foreach (var validLocale in LocaleHelper.ValidLocales)
                         {
-                            Id = csvEntry.SongId,
-                            Rarity = csvEntry.SongRarity,
-                            RecordType = csvEntry.SongRecordType,
-                            Playlists = new List<PlaylistInfo>(),
-                            Author = new Dictionary<string, string>(),
-                            Copyright = new Dictionary<string, string>(),
-                            Title = new Dictionary<string, string>()
+                            var localePascal = LocaleHelper.GetPascalCaseLocale(validLocale);
+                            var gameTitle = GetPropValue<string>(csvEntry, $"GameTitle{localePascal}");
+                            if (!string.IsNullOrEmpty(gameTitle))
+                                game.Title.Add(validLocale, gameTitle);
                         }
+                        output.Games.Add(game);
+                    }
+
+                    var newSong = new Song()
+                    {
+                        FileName = csvEntry.FileName,
+                        Id = csvEntry.SongId,
+                        Rarity = csvEntry.SongRarity,
+                        RecordType = csvEntry.SongRecordType,
+                        Playlists = new List<PlaylistInfo>(),
+                        Author = new Dictionary<string, string>(),
+                        Copyright = new Dictionary<string, string>(),
+                        Title = new Dictionary<string, string>()
                     };
 
                     foreach(var validLocale in LocaleHelper.ValidLocales)
@@ -46,22 +62,28 @@ namespace Sm5shMusic.Helpers
 
                         var title = GetPropValue<string>(csvEntry, $"SongTitle{localePascal}");
                         if (!string.IsNullOrEmpty(title))
-                            newSong.SongInfo.Title.Add(validLocale, title);
+                            newSong.Title.Add(validLocale, title);
 
                         var author = GetPropValue<string>(csvEntry, $"SongAuthor{localePascal}");
                         if (!string.IsNullOrEmpty(author))
-                            newSong.SongInfo.Author.Add(validLocale, author);
+                            newSong.Author.Add(validLocale, author);
 
                         var copyright = GetPropValue<string>(csvEntry, $"SongCopyright{localePascal}");
                         if (!string.IsNullOrEmpty(copyright))
-                            newSong.SongInfo.Copyright.Add(validLocale, copyright);
-
-                        var gameTitle = GetPropValue<string>(csvEntry, $"GameTitle{localePascal}");
-                        if (!string.IsNullOrEmpty(gameTitle))
-                            newSong.GameTitle.Title.Add(validLocale, gameTitle);
+                            newSong.Copyright.Add(validLocale, copyright);
                     }
 
-                    output.Songs.Add(newSong);
+                    for(int i = 1; i <= 9; i++)
+                    {
+                        var playlistId = GetPropValue<string>(csvEntry, $"PlaylistId{i}");
+                        if (!string.IsNullOrEmpty(playlistId))
+                            newSong.Playlists.Add(new PlaylistInfo()
+                            {
+                                Id = playlistId
+                            });
+                    }
+
+                    game.Songs.Add(newSong);
                 }
             }
 
