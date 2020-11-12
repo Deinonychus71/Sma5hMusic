@@ -63,7 +63,8 @@ namespace Sm5shMusic.Models
         public string RecordType { get; set; }
         [JsonProperty("playlists")]
         public List<PlaylistInfo> Playlists { get; set; }
-
+        [JsonProperty("time_markers")]
+        public Dictionary<string, string> TimeMarkers { get; set; }
         public string GetDefaultTitle()
         {
             if (Title.ContainsKey(Constants.DefaultLocale))

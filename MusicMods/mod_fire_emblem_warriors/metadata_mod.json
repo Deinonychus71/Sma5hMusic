@@ -1,0 +1,45 @@
+﻿{
+	"author": "soneek",
+	"name": "Fire Emblem Warriors Pack",
+	"prefix": "few",
+	"songs": [
+		{
+			"file_name": "femusou_kakusei.lopus",
+			"game_title": {
+				"series_id": "fireemblem",
+				"id": "fire_emblem_warriors",
+				"title": {
+					"en_US": "Fire Emblem Warriors",
+                    "jp_ja": "ファイアーエムブレム無双"
+				}
+			},
+			"song_info": {
+				"id": "femusou_kakusei",
+				"rarity": "bgm_rarity_0",
+				"record_type": "record_arrange",
+				"title": {
+					"en_US": "Awakening",
+                    "jp_ja": "覚醒"
+				},
+				"copyright": {
+					"en_US": "KOEI TECMO"
+				},
+				"author": {
+					"en_US": "Kosuke Mizukami, Shin-ichiro Nakamura, Yosuke Kinoshita"
+				},
+				"playlists": [
+					{
+						"id": "bgmfe"
+					},
+                    {
+						"id": "bgmmaster"
+					}                   
+				],
+                "time_markers": {
+                    "start_point_transition": "00:00:05.661",
+                    "start_point_suddendeath": "00:02:02.642"
+                }
+			}
+		}
+	]
+}

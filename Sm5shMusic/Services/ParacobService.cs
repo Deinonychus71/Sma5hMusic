@@ -44,6 +44,11 @@ namespace Sm5shMusic.Services
         private readonly string HEX_END_POINT = "end_point";
         private readonly string HEX_START_POINT_SUDDENDEATH = "start_point_suddendeath";
         private readonly string HEX_START_POINT_TRANSITION = "start_point_transition";
+        private readonly string HEX_START_POINT0 = "start_point0";
+        private readonly string HEX_START_POINT1 = "start_point1";
+        private readonly string HEX_START_POINT2 = "start_point2";
+        private readonly string HEX_START_POINT3 = "start_point3";
+        private readonly string HEX_START_POINT4 = "start_point4";
         private readonly string HEX_ORDERNBR = "order{0}";
         private readonly string HEX_INCIDENCENBR = "incidence{0}";
         private readonly string HEX_PLAYLIST_EXAMPLE = "bgmzelda";
@@ -206,6 +211,26 @@ namespace Sm5shMusic.Services
                 var newEntry = streamProperty.Nodes[0].Clone() as ParamStruct;
                 SetNodeParamValue(newEntry, HEX_STREAM_ID, bgmEntry.StreamId);
                 SetNodeParamValue(newEntry, HEX_DATA_NAME0, bgmEntry.DataName0);
+                if (!(bgmEntry.TimeMarkers is null))
+                {
+                    if (bgmEntry.TimeMarkers.ContainsKey(HEX_END_POINT))
+                        SetNodeParamValue(newEntry, HEX_END_POINT, bgmEntry.TimeMarkers[HEX_END_POINT]);
+                    if (bgmEntry.TimeMarkers.ContainsKey(HEX_START_POINT_SUDDENDEATH))
+                    SetNodeParamValue(newEntry, HEX_START_POINT_SUDDENDEATH, bgmEntry.TimeMarkers[HEX_START_POINT_SUDDENDEATH]);
+                    if (bgmEntry.TimeMarkers.ContainsKey(HEX_START_POINT_TRANSITION))
+                        SetNodeParamValue(newEntry, HEX_START_POINT_TRANSITION, bgmEntry.TimeMarkers[HEX_START_POINT_TRANSITION]);
+                    if (bgmEntry.TimeMarkers.ContainsKey(HEX_START_POINT0))
+                        SetNodeParamValue(newEntry, HEX_START_POINT0, bgmEntry.TimeMarkers[HEX_START_POINT0]);
+                    if (bgmEntry.TimeMarkers.ContainsKey(HEX_START_POINT1))
+                        SetNodeParamValue(newEntry, HEX_START_POINT1, bgmEntry.TimeMarkers[HEX_START_POINT1]);
+                    if (bgmEntry.TimeMarkers.ContainsKey(HEX_START_POINT2))
+                        SetNodeParamValue(newEntry, HEX_START_POINT2, bgmEntry.TimeMarkers[HEX_START_POINT2]);
+                    if (bgmEntry.TimeMarkers.ContainsKey(HEX_START_POINT3))
+                        SetNodeParamValue(newEntry, HEX_START_POINT3, bgmEntry.TimeMarkers[HEX_START_POINT3]);
+                    if (bgmEntry.TimeMarkers.ContainsKey(HEX_START_POINT4))
+                        SetNodeParamValue(newEntry, HEX_START_POINT4, bgmEntry.TimeMarkers[HEX_START_POINT4]);
+
+                }
                 streamProperty.Nodes.Add(newEntry);
             }
 

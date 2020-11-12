@@ -88,6 +88,7 @@ namespace Sm5shMusic.Services
                 RecordType = p.Song.SongInfo.RecordType,
                 GameTitleId = p.Song.GameTitle.Id,
                 NameId = p.NameId,
+                TimeMarkers = p.Song.SongInfo.TimeMarkers,
                 Playlists = p.Song.SongInfo.Playlists
             }).ToList();
             _logger.LogInformation("Generate BGM DB - {Entries} new entries", newBgmEntries.Count);

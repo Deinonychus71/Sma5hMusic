@@ -25,8 +25,9 @@ namespace Sm5shMusic.Models
 
         //StreamProperty
         public string DataName0 { get { return ToneName; } }
-
+        public Dictionary<string, string> TimeMarkers { get; set; }
         //Playlist
         public List<PlaylistInfo> Playlists { get; set; }
+
     }
 }
