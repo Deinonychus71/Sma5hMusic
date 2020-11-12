@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
+using Microsoft.Extensions.Logging.Console;
 using Sm5shMusic.Interfaces;
 using Sm5shMusic.Managers;
 using Sm5shMusic.Services;
@@ -32,17 +32,18 @@ namespace Sm5shMusic
 
         private static void ConfigureServices(IServiceCollection services, string[] args)
         {
-            var loggerFactory = LoggerFactory.Create(builder => builder
-                .AddConsole((c) => {
-                    c.FormatterName = "Systemd";
-                    c.LogToStandardErrorThreshold = LogLevel.Warning;
-                }));
-
             var configuration = new ConfigurationBuilder()
-                .SetBasePath(Directory.GetParent(AppContext.BaseDirectory).FullName)
-                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-                .AddCommandLine(args)
-                .Build();
+               .SetBasePath(Directory.GetParent(AppContext.BaseDirectory).FullName)
+               .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+               .AddCommandLine(args)
+               .Build();
+
+            var loggerFactory = LoggerFactory.Create(builder => builder
+                .AddFilter<ConsoleLoggerProvider>((ll) => ll >= LogLevel.Information)
+                .AddFile(Path.Combine(configuration.GetValue<string>("LogPath"), "log_{Date}.txt"), LogLevel.Debug, retainedFileCountLimit: 7)
+                .AddSimpleConsole((c) => {
+                    c.SingleLine = true;
+                }));
 
             services.AddLogging();
             services.AddOptions();
