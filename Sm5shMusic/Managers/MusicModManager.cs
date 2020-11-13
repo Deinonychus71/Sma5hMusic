@@ -218,6 +218,12 @@ namespace Sm5shMusic.Managers
                 foreach (var song in game.Songs)
                 {
                     //Filename test
+                    if (string.IsNullOrEmpty(song.FileName))
+                    {
+                        _logger.LogWarning("MusicModFile {MusicMod} {Game} - The song {SongId} doesn't have a filename. Skipping...", _musicModConfig.Name, game.Id, song.Id);
+                        continue;
+                    }
+
                     if (!File.Exists(Path.Combine(_musicModPath, song.FileName)))
                     {
                         _logger.LogWarning("MusicModFile {MusicMod} {Game} - Audio file {AudioFile} does not exist. Skipping...", _musicModConfig.Name, game.Id, song.FileName);

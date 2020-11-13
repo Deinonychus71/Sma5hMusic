@@ -140,7 +140,7 @@ namespace Sm5shMusic.Helpers
         public static string[] ValidExtensions = new string[]
         {
             ".idsp",
-            ".lotus",
+            ".lopus",
             ".brstm"
         };
 
