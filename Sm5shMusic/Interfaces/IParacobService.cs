@@ -7,8 +7,11 @@ namespace Sm5shMusic.Interfaces
     {
         bool GenerateGameTitlePrcFile(List<GameTitleDbNewEntry> gameTitleEntries, string outputFilePath);
         bool GenerateBgmPrcFile(List<BgmDbNewEntry> bgmEntries, string outputFilePath);
+        bool UpdateStagePrcFile(List<StageDbEntry> stageEntries, string outputFilePath);
         string GetNewBgmId();
         List<GameTitleDbEntry> GetCoreDbRootGameTitleEntries();
         List<BgmDbRootEntry> GetCoreDbRootBgmEntries();
+        List<StageDbEntry> GetCoreDbRootStageEntries();
+        List<string> GetCoreDbRootPlaylists();
     }
 }

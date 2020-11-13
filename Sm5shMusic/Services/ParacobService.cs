@@ -18,6 +18,7 @@ namespace Sm5shMusic.Services
         private readonly IResourceService _resourceService;
         private readonly List<BgmDbRootEntry> _coreBgmDb;
         private readonly List<GameTitleDbEntry> _coreGameTitleDb;
+        private readonly List<StageDbEntry> _coreStageDb;
         private readonly Dictionary<ulong, string> _paramLabels;
         private string _lastNameId;
         private readonly string HEX_CAT_DBROOT = "db_root";
@@ -26,8 +27,11 @@ namespace Sm5shMusic.Services
         private readonly string HEX_CAT_STREAM_PROPERTY = "stream_property";
         private readonly string HEX_NAME_ID = "name_id";
         private readonly string HEX_UI_BGM_ID = "ui_bgm_id";
+        private readonly string HEX_UI_STAGE_ID = "ui_stage_id";
         private readonly string HEX_UI_GAMETITLE_ID = "ui_gametitle_id";
         private readonly string HEX_UI_SERIES_ID = "ui_series_id";
+        private readonly string HEX_BGM_SET_ID = "bgm_set_id";
+        private readonly string HEX_BGM_SETTING_NO = "bgm_setting_no";
         private readonly string HEX_RELEASE = "release";
         private readonly string HEX_STREAM_SET_ID = "stream_set_id";
         private readonly string HEX_RARITY = "rarity";
@@ -36,6 +40,8 @@ namespace Sm5shMusic.Services
         private readonly string HEX_TEST_DISP_ORDER = "test_disp_order";
         private readonly string HEX_MENU_VALUE = "menu_value";
         private readonly string HEX_SHOP_PRICE = "shop_price";
+        private readonly string HEX_IS_DLC = "is_dlc";
+        private readonly string HEX_IS_PATCH = "is_patch";
         private readonly string HEX_INFO0 = "info0";
         private readonly string HEX_INFO_ID = "info_id";
         private readonly string HEX_STREAM_ID = "stream_id";
@@ -54,6 +60,7 @@ namespace Sm5shMusic.Services
         private readonly string LOG_NEW_BGM_ENTRY_ASSIGNED_INFO;
         private readonly string LOG_NEW_BGM_ENTRY_STREAM_PROPERTY;
         private readonly string LOG_NEW_BGM_ENTRY_PLAYLIST;
+        private readonly string LOG_UPDATE_STAGE_ENTRY;
 
         public ParacobService(IResourceService resourceService, ILogger<IParacobService> logger)
         {
@@ -62,6 +69,7 @@ namespace Sm5shMusic.Services
             _paramLabels = GetParamLabels();
             _coreBgmDb = GetCoreDbRootBgmEntries();
             _coreGameTitleDb = GetCoreDbRootGameTitleEntries();
+            _coreStageDb = GetCoreDbRootStageEntries();
             _lastNameId = _coreBgmDb.Where(p => p.NameId != "random" && !string.IsNullOrEmpty(p.NameId)).OrderByDescending(p => Base36IncrementHelper.ToInt(p.NameId)).FirstOrDefault()?.NameId;
             LOG_NEW_GAMETITLE_ENTRY_DB_ROOT = $"Generating new Game Title DB - db_root entry: {HEX_UI_GAMETITLE_ID}: {{UI_GAMETITLE_ID}}, {HEX_UI_SERIES_ID}: {{HEX_UI_SERIES_ID}}, {HEX_NAME_ID}: {{HEX_NAME_ID}}, {HEX_RELEASE}: {{HEX_RELEASE}}";
             LOG_NEW_BGM_ENTRY_DB_ROOT = $"Generating new BGM DB - db_root: {HEX_UI_BGM_ID}: {{HEX_UI_BGM_ID}}, {HEX_STREAM_SET_ID}: {{HEX_STREAM_SET_ID}}, {HEX_RARITY}: {{HEX_RARITY}}, {HEX_RECORD_TYPE}: {{HEX_RECORD_TYPE}}, {HEX_UI_GAMETITLE_ID}: {{HEX_UI_GAMETITLE_ID}}, {HEX_NAME_ID}: {{HEX_NAME_ID}}, {HEX_TEST_DISP_ORDER}: {{HEX_TEST_DISP_ORDER}}, {HEX_MENU_VALUE}: {{HEX_MENU_VALUE}}, {HEX_SHOP_PRICE}: {{HEX_SHOP_PRICE}}";
@@ -69,6 +77,7 @@ namespace Sm5shMusic.Services
             LOG_NEW_BGM_ENTRY_ASSIGNED_INFO = $"Generating new BGM DB - assigned_info entry: {HEX_INFO_ID}: {{HEX_INFO_ID}}, {HEX_STREAM_ID}: {{HEX_STREAM_ID}}";
             LOG_NEW_BGM_ENTRY_STREAM_PROPERTY = $"Generating new BGM DB - stream_property entry: {HEX_STREAM_ID}: {{HEX_STREAM_ID}}, {HEX_DATA_NAME0}: {{HEX_DATA_NAME0}}";
             LOG_NEW_BGM_ENTRY_PLAYLIST = $"Generating new BGM DB - playlist {{PlaylistId}} entry : {HEX_UI_BGM_ID}: {{HEX_UI_BGM_ID}}, order: {{HEX_ORDERNBR}}, incidence: {{HEX_INCIDENCENBR}}";
+            LOG_UPDATE_STAGE_ENTRY = $"Updating Stage DB - Stage Id {{StageId}}:0x{{Hash40Hex:X}} entry : {HEX_BGM_SET_ID}: {{HEX_BGM_SET_ID}}, {HEX_BGM_SETTING_NO}: {{HEX_BGM_SETTING_NO}}"; 
         }
 
         public List<GameTitleDbEntry> GetCoreDbRootGameTitleEntries()
@@ -82,7 +91,7 @@ namespace Sm5shMusic.Services
             _logger.LogDebug("Retrieving Game Title DB Core entries from {GameTitleDbFile}", gameTitleDbResource);
 
             var t = new ParamFile();
-            t.Open(_resourceService.GetGameTitleDbResource());
+            t.Open(gameTitleDbResource);
 
             var dbRoot = t.Root.Nodes[HEX_CAT_DBROOT] as ParamList;
 
@@ -104,18 +113,49 @@ namespace Sm5shMusic.Services
             return output;
         }
 
+        public List<StageDbEntry> GetCoreDbRootStageEntries()
+        {
+            var output = new List<StageDbEntry>();
+
+            var stageDbResource = _resourceService.GetStageDbResource();
+            if (!File.Exists(stageDbResource))
+                return output;
+
+            _logger.LogDebug("Retrieving Stage DB Core entries from {StageDbFile}", stageDbResource);
+
+            var t = new ParamFile();
+            t.Open(stageDbResource);
+
+            var dbRoot = t.Root.Nodes[HEX_CAT_DBROOT] as ParamList;
+
+            foreach (var node in dbRoot.Nodes)
+            {
+                var rootEntry = node as ParamStruct;
+                output.Add(new StageDbEntry()
+                {
+                    UiStageId = GetNodeParamValueHash40(rootEntry, HEX_UI_STAGE_ID),
+                    BgmSetId = GetNodeParamValueHash40(rootEntry, HEX_BGM_SET_ID),
+                    BgmSettingNo = GetNodeParamValue<byte>(rootEntry, HEX_BGM_SETTING_NO)
+                });
+            }
+
+            _logger.LogDebug("{NbrEntries} entries retrieved from Stage DB", output.Count);
+
+            return output;
+        }
+
         public List<BgmDbRootEntry> GetCoreDbRootBgmEntries()
         {
             var output = new List<BgmDbRootEntry>();
 
-            var bgmDbResource = _resourceService.GetGameTitleDbResource();
+            var bgmDbResource = _resourceService.GetBgmDbResource();
             if (!File.Exists(bgmDbResource))
                 return output;
 
             _logger.LogDebug("Retrieving BGM DB Core entries from {BgmDbFile}", bgmDbResource);
 
             var t = new ParamFile();
-            t.Open(_resourceService.GetBgmDbResource());
+            t.Open(bgmDbResource);
 
             var dbRoot = t.Root.Nodes[HEX_CAT_DBROOT] as ParamList;
 
@@ -138,6 +178,31 @@ namespace Sm5shMusic.Services
             }
 
             _logger.LogDebug("{NbrEntries} entries retrieved from BGM DB", output.Count);
+
+            return output;
+        }
+
+        public List<string> GetCoreDbRootPlaylists()
+        {
+            var output = new List<string>();
+
+            var bgmDbResource = _resourceService.GetBgmDbResource();
+            if (!File.Exists(bgmDbResource))
+                return output;
+
+            _logger.LogDebug("Retrieving BGM Playlists DB Core entries from {BgmDbFile}", bgmDbResource);
+
+            var t = new ParamFile();
+            t.Open(bgmDbResource);
+
+            foreach (var node in t.Root.Nodes)
+            {
+                var hashString = Hash40Util.FormatToString(node.Key, _paramLabels);
+                if(hashString.StartsWith(Constants.InternalIds.PlaylistPrefix))
+                    output.Add(Hash40Util.FormatToString(node.Key, _paramLabels));
+            }
+
+            _logger.LogDebug("{NbrEntries} entries retrieved from BGM Playlists DB", output.Count);
 
             return output;
         }
@@ -175,6 +240,41 @@ namespace Sm5shMusic.Services
             return true;
         }
 
+        public bool UpdateStagePrcFile(List<StageDbEntry> stageEntries, string outputFilePath)
+        {
+            var t = new ParamFile();
+            t.Open(_resourceService.GetStageDbResource());
+            var dbRoot = t.Root.Nodes[HEX_CAT_DBROOT] as ParamList;
+
+            int entriesUpdated = 0;
+            foreach (var stageNode in dbRoot.Nodes)
+            {
+                var stageEntry = (ParamStruct)stageNode;
+                var stageIdHex = stageEntry.Nodes[HEX_UI_STAGE_ID] as ParamValue;
+                var stageId = Hash40Util.FormatToString((ulong)stageIdHex.Value, _paramLabels);
+
+                var stageUpdateEntry = stageEntries.FirstOrDefault(p => p.UiStageId == stageId);
+                if(stageUpdateEntry != null)
+                {
+                    _logger.LogDebug(LOG_UPDATE_STAGE_ENTRY, stageId, stageIdHex.Value, stageUpdateEntry.BgmSetId, stageUpdateEntry.BgmSettingNo);
+
+                    SetNodeParamValue(stageEntry, HEX_BGM_SET_ID, stageUpdateEntry.BgmSetId);
+                    SetNodeParamValue(stageEntry, HEX_BGM_SETTING_NO, stageUpdateEntry.BgmSettingNo);
+                    entriesUpdated++;
+                }
+                else
+                {
+                    _logger.LogDebug("Stage Id {StageId}:0x{Hash40Hex:X} could not be found the Stage DB", stageId, stageIdHex.Value);
+                }
+            }
+
+            _logger.LogDebug("{NbrEntries} entries updated in Stage DB - db_root", entriesUpdated);
+
+            t.Save(outputFilePath);
+
+            return true;
+        }
+
         public bool GenerateBgmPrcFile(List<BgmDbNewEntry> bgmEntries, string outputFilePath)
         {
             var saveNoIndex = (short)(_coreBgmDb.OrderByDescending(p => p.SaveNo).First().SaveNo + 1);
@@ -197,7 +297,7 @@ namespace Sm5shMusic.Services
                 SetNodeParamValue(newEntry, HEX_RECORD_TYPE, bgmEntry.RecordType);
                 SetNodeParamValue(newEntry, HEX_UI_GAMETITLE_ID, bgmEntry.UiGameTitleId);
                 SetNodeParamValue(newEntry, HEX_NAME_ID, bgmEntry.NameId);
-                //SetNodeParamValue(newEntry, HEX_SAVE_NO, saveNoIndex);
+                //SetNodeParamValue(newEntry, HEX_SAVE_NO, saveNoIndex); //Does not work past 1230 (9.01 update)
                 SetNodeParamValue(newEntry, HEX_TEST_DISP_ORDER, testDispOrderIndex);
                 SetNodeParamValue(newEntry, HEX_MENU_VALUE, menuValueIndex);
                 SetNodeParamValue(newEntry, HEX_SHOP_PRICE, (uint)0);

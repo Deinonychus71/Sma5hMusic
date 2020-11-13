@@ -18,6 +18,7 @@
         string GetWorkspaceOutputForSoundConfig();
         string GetWorkspaceOutputForUiGameTitleDbFile();
         string GetWorkspaceOutputForUiBgmDbFile();
+        string GetWorkspaceOutputForUiStageDbFile();
         string GetWorkspaceOutputForBgmPropertyFile();
         string GetWorkspaceOutputForMsbtTitleResource(string locale);
         string GetWorkspaceOutputForMsbtBgmResource(string locale);

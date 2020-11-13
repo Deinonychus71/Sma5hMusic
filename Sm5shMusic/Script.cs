@@ -7,6 +7,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using System.Linq;
+using Sm5shMusic.Helpers;
+using Sm5shMusic.Models;
+using Newtonsoft.Json;
 
 namespace Sm5shMusic
 {
@@ -43,8 +46,11 @@ namespace Sm5shMusic
             _logger.LogInformation("--------------------");
 
             await Task.Delay(1000);
-            _logger.LogInformation("AudioCache: {AudioCache}", _settings.EnableAudioCaching ? "Enabled" : "Disabled");
             _logger.LogInformation("MusicModPath: {MusicModPath}", _settings.MusicModPath);
+            _logger.LogInformation("AudioCache: {AudioCache}", _settings.EnableAudioCaching ? "Enabled - If songs are mismatched try to clear the cache!" : "Disabled");
+
+            var stageModJsonFile = LoadStagePlaylistMod();
+            _logger.LogInformation("StagePlaylistMod: {StagePlaylistMod}", stageModJsonFile != null ? "Enabled" : "Disabled");
 
             //Check proper resources exist
             if (!CheckApplicationFolders())
@@ -66,9 +72,15 @@ namespace Sm5shMusic
 
             //Generate Output mod
             _logger.LogInformation("--------------------");
-            _logger.LogInformation("Starting Arc Mod Generation");
-            var bgmEntries = musicMods.SelectMany(p => p.BgmEntries).ToDictionary(p => p.Key, p => p.Value);
-            _arcModGeneratorService.GenerateArcMod(bgmEntries.Values.ToList());
+            _logger.LogInformation("Starting Arc Music Mod Generation");
+            var bgmEntries = musicMods.SelectMany(p => p.BgmEntries).Select(p => p.Value).ToList();
+            _arcModGeneratorService.GenerateArcMusicMod(bgmEntries);
+            if(stageModJsonFile != null)
+            {
+                _logger.LogInformation("--------------------");
+                _logger.LogInformation("Starting Arc Stage Playlist Mod Generation");
+                _arcModGeneratorService.GenerateArcStagePlaylistMod(bgmEntries, stageModJsonFile);
+            }
 
             _logger.LogInformation("COMPLETE - Please check the logs for any error.");
             _logger.LogInformation("--------------------");
@@ -171,6 +183,33 @@ namespace Sm5shMusic
             }
 
             return true;
+        }
+
+        private List<StagePlaylistModConfig> LoadStagePlaylistMod()
+        {
+            var stageModJsonFile = Path.Combine(_settings.MusicModPath, Constants.MusicModFiles.StageModMetadataJsonFile);
+            var generateStageMod = File.Exists(stageModJsonFile);
+            if (!generateStageMod)
+            {
+                _logger.LogDebug("The file {StageModJsonFile} could not be found. The stage playlists will not be updated.", stageModJsonFile);
+                return null;
+            }
+
+            var stagePlaylistsEntries = JsonConvert.DeserializeObject<List<StagePlaylistModConfig>>(File.ReadAllText(stageModJsonFile));
+
+            if(stagePlaylistsEntries.Any(p => !Constants.ValidStages.Contains(p.StageId)))
+            {
+                _logger.LogError("{StagePlaylistMod} will be disabled. At least one stage is not registered in the Stage DB.");
+                return null;
+            }
+
+            if (stagePlaylistsEntries.Any(p => p.OrderId < 0 || p.OrderId > 15))
+            {
+                _logger.LogError("{StagePlaylistMod} will be disabled. At least one stage has an invalid order id. The value is 0 to 15.");
+                return null;
+            }
+
+            return stagePlaylistsEntries;
         }
     }
 }

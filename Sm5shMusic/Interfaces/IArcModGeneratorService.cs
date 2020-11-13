@@ -5,6 +5,8 @@ namespace Sm5shMusic.Interfaces
 {
     public interface IArcModGeneratorService
     {
-        bool GenerateArcMod(List<MusicModBgmEntry> bgmEntries);
+        bool GenerateArcMusicMod(List<MusicModBgmEntry> bgmEntries);
+
+        bool GenerateArcStagePlaylistMod(List<MusicModBgmEntry> bgmEntries, List<StagePlaylistModConfig> stageEntries);
     }
 }

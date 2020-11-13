@@ -139,6 +139,11 @@ namespace Sm5shMusic.Managers
             return Path.Combine(GetWorkspaceOutputForUiDb(), Constants.WorkspacePaths.WorkspaceUiBgmDb);
         }
 
+        public string GetWorkspaceOutputForUiStageDbFile()
+        {
+            return Path.Combine(GetWorkspaceOutputForUiDb(), Constants.WorkspacePaths.WorkspaceUiStageDb);
+        }
+
         public string GetWorkspaceOutputForBgmPropertyFile()
         {
             return Path.Combine(GetWorkspaceOutputForSoundConfig(), Constants.WorkspacePaths.WorkspaceBgmPropertyFile);

@@ -61,6 +61,11 @@ namespace Sm5shMusic.Services
             return Path.Combine(_settings.ResourcesPath, Constants.ResourcesFiles.ParamsPath, Constants.ResourcesFiles.UiGameTitleDbFile);
         }
 
+        public string GetStageDbResource()
+        {
+            return Path.Combine(_settings.ResourcesPath, Constants.ResourcesFiles.ParamsPath, Constants.ResourcesFiles.UiStageDbFile);
+        }
+
         public string GetNusBankTemplateResource()
         {
             return Path.Combine(_settings.ResourcesPath, Constants.ResourcesFiles.NusBankTemplatePath, Constants.ResourcesFiles.NusBankTemplateFile);

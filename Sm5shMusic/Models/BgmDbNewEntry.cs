@@ -15,6 +15,8 @@ namespace Sm5shMusic.Models
         public string RecordType { get; set; }
         public string NameId { get; set; }
         public string UiGameTitleId { get { return $"{Constants.InternalIds.GameTitleIdPrefix}{GameTitleId}"; } }
+        public bool IsDlc { get; set; }
+        public bool IsPatch { get; set; }
 
         //Stream Set
         public string Info0 { get { return $"{Constants.InternalIds.InfoPrefix}{ToneName}"; } }
@@ -27,6 +29,11 @@ namespace Sm5shMusic.Models
         public string DataName0 { get { return ToneName; } }
 
         //Playlist
-        public List<PlaylistInfo> Playlists { get; set; }
+        public List<BgmPlaylistEntry> Playlists { get; set; }
+    }
+
+    public class BgmPlaylistEntry
+    {
+        public string Id { get; set; }
     }
 }

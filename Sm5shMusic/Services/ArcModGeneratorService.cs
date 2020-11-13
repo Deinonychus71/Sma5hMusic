@@ -32,7 +32,7 @@ namespace Sm5shMusic.Services
             _paracobService = paracobService;
         }
 
-        public bool GenerateArcMod(List<MusicModBgmEntry> bgmEntries)
+        public bool GenerateArcMusicMod(List<MusicModBgmEntry> bgmEntries)
         {
             if(bgmEntries == null || bgmEntries.Count == 0)
             {
@@ -43,9 +43,11 @@ namespace Sm5shMusic.Services
             //Prefix
             if (!ValidateUniqueToneNames(bgmEntries))
             {
-                _logger.LogError("The Arc Mod Generation failed. At least two songs have the same tone name.");
+                _logger.LogError("The Arc Music Mod Generation failed. At least two songs have the same tone name.");
                 return false;
             }
+
+            _logger.LogDebug("Starting Arc Music Mod generation.");
 
             //Get new Game Titles
             var coreGameTitleEntries = _paracobService.GetCoreDbRootGameTitleEntries();
@@ -102,7 +104,9 @@ namespace Sm5shMusic.Services
                 RecordType = $"{Constants.InternalIds.RecordTypePrefix}{p.Song.RecordType}",
                 GameTitleId = p.Game.Id,
                 NameId = p.NameId,
-                Playlists = p.Song.Playlists.Select(p => { p.Id = $"{Constants.InternalIds.PlaylistPrefix}{p.Id}"; return p; }).ToList()
+                Playlists = p.Song.Playlists.Select(p => new BgmPlaylistEntry() { Id = $"{Constants.InternalIds.PlaylistPrefix}{p.Id}" }).ToList(),
+                IsDlc = p.Song.Playlists.Any(p => Constants.DLCStages.Contains(p.Id)),
+                IsPatch = p.Song.Playlists.Any(p => Constants.DLCStages.Contains(p.Id))
             }).ToList();
             _logger.LogInformation("Generate BGM DB - {Entries} new entries", newBgmEntries.Count);
             _paracobService.GenerateBgmPrcFile(newBgmEntries, _workspace.GetWorkspaceOutputForUiBgmDbFile());
@@ -160,6 +164,35 @@ namespace Sm5shMusic.Services
                     _msbtService.GenerateNewEntries(newMsbtBgms, inputMsbtFile, outputMsbtFile);
                 }
             }
+
+            _logger.LogInformation("Output Folder: {OutputFolder}", _workspace.GetWorkspaceDirectory());
+
+            return true;
+        }
+
+        public bool GenerateArcStagePlaylistMod(List<MusicModBgmEntry> bgmEntries, List<StagePlaylistModConfig> stagePlaylistEntries)
+        {
+            _logger.LogDebug("Starting Arc Stage Playlist Mod generation.");
+
+            var corePlaylistEntries = _paracobService.GetCoreDbRootPlaylists();
+            corePlaylistEntries.AddRange(bgmEntries.SelectMany(p => p.Song.Playlists.Select(p2 => $"{Constants.InternalIds.PlaylistPrefix}{p2.Id}")));
+            var validPlaylistEntries = corePlaylistEntries.Distinct().ToList();
+
+            var stagePlaylistDbEntries = stagePlaylistEntries.Select(p => new StageDbEntry()
+            {
+                UiStageId = $"{Constants.InternalIds.StageIdPrefix}{p.StageId}",
+                BgmSetId = $"{Constants.InternalIds.PlaylistPrefix}{p.PlaylistId}",
+                BgmSettingNo = (byte)p.OrderId
+            }).ToList();
+
+            //Validate that all new playlists are registered
+            if(stagePlaylistDbEntries.Any(p => !validPlaylistEntries.Contains(p.BgmSetId)))
+            {
+                _logger.LogError("The Arc Stage Playlist Mod Generation failed. At least one playlist is not registered in the BGM DB.");
+                return false;
+            }
+
+            _paracobService.UpdateStagePrcFile(stagePlaylistDbEntries, _workspace.GetWorkspaceOutputForUiStageDbFile());
 
             _logger.LogInformation("Output Folder: {OutputFolder}", _workspace.GetWorkspaceDirectory());
 

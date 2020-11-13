@@ -24,6 +24,8 @@
 
         string GetGameTitleDbResource();
 
+        string GetStageDbResource();
+
         string GetNusBankTemplateResource();
 
         string GetMsbtTitleResource(string locale);
