@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Options" Version="5.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Common\Sm5sh.Services\Sm5sh.Services.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="VGAudioCli">
+      <HintPath>..\Tools\VGAudioCli.exe</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>
