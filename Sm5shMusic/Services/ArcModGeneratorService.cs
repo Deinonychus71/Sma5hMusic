@@ -141,17 +141,19 @@ namespace Sm5shMusic.Services
                 var newMsbtTitleBgms = bgmEntries.Select(p => new MsbtNewEntryModel()
                 {
                     Label = $"{Constants.InternalIds.MsbtBgmTitlePrefix}{p.NameId}",
-                    Value = p.Song.Title.ContainsKey(locale) ? p.Song.Title[locale] : p.Song.Title.ContainsKey(Constants.DefaultLocale) ? p.Song.Title[Constants.DefaultLocale] : "MISSING"
+                    Value = 
+                    p.Song.Title.ContainsKey(locale) && !string.IsNullOrEmpty(p.Song.Title[locale]) ? p.Song.Title[locale] : 
+                    p.Song.Title.ContainsKey(Constants.DefaultLocale) && !string.IsNullOrEmpty(p.Song.Title[Constants.DefaultLocale]) ? p.Song.Title[Constants.DefaultLocale] : "MISSING"
                 }).ToList();
-                var newMsbtAuthorBgms = bgmEntries.Select(p => new MsbtNewEntryModel()
+                var newMsbtAuthorBgms = bgmEntries.Where(p => p.Song.Author != null && p.Song.Author.ContainsKey(locale) && !string.IsNullOrEmpty(p.Song.Author[locale])).Select(p => new MsbtNewEntryModel()
                 {
                     Label = $"{Constants.InternalIds.MsbtBgmAuthorPrefix}{p.NameId}",
-                    Value = p.Song.Author.ContainsKey(locale) ? p.Song.Author[locale] : p.Song.Author.ContainsKey(Constants.DefaultLocale) ? p.Song.Author[Constants.DefaultLocale] : "MISSING"
+                    Value = p.Song.Author[locale]
                 });
-                var newMsbtCopyrightBgms = bgmEntries.Select(p => new MsbtNewEntryModel()
+                var newMsbtCopyrightBgms = bgmEntries.Where(p => p.Song.Copyright != null && p.Song.Copyright.ContainsKey(locale) && !string.IsNullOrEmpty(p.Song.Copyright[locale])).Select(p => new MsbtNewEntryModel()
                 {
                     Label = $"{Constants.InternalIds.MsbtBgmCopyrightPrefix}{p.NameId}",
-                    Value = p.Song.Copyright.ContainsKey(locale) ? p.Song.Copyright[locale] : p.Song.Copyright.ContainsKey(Constants.DefaultLocale) ? p.Song.Copyright[Constants.DefaultLocale] : "MISSING"
+                    Value = p.Song.Copyright[locale]
                 });
                 var newMsbtBgms = newMsbtTitleBgms;
                 newMsbtBgms.AddRange(newMsbtAuthorBgms);
