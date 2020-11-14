@@ -52,7 +52,7 @@ namespace Sm5shMusic.Services
             //Get new Game Titles
             var coreGameTitleEntries = _paracobService.GetCoreDbRootGameTitleEntries();
             var coreGameTitleIds = coreGameTitleEntries.Select(p => p.UiGameTitleId).Distinct().ToList();
-            var newGameTitleIds = bgmEntries.Where(p => !coreGameTitleIds.Contains(p.Game.Id));
+            var newGameTitleIds = bgmEntries.Where(p => !coreGameTitleIds.Contains($"{Constants.InternalIds.GameTitleIdPrefix}{p.Game.Id}"));
 
             //Generate NUS3AUDIO and NUS3BANK
             _logger.LogInformation("Generate/Copy Nus3Audio and Nus3Bank - {NbrFiles} files", bgmEntries.Count * 2);
