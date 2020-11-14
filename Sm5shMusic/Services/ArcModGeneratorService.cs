@@ -123,7 +123,9 @@ namespace Sm5shMusic.Services
                     var newMsbtGameTitles = newGameTitleIds.Select(p => new MsbtNewEntryModel()
                     {
                         Label = $"{Constants.InternalIds.MsbtTitPrefix}{p.Game.Id}",
-                        Value = p.Game.Title.ContainsKey(locale) ? p.Game.Title[locale] : p.Game.Title.ContainsKey(Constants.DefaultLocale) ? p.Game.Title[Constants.DefaultLocale] : "MISSING"
+                        Value = 
+                        p.Game.Title.ContainsKey(locale) && !string.IsNullOrEmpty(p.Game.Title[locale]) ? p.Game.Title[locale] : 
+                        p.Game.Title.ContainsKey(Constants.DefaultLocale) && !string.IsNullOrEmpty(p.Game.Title[Constants.DefaultLocale]) ? p.Game.Title[Constants.DefaultLocale] : "MISSING"
                     }).GroupBy(p => p.Label).Select(p => p.First()).ToList();
                     var inputMsbtFile = _resourceService.GetMsbtTitleResource(locale);
                     if (File.Exists(inputMsbtFile))

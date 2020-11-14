@@ -7,7 +7,7 @@
 			"series_id": "zelda",
 			"id": "cadence_of_hyrule",
 			"title": {
-				"en_US": "Cadence of Hyrule"
+				"us_en": "Cadence of Hyrule"
 			},
 			"songs": [
 				{
@@ -15,13 +15,13 @@
 					"id": "overworld",
 					"record_type": "arrange",
 					"title": {
-						"en_US": "Overworld (Combat)"
+						"us_en": "Overworld (Combat)"
 					},
 					"copyright": {
-						"en_US": "Nintendo"
+						"us_en": "Nintendo"
 					},
 					"author": {
-						"en_US": "Nintendo"
+						"us_en": "Nintendo"
 					},
 					"playlists": [
 						{
