@@ -1,12 +1,14 @@
 ﻿using Microsoft.Extensions.Logging;
-using Sm5sh.Mods.Music.BgmEntryModels;
+using Sm5sh.Mods.Music.Interfaces;
+using Sm5sh.Mods.Music.Models;
+using Sm5sh.Mods.Music.Models.BgmEntryModels;
 using Sm5sh.Services.Interfaces;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace Sm5sh.Mods.Music
 {
-    public class BgmService : IBgmService
+    public class BgmService : IBgmService, ISm5shMod
     {
         private readonly ILogger _logger;
         private readonly IStateService _stateService;

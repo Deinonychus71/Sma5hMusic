@@ -1,4 +1,4 @@
-﻿namespace Sm5shMusic.Interfaces
+﻿namespace Sm5sh.Mods.Music.Interfaces
 {
     public interface INus3AudioService
     {

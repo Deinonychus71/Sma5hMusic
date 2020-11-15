@@ -1,11 +1,12 @@
 ﻿using Microsoft.Extensions.Logging;
-using Sm5sh.Mods.Music.BgmEntryModels;
+using Sm5sh.Mods.Music.Interfaces;
+using Sm5sh.Mods.Music.Models.BgmEntryModels;
 using System;
 using System.IO;
 using System.Text;
 using VGAudio.Cli;
 
-namespace Sm5sh.Mods.Music
+namespace Sm5sh.Mods.Music.Services
 {
     public class VGAudioMetadataService: IAudioMetadataService
     {

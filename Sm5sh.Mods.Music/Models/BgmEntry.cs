@@ -1,7 +1,7 @@
 ﻿using Sm5sh.Helpers;
 using System.Collections.Generic;
 
-namespace Sm5sh.Mods.Music
+namespace Sm5sh.Mods.Music.Models
 {
     public class BgmEntry
     {

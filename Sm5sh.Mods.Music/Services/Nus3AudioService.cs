@@ -1,6 +1,6 @@
 ﻿using CsvHelper;
 using Microsoft.Extensions.Logging;
-using Sm5shMusic.Interfaces;
+using Sm5sh.Mods.Music.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -8,7 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 
-namespace Sm5shMusic.Services
+namespace Sm5sh.Mods.Music.Services
 {
     public class Nus3AudioService : INus3AudioService
     {
