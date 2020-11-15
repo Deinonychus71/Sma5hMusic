@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Core\Helpers\MsbtEditor\MsbtEditor.csproj" />
+    <ProjectReference Include="..\..\Core\Sm5sh.Core\Sm5sh.Core.csproj" />
+  </ItemGroup>
+
+</Project>
