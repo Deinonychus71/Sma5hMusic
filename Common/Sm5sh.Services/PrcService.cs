@@ -7,7 +7,7 @@ using System.IO;
 using Sm5sh.Services.Interfaces;
 using Sm5sh.Helpers.PrcHelper;
 
-namespace Sm5sh.Services.Shared
+namespace Sm5sh.Services
 {
     public class PrcService : IPrcService
     {

@@ -1,9 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using Sm5sh.Mods.Music.BgmEntryModels;
 using Sm5sh.Services.Interfaces;
-using Sm5sh.Shared.Data.Sound.Config;
-using Sm5sh.Shared.Data.Ui.Param.Database;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -12,50 +9,104 @@ namespace Sm5sh.Mods.Music
     public class BgmService : IBgmService
     {
         private readonly ILogger _logger;
-        private readonly IPrcService _prcService;
-        private readonly IYmlService _ymlService;
-        private readonly IOptions<Options> _config;
-        
+        private readonly IStateService _stateService;
 
         private const string UI_BGM_ID_PREFIX = "ui_bgm_";
         private const string STREAM_SET_PREFIX = "set_";
         private const string INFO_ID_PREFIX = "info_";
-        private const string STREAM_PREFIX = "stream_";
 
-        private readonly Dictionary<string, BgmEntry> _bgmEntries;
-        private readonly PrcUiBgmDatabase _daoUiBgmDatabase;
-        private readonly BinBgmProperty _daoBgmProperty;
+        private Dictionary<string, BgmEntry> _bgmEntries;
+        private Dictionary<string, BgmServiceModels.BgmDbOperation> _dbOperations;
 
-        public Dictionary<string, BgmEntry> BgmEntries { get { return _bgmEntries; } }
-
-        public BgmService(IOptions<Options> config, IPrcService prcService, IYmlService ymlService, ILogger<IBgmService> logger)
+        public BgmService(IStateService stateService, ILogger<IBgmService> logger)
         {
             _logger = logger;
-            _prcService = prcService;
-            _ymlService = ymlService;
-            _config = config;
+            _stateService = stateService;
+            _dbOperations = new Dictionary<string, BgmServiceModels.BgmDbOperation>();
 
             //Initialize core files
-            _daoUiBgmDatabase = prcService.ReadPrcFile<PrcUiBgmDatabase>(_config.Value.PrcBgmDatabaseFile);
-            _daoBgmProperty = ymlService.ReadYmlFile<BinBgmProperty>(_config.Value.BinBgmPropertyFile);
             _bgmEntries = InitializeCoreBgmEntries();
 
             //Initialize mods
             //TODO
         }
 
-        public bool Save()
+        public IEnumerable<BgmEntry> GetBgmEntries()
         {
+            return _bgmEntries.Values;
+        }
+
+        public BgmEntry AddBgmEntry(string toneId)
+        {
+            if (_bgmEntries.ContainsKey(toneId))
+            {
+                _logger.LogError("The ToneId {ToneId} already exists in the Bgm Entries", toneId);
+                return null;
+            }
+
+            var newBgmEntry = new BgmEntry() { ToneId = toneId, Source = BgmAudioSource.Mod };
+            _bgmEntries.Add(toneId, newBgmEntry);
+
+            //Delete remove tag
+            if (_dbOperations.ContainsKey(toneId))
+                _dbOperations.Remove(toneId);
+
+            //If already exists in Core game, do not tag added
+            if (!_stateService.UiBgmDatabase.StreamPropertyEntries.Any(p => p.DateName0 == toneId))
+                _dbOperations[toneId] = BgmServiceModels.BgmDbOperation.Added;
+
+            return newBgmEntry;
+        }
+
+        public bool RemoveBgmEntry(string toneId)
+        {
+            if (_bgmEntries.ContainsKey(toneId))
+            {
+                _bgmEntries.Remove(toneId);
+                _dbOperations[toneId] = BgmServiceModels.BgmDbOperation.Removed;
+            }
+            return true;
+        }
+
+        public bool SaveChangesToStateService()
+        {
+            _logger.LogInformation("Saving Bgm Entries to State Service");
+
+            //Remove
+            foreach(var toneIdToRemove in _dbOperations.Where(p => p.Value == BgmServiceModels.BgmDbOperation.Removed).Select(p => p.Key))
+            {
+                //Remove from DBs
+                _stateService.BgmProperty.Entries.RemoveAll(p => p.NameId == toneIdToRemove);
+                _stateService.UiBgmDatabase.DbRootEntries.RemoveAll(p => p.UiBgmId.StringValue == $"{UI_BGM_ID_PREFIX}{toneIdToRemove}");
+                _stateService.UiBgmDatabase.StreamSetEntries.RemoveAll(p => p.StreamSetId.StringValue == $"{STREAM_SET_PREFIX}{toneIdToRemove}");
+                _stateService.UiBgmDatabase.AssignedInfoEntries.RemoveAll(p => p.InfoId.StringValue == $"{INFO_ID_PREFIX}{toneIdToRemove}");
+                _stateService.UiBgmDatabase.StreamPropertyEntries.RemoveAll(p => p.DateName0 == toneIdToRemove);
+
+                //Remove from playlists
+                foreach(var playlist in _stateService.UiBgmDatabase.PlaylistEntries)
+                {
+                    playlist.Values.RemoveAll(p => p.UiBgmId.StringValue == $"{UI_BGM_ID_PREFIX}{toneIdToRemove}");
+                }
+
+                //TODO: Remove from MSBT (for cleanup)
+            }
+
+            //Add Update
+            foreach (var bgmEntry in _bgmEntries)
+            {
+                
+            }
+
             return true;
         }
 
         private Dictionary<string, BgmEntry> InitializeCoreBgmEntries()
         {
-            var uiBgmDbRoot = _daoUiBgmDatabase.DbRootEntries.ToDictionary(p => p.UiBgmId.StringValue, p => p);
-            var uiBgmStreamSet = _daoUiBgmDatabase.StreamSetEntries.ToDictionary(p => p.StreamSetId.StringValue, p => p);
-            var uiBgmAssignedInfo = _daoUiBgmDatabase.AssignedInfoEntries.ToDictionary(p => p.InfoId.StringValue, p => p);
-            var uiBgmStreamProperty = _daoUiBgmDatabase.StreamPropertyEntries.ToDictionary(p => p.DateName0, p => p);
-            var binBgmProperty = _daoBgmProperty.Entries.ToDictionary(p => p.NameId, p => p);
+            var uiBgmDbRoot = _stateService.UiBgmDatabase.DbRootEntries.ToDictionary(p => p.UiBgmId.StringValue, p => p);
+            var uiBgmStreamSet = _stateService.UiBgmDatabase.StreamSetEntries.ToDictionary(p => p.StreamSetId.StringValue, p => p);
+            var uiBgmAssignedInfo = _stateService.UiBgmDatabase.AssignedInfoEntries.ToDictionary(p => p.InfoId.StringValue, p => p);
+            var uiBgmStreamProperty = _stateService.UiBgmDatabase.StreamPropertyEntries.ToDictionary(p => p.DateName0, p => p);
+            var binBgmProperty = _stateService.BgmProperty.Entries.ToDictionary(p => p.NameId, p => p);
 
             var output = new Dictionary<string, BgmEntry>();
 
@@ -63,6 +114,9 @@ namespace Sm5sh.Mods.Music
             {
                 var toneId = uiBgmStreamPropertyEntry.Key;
                 var dbRootEntry = uiBgmDbRoot[$"{UI_BGM_ID_PREFIX}{toneId}"];
+                var setStreamEntry = uiBgmDbRoot[$"{STREAM_SET_PREFIX}{toneId}"];
+                var assignedInfoEntry = uiBgmDbRoot[$"{INFO_ID_PREFIX}{toneId}"];
+                var streamPropertyEntry = uiBgmDbRoot[toneId];
                 var bgmProperty = binBgmProperty[toneId];
 
                 var newBgmEntry = new BgmEntry()
@@ -88,12 +142,14 @@ namespace Sm5sh.Mods.Music
 
             return output;
         }
+    }
 
-        public class Options
+    namespace BgmServiceModels
+    {
+        public enum BgmDbOperation
         {
-            public string PrcBgmDatabaseFile { get; set; }
-            public string BinBgmPropertyFile { get; set; }
-
+            Added,
+            Removed
         }
     }
 }

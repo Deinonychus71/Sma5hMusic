@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Sm5sh.Shared.Helpers
+namespace Sm5sh.Helpers
 {
     public static class Base36IncrementHelper
     {

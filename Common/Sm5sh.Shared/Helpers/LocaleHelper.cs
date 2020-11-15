@@ -1,6 +1,6 @@
 ﻿using System.Linq;
 
-namespace Sm5sh.Shared.Helpers
+namespace Sm5sh.Helpers
 {
     public class LocaleHelper
     {

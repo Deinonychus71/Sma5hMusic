@@ -3,8 +3,8 @@ using System.Collections.Generic;
 
 namespace Sm5shMusic.Interfaces
 {
-    public interface IBgmPropertyService
+    public interface IMsbtService
     {
-        bool GenerateBgmProperty(List<MusicModBgmEntry> bgmEntries);
+        bool GenerateNewEntries(List<MsbtNewEntryModel> newMsbtEntries, string inputMsbtFile, string outputMsbtFile);
     }
 }

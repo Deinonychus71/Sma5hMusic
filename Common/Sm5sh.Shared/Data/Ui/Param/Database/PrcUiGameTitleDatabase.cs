@@ -1,7 +1,7 @@
 ﻿using Sm5sh.Helpers.PrcHelper;
 using System.Collections.Generic;
 
-namespace Sm5sh.Shared.Data.Ui.Param.Database
+namespace Sm5sh.Data.Ui.Param.Database
 {
     public class PrcUiGameTitleDatabase : IPrcParsable
     {

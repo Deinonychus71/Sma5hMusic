@@ -3,7 +3,7 @@ using Sm5sh.Helpers.YmlHelper;
 using Sm5sh.Services.Interfaces;
 using System;
 
-namespace Sm5sh.Services.Shared
+namespace Sm5sh.Services
 {
     public class YmlService : IYmlService
     {

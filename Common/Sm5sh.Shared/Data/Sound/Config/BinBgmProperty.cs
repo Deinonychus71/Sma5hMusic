@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using YamlDotNet.Serialization;
 
-namespace Sm5sh.Shared.Data.Sound.Config
+namespace Sm5sh.Data.Sound.Config
 {
     public class BinBgmProperty : IYmlParsable
     {

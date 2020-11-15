@@ -1,4 +1,4 @@
-﻿using Sm5sh.Shared.Helpers;
+﻿using Sm5sh.Helpers;
 using System.Collections.Generic;
 
 namespace Sm5sh.Mods.Music
@@ -33,7 +33,7 @@ namespace Sm5sh.Mods.Music
         public enum BgmAudioSource
         {
             CoreGame = 0,
-            File = 1
+            Mod = 1
         }
 
         public class AudioCuePoints

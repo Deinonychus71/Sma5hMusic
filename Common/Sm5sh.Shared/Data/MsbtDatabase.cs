@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Sm5sh.Shared.Data
+namespace Sm5sh.Data
 {
     public class MsbtDatabase
     {

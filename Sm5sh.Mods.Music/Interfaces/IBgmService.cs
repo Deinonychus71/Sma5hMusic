@@ -4,6 +4,12 @@ namespace Sm5sh.Mods.Music
 {
     public interface IBgmService
     {
-        Dictionary<string, BgmEntry> BgmEntries { get; }
+        IEnumerable<BgmEntry> GetBgmEntries();
+
+        BgmEntry AddBgmEntry(string toneId);
+
+        bool RemoveBgmEntry(string toneId);
+
+        bool SaveChangesToStateService();
     }
 }
