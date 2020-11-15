@@ -4,30 +4,36 @@ using Sm5sh.Attributes;
 using Sm5sh.Interfaces;
 using Sm5sh.Mods.Music.Data.Sound.Config;
 using Sm5sh.Mods.Music.Data.Sound.Config.BgmPropertyStructs;
-using Sm5sh.Mods.Music.Interfaces;
+using Sm5sh.Mods.Music.Helpers;
 using System;
 using System.Collections.Generic;
 using System.IO;
 
 namespace Sm5sh.Mods.Music.ResourceProviders
 {
-    [ResourceProviderMatch("sound/config/bgm_property.bin")]
+    [ResourceProviderMatch(Constants.GameResources.PRC_BGM_PROPERTY_PATH)]
     public class BgmPropertyProvider : BaseResourceProvider
     {
         private readonly ILogger _logger;
-        private readonly IYmlService _ymlService;
         private readonly IProcessService _processService;
+        private readonly YmlHelper _ymlHelper;
         private readonly string _bgmPropertyExeFile;
         private readonly string _bgmPropertyHashFile;
 
-        public BgmPropertyProvider(IOptions<Sm5shOptions> config, IProcessService processService, IYmlService ymlService, ILogger<BgmPropertyProvider> logger)
+        public BgmPropertyProvider(IOptions<Sm5shMusicOptions> config, IProcessService processService, ILogger<BgmPropertyProvider> logger)
             : base(config)
         {
             _logger = logger;
-            _ymlService = ymlService;
+            _ymlHelper = new YmlHelper();
             _processService = processService;
-            _bgmPropertyExeFile = Path.Combine(config.Value.ToolsPath, "BgmProperty", "bgm-property.exe");
-            _bgmPropertyHashFile = Path.Combine(config.Value.ToolsPath, "BgmProperty", "bgm_hashes.txt");
+            _bgmPropertyExeFile = Path.Combine(config.Value.ToolsPath, Constants.Resources.BGM_PROPERTY_EXE_FILE);
+            _bgmPropertyHashFile = Path.Combine(config.Value.ToolsPath, Constants.Resources.BGM_PROPERTY_HASH_FILE);
+
+            if (!File.Exists(_bgmPropertyExeFile))
+                throw new Exception($"bgm-property.exe: {_bgmPropertyExeFile} could not be found.");
+
+            if (!File.Exists(_bgmPropertyHashFile))
+                throw new Exception($"bgm_hashes.txt: {_bgmPropertyHashFile} could not be found.");
         }
 
         public override T ReadFile<T>(string inputFile)
@@ -41,19 +47,8 @@ namespace Sm5sh.Mods.Music.ResourceProviders
                 return default;
             }
 
-            if (!File.Exists(_bgmPropertyExeFile))
-            {
-                _logger.LogError("bgm-property.exe {BgmPropertyExeFile} could not be found.", _bgmPropertyExeFile);
-                return default;
-            }
-
-            if (!File.Exists(_bgmPropertyHashFile))
-            {
-                _logger.LogError("bgm_hashes.txt {BgmPropertyHashFile} could not be found.", _bgmPropertyHashFile);
-                return default;
-            }
-
-            var tempFile = Path.Combine(_config.Value.TempPath, "temp.yml");
+            Directory.CreateDirectory(_config.Value.TempPath);
+            var tempFile = Path.Combine(_config.Value.TempPath, Constants.Resources.BGM_PROPERTY_TEMP_FILE);
 
             //Retrieve YML from Bgm Property
             try
@@ -65,7 +60,7 @@ namespace Sm5sh.Mods.Music.ResourceProviders
                 throw new Exception("Error while generating bgm_property.yml file.", e);
             }
 
-            var output = _ymlService.ReadYmlFile<List<BgmPropertyEntry>>(tempFile);
+            var output = _ymlHelper.ReadYmlFile<List<BgmPropertyEntry>>(tempFile);
 
             //Delete temp file
             File.Delete(tempFile);
@@ -78,16 +73,11 @@ namespace Sm5sh.Mods.Music.ResourceProviders
             if (!typeof(T).IsAssignableFrom(typeof(BinBgmProperty)))
                 throw new Exception($"Tried to use BgmPropertyProvider with wrong mapping type '{nameof(BinBgmProperty)}'");
 
-            if (!File.Exists(_bgmPropertyExeFile))
-            {
-                _logger.LogError("bgm-property.exe {BgmPropertyExeFile} could not be found.", _bgmPropertyExeFile);
-                return false;
-            }
-
-            var tempFile = Path.Combine(_config.Value.TempPath, "temp.yml");
+            Directory.CreateDirectory(_config.Value.TempPath);
+            var tempFile = Path.Combine(_config.Value.TempPath, Constants.Resources.BGM_PROPERTY_TEMP_FILE);
 
             //Serialize
-            var ymlStr = _ymlService.WriteYmlFile(tempFile, ((BinBgmProperty)(object)inputObj).Entries);
+            _ymlHelper.WriteYmlFile(tempFile, ((BinBgmProperty)(object)inputObj).Entries);
 
             //Build Bgm Property
             try

@@ -16,7 +16,16 @@ namespace Sm5sh.ResourceProviders.Prc.Helpers
         public PrcHash40(ulong hexValue, Dictionary<ulong, string> paramHashes = null)
         {
             HexValue = hexValue;
-            StringValue = paramHashes.ContainsKey(hexValue) ? paramHashes[hexValue] : $"0x{hexValue:X}";
+            if(paramHashes != null)
+                StringValue = paramHashes.ContainsKey(hexValue) ? paramHashes[hexValue] : $"0x{hexValue:X}";
         }
+
+        public PrcHash40(string stringValue)
+        {
+            HexValue = paracobNET.Hash40Util.StringToHash40(stringValue);
+            StringValue = stringValue;
+        }
+
+        public static PrcHash40 EmptyValue = new PrcHash40(0);
     }
 }

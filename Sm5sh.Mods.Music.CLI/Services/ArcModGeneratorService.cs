@@ -1,92 +1,9 @@
-﻿using Microsoft.Extensions.Logging;
-using Sm5shMusic.Helpers;
-using Sm5shMusic.Interfaces;
-using Sm5shMusic.Models;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-
-namespace Sm5shMusic.Services
+﻿namespace Sm5shMusic.Services
 {
     /*public class ArcModGeneratorService : IArcModGeneratorService
     {
-        private readonly IResourceService _resourceService;
-        private readonly IParacobService _paracobService;
-        private readonly INus3AudioService _nus3AudioService;
-        private readonly IAudioMetadataService _audioMetadataService;
-        private readonly IBgmPropertyService _bgmPropertyService;
-        private readonly IMsbtService _msbtService;
-        private readonly IWorkspaceManager _workspace;
-        private readonly ILogger _logger;
-
-        public ArcModGeneratorService(IResourceService resourceService, IParacobService paracobService, INus3AudioService nus3AudioService, IAudioMetadataService audioMetadataService,
-            IMsbtService msbtService, IBgmPropertyService bgmPropertyService, IWorkspaceManager workspace, ILogger<IArcModGeneratorService> logger)
-        {
-            _logger = logger;
-            _resourceService = resourceService;
-            _workspace = workspace;
-            _nus3AudioService = nus3AudioService;
-            _audioMetadataService = audioMetadataService;
-            _msbtService = msbtService;
-            _bgmPropertyService = bgmPropertyService;
-            _paracobService = paracobService;
-        }
-
         public bool GenerateArcMusicMod(List<MusicModBgmEntry> bgmEntries)
         {
-            if(bgmEntries == null || bgmEntries.Count == 0)
-            {
-                _logger.LogError("No Music Mod BGM Entry.");
-                return false;
-            }
-
-            //Prefix
-            if (!ValidateUniqueToneNames(bgmEntries))
-            {
-                _logger.LogError("The Arc Music Mod Generation failed. At least two songs have the same tone name.");
-                return false;
-            }
-
-            _logger.LogDebug("Starting Arc Music Mod generation.");
-
-            //Get new Game Titles
-            var coreGameTitleEntries = _paracobService.GetCoreDbRootGameTitleEntries();
-            var coreGameTitleIds = coreGameTitleEntries.Select(p => p.UiGameTitleId).Distinct().ToList();
-            var newGameTitleIds = bgmEntries.Where(p => !coreGameTitleIds.Contains($"{Constants.InternalIds.GameTitleIdPrefix}{p.Game.Id}"));
-
-            //Generate NUS3AUDIO and NUS3BANK
-            _logger.LogInformation("Generate/Copy Nus3Audio and Nus3Bank - {NbrFiles} files", bgmEntries.Count * 2);
-            var nusBankTemplate = _resourceService.GetNusBankTemplateResource();
-            foreach (var bgmEntry in bgmEntries)
-            {
-                var nusBankOutputFile = _workspace.GetWorkspaceOutputForNus3Bank(bgmEntry.InternalToneName);
-                var audioInputFile = bgmEntry.AudioFilePath;
-                var nusAudioOutputFile = _workspace.GetWorkspaceOutputForNus3Audio(bgmEntry.InternalToneName);
-
-                //We always generate a new Nus3Bank as the internal ID might change
-                _nus3AudioService.GenerateNus3Bank(bgmEntry.InternalToneName, nusBankTemplate, nusBankOutputFile);
-
-                //Test for audio cache
-                if (_workspace.IsAudioCacheEnabled)
-                {
-                    var cachedAudioFile = _workspace.GetCacheForNus3Audio(bgmEntry.InternalToneName);
-                    if (!File.Exists(cachedAudioFile))
-                    {
-                        GenerateNus3Audio(bgmEntry.InternalToneName, audioInputFile, cachedAudioFile);
-                    }
-                    else
-                    {
-                        _logger.LogDebug("Retrieving nus3audio {InternalToneName} from cache {CacheFile}", bgmEntry.InternalToneName, cachedAudioFile);
-                    }
-                    _logger.LogDebug("Copy nus3audio {InternalToneName} from cache {CacheFile} to {Nus3AudioOutputFile}", bgmEntry.InternalToneName, cachedAudioFile, nusAudioOutputFile);
-                    File.Copy(cachedAudioFile, nusAudioOutputFile);
-                }
-                else
-                {
-                    GenerateNus3Audio(bgmEntry.InternalToneName, audioInputFile, nusAudioOutputFile);
-                }
-            }
-
             //Generate PRC UI Title
             var newGameTitleDbEntries = newGameTitleIds.Select(p => new GameTitleDbNewEntry()
             {
@@ -110,10 +27,6 @@ namespace Sm5shMusic.Services
             }).ToList();
             _logger.LogInformation("Generate BGM DB - {Entries} new entries", newBgmEntries.Count);
             _paracobService.GenerateBgmPrcFile(newBgmEntries, _workspace.GetWorkspaceOutputForUiBgmDbFile());
-
-            //Generate BGM_Property
-            _logger.LogInformation("Generate BGM Property - {Entries} new entries", bgmEntries.Count);
-            _bgmPropertyService.GenerateBgmProperty(bgmEntries);
 
             //Generate MSBT Title Files
             if (newGameTitleIds != null && newGameTitleIds.Count() > 0)
@@ -201,38 +114,6 @@ namespace Sm5shMusic.Services
             _logger.LogInformation("Output Folder: {OutputFolder}", _workspace.GetWorkspaceDirectory());
 
             return true;
-        }
-
-        private bool GenerateNus3Audio(string toneId, string audioInputFile, string nusAudioOutputFile)
-        {
-            //Check if conversion if necessary
-            bool needConversion = false;
-            if (Constants.ExtensionsNeedConversion.Contains(Path.GetExtension(audioInputFile).ToLower()))
-            {
-                _audioMetadataService.ConvertAudio(audioInputFile, _resourceService.GetTemporaryAudioConversionFile());
-                audioInputFile = _resourceService.GetTemporaryAudioConversionFile();
-                needConversion = true;
-            }
-
-            var result = _nus3AudioService.GenerateNus3Audio(toneId, audioInputFile, nusAudioOutputFile);
-
-            if (needConversion)
-            {
-                File.Delete(_resourceService.GetTemporaryAudioConversionFile());
-            }
-
-            return result;
-        }
-
-        private bool ValidateUniqueToneNames(List<MusicModBgmEntry> bgmEntries)
-        {
-            var coreBgmEntries = _paracobService.GetCoreDbRootBgmEntries();
-            var tones = coreBgmEntries.Select(p => p.UiBgmId.Replace(Constants.InternalIds.BgmIdPrefix, string.Empty)).ToList();
-            foreach(var musicMod in bgmEntries)
-            {
-                tones.Add(musicMod.InternalToneName);
-            }
-            return tones.Count == tones.Distinct().Count();
         }
     }*/
 }

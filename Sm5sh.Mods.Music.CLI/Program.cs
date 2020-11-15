@@ -5,6 +5,8 @@ using Microsoft.Extensions.Logging.Console;
 using Sm5sh;
 using Sm5sh.Interfaces;
 using Sm5sh.Mods.Music;
+using Sm5sh.Mods.Music.CLI;
+using Sm5sh.Mods.Music.CLI.Interfaces;
 using Sm5sh.Mods.Music.Interfaces;
 using Sm5sh.Mods.Music.ResourceProviders;
 using Sm5sh.Mods.Music.Services;
@@ -44,7 +46,7 @@ namespace Sm5shMusic
 
             var loggerFactory = LoggerFactory.Create(builder => builder
                 .AddFilter<ConsoleLoggerProvider>((ll) => ll >= LogLevel.Information)
-                .AddFile(Path.Combine(configuration.GetValue<string>("Sm5sh:LogPath"), "log_{Date}.txt"), LogLevel.Debug, retainedFileCountLimit: 7)
+                .AddFile(Path.Combine(configuration.GetValue<string>("LogPath"), "log_{Date}.txt"), LogLevel.Debug, retainedFileCountLimit: 7)
                 .AddSimpleConsole((c) => {
                     c.SingleLine = true;
                 }));
@@ -55,7 +57,7 @@ namespace Sm5shMusic
             services.AddSingleton(loggerFactory);
 
             //Sm5sh Core
-            services.Configure<Sm5shOptions>(configuration.GetSection("Sm5sh"));
+            services.Configure<Sm5shOptions>(configuration);
             services.AddSingleton<IProcessService, ProcessService>();
             services.AddSingleton<IStateManager, StateManager>();
             services.AddSingleton<IResourceProvider, MsbtResourceProvider>();
@@ -63,13 +65,15 @@ namespace Sm5shMusic
 
             //MODS - TODO LOAD DYNAMICALLY?
             //Mod Music
+            services.Configure<Sm5shMusicOptions>(configuration);
             services.AddSingleton<ISm5shMod, BgmMod>();
             services.AddSingleton<IResourceProvider, BgmPropertyProvider>();
+            services.AddTransient<IAudioStateService, AudioStateService>();
             services.AddSingleton<IAudioMetadataService, VGAudioMetadataService>();
             services.AddSingleton<INus3AudioService, Nus3AudioService>();
-            services.AddSingleton<IYmlService, YmlService>();
 
             //CLI
+            services.AddScoped<IWorkspaceManager, WorkspaceManager>();
             services.AddScoped<Script>();
             
             services.AddLogging();

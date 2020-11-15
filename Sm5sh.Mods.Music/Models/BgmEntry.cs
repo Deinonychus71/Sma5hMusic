@@ -15,8 +15,6 @@ namespace Sm5sh.Mods.Music.Models
 
         public Dictionary<string, string> Author { get; set; }
 
-        public string Rarity { get; set; }
-
         public string RecordType { get; set; }
 
         public BgmEntryModels.AudioCuePoints AudioCuePoints { get; set; }

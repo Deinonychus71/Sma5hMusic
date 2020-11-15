@@ -1,31 +1,25 @@
 ﻿using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.DependencyInjection;
-using Sm5shMusic.Interfaces;
 using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Threading.Tasks;
-using System.Linq;
-using Sm5shMusic.Helpers;
-using Sm5shMusic.Models;
-using Newtonsoft.Json;
-using Sm5sh.Mods.Music.Interfaces;
 using Sm5sh.Interfaces;
-using Sm5sh;
+using Sm5sh.Mods.Music.CLI.Interfaces;
 
-namespace Sm5shMusic
+namespace Sm5sh.Mods.Music.CLI
 {
     public class Script
     {
         private readonly ILogger _logger;
         private readonly IStateManager _state;
         private readonly IServiceProvider _serviceProvider;
+        private readonly IWorkspaceManager _workspace;
         private readonly IOptions<Sm5shOptions> _config;
 
-        public Script(IServiceProvider serviceProvider, IOptions<Sm5shOptions> config, IStateManager state, ILogger<Script> logger)
+        public Script(IServiceProvider serviceProvider, IOptions<Sm5shOptions> config, IWorkspaceManager workspace, IStateManager state, ILogger<Script> logger)
         {
             _serviceProvider = serviceProvider;
+            _workspace = workspace;
             _state = state;
             _logger = logger;
             _config = config;
@@ -44,153 +38,42 @@ namespace Sm5shMusic
             _logger.LogInformation("--------------------");
 
             await Task.Delay(1000);
-            _logger.LogInformation("ModsPath: {ModsPath}", _config.Value.ModsPath);
-            //_logger.LogInformation("AudioCache: {AudioCache}", _settings.EnableAudioCaching ? "Enabled - If songs are mismatched try to clear the cache!" : "Disabled");
 
             //var stageModJsonFile = LoadStagePlaylistMod();
             //_logger.LogInformation("StagePlaylistMod: {StagePlaylistMod}", stageModJsonFile != null ? "Enabled" : "Disabled");
 
-            //Check proper resources exist
-            //if (!CheckApplicationFolders())
-            //    return;
+            //Init State Manager
+            _state.Init();
 
             //Init workspace
-            //if (!_workspace.Init())
-            //    return;
+            if (!_workspace.Init())
+                return;
 
-            //Load Music Mods
-            _logger.LogInformation("Running Mods");
+            //Load Mods
             var mods = _serviceProvider.GetServices<ISm5shMod>();
 
             //Emulate UI that would init mods
             foreach(var mod in mods)
             {
-                _logger.LogInformation("Initialize mod {ModeName}", "TOADD");
+                _logger.LogInformation("Initialize mod {ModeName}", mod.ModName);
                 mod.Init();
             }
             //Emulate UI that would save changes from mods
             foreach (var mod in mods)
             {
-                _logger.LogInformation("Save changes for mod {ModeName}", "TOADD");
+                _logger.LogInformation("Save changes for mod {ModeName}", mod.ModName);
                 mod.SaveChanges();
             }
 
             //Generate Output mod
             _logger.LogInformation("--------------------");
             _logger.LogInformation("Starting State Manager Mod Generation");
-            /*var bgmEntries = musicMods.SelectMany(p => p.BgmEntries).Select(p => p.Value).ToList();
-            _arcModGeneratorService.GenerateArcMusicMod(bgmEntries);
-            if(stageModJsonFile != null)
-            {
-                _logger.LogInformation("--------------------");
-                _logger.LogInformation("Starting Arc Stage Playlist Mod Generation");
-                _arcModGeneratorService.GenerateArcStagePlaylistMod(bgmEntries, stageModJsonFile);
-            }*/
             _state.WriteChanges();
             _logger.LogInformation("COMPLETE - Please check the logs for any error.");
             _logger.LogInformation("--------------------");
         }
 
-        /*private bool CheckApplicationFolders()
-        {
-            Directory.CreateDirectory(_settings.WorkspacePath);
-            Directory.CreateDirectory(_settings.TempPath);
-
-            //Check if MusicModPath exists
-            if (!Directory.Exists(_settings.MusicModPath))
-            {
-                _logger.LogError("Directory {MusicModPath} does not exist, aborting...", _settings.MusicModPath);
-                return false;
-            }
-
-            //Check if LibsPath exists
-            if (!Directory.Exists(_settings.LibsPath))
-            {
-                _logger.LogError("Directory {LibsPath} does not exist, aborting...", _settings.LibsPath);
-                return false;
-            }
-
-            //Check if ResourcesPath exists
-            if (!Directory.Exists(_settings.ResourcesPath))
-            {
-                _logger.LogError("Directory {ResourcesPath} does not exist, aborting...", _settings.ResourcesPath);
-                return false;
-            }
-
-            //Check if Nus3AudioCLIExe exists
-            if (!File.Exists(_resourceService.GetNus3AudioCLIExe()))
-            {
-                _logger.LogError("File {Nus3AudioCLIExe} does not exist, aborting...", _resourceService.GetNus3AudioCLIExe());
-                return false;
-            }
-
-            //Check if BgmPropertyExe exists
-            if (!File.Exists(_resourceService.GetBgmPropertyExe()))
-            {
-                _logger.LogError("File {BgmPropertyExe} does not exist, aborting...", _resourceService.GetBgmPropertyExe());
-                return false;
-            }
-
-            //Check if BgmPropertyExe exists
-            if (!File.Exists(_resourceService.GetBgmPropertyExe()))
-            {
-                _logger.LogError("File {BgmPropertyExe} does not exist, aborting...", _resourceService.GetBgmPropertyExe());
-                return false;
-            }
-
-            //Check if BgmDbLabelsCsv exists
-            if (!File.Exists(_resourceService.GetBgmDbLabelsCsvResource()))
-            {
-                _logger.LogError("File {BgmDbLabelsCsv} does not exist, aborting...", _resourceService.GetBgmDbLabelsCsvResource());
-                return false;
-            }
-
-            //Check if NusBankIdsCsv exists
-            if (!File.Exists(_resourceService.GetNusBankIdsCsvResource()))
-            {
-                _logger.LogError("File {NusBankIdsCsv} does not exist, aborting...", _resourceService.GetNusBankIdsCsvResource());
-                return false;
-            }
-
-            //Check if BgmPropertyYml exists
-            if (!File.Exists(_resourceService.GetBgmPropertyYmlResource()))
-            {
-                _logger.LogError("File {BgmPropertyYml} does not exist, aborting...", _resourceService.GetBgmPropertyYmlResource());
-                return false;
-            }
-
-            //Check if BgmPropertyHashes exists
-            if (!File.Exists(_resourceService.GetBgmPropertyHashes()))
-            {
-                _logger.LogError("File {BgmPropertyHashes} does not exist, aborting...", _resourceService.GetBgmPropertyHashes());
-                return false;
-            }
-
-            //Check if NusBankTemplate exists
-            if (!File.Exists(_resourceService.GetNusBankTemplateResource()))
-            {
-                _logger.LogError("File {NusBankTemplate} does not exist, aborting...", _resourceService.GetNusBankTemplateResource());
-                return false;
-            }
-
-            //Check if GameTitleDb exists
-            if (!File.Exists(_resourceService.GetGameTitleDbResource()))
-            {
-                _logger.LogError("File {GameTitleDb} does not exist, aborting...", _resourceService.GetGameTitleDbResource());
-                return false;
-            }
-
-            //Check if BgmDb exists
-            if (!File.Exists(_resourceService.GetBgmDbResource()))
-            {
-                _logger.LogError("File {BgmDb} does not exist, aborting...", _resourceService.GetBgmDbResource());
-                return false;
-            }
-
-            return true;
-        }
-
-        private List<StagePlaylistModConfig> LoadStagePlaylistMod()
+        /*private List<StagePlaylistModConfig> LoadStagePlaylistMod()
         {
             var stageModJsonFile = Path.Combine(_settings.MusicModPath, Constants.MusicModFiles.StageModMetadataJsonFile);
             var generateStageMod = File.Exists(stageModJsonFile);

@@ -1,11 +1,10 @@
 ﻿using Sm5sh.Helpers;
-using Sm5shMusic.Models;
+using Sm5sh.Mods.Music.Models;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Runtime.CompilerServices;
 
-namespace Sm5shMusic.Helpers
+namespace Sm5sh.Mods.Music.Helpers
 {
     public static class CSVModMapper
     {
@@ -49,7 +48,6 @@ namespace Sm5shMusic.Helpers
                     {
                         FileName = csvEntry.FileName,
                         Id = csvEntry.SongId,
-                        Rarity = csvEntry.SongRarity,
                         RecordType = csvEntry.SongRecordType,
                         Playlists = new List<PlaylistInfo>(),
                         Author = new Dictionary<string, string>(),

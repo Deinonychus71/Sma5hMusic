@@ -1,207 +1,97 @@
-﻿using Microsoft.Extensions.Logging;
-using Sm5sh.Data;
-using Sm5sh.Data.Ui.Param.Database;
-using Sm5sh.Helpers;
+﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Sm5sh.Interfaces;
-using Sm5sh.Mods.Music.Data.Sound.Config;
-using Sm5sh.Mods.Music.Models;
-using Sm5sh.Mods.Music.Models.BgmEntryModels;
-using System.Collections.Generic;
-using System.Linq;
+using Sm5sh.Mods.Music.Helpers;
+using Sm5sh.Mods.Music.Interfaces;
+using System;
+using System.IO;
 
 namespace Sm5sh.Mods.Music
 {
-    public class BgmMod : BaseSm5shMod, ISm5shMod
+    public class BgmMod : BaseSm5shMod
     {
         private readonly ILogger _logger;
-        private readonly IStateManager _state;
+        private readonly IOptions<Sm5shMusicOptions> _config;
+        private readonly IServiceProvider _serviceProvider;
+        private readonly IAudioStateService _audioStateService;
+        private readonly INus3AudioService _nus3AudioService;
 
-        private const string UI_BGM_ID_PREFIX = "ui_bgm_";
-        private const string STREAM_SET_PREFIX = "set_";
-        private const string INFO_ID_PREFIX = "info_";
-        private const string STREAM_PREFIX = "stream_";
-        private const string MSBT_BGM_TITLE = "bgm_title_{0}";
-        private const string MSBT_BGM_AUTHOR = "bgm_author_{0}";
-        private const string MSBT_BGM_COPYRIGHT = "bgm_copyright_{0}";
+        public override string ModName => "Sm5shMusic";
 
-        private PrcUiBgmDatabase _daoUiBgmDatabase;
-        private PrcUiGameTitleDatabase _daoUiGameTitleDatabase;
-        private Dictionary<string, MsbtDatabase> _daoMsbtBgms;
-        private Dictionary<string, MsbtDatabase> _daoMsbtTitle;
-        private BinBgmProperty _daoBinBgmProperty;
-        private Dictionary<string, BgmEntry> _bgmEntries;
-        private Dictionary<string, BgmServiceModels.BgmDbOperation> _dbOperations;
-
-        public BgmMod(IStateManager state, ILogger<BgmMod> logger)
+        public BgmMod(IOptions<Sm5shMusicOptions> config, IServiceProvider serviceProvider, IAudioStateService audioStateService, 
+            INus3AudioService nus3AudioService, IStateManager state, ILogger<BgmMod> logger)
+            : base(state)
         {
             _logger = logger;
+            _audioStateService = audioStateService;
+            _nus3AudioService = nus3AudioService;
+            _serviceProvider = serviceProvider;
             _state = state;
-            _dbOperations = new Dictionary<string, BgmServiceModels.BgmDbOperation>();
-            _daoMsbtBgms = new Dictionary<string, MsbtDatabase>();
-            _daoMsbtTitle = new Dictionary<string, MsbtDatabase>();
-
-            //Initialize core files
-            _daoUiBgmDatabase = _state.LoadResource<PrcUiBgmDatabase>("ui/param/database/ui_bgm_db.prc");
-            _daoUiGameTitleDatabase = _state.LoadResource<PrcUiGameTitleDatabase>("ui/param/database/ui_gametitle_db.prc");
-            _daoBinBgmProperty = _state.LoadResource<BinBgmProperty>("sound/config/bgm_property.bin");
-            foreach(var locale in LocaleHelper.ValidLocales)
-            {
-                var msbtBgm = _state.LoadResource<MsbtDatabase>($"ui/message/msg_bgm+{locale}.msbt", true);
-                if(msbtBgm != null)
-                    _daoMsbtBgms.Add(locale, msbtBgm);
-
-                var msbtTitle = _state.LoadResource<MsbtDatabase>($"ui/message/msg_title+{locale}.msbt", true);
-                if (msbtBgm != null)
-                    _daoMsbtTitle.Add(locale, msbtTitle);
-            }
-            _bgmEntries = InitializeCoreBgmEntries();
-
-            //TODO Init mods
+            _config = config;
         }
 
-        public IEnumerable<BgmEntry> GetBgmEntries()
+        public override void Init()
         {
-            return _bgmEntries.Values;
-        }
+            _logger.LogInformation("Music Mod Path: {MusicModPath}", _config.Value.Sm5shMusic.ModPath);
+            _logger.LogInformation("Audio Conversion Format: {AudioConversionFormat}", _config.Value.Sm5shMusic.AudioConversionFormat);
+            _logger.LogInformation("Resources Path: {ResourcesPath}", _config.Value.Sm5shMusic.EnableAudioCaching ? "Enabled - If songs are mismatched try to clear the cache!" : "Disabled");
+            _logger.LogInformation("Cache Path: {CachePath}", _config.Value.Sm5shMusic.CachePath);
+            _logger.LogInformation("Default Locale: {DefaultLocale}", _config.Value.Sm5shMusic.DefaultLocale);
 
-        public BgmEntry AddBgmEntry(string toneId)
-        {
-            if (_bgmEntries.ContainsKey(toneId))
+            //Load Music Mods
+            _logger.LogInformation("Loading Music Mods");
+            foreach (var musicModFolder in Directory.GetDirectories(_config.Value.Sm5shMusic.ModPath))
             {
-                _logger.LogError("The ToneId {ToneId} already exists in the Bgm Entries", toneId);
-                return null;
+                var newMusicMod = ActivatorUtilities.CreateInstance<MusicModManager>(_serviceProvider, musicModFolder);
+                var newBgmEntries = newMusicMod.LoadBgmEntries();
+                foreach(var newBgmEntry in newBgmEntries)
+                {
+                    _audioStateService.AddBgmEntry(newBgmEntry.ToneId, newBgmEntry);
+                }
             }
-
-            var newBgmEntry = new BgmEntry() { ToneId = toneId, Source = BgmAudioSource.Mod };
-            _bgmEntries.Add(toneId, newBgmEntry);
-
-            //Delete remove tag
-            if (_dbOperations.ContainsKey(toneId))
-                _dbOperations.Remove(toneId);
-
-            //If already exists in Core game, do not tag added
-            if (!_daoUiBgmDatabase.StreamPropertyEntries.Any(p => p.DateName0 == toneId))
-                _dbOperations[toneId] = BgmServiceModels.BgmDbOperation.Added;
-
-            return newBgmEntry;
-        }
-
-        public bool RemoveBgmEntry(string toneId)
-        {
-            if (_bgmEntries.ContainsKey(toneId))
-            {
-                _bgmEntries.Remove(toneId);
-                _dbOperations[toneId] = BgmServiceModels.BgmDbOperation.Removed;
-            }
-            return true;
         }
 
         public override bool SaveChanges()
         {
-            _logger.LogInformation("Saving Bgm Entries to State Service");
-
-            //Remove
-            foreach(var toneIdToRemove in _dbOperations.Where(p => p.Value == BgmServiceModels.BgmDbOperation.Removed).Select(p => p.Key))
+            //Save DB Items - MSBT/PRC/BIN
+            if (!_audioStateService.SaveChanges())
             {
-                //Remove from DBs
-                _daoBinBgmProperty.Entries.RemoveAll(p => p.NameId == toneIdToRemove);
-                _daoUiBgmDatabase.DbRootEntries.RemoveAll(p => p.UiBgmId.StringValue == $"{UI_BGM_ID_PREFIX}{toneIdToRemove}");
-                _daoUiBgmDatabase.StreamSetEntries.RemoveAll(p => p.StreamSetId.StringValue == $"{STREAM_SET_PREFIX}{toneIdToRemove}");
-                _daoUiBgmDatabase.AssignedInfoEntries.RemoveAll(p => p.InfoId.StringValue == $"{INFO_ID_PREFIX}{toneIdToRemove}");
-                _daoUiBgmDatabase.StreamPropertyEntries.RemoveAll(p => p.DateName0 == toneIdToRemove);
-
-                //Remove from playlists
-                foreach(var playlist in _daoUiBgmDatabase.PlaylistEntries)
-                {
-                    playlist.Values.RemoveAll(p => p.UiBgmId.StringValue == $"{UI_BGM_ID_PREFIX}{toneIdToRemove}");
-                }
-
-                //TODO: Remove from MSBT (for cleanup)
+                _logger.LogError("Error while saving changes to StateService");
+                return false;
             }
 
-            //Add Update
-            foreach (var bgmEntry in _bgmEntries)
+            //Save NUS3Audio/Nus3Bank
+            foreach(var bgmEntry in _audioStateService.GetModBgmEntries())
             {
+                var nusBankOutputFile = Path.Combine(_config.Value.OutputPath, "stream;", "sound", "bgm", string.Format(Constants.GameResources.NUS3BANK_FILE, bgmEntry.ToneId));
+                var nusAudioOutputFile = Path.Combine(_config.Value.OutputPath, "stream;", "sound", "bgm", string.Format(Constants.GameResources.NUS3AUDIO_FILE, bgmEntry.ToneId));
                 
+                //We always generate a new Nus3Bank as the internal ID might change
+                _nus3AudioService.GenerateNus3Bank(bgmEntry.ToneId, nusBankOutputFile);
+
+                //Test for audio cache
+                if (_config.Value.Sm5shMusic.EnableAudioCaching)
+                {
+                    var cachedAudioFile = Path.Combine(_config.Value.Sm5shMusic.CachePath, string.Format(Constants.GameResources.NUS3AUDIO_FILE, bgmEntry.ToneId));
+                    if (!File.Exists(cachedAudioFile))
+                    {
+                        _nus3AudioService.GenerateNus3Audio(bgmEntry.ToneId, bgmEntry.FileName, cachedAudioFile);
+                    }
+                    else
+                    {
+                        _logger.LogDebug("Retrieving nus3audio {InternalToneName} from cache {CacheFile}", bgmEntry.ToneId, cachedAudioFile);
+                    }
+                    _logger.LogDebug("Copy nus3audio {InternalToneName} from cache {CacheFile} to {Nus3AudioOutputFile}", bgmEntry.ToneId, cachedAudioFile, nusAudioOutputFile);
+                    File.Copy(cachedAudioFile, nusAudioOutputFile);
+                }
+                else
+                {
+                    _nus3AudioService.GenerateNus3Audio(bgmEntry.ToneId, bgmEntry.FileName, nusAudioOutputFile);
+                }
             }
 
             return true;
-        }
-
-        private Dictionary<string, BgmEntry> InitializeCoreBgmEntries()
-        {
-            var uiBgmDbRoot = _daoUiBgmDatabase.DbRootEntries.ToDictionary(p => p.UiBgmId.StringValue.Replace(UI_BGM_ID_PREFIX, string.Empty), p => p);
-            var uiBgmStreamSet = _daoUiBgmDatabase.StreamSetEntries.ToDictionary(p => p.StreamSetId.StringValue.Replace(STREAM_SET_PREFIX, string.Empty), p => p);
-            var uiBgmAssignedInfo = _daoUiBgmDatabase.AssignedInfoEntries.ToDictionary(p => p.InfoId.StringValue.Replace(INFO_ID_PREFIX, string.Empty), p => p);
-            var uiBgmStreamProperty = _daoUiBgmDatabase.StreamPropertyEntries.ToDictionary(p => p.StreamId.StringValue.Replace(STREAM_PREFIX, string.Empty), p => p);
-            var binBgmProperty = _daoBinBgmProperty.Entries.ToDictionary(p => p.NameId, p => p);
-
-            var output = new Dictionary<string, BgmEntry>();
-
-            foreach (var dbRootEntryKeyValue in uiBgmDbRoot)
-            {
-                var toneId = dbRootEntryKeyValue.Key;
-
-                //For now, we're only treating songs that have all the data we need
-                if (!uiBgmStreamSet.ContainsKey(toneId) || !uiBgmAssignedInfo.ContainsKey(toneId) ||
-                   !uiBgmStreamProperty.ContainsKey(toneId) || !binBgmProperty.ContainsKey(toneId))
-                    continue;
-
-                var dbRootEntry = dbRootEntryKeyValue.Value;
-                var setStreamEntry = uiBgmStreamSet[toneId];
-                var assignedInfoEntry = uiBgmAssignedInfo[toneId];
-                var streamPropertyEntry = uiBgmStreamProperty[toneId]; 
-                var bgmProperty = binBgmProperty[toneId];
-
-                var newBgmEntry = new BgmEntry()
-                {
-                    ToneId = toneId,
-                    Source = BgmAudioSource.CoreGame,
-                    GameTitleId = dbRootEntry.UiGameTitleId.StringValue,
-                    RecordType = dbRootEntry.RecordType.StringValue,
-                    Rarity = dbRootEntry.Rarity.StringValue,
-                    AudioCuePoints =new AudioCuePoints()
-                    {
-                        LoopEndMs = bgmProperty.LoopEndMs,
-                        LoopEndSample = bgmProperty.LoopEndSample,
-                        LoopStartMs = bgmProperty.LoopStartMs,
-                        LoopStartSample = bgmProperty.LoopStartSample,
-                        TotalSamples = bgmProperty.TotalSamples,
-                        TotalTimeMs = bgmProperty.TotalTimeMs
-                    },
-                    Title = new Dictionary<string, string>(),
-                    Author = new Dictionary<string, string>(),
-                    Copyright = new Dictionary<string, string>()
-                };
-
-                var nameId = dbRootEntry.NameId;
-                var titleLabel = string.Format(MSBT_BGM_TITLE, nameId);
-                var authorLabel = string.Format(MSBT_BGM_AUTHOR, nameId);
-                var copyrightLabel = string.Format(MSBT_BGM_COPYRIGHT, nameId);
-                foreach (var msbtDb in _daoMsbtBgms)
-                {
-                    var entries = msbtDb.Value.Entries;
-                    if (entries.ContainsKey(titleLabel))
-                        newBgmEntry.Title.Add(msbtDb.Key, entries[titleLabel]);
-                    if (entries.ContainsKey(authorLabel))
-                        newBgmEntry.Author.Add(msbtDb.Key, entries[authorLabel]);
-                    if (entries.ContainsKey(copyrightLabel))
-                        newBgmEntry.Copyright.Add(msbtDb.Key, entries[copyrightLabel]);
-                }
-
-                output.Add(toneId, newBgmEntry);
-            }
-
-            return output;
-        }
-    }
-
-    namespace BgmServiceModels
-    {
-        public enum BgmDbOperation
-        {
-            Added,
-            Removed
         }
     }
 }

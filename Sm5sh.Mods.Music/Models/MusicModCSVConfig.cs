@@ -1,4 +1,4 @@
-﻿namespace Sm5shMusic.Models
+﻿namespace Sm5sh.Mods.Music.Models
 {
     public class MusicModCSVConfig
     {
@@ -24,7 +24,6 @@
 
         //Song
         public string SongId { get; set; }
-        public string SongRarity { get; set; }
         public string SongRecordType { get; set; }
         public string PlaylistId1 { get; set; }
         public string PlaylistId2 { get; set; }

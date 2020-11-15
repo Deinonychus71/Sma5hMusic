@@ -1,9 +1,10 @@
 ﻿using CsvHelper;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
-using Sm5shMusic.Helpers;
-using Sm5shMusic.Interfaces;
-using Sm5shMusic.Models;
+using Sm5sh.Core.Helpers;
+using Sm5sh.Mods.Music.Helpers;
+using Sm5sh.Mods.Music.Interfaces;
+using Sm5sh.Mods.Music.Models;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -11,49 +12,39 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 
-namespace Sm5shMusic.Managers
+namespace Sm5sh.Mods.Music
 {
-    /*public class MusicModManager : IMusicModManager
+    public class MusicModManager : IMusicModManager
     {
         private readonly IAudioMetadataService _audioMetadataService;
-        private readonly IParacobService _paracobService;
         private readonly ILogger _logger;
 
         private readonly Regex _idValidatorRegexp = new Regex(@"^[a-z0-9_\s,]*$");
 
-        private readonly Dictionary<string, MusicModBgmEntry> _bgmEntries;
         private readonly string _musicModPath;
         private readonly MusicModConfig _musicModConfig;
 
-        public Dictionary<string, MusicModBgmEntry> BgmEntries
-        {
-            get
-            {
-                return _bgmEntries;
-            }
-        }
 
-        public MusicModManager(IAudioMetadataService audioMetadataService, IParacobService paracobService, ILogger<IMusicModManager> logger, string musicModPath)
+        public MusicModManager(IAudioMetadataService audioMetadataService, ILogger<IMusicModManager> logger, string musicModPath)
         {
             _musicModPath = musicModPath;
             _audioMetadataService = audioMetadataService;
-            _paracobService = paracobService;
             _logger = logger;
-            _bgmEntries = new Dictionary<string, MusicModBgmEntry>();
             _musicModConfig = LoadMusicModConfig();
         }
 
-        public bool Init()
+        public List<BgmEntry> LoadBgmEntries()
         {
             if (_musicModConfig == null || !ValidateAndSanitizeModConfig())
             {
-                return false;
+                return new List<BgmEntry>();
             }
 
             //Process audio mods
             _logger.LogInformation("Mod {MusicMod} by '{Author}' - {NbrSongs} song(s)", _musicModConfig.Name, _musicModConfig.Author, _musicModConfig.Games.Sum(p => p.Songs.Count));
 
             var index = 0;
+            var output = new List<BgmEntry>();
             foreach (var game in _musicModConfig.Games)
             {
                 foreach (var song in game.Songs)
@@ -61,28 +52,32 @@ namespace Sm5shMusic.Managers
                     var audioFilePath = GetMusicModAudioFile(song.FileName);
                     var audioCuePoints = _audioMetadataService.GetCuePoints(audioFilePath);
 
-                    var toneName = song.Id;
+                    var toneId = song.Id;
                     if (!string.IsNullOrEmpty(_musicModConfig.Prefix))
-                        toneName = $"{_musicModConfig.Prefix}{index}_{song.Id}";
+                        toneId = $"{_musicModConfig.Prefix}{index}_{song.Id}";
 
-                    _bgmEntries.Add(toneName, new MusicModBgmEntry()
+                    output.Add(new BgmEntry()
                     {
-                        NameId = _paracobService.GetNewBgmId(),
-                        AudioFilePath = audioFilePath,
-                        InternalToneName = toneName,
-                        Song = song,
-                        Game = game,
-                        CuePoints = song.SongCuePointsOverride ?? MusicModAudioCuePoints.FromAudioCuePoints(audioCuePoints)
+                        ToneId = toneId,
+                        AudioVolume = 0, //TODO
+                        RecordType = song.RecordType,
+                        Source = Models.BgmEntryModels.BgmAudioSource.Mod,
+                        Title = song.Title,
+                        Author = song.Author,
+                        Copyright = song.Copyright,
+                        GameTitleId = game.Id,
+                        FileName = audioFilePath,
+                        AudioCuePoints = audioCuePoints
                     });
                     index++;
-                    _logger.LogInformation("Mod {MusicMod}: Adding song {Song} ({ToneName})", _musicModConfig.Name, song.Id, toneName);
+                    _logger.LogInformation("Mod {MusicMod}: Adding song {Song} ({ToneName})", _musicModConfig.Name, song.Id, toneId);
                 }
             }
 
-            return true;
+            return output;
         }
 
-        public string GetMusicModAudioFile(string songFileName)
+        private string GetMusicModAudioFile(string songFileName)
         {
             return Path.Combine(_musicModPath, songFileName);
         }
@@ -97,7 +92,7 @@ namespace Sm5shMusic.Managers
             }
 
             //Attempt JSON
-            var metadataJsonFile = Path.Combine(_musicModPath, Constants.MusicModFiles.MusicModMetadataJsonFile);
+            var metadataJsonFile = Path.Combine(_musicModPath, Constants.MusicModFiles.MUSIC_MOD_METADATA_JSON_FILE);
             if (File.Exists(metadataJsonFile))
             {
                 var file = File.ReadAllText(metadataJsonFile);
@@ -113,7 +108,7 @@ namespace Sm5shMusic.Managers
             }
 
             //Attempt CSV
-            var metadataCsvFile = Path.Combine(_musicModPath, Constants.MusicModFiles.MusicModMetadataCsvFile);
+            var metadataCsvFile = Path.Combine(_musicModPath, Constants.MusicModFiles.MUSIC_MOD_METADATA_CSV_FILE);
             if (File.Exists(metadataCsvFile))
             {
                 _logger.LogDebug("Parsing {MusicModFile} CSV File", metadataCsvFile);
@@ -177,6 +172,7 @@ namespace Sm5shMusic.Managers
                 }
             }
 
+            var sanitizedGames = new List<Game>();
             foreach (var game in _musicModConfig.Games)
             {
                 //Gametitle ID
@@ -186,6 +182,8 @@ namespace Sm5shMusic.Managers
                     continue;
                 }
                 game.Id = game.Id.ToLower();
+                if (!game.Id.StartsWith(Constants.InternalIds.GAME_TITLE_ID_PREFIX))
+                    game.Id = $"{Constants.InternalIds.GAME_TITLE_ID_PREFIX}{game.Id}";
                 if (!IsLegalId(game.Id))
                 {
                     _logger.LogWarning("MusicModFile {MusicMod} - Game {GameId} is invalid. The Game Title Id contains invalid characters. Skipping...", _musicModConfig.Name, game.Id);
@@ -198,13 +196,14 @@ namespace Sm5shMusic.Managers
                     _logger.LogWarning("MusicModFile {MusicMod} - Game {GameId} is invalid. It does not have a Game Series Id. Skipping...", _musicModConfig.Name, game.Id);
                     continue;
                 }
+
                 game.SeriesId = game.SeriesId.ToLower();
-                if (game.SeriesId.StartsWith(Constants.InternalIds.GameSeriesIdPrefix))
-                    game.SeriesId = game.SeriesId.Replace(Constants.InternalIds.GameSeriesIdPrefix, string.Empty);
-                if (!Constants.ValidSeries.Contains(game.SeriesId))
+                if (!game.SeriesId.StartsWith(Constants.InternalIds.GAME_SERIES_ID_PREFIX))
+                    game.SeriesId = $"{Constants.InternalIds.GAME_SERIES_ID_PREFIX}{game.SeriesId}";
+                if (!CoreConstants.VALID_SERIES.Contains(game.SeriesId))
                 {
                     _logger.LogWarning("MusicModFile {MusicMod} - Game {GameId} is invalid. The Game Series Id is invalid. Please check the list of valid Game Series Ids. Skipping...", _musicModConfig.Name, game.Id);
-                    _logger.LogDebug("MusicModFile {MusicMod} - Valid Game Series Ids: {GameSeriesIds}", _musicModConfig.Name, string.Join(", ", Constants.ValidSeries));
+                    _logger.LogDebug("MusicModFile {MusicMod} - Valid Game Series Ids: {GameSeriesIds}", _musicModConfig.Name, string.Join(", ", CoreConstants.VALID_SERIES));
                     continue;
                 }
 
@@ -231,10 +230,10 @@ namespace Sm5shMusic.Managers
                     }
 
                     //Filename extensions test
-                    if (!Constants.ValidExtensions.Contains(Path.GetExtension(song.FileName).ToLower()))
+                    if (!Constants.VALID_MUSIC_EXTENSIONS.Contains(Path.GetExtension(song.FileName).ToLower()))
                     {
                         _logger.LogWarning("MusicModFile {MusicMod} {Game} - Song {SongId} is invalid. The audio file extension is incompatible. Skipping...", _musicModConfig.Name, game.Id, song.Id);
-                        _logger.LogDebug("MusicModFile {MusicMod} {Game} - Valid Extensions: {RecordTypes}", _musicModConfig.Name, game.Id, string.Join(", ", Constants.ValidExtensions));
+                        _logger.LogDebug("MusicModFile {MusicMod} {Game} - Valid Extensions: {RecordTypes}", _musicModConfig.Name, game.Id, string.Join(", ", Constants.VALID_MUSIC_EXTENSIONS));
                         continue;
                     }
 
@@ -253,19 +252,14 @@ namespace Sm5shMusic.Managers
                     }
 
                     //Record type
-                    if (song.RecordType.StartsWith(Constants.InternalIds.RecordTypePrefix))
-                        song.RecordType = song.RecordType.Replace(Constants.InternalIds.RecordTypePrefix, string.Empty);
-                    if (!Constants.ValidRecordTypes.Contains(song.RecordType))
+                    if (!song.RecordType.StartsWith(Constants.InternalIds.RECORD_TYPE_PREFIX))
+                        song.RecordType = $"{Constants.InternalIds.RECORD_TYPE_PREFIX}{song.RecordType}";
+                    if (!Constants.VALID_RECORD_TYPES.Contains(song.RecordType))
                     {
                         _logger.LogWarning("MusicModFile {MusicMod} {Game} - Song {SongId} is invalid. The record type is invalid. Please check the list of valid record types. Skipping...", _musicModConfig.Name, game.Id, song.Id);
-                        _logger.LogDebug("MusicModFile {MusicMod} {Game} - Valid Record Types: {RecordTypes}", _musicModConfig.Name, game.Id, string.Join(", ", Constants.ValidRecordTypes));
+                        _logger.LogDebug("MusicModFile {MusicMod} {Game} - Valid Record Types: {RecordTypes}", _musicModConfig.Name, game.Id, string.Join(", ", Constants.VALID_RECORD_TYPES));
                         continue;
                     }
-
-                    //Rarity
-                    //TODO: Figure out
-                    if (string.IsNullOrEmpty(song.Rarity))
-                        song.Rarity = Constants.InternalIds.RarityDefault;
 
                     //Playlists
                     if (song.Playlists != null)
@@ -273,9 +267,9 @@ namespace Sm5shMusic.Managers
                         foreach (var playlist in song.Playlists)
                         {
                             playlist.Id = playlist.Id.ToLower();
-                            if (playlist.Id.StartsWith(Constants.InternalIds.PlaylistPrefix))
+                            if (!playlist.Id.StartsWith(Constants.InternalIds.PLAYLIST_PREFIX))
                             {
-                                var newPlaylistId = playlist.Id.Replace(Constants.InternalIds.PlaylistPrefix, string.Empty);
+                                var newPlaylistId = $"{Constants.InternalIds.PLAYLIST_PREFIX}{playlist.Id}";
                                 _logger.LogDebug("MusicModFile {MusicMod} {Game} - Song {SongId}'s playlist {Playlist} was renamed {RenamedPlaylist}", _musicModConfig.Name, game.Id, song.Id, playlist.Id, newPlaylistId);
                                 playlist.Id = newPlaylistId;
                             }
@@ -284,7 +278,9 @@ namespace Sm5shMusic.Managers
 
                     sanitizedSongs.Add(song);
                 }
+
                 game.Songs = sanitizedSongs;
+                sanitizedGames.Add(game);
 
                 if (game.Songs == null || game.Songs.Count == 0)
                 {
@@ -292,6 +288,8 @@ namespace Sm5shMusic.Managers
                     continue;
                 }
             }
+
+            _musicModConfig.Games = sanitizedGames;
 
             //Post song validation warnings
             if (_musicModConfig.Games.Sum(p => p.Songs.Count) == 0)
@@ -307,5 +305,5 @@ namespace Sm5shMusic.Managers
         {
             return _idValidatorRegexp.IsMatch(idToCheck);
         }
-    }*/
+    }
 }
