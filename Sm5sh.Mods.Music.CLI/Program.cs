@@ -2,9 +2,13 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Console;
-using Sm5shMusic.Interfaces;
-using Sm5shMusic.Managers;
-using Sm5shMusic.Services;
+using Sm5sh;
+using Sm5sh.Interfaces;
+using Sm5sh.Mods.Music;
+using Sm5sh.Mods.Music.Interfaces;
+using Sm5sh.Mods.Music.ResourceProviders;
+using Sm5sh.Mods.Music.Services;
+using Sm5sh.ResourceProviders;
 using System;
 using System.IO;
 using System.Threading.Tasks;
@@ -40,28 +44,34 @@ namespace Sm5shMusic
 
             var loggerFactory = LoggerFactory.Create(builder => builder
                 .AddFilter<ConsoleLoggerProvider>((ll) => ll >= LogLevel.Information)
-                .AddFile(Path.Combine(configuration.GetValue<string>("LogPath"), "log_{Date}.txt"), LogLevel.Debug, retainedFileCountLimit: 7)
+                .AddFile(Path.Combine(configuration.GetValue<string>("Sm5sh:LogPath"), "log_{Date}.txt"), LogLevel.Debug, retainedFileCountLimit: 7)
                 .AddSimpleConsole((c) => {
                     c.SingleLine = true;
                 }));
 
             services.AddLogging();
             services.AddOptions();
-            services.Configure<Settings>(configuration);
-
-            services.AddScoped<Script>();
-            services.AddScoped<IWorkspaceManager, WorkspaceManager>();
-            services.AddTransient<IMusicModManager, MusicModManager>();
             services.AddSingleton(configuration);
             services.AddSingleton(loggerFactory);
-            services.AddSingleton<IResourceService, ResourceService>();
-            services.AddSingleton<IMsbtService, MsbtService>();
-            services.AddSingleton<IBgmPropertyService, BgmPropertyService>();
+
+            //Sm5sh Core
+            services.Configure<Sm5shOptions>(configuration.GetSection("Sm5sh"));
             services.AddSingleton<IProcessService, ProcessService>();
-            services.AddSingleton<IArcModGeneratorService, ArcModGeneratorService>();
+            services.AddSingleton<IStateManager, StateManager>();
+            services.AddSingleton<IResourceProvider, MsbtResourceProvider>();
+            services.AddSingleton<IResourceProvider, PrcResourceProvider>();
+
+            //MODS - TODO LOAD DYNAMICALLY?
+            //Mod Music
+            services.AddSingleton<ISm5shMod, BgmMod>();
+            services.AddSingleton<IResourceProvider, BgmPropertyProvider>();
             services.AddSingleton<IAudioMetadataService, VGAudioMetadataService>();
-            services.AddSingleton<IParacobService, ParacobService>();
             services.AddSingleton<INus3AudioService, Nus3AudioService>();
+            services.AddSingleton<IYmlService, YmlService>();
+
+            //CLI
+            services.AddScoped<Script>();
+            
             services.AddLogging();
         }
     }

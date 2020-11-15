@@ -10,27 +10,25 @@ using System.Linq;
 using Sm5shMusic.Helpers;
 using Sm5shMusic.Models;
 using Newtonsoft.Json;
+using Sm5sh.Mods.Music.Interfaces;
+using Sm5sh.Interfaces;
+using Sm5sh;
 
 namespace Sm5shMusic
 {
     public class Script
     {
-        private readonly Settings _settings;
-        private readonly IResourceService _resourceService;
-        private readonly IWorkspaceManager _workspace;
         private readonly ILogger _logger;
+        private readonly IStateManager _state;
         private readonly IServiceProvider _serviceProvider;
-        private readonly IArcModGeneratorService _arcModGeneratorService;
+        private readonly IOptions<Sm5shOptions> _config;
 
-        public Script(IOptions<Settings> settings, IWorkspaceManager workspace, IResourceService resourceService,
-            IArcModGeneratorService arcModGeneratorService, IServiceProvider serviceProvider, ILogger<Script> logger)
+        public Script(IServiceProvider serviceProvider, IOptions<Sm5shOptions> config, IStateManager state, ILogger<Script> logger)
         {
-            _settings = settings.Value;
-            _resourceService = resourceService;
-            _workspace = workspace;
             _serviceProvider = serviceProvider;
-            _arcModGeneratorService = arcModGeneratorService;
+            _state = state;
             _logger = logger;
+            _config = config;
         }
 
         public async Task Run()
@@ -46,47 +44,54 @@ namespace Sm5shMusic
             _logger.LogInformation("--------------------");
 
             await Task.Delay(1000);
-            _logger.LogInformation("MusicModPath: {MusicModPath}", _settings.MusicModPath);
-            _logger.LogInformation("AudioCache: {AudioCache}", _settings.EnableAudioCaching ? "Enabled - If songs are mismatched try to clear the cache!" : "Disabled");
+            _logger.LogInformation("ModsPath: {ModsPath}", _config.Value.ModsPath);
+            //_logger.LogInformation("AudioCache: {AudioCache}", _settings.EnableAudioCaching ? "Enabled - If songs are mismatched try to clear the cache!" : "Disabled");
 
-            var stageModJsonFile = LoadStagePlaylistMod();
-            _logger.LogInformation("StagePlaylistMod: {StagePlaylistMod}", stageModJsonFile != null ? "Enabled" : "Disabled");
+            //var stageModJsonFile = LoadStagePlaylistMod();
+            //_logger.LogInformation("StagePlaylistMod: {StagePlaylistMod}", stageModJsonFile != null ? "Enabled" : "Disabled");
 
             //Check proper resources exist
-            if (!CheckApplicationFolders())
-                return;
+            //if (!CheckApplicationFolders())
+            //    return;
 
             //Init workspace
-            if (!_workspace.Init())
-                return;
+            //if (!_workspace.Init())
+            //    return;
 
             //Load Music Mods
-            _logger.LogInformation("Loading Music Mods");
-            var musicMods = new List<IMusicModManager>();
-            foreach (var musicModFolder in Directory.GetDirectories(_settings.MusicModPath))
+            _logger.LogInformation("Running Mods");
+            var mods = _serviceProvider.GetServices<ISm5shMod>();
+
+            //Emulate UI that would init mods
+            foreach(var mod in mods)
             {
-                var newMusicMod = ActivatorUtilities.CreateInstance<Managers.MusicModManager>(_serviceProvider, musicModFolder);
-                if (newMusicMod.Init())
-                    musicMods.Add(newMusicMod);
+                _logger.LogInformation("Initialize mod {ModeName}", "TOADD");
+                mod.Init();
+            }
+            //Emulate UI that would save changes from mods
+            foreach (var mod in mods)
+            {
+                _logger.LogInformation("Save changes for mod {ModeName}", "TOADD");
+                mod.SaveChanges();
             }
 
             //Generate Output mod
             _logger.LogInformation("--------------------");
-            _logger.LogInformation("Starting Arc Music Mod Generation");
-            var bgmEntries = musicMods.SelectMany(p => p.BgmEntries).Select(p => p.Value).ToList();
+            _logger.LogInformation("Starting State Manager Mod Generation");
+            /*var bgmEntries = musicMods.SelectMany(p => p.BgmEntries).Select(p => p.Value).ToList();
             _arcModGeneratorService.GenerateArcMusicMod(bgmEntries);
             if(stageModJsonFile != null)
             {
                 _logger.LogInformation("--------------------");
                 _logger.LogInformation("Starting Arc Stage Playlist Mod Generation");
                 _arcModGeneratorService.GenerateArcStagePlaylistMod(bgmEntries, stageModJsonFile);
-            }
-
+            }*/
+            _state.WriteChanges();
             _logger.LogInformation("COMPLETE - Please check the logs for any error.");
             _logger.LogInformation("--------------------");
         }
 
-        private bool CheckApplicationFolders()
+        /*private bool CheckApplicationFolders()
         {
             Directory.CreateDirectory(_settings.WorkspacePath);
             Directory.CreateDirectory(_settings.TempPath);
@@ -210,6 +215,6 @@ namespace Sm5shMusic
             }
 
             return stagePlaylistsEntries;
-        }
+        }*/
     }
 }

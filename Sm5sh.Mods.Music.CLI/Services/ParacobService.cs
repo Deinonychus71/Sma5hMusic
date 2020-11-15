@@ -1,6 +1,5 @@
 ﻿using CsvHelper;
 using Microsoft.Extensions.Logging;
-using paracobNET;
 using Sm5shMusic.Helpers;
 using Sm5shMusic.Interfaces;
 using Sm5shMusic.Models;
@@ -12,7 +11,7 @@ using System.Linq;
 
 namespace Sm5shMusic.Services
 {
-    public class ParacobService : IParacobService
+    /*public class ParacobService : IParacobService
     {
         private readonly ILogger _logger;
         private readonly IResourceService _resourceService;
@@ -487,5 +486,5 @@ namespace Sm5shMusic.Services
                 paramValue.Value = value;
         }
         #endregion
-    }
+    }*/
 }

@@ -8,7 +8,7 @@ using System.Linq;
 
 namespace Sm5shMusic.Services
 {
-    public class ArcModGeneratorService : IArcModGeneratorService
+    /*public class ArcModGeneratorService : IArcModGeneratorService
     {
         private readonly IResourceService _resourceService;
         private readonly IParacobService _paracobService;
@@ -234,5 +234,5 @@ namespace Sm5shMusic.Services
             }
             return tones.Count == tones.Distinct().Count();
         }
-    }
+    }*/
 }

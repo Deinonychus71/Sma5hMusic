@@ -20,7 +20,7 @@
 
 
   <ItemGroup>
-    <PackageReference Include="CsvHelper" Version="15.0.10" />
+    <PackageReference Include="CsvHelper" Version="16.0.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="5.0.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.CommandLine" Version="5.0.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="5.0.0" />
@@ -33,9 +33,8 @@
 
 
   <ItemGroup>
-    <ProjectReference Include="..\Sm5shMusic.Services\Sm5sh.Mods.Music.csproj" />
+    <ProjectReference Include="..\Sm5sh.Mods.Music\Sm5sh.Mods.Music.csproj" />
   </ItemGroup>
-
 
   <ItemGroup>
     <Reference Include="VGAudioCli">

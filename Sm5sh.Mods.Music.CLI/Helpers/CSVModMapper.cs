@@ -1,4 +1,5 @@
-﻿using Sm5shMusic.Models;
+﻿using Sm5sh.Helpers;
+using Sm5shMusic.Models;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;

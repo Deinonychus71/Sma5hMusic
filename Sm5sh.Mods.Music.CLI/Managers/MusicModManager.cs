@@ -13,7 +13,7 @@ using System.Text.RegularExpressions;
 
 namespace Sm5shMusic.Managers
 {
-    public class MusicModManager : IMusicModManager
+    /*public class MusicModManager : IMusicModManager
     {
         private readonly IAudioMetadataService _audioMetadataService;
         private readonly IParacobService _paracobService;
@@ -307,5 +307,5 @@ namespace Sm5shMusic.Managers
         {
             return _idValidatorRegexp.IsMatch(idToCheck);
         }
-    }
+    }*/
 }

@@ -7,7 +7,7 @@ using System.IO;
 
 namespace Sm5shMusic.Managers
 {
-    public class WorkspaceManager : IWorkspaceManager
+    /*public class WorkspaceManager : IWorkspaceManager
     {
         private readonly Settings _settings;
         private readonly ILogger _logger;
@@ -167,5 +167,5 @@ namespace Sm5shMusic.Managers
                 File.Delete(fileToDelete);
             }
         }
-    }
+    }*/
 }

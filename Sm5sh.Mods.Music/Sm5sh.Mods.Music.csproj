@@ -6,10 +6,12 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Options" Version="5.0.0" />
+    <PackageReference Include="YamlDotNet" Version="8.1.2" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Common\Sm5sh.Services\Sm5sh.Services.csproj" />
+    <ProjectReference Include="..\Common\Sm5sh.ResourceProviders.MsbtExt\Sm5sh.ResourceProviders.MsbtExt.csproj" />
+    <ProjectReference Include="..\Common\Sm5sh.ResourceProviders.PrcExt\Sm5sh.ResourceProviders.PrcExt.csproj" />
   </ItemGroup>
 
   <ItemGroup>

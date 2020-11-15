@@ -9,11 +9,11 @@ namespace Sm5sh.Mods.Music.Models
 
         public string GameTitleId { get; set; }
 
-        public Dictionary<LocaleHelper.Locales, string> Title { get; set; }
+        public Dictionary<string, string> Title { get; set; }
 
-        public Dictionary<LocaleHelper.Locales, string> Copyright { get; set; }
+        public Dictionary<string, string> Copyright { get; set; }
 
-        public Dictionary<LocaleHelper.Locales, string> Author { get; set; }
+        public Dictionary<string, string> Author { get; set; }
 
         public string Rarity { get; set; }
 

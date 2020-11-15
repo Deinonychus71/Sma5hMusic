@@ -1,5 +1,7 @@
 ﻿using CsvHelper;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using Sm5sh.Interfaces;
 using Sm5sh.Mods.Music.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -13,16 +15,18 @@ namespace Sm5sh.Mods.Music.Services
     public class Nus3AudioService : INus3AudioService
     {
         private readonly ILogger _logger;
-        private readonly IResourceService _resourceService;
         private readonly IProcessService _processService;
+        private readonly IOptions<Sm5shOptions> _config;
+        private readonly string _nus3AudioExeFile;
         private ushort _lastBankId;
 
-        public Nus3AudioService(IResourceService resourceService, IProcessService processService, ILogger<INus3AudioService> logger)
+        public Nus3AudioService(IOptions<Sm5shOptions> config, IProcessService processService, ILogger<INus3AudioService> logger)
         {
             _logger = logger;
-            _resourceService = resourceService;
             _processService = processService;
+            _config = config;
             var nus3BankIds = GetCoreNus3BankIds();
+            _nus3AudioExeFile = Path.Combine(config.Value.ToolsPath, "Nus3Audio", "nus3audio.exe");
             _lastBankId = (ushort)(nus3BankIds.Count > 0 ? GetCoreNus3BankIds().Values.OrderByDescending(p => p).First() : 0);
         }
 
@@ -30,7 +34,7 @@ namespace Sm5sh.Mods.Music.Services
         {
             var output = new Dictionary<string, ushort>();
 
-            var nusBankResourceFile = _resourceService.GetNusBankIdsCsvResource();
+            var nusBankResourceFile = Path.Combine(_config.Value.GameResourcesPath, "nusbank_ids.csv");
             if (!File.Exists(nusBankResourceFile))
                 return output;
 
@@ -61,17 +65,16 @@ namespace Sm5sh.Mods.Music.Services
                 return false;
             }
 
-            var nus3AudioCliPath = _resourceService.GetNus3AudioCLIExe();
-            if (!File.Exists(nus3AudioCliPath))
+            if (!File.Exists(_nus3AudioExeFile))
             {
-                _logger.LogError("Executable {Nus3AudioCli} could not be found.", nus3AudioCliPath);
+                _logger.LogError("Executable {Nus3AudioCli} could not be found.", _nus3AudioExeFile);
                 return false;
             }
 
             try
             {
-                _processService.RunProcess(nus3AudioCliPath, $"-n -w \"{outputMediaFile}\"");
-                _processService.RunProcess(nus3AudioCliPath, $"-A {toneId} \"{inputMediaFile}\" -w \"{outputMediaFile}\"");
+                _processService.RunProcess(_nus3AudioExeFile, $"-n -w \"{outputMediaFile}\"");
+                _processService.RunProcess(_nus3AudioExeFile, $"-A {toneId} \"{inputMediaFile}\" -w \"{outputMediaFile}\"");
             }
             catch(Exception e)
             {
