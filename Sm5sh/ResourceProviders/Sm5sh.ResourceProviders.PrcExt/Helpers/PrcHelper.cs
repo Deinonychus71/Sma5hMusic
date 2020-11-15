@@ -188,14 +188,21 @@ namespace Sm5sh.ResourceProviders.Prc.Helpers
             else
             {
                 var paramType = GetParamTypeFromProperty(inputObjPropertyInfo);
+                var propertyValue = inputObjPropertyInfo.GetValue(inputObj);
                 ParamValue newValue;
                 if (paramType == ParamType.hash40)
                 {
-                    newValue = new ParamValue(paramType, ((PrcHash40)inputObjPropertyInfo.GetValue(inputObj)).HexValue);
+                    if (!(propertyValue is PrcHash40 hash40Value))
+                        hash40Value = PrcHash40.EmptyValue;
+                    newValue = new ParamValue(paramType, hash40Value.HexValue);
+                }
+                else if(propertyValue == null && paramType == ParamType.@string)
+                {
+                    newValue = new ParamValue(paramType, string.Empty);
                 }
                 else
                 {
-                    newValue = new ParamValue(paramType, inputObjPropertyInfo.GetValue(inputObj));
+                    newValue = new ParamValue(paramType, propertyValue);
                 }
                 nodes.Add(new HashValuePair<IParam>(hexKey, newValue));
             }

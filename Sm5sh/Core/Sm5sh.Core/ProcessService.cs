@@ -3,7 +3,7 @@ using Sm5sh.Interfaces;
 using System;
 using System.Diagnostics;
 
-namespace Sm5shMusic
+namespace Sm5sh
 {
     public class ProcessService : IProcessService
     {

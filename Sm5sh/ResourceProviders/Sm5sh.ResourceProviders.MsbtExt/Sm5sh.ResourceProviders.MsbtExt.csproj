@@ -5,8 +5,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Helpers\MsbtEditor\MsbtEditor.csproj" />
-    <ProjectReference Include="..\Sm5sh.Core\Sm5sh.Core.csproj" />
+    <ProjectReference Include="..\..\Core\Helpers\MsbtEditor\MsbtEditor.csproj" />
+    <ProjectReference Include="..\..\Core\Sm5sh.Core\Sm5sh.Core.csproj" />
   </ItemGroup>
 
 </Project>

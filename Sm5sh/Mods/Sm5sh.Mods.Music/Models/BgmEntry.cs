@@ -1,5 +1,6 @@
 ﻿using Sm5sh.Helpers;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Sm5sh.Mods.Music.Models
 {
@@ -7,7 +8,7 @@ namespace Sm5sh.Mods.Music.Models
     {
         public string ToneId { get; set; }
 
-        public string GameTitleId { get; set; }
+        public GameTitleEntry GameTitle { get; set; }
 
         public Dictionary<string, string> Title { get; set; }
 
@@ -21,9 +22,20 @@ namespace Sm5sh.Mods.Music.Models
 
         public float AudioVolume { get; set; }
 
+        public bool IsDlc { get; set; }
+
+        public bool IsPatch { get; set; }
+
+        public List<BgmEntryModels.PlaylistEntry> Playlists { get; set; }
+
         public BgmEntryModels.BgmAudioSource Source { get; set; }
 
         public string FileName { get; set; }
+
+        public override string ToString()
+        {
+            return ToneId;
+        }
     }
 
     namespace BgmEntryModels
@@ -43,6 +55,16 @@ namespace Sm5sh.Mods.Music.Models
             public ulong TotalTimeMs { get; set; }
             public ulong TotalSamples { get; set; }
             public ulong Frequency { get { return TotalTimeMs / 1000 * TotalSamples; } }
+        }
+
+        public class PlaylistEntry
+        {
+            public string Id { get; set; }
+
+            public override string ToString()
+            {
+                return Id;
+            }
         }
     }
 }

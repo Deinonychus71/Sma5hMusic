@@ -56,6 +56,7 @@ namespace Sm5sh.Mods.Music
                     if (!string.IsNullOrEmpty(_musicModConfig.Prefix))
                         toneId = $"{_musicModConfig.Prefix}{index}_{song.Id}";
 
+                    var hasDlcPlaylistId = song.Playlists.Any(p => CoreConstants.DLC_STAGES.Contains(p.Id));
                     output.Add(new BgmEntry()
                     {
                         ToneId = toneId,
@@ -65,7 +66,16 @@ namespace Sm5sh.Mods.Music
                         Title = song.Title,
                         Author = song.Author,
                         Copyright = song.Copyright,
-                        GameTitleId = game.Id,
+                        GameTitle = new GameTitleEntry()
+                        {
+                            GameTitleId = game.Id,
+                            SeriesId = game.SeriesId,
+                            NameId = game.Id.Replace(Constants.InternalIds.GAME_TITLE_ID_PREFIX, string.Empty),
+                            Title = game.Title
+                        },
+                        IsDlc = hasDlcPlaylistId,
+                        IsPatch = hasDlcPlaylistId,
+                        Playlists = song.Playlists.Select(p => new Models.BgmEntryModels.PlaylistEntry() {  Id = p.Id}).ToList(),
                         FileName = audioFilePath,
                         AudioCuePoints = audioCuePoints
                     });

@@ -1,4 +1,4 @@
-﻿namespace Sm5sh.Mods.Music.CLI.Interfaces
+﻿namespace Sm5sh.CLI
 {
     public interface IWorkspaceManager
     {

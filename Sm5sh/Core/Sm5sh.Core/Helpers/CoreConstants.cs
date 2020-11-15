@@ -192,7 +192,5 @@
             "ui_stage_pickel_world",
             "ui_stage_battle_field_s"
         };
-
-        public const string DEFAULT_LOCALE = "en_US";
     }
 }

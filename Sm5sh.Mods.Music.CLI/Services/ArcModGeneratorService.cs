@@ -4,15 +4,6 @@
     {
         public bool GenerateArcMusicMod(List<MusicModBgmEntry> bgmEntries)
         {
-            //Generate PRC UI Title
-            var newGameTitleDbEntries = newGameTitleIds.Select(p => new GameTitleDbNewEntry()
-            {
-                GameTitleId = p.Game.Id,
-                SeriesId = p.Game.SeriesId
-            }).GroupBy(p => p.NameId).Select(p => p.First()).ToList();
-            _logger.LogInformation("Generate Game Title DB - {Entries} new entries", newGameTitleDbEntries.Count);
-            _paracobService.GenerateGameTitlePrcFile(newGameTitleDbEntries, _workspace.GetWorkspaceOutputForUiGameTitleDbFile());
-
             //Generate PRC UI BGM
             var newBgmEntries = bgmEntries.Select(p => new BgmDbNewEntry()
             {

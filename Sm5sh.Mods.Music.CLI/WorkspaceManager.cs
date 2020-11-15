@@ -1,10 +1,9 @@
 ﻿using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Sm5sh.Mods.Music.CLI.Interfaces;
 using System;
 using System.IO;
 
-namespace Sm5sh.Mods.Music.CLI
+namespace Sm5sh.CLI
 {
     public class WorkspaceManager : IWorkspaceManager
     {

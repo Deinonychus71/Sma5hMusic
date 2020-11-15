@@ -11,13 +11,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Common\Sm5sh.ResourceProviders.MsbtExt\Sm5sh.ResourceProviders.MsbtExt.csproj" />
-    <ProjectReference Include="..\Common\Sm5sh.ResourceProviders.PrcExt\Sm5sh.ResourceProviders.PrcExt.csproj" />
+    <ProjectReference Include="..\..\ResourceProviders\Sm5sh.ResourceProviders.MsbtExt\Sm5sh.ResourceProviders.MsbtExt.csproj" />
+    <ProjectReference Include="..\..\ResourceProviders\Sm5sh.ResourceProviders.PrcExt\Sm5sh.ResourceProviders.PrcExt.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <Reference Include="VGAudioCli">
-      <HintPath>..\Tools\VGAudioCli.exe</HintPath>
+      <HintPath>..\..\..\Tools\VGAudioCli.exe</HintPath>
     </Reference>
   </ItemGroup>
 

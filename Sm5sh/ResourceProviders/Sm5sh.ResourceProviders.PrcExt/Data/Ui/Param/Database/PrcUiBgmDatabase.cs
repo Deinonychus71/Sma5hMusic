@@ -420,6 +420,82 @@ namespace Sm5sh.Data.Ui.Param.Database
             [PrcHexMapping("incidence15")]
             public ushort Incidence15 { get; set; }
 
+            public void SetOrder(short orderValue, int index = -1)
+            {
+                var all = index == -1;
+
+                if (all || index == 0)
+                    Order0 = orderValue;
+                if (all || index == 1)
+                    Order1 = orderValue;
+                if (all || index == 2)
+                    Order2 = orderValue;
+                if (all || index == 3)
+                    Order3 = orderValue;
+                if (all || index == 4)
+                    Order4 = orderValue;
+                if (all || index == 5)
+                    Order5 = orderValue;
+                if (all || index == 6)
+                    Order6 = orderValue;
+                if (all || index == 7)
+                    Order7 = orderValue;
+                if (all || index == 8)
+                    Order8 = orderValue;
+                if (all || index == 9)
+                    Order9 = orderValue;
+                if (all || index == 10)
+                    Order10 = orderValue;
+                if (all || index == 11)
+                    Order11 = orderValue;
+                if (all || index == 12)
+                    Order12 = orderValue;
+                if (all || index == 13)
+                    Order13 = orderValue;
+                if (all || index == 14)
+                    Order14 = orderValue;
+                if (all || index == 15)
+                    Order15 = orderValue;
+            }
+
+            public void SetIncidence(ushort incidenceValue, int index = -1)
+            {
+                var all = index == -1;
+
+                if (all || index == 0)
+                    Incidence0 = incidenceValue;
+                if (all || index == 1)
+                    Incidence1 = incidenceValue;
+                if (all || index == 2)
+                    Incidence2 = incidenceValue;
+                if (all || index == 3)
+                    Incidence3 = incidenceValue;
+                if (all || index == 4)
+                    Incidence4 = incidenceValue;
+                if (all || index == 5)
+                    Incidence5 = incidenceValue;
+                if (all || index == 6)
+                    Incidence6 = incidenceValue;
+                if (all || index == 7)
+                    Incidence7 = incidenceValue;
+                if (all || index == 8)
+                    Incidence8 = incidenceValue;
+                if (all || index == 9)
+                    Incidence9 = incidenceValue;
+                if (all || index == 10)
+                    Incidence10 = incidenceValue;
+                if (all || index == 11)
+                    Incidence11 = incidenceValue;
+                if (all || index == 12)
+                    Incidence12 = incidenceValue;
+                if (all || index == 13)
+                    Incidence13 = incidenceValue;
+                if (all || index == 14)
+                    Incidence14 = incidenceValue;
+                if (all || index == 15)
+                    Incidence15 = incidenceValue;
+            }
+
             public override string ToString()
             {
                 return UiBgmId.ToString();

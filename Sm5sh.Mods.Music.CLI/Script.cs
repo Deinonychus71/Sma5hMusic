@@ -4,9 +4,8 @@ using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Threading.Tasks;
 using Sm5sh.Interfaces;
-using Sm5sh.Mods.Music.CLI.Interfaces;
 
-namespace Sm5sh.Mods.Music.CLI
+namespace Sm5sh.CLI
 {
     public class Script
     {

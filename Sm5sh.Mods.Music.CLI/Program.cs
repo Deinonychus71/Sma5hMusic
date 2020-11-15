@@ -2,11 +2,8 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Console;
-using Sm5sh;
 using Sm5sh.Interfaces;
 using Sm5sh.Mods.Music;
-using Sm5sh.Mods.Music.CLI;
-using Sm5sh.Mods.Music.CLI.Interfaces;
 using Sm5sh.Mods.Music.Interfaces;
 using Sm5sh.Mods.Music.ResourceProviders;
 using Sm5sh.Mods.Music.Services;
@@ -15,7 +12,7 @@ using System;
 using System.IO;
 using System.Threading.Tasks;
 
-namespace Sm5shMusic
+namespace Sm5sh.CLI
 {
     class Program
     {

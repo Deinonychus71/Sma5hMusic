@@ -46,6 +46,8 @@
 
             public const string PLAYLIST_PREFIX = "bgm";
 
+            public const string MSBT_GAME_TITLE_PREFIX = "tit_";
+            public const string MSBT_GAME_TITLE = "tit_{0}";
             public const string MSBT_BGM_TITLE = "bgm_title_{0}";
             public const string MSBT_BGM_AUTHOR = "bgm_author_{0}";
             public const string MSBT_BGM_COPYRIGHT = "bgm_copyright_{0}";

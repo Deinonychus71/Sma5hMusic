@@ -28,64 +28,6 @@
             LOG_UPDATE_STAGE_ENTRY = $"Updating Stage DB - Stage Id {{StageId}}:0x{{Hash40Hex:X}} entry : {HEX_BGM_SET_ID}: {{HEX_BGM_SET_ID}}, {HEX_BGM_SETTING_NO}: {{HEX_BGM_SETTING_NO}}"; 
         }
 
-        public List<string> GetCoreDbRootPlaylists()
-        {
-            var output = new List<string>();
-
-            var bgmDbResource = _resourceService.GetBgmDbResource();
-            if (!File.Exists(bgmDbResource))
-                return output;
-
-            _logger.LogDebug("Retrieving BGM Playlists DB Core entries from {BgmDbFile}", bgmDbResource);
-
-            var t = new ParamFile();
-            t.Open(bgmDbResource);
-
-            foreach (var node in t.Root.Nodes)
-            {
-                var hashString = Hash40Util.FormatToString(node.Key, _paramLabels);
-                if(hashString.StartsWith(Constants.InternalIds.PlaylistPrefix))
-                    output.Add(Hash40Util.FormatToString(node.Key, _paramLabels));
-            }
-
-            _logger.LogDebug("{NbrEntries} entries retrieved from BGM Playlists DB", output.Count);
-
-            return output;
-        }
-
-        public bool GenerateGameTitlePrcFile(List<GameTitleDbNewEntry> gameTitleEntries, string outputFilePath)
-        {
-            var coreGameSeries = _coreGameTitleDb.Select(p => p.UiSeriesId).Distinct().ToList();
-            var releaseIndex = _coreGameTitleDb.OrderByDescending(p => p.Release).First().Release + 1;
-
-            var t = new ParamFile();
-            t.Open(_resourceService.GetGameTitleDbResource());
-            var dbRoot = t.Root.Nodes[HEX_CAT_DBROOT] as ParamList;
-
-            foreach (var gameTitleEntry in gameTitleEntries)
-            {
-                var uiSeriesId = gameTitleEntry.UiSeriesId;
-                if (!coreGameSeries.Contains(gameTitleEntry.UiSeriesId))
-                    uiSeriesId = Constants.InternalIds.GameSeriesIdDefault;
-
-                _logger.LogDebug(LOG_NEW_GAMETITLE_ENTRY_DB_ROOT, gameTitleEntry.UiGameTitleId, uiSeriesId, gameTitleEntry.NameId, releaseIndex);
-
-                var newEntry = dbRoot.Nodes[0].Clone() as ParamStruct;
-                SetNodeParamValue(newEntry, HEX_UI_GAMETITLE_ID, gameTitleEntry.UiGameTitleId);
-                SetNodeParamValue(newEntry, HEX_UI_SERIES_ID, uiSeriesId);
-                SetNodeParamValue(newEntry, HEX_NAME_ID, gameTitleEntry.NameId);
-                SetNodeParamValue(newEntry, HEX_RELEASE, releaseIndex);
-                dbRoot.Nodes.Add(newEntry);
-                releaseIndex++;
-            }
-
-            _logger.LogDebug("{NbrEntries} entries added in Game Title DB - db_root", gameTitleEntries.Count);
-
-            t.Save(outputFilePath);
-
-            return true;
-        }
-
         public bool UpdateStagePrcFile(List<StageDbEntry> stageEntries, string outputFilePath)
         {
             var t = new ParamFile();

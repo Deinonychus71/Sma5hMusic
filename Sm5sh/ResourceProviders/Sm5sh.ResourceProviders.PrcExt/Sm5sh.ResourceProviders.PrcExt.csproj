@@ -9,12 +9,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Sm5sh.Core\Sm5sh.Core.csproj" />
+    <ProjectReference Include="..\..\Core\Sm5sh.Core\Sm5sh.Core.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <Reference Include="paracobNET">
-      <HintPath>..\..\Tools\paracobNET.dll</HintPath>
+      <HintPath>..\..\..\Tools\paracobNET.dll</HintPath>
     </Reference>
   </ItemGroup>
 
