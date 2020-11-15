@@ -2,7 +2,7 @@
 Script to add (not replace) musics for Smash Ultimate
 Based on research & guide by Soneek
 
-This is highly experimental! Bugs may happen.
+**This is highly experimental! Bugs may happen.**
 
 ## Repos of the different tools
 1. prcEditor: https://github.com/BenHall-7/paracobNET
