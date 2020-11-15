@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Threading.Tasks;
 using Sm5sh.Interfaces;
+using System.Collections.Generic;
 
 namespace Sm5sh.CLI
 {
@@ -38,9 +39,6 @@ namespace Sm5sh.CLI
 
             await Task.Delay(1000);
 
-            //var stageModJsonFile = LoadStagePlaylistMod();
-            //_logger.LogInformation("StagePlaylistMod: {StagePlaylistMod}", stageModJsonFile != null ? "Enabled" : "Disabled");
-
             //Init State Manager
             _state.Init();
 
@@ -52,13 +50,15 @@ namespace Sm5sh.CLI
             var mods = _serviceProvider.GetServices<ISm5shMod>();
 
             //Emulate UI that would init mods
+            var initMods = new List<ISm5shMod>();
             foreach(var mod in mods)
             {
                 _logger.LogInformation("Initialize mod {ModeName}", mod.ModName);
-                mod.Init();
+                if (mod.Init())
+                    initMods.Add(mod);
             }
             //Emulate UI that would save changes from mods
-            foreach (var mod in mods)
+            foreach (var mod in initMods)
             {
                 _logger.LogInformation("Save changes for mod {ModeName}", mod.ModName);
                 mod.SaveChanges();
@@ -71,32 +71,5 @@ namespace Sm5sh.CLI
             _logger.LogInformation("COMPLETE - Please check the logs for any error.");
             _logger.LogInformation("--------------------");
         }
-
-        /*private List<StagePlaylistModConfig> LoadStagePlaylistMod()
-        {
-            var stageModJsonFile = Path.Combine(_settings.MusicModPath, Constants.MusicModFiles.StageModMetadataJsonFile);
-            var generateStageMod = File.Exists(stageModJsonFile);
-            if (!generateStageMod)
-            {
-                _logger.LogDebug("The file {StageModJsonFile} could not be found. The stage playlists will not be updated.", stageModJsonFile);
-                return null;
-            }
-
-            var stagePlaylistsEntries = JsonConvert.DeserializeObject<List<StagePlaylistModConfig>>(File.ReadAllText(stageModJsonFile));
-
-            if(stagePlaylistsEntries.Any(p => !Constants.ValidStages.Contains(p.StageId)))
-            {
-                _logger.LogError("{StagePlaylistMod} will be disabled. At least one stage is not registered in the Stage DB.");
-                return null;
-            }
-
-            if (stagePlaylistsEntries.Any(p => p.OrderId < 0 || p.OrderId > 15))
-            {
-                _logger.LogError("{StagePlaylistMod} will be disabled. At least one stage has an invalid order id. The value is 0 to 15.");
-                return null;
-            }
-
-            return stagePlaylistsEntries;
-        }*/
     }
 }

@@ -19,8 +19,6 @@ namespace Sm5sh.Mods.Music
         private readonly IAudioMetadataService _audioMetadataService;
         private readonly ILogger _logger;
 
-        private readonly Regex _idValidatorRegexp = new Regex(@"^[a-z0-9_\s,]*$");
-
         private readonly string _musicModPath;
         private readonly MusicModConfig _musicModConfig;
 
@@ -175,7 +173,7 @@ namespace Sm5sh.Mods.Music
 
                 //Sanitize
                 _musicModConfig.Prefix = _musicModConfig.Prefix.ToLower();
-                if (!IsLegalId(_musicModConfig.Prefix))
+                if (!IdValidationHelper.IsLegalId(_musicModConfig.Prefix))
                 {
                     _logger.LogWarning("MusicModFile {MusicMod} - The prefix contains invalid characters. Skipping...", _musicModConfig.Name);
                     return false;
@@ -194,7 +192,7 @@ namespace Sm5sh.Mods.Music
                 game.Id = game.Id.ToLower();
                 if (!game.Id.StartsWith(Constants.InternalIds.GAME_TITLE_ID_PREFIX))
                     game.Id = $"{Constants.InternalIds.GAME_TITLE_ID_PREFIX}{game.Id}";
-                if (!IsLegalId(game.Id))
+                if (!IdValidationHelper.IsLegalId(game.Id))
                 {
                     _logger.LogWarning("MusicModFile {MusicMod} - Game {GameId} is invalid. The Game Title Id contains invalid characters. Skipping...", _musicModConfig.Name, game.Id);
                     continue;
@@ -255,7 +253,7 @@ namespace Sm5sh.Mods.Music
                     }
 
                     song.Id = song.Id.ToLower();
-                    if (!IsLegalId(song.Id))
+                    if (!IdValidationHelper.IsLegalId(song.Id))
                     {
                         _logger.LogWarning("MusicModFile {MusicMod} {Game} - Song {SongId} is invalid. The Song Id contains invalid characters. Skipping...", _musicModConfig.Name, game.Id, song.Id);
                         continue;
@@ -309,11 +307,6 @@ namespace Sm5sh.Mods.Music
             }
 
             return true;
-        }
-
-        private bool IsLegalId(string idToCheck)
-        {
-            return _idValidatorRegexp.IsMatch(idToCheck);
         }
     }
 }

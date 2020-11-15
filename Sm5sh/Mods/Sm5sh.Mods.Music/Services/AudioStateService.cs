@@ -4,7 +4,6 @@ using Sm5sh.Data;
 using Sm5sh.Data.Ui.Param.Database;
 using Sm5sh.Data.Ui.Param.Database.PrcUiBgmDatabaseModels;
 using Sm5sh.Data.Ui.Param.Database.PrcUiGameTitleDatabaseModels;
-using Sm5sh.Data.Ui.Param.Database.PrcUiStageDatabasModels;
 using Sm5sh.Helpers;
 using Sm5sh.Interfaces;
 using Sm5sh.Mods.Music.Data.Sound.Config;
@@ -32,14 +31,13 @@ namespace Sm5sh.Mods.Music.Services
         private Dictionary<string, PrcBgmStreamPropertyEntry> _daoUiBgmStreamPropertyEntries;
         private Dictionary<string, BgmPropertyEntry> _daoBinPropertyEntries;
         private Dictionary<string, PrcGameTitleDbRootEntry> _daoUiGameTitleDbRootEntries;
-        private Dictionary<string, StageDbRootEntry> _daoUiStageDbRootEntries;
         private Dictionary<string, List<PrcBgmPlaylistEntry>> _daobgmPlaylistsEntries;
         private readonly Dictionary<string, MsbtDatabase> _daoMsbtBgms;
         private readonly Dictionary<string, MsbtDatabase> _daoMsbtTitle;
         private string _lastNameId;
 
         //Public
-        private Dictionary<string, BgmEntry> _bgmEntries;
+        private readonly Dictionary<string, BgmEntry> _bgmEntries;
         private readonly Dictionary<string, AudioStateServiceModels.BgmDbOperation> _dbOperations;
 
         public AudioStateService(IOptions<Sm5shMusicOptions> config, IStateManager state, ILogger<IAudioStateService> logger)
@@ -200,7 +198,6 @@ namespace Sm5sh.Mods.Music.Services
             var daoBinBgmProperty = _state.LoadResource<BinBgmProperty>(Constants.GameResources.PRC_BGM_PROPERTY_PATH);
             var daoUiBgmDatabase = _state.LoadResource<PrcUiBgmDatabase>(Constants.GameResources.PRC_UI_BGM_DB_PATH);
             var daoUiGameTitleDatabase = _state.LoadResource<PrcUiGameTitleDatabase>(Constants.GameResources.PRC_UI_GAMETITLE_DB_PATH);
-            var daoUiStageDatabase = _state.LoadResource<PrcUiStageDatabase>(Constants.GameResources.PRC_UI_STAGE_DB_PATH);
             daoUiBgmDatabase.DbRootEntries = _daoUiBgmDbRootEntries.Values.ToList();
             daoUiBgmDatabase.StreamSetEntries = _daoUiBgmStreamSetEntries.Values.ToList();
             daoUiBgmDatabase.AssignedInfoEntries = _daoUiBgmAssignedInfoEntries.Values.ToList();
@@ -225,13 +222,11 @@ namespace Sm5sh.Mods.Music.Services
             //Initialize UI_BGM_DB
             var daoUiBgmDatabase = _state.LoadResource<PrcUiBgmDatabase>(Constants.GameResources.PRC_UI_BGM_DB_PATH);
             var daoUiGameTitleDatabase = _state.LoadResource<PrcUiGameTitleDatabase>(Constants.GameResources.PRC_UI_GAMETITLE_DB_PATH);
-            var daoUiStageDatabase = _state.LoadResource<PrcUiStageDatabase>(Constants.GameResources.PRC_UI_STAGE_DB_PATH);
             _daoUiBgmDbRootEntries = daoUiBgmDatabase.DbRootEntries.ToDictionary(p => p.UiBgmId.StringValue.Replace(Constants.InternalIds.UI_BGM_ID_PREFIX, string.Empty), p => p);
             _daoUiBgmStreamSetEntries = daoUiBgmDatabase.StreamSetEntries.ToDictionary(p => p.StreamSetId.StringValue.Replace(Constants.InternalIds.STREAM_SET_PREFIX, string.Empty), p => p);
             _daoUiBgmAssignedInfoEntries = daoUiBgmDatabase.AssignedInfoEntries.ToDictionary(p => p.InfoId.StringValue.Replace(Constants.InternalIds.INFO_ID_PREFIX, string.Empty), p => p);
             _daoUiBgmStreamPropertyEntries = daoUiBgmDatabase.StreamPropertyEntries.ToDictionary(p => p.StreamId.StringValue.Replace(Constants.InternalIds.STREAM_PREFIX, string.Empty), p => p);
             _daoUiGameTitleDbRootEntries = daoUiGameTitleDatabase.DbRootEntries.ToDictionary(p => p.UiGameTitleId.StringValue, p => p);
-            _daoUiStageDbRootEntries = daoUiStageDatabase.DbRootEntries.ToDictionary(p => p.UiStageId.StringValue, p => p);
             _daobgmPlaylistsEntries = daoUiBgmDatabase.PlaylistEntries.ToDictionary(p => p.Id.StringValue, p => p.Values);
 
             //Calculate last Name Id

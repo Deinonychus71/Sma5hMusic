@@ -7,6 +7,7 @@ using Sm5sh.Mods.Music;
 using Sm5sh.Mods.Music.Interfaces;
 using Sm5sh.Mods.Music.ResourceProviders;
 using Sm5sh.Mods.Music.Services;
+using Sm5sh.Mods.StagePlaylist;
 using Sm5sh.ResourceProviders;
 using System;
 using System.IO;
@@ -68,6 +69,10 @@ namespace Sm5sh.CLI
             services.AddTransient<IAudioStateService, AudioStateService>();
             services.AddSingleton<IAudioMetadataService, VGAudioMetadataService>();
             services.AddSingleton<INus3AudioService, Nus3AudioService>();
+
+            //Mod Stage Playlist
+            services.Configure<Sm5shStagePlaylistOptions>(configuration);
+            services.AddSingleton<ISm5shMod, StagePlaylistMod>();
 
             //CLI
             services.AddScoped<IWorkspaceManager, WorkspaceManager>();

@@ -14,7 +14,7 @@ namespace Sm5sh
 
         public abstract string ModName { get ; }
 
-        public virtual void Init() { }
+        public virtual bool Init() { return true; }
 
         public abstract bool SaveChanges();
     }

@@ -31,7 +31,7 @@ namespace Sm5sh.Mods.Music
             _config = config;
         }
 
-        public override void Init()
+        public override bool Init()
         {
             _logger.LogInformation("Music Mod Path: {MusicModPath}", _config.Value.Sm5shMusic.ModPath);
             _logger.LogInformation("Audio Conversion Format: {AudioConversionFormat}", _config.Value.Sm5shMusic.AudioConversionFormat);
@@ -50,6 +50,8 @@ namespace Sm5sh.Mods.Music
                     _audioStateService.AddBgmEntry(newBgmEntry.ToneId, newBgmEntry);
                 }
             }
+
+            return true;
         }
 
         public override bool SaveChanges()

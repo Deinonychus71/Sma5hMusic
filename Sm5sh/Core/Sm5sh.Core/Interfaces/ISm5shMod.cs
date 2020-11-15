@@ -3,7 +3,7 @@
     public interface ISm5shMod
     {
         string ModName { get; }
-        void Init();
+        bool Init();
 
         bool SaveChanges();
     }
