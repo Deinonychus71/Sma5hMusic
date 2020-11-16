@@ -91,31 +91,6 @@ namespace Sm5sh.ResourceProviders.Prc.Helpers
             }
         }
 
-        private object WriteNewFilterStruct(object objToMap, Type objType, string propertyName, ulong hexKey)
-        {
-            var propertyInfo = objType.GetProperty(propertyName);
-            var filterStruct = propertyInfo.GetValue(objToMap);    
-            
-            //Retrieve PcrFilterStruct flagged property. If null, create it
-            if (filterStruct == null)
-            {
-                filterStruct = Activator.CreateInstance(propertyInfo.PropertyType);
-                propertyInfo.SetValue(objToMap, filterStruct);
-            }
-
-            //Add a new entry
-            var filterStructType = filterStruct.GetType();
-            var filterStructAddMethod = filterStructType.GetMethod("Add");
-            var filterStructObjType = GetListObjectType(filterStructType);
-            var newfilterStructObjInstance = Activator.CreateInstance(filterStructObjType);
-            filterStructAddMethod.Invoke(filterStruct, new[] { newfilterStructObjInstance });
-
-            //Set ID
-            filterStructObjType.GetProperty("Id").SetValue(newfilterStructObjInstance, new PrcHash40(hexKey, _paramHashes));
-
-            return newfilterStructObjInstance;
-        }
-
         private void ReadPrc(IParam node, object objToMap, PropertyInfo propertyInfo)
         {
             //List
@@ -128,16 +103,38 @@ namespace Sm5sh.ResourceProviders.Prc.Helpers
 
                 //Instanciate list
                 var newList = Activator.CreateInstance(propertyInfo.PropertyType);
-                var newListObj = GetListObjectType(newList.GetType());
-                var newListAdd = newList.GetType().GetMethod("Add");
-
-                //Set in property
+                var dictKey = MapDictionaryKeyFromPropertyInfo(propertyInfo);
                 propertyInfo.SetValue(objToMap, newList);
-                foreach (var nodeChild in nodeList.Nodes)
+
+                //Regular case - List
+                if (dictKey == null)
                 {
-                    var newObjInstance = Activator.CreateInstance(newListObj);
-                    newListAdd.Invoke(newList, new[] { newObjInstance });
-                    ReadPrc(nodeChild, newObjInstance, null);
+                    var newListObj = GetListObjectType(newList.GetType());
+                    var newListAdd = newList.GetType().GetMethod("Add");
+
+                    //Set in property
+                    foreach (var nodeChild in nodeList.Nodes)
+                    {
+                        var newObjInstance = Activator.CreateInstance(newListObj);
+                        newListAdd.Invoke(newList, new[] { newObjInstance });
+                        ReadPrc(nodeChild, newObjInstance, null);
+                    }
+                }
+                //Dictionary case - PrcDictionary
+                else
+                {
+                    var newDictObj = GetDictionaryObjectType(newList.GetType());
+                    var newListAdd = newList.GetType().GetMethod("Add", new[] { newDictObj.Item1, newDictObj.Item2 });
+
+                    //Set in property
+                    foreach (var nodeChild in nodeList.Nodes)
+                    {
+                        var id = (ParamValue)((ParamStruct)nodeChild).Nodes[dictKey];
+                        var idStr = Hash40Util.FormatToString((ulong)(id.Value), _paramHashes);
+                        var newObjInstance = Activator.CreateInstance(newDictObj.Item2);
+                        newListAdd.Invoke(newList, new[] { idStr, newObjInstance });
+                        ReadPrc(nodeChild, newObjInstance, null);
+                    }
                 }
             }
             else if (node is ParamStruct)
@@ -162,8 +159,32 @@ namespace Sm5sh.ResourceProviders.Prc.Helpers
                 {
                     propertyInfo.SetValue(objToMap, nodeValue.Value);
                 }
-                
             }
+        }
+
+        private object WriteNewFilterStruct(object objToMap, Type objType, string propertyName, ulong hexKey)
+        {
+            var propertyInfo = objType.GetProperty(propertyName);
+            var filterStruct = propertyInfo.GetValue(objToMap);
+
+            //Retrieve PcrFilterStruct flagged property. If null, create it
+            if (filterStruct == null)
+            {
+                filterStruct = Activator.CreateInstance(propertyInfo.PropertyType);
+                propertyInfo.SetValue(objToMap, filterStruct);
+            }
+
+            //Add a new entry
+            var filterStructType = filterStruct.GetType();
+            var filterStructAddMethod = filterStructType.GetMethod("Add");
+            var filterStructObjType = GetListObjectType(filterStructType);
+            var newfilterStructObjInstance = Activator.CreateInstance(filterStructObjType);
+            filterStructAddMethod.Invoke(filterStruct, new[] { newfilterStructObjInstance });
+
+            //Set ID
+            filterStructObjType.GetProperty("Id").SetValue(newfilterStructObjInstance, new PrcHash40(hexKey, _paramHashes));
+
+            return newfilterStructObjInstance;
         }
         #endregion
 
@@ -179,6 +200,21 @@ namespace Sm5sh.ResourceProviders.Prc.Helpers
                 var inputObjListProperties = GetListObjectType(inputObjList.GetType()).GetProperties();
 
                 foreach (var inputObjEntry in inputObjList)
+                {
+                    var newStructList = new ParamStruct();
+                    newList.Nodes.Add(newStructList);
+                    WritePrc(newStructList, inputObjEntry, inputObjListProperties);
+                }
+            }
+            else if (IsTypeADictionary(inputObjPropertyInfo.PropertyType))
+            {
+                var newList = new ParamList();
+                nodes.Add(new HashValuePair<IParam>(hexKey, newList));
+
+                var inputObjList = (IDictionary)inputObjPropertyInfo.GetValue(inputObj, null);
+                var inputObjListProperties = GetDictionaryObjectType(inputObjList.GetType()).Item2.GetProperties();
+
+                foreach (var inputObjEntry in inputObjList.Values)
                 {
                     var newStructList = new ParamStruct();
                     newList.Nodes.Add(newStructList);
@@ -217,8 +253,11 @@ namespace Sm5sh.ResourceProviders.Prc.Helpers
                 //Regular case
                 if (prcFilter == null)
                 {
-                    var hexKey = MapHexKeyFromPropertyInfo(inputObjPropertyInfo);
-                    WritePrc(paramsStruct.Nodes, inputObj, hexKey, inputObjPropertyInfo);
+                    if (!ShouldIgnore(inputObjPropertyInfo))
+                    {
+                        var hexKey = MapHexKeyFromPropertyInfo(inputObjPropertyInfo);
+                        WritePrc(paramsStruct.Nodes, inputObj, hexKey, inputObjPropertyInfo);
+                    }
                 }
                 //Prc filter
                 else
@@ -250,6 +289,16 @@ namespace Sm5sh.ResourceProviders.Prc.Helpers
             return null;
         }
 
+        private Tuple<Type, Type> GetDictionaryObjectType(Type type)
+        {
+            foreach (Type interfaceType in type.GetInterfaces())
+            {
+                if (interfaceType.IsGenericType && interfaceType.GetGenericTypeDefinition() == typeof(IDictionary<,>))
+                    return new Tuple<Type, Type>(type.GetGenericArguments()[0], type.GetGenericArguments()[1]);
+            }
+            return null;
+        }
+
         private Dictionary<ulong, string> MapOffsetToProperties(Type type)
         {
             return type.GetProperties().Where(p => p.GetCustomAttribute<PrcHexMapping>() != null).ToDictionary(p => p.GetCustomAttribute<PrcHexMapping>().Value, p => p.Name);
@@ -260,9 +309,19 @@ namespace Sm5sh.ResourceProviders.Prc.Helpers
             return type.GetProperties().Where(p => p.GetCustomAttribute<PrcFilterMatch>() != null).ToDictionary(p => p.Name, p => p.GetCustomAttribute<PrcFilterMatch>());
         }
 
+        private string MapDictionaryKeyFromPropertyInfo(PropertyInfo propertyInfo)
+        {
+            return propertyInfo.GetCustomAttribute<PrcDictionary>()?.Key;
+        }
+
         private ulong MapHexKeyFromPropertyInfo(PropertyInfo propertyInfo)
         {
             return propertyInfo.GetCustomAttribute<PrcHexMapping>().Value;
+        }
+
+        private bool ShouldIgnore(PropertyInfo propertyInfo)
+        {
+            return propertyInfo.GetCustomAttribute<PrcIgnore>() != null;
         }
 
         private PrcFilterMatch MapPrcFilterFromPropertyInfo(PropertyInfo propertyInfo)
@@ -275,6 +334,16 @@ namespace Sm5sh.ResourceProviders.Prc.Helpers
             foreach (Type interfaceType in type.GetInterfaces())
             {
                 if (interfaceType.IsGenericType && interfaceType.GetGenericTypeDefinition() == typeof(IList<>))
+                    return true;
+            }
+            return false;
+        }
+
+        private bool IsTypeADictionary(Type type)
+        {
+            foreach (Type interfaceType in type.GetInterfaces())
+            {
+                if (interfaceType.IsGenericType && interfaceType.GetGenericTypeDefinition() == typeof(IDictionary<,>))
                     return true;
             }
             return false;

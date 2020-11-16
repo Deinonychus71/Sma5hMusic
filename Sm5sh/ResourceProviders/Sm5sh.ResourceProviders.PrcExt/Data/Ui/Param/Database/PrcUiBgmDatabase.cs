@@ -6,23 +6,29 @@ namespace Sm5sh.Data.Ui.Param.Database
 {
     public class PrcUiBgmDatabase : IStateManagerDb
     {
+        [PrcDictionary("ui_bgm_id")]
         [PrcHexMapping("db_root")]
-        public List<PrcUiBgmDatabaseModels.PrcBgmDbRootEntry> DbRootEntries { get; set; }
+        public Dictionary<string, PrcUiBgmDatabaseModels.PrcBgmDbRootEntry> DbRootEntries { get; set; }
 
+        [PrcDictionary("ui_bgm_id")]
         [PrcHexMapping("stage_bgm")]
-        public List<PrcUiBgmDatabaseModels.PrcBgmStageBgmEntry> StageBgmEntries { get; set; }
+        public Dictionary<string, PrcUiBgmDatabaseModels.PrcBgmStageBgmEntry> StageBgmEntries { get; set; }
 
+        [PrcDictionary("stream_set_id")]
         [PrcHexMapping("stream_set")]
-        public List<PrcUiBgmDatabaseModels.PrcBgmStreamSetEntry> StreamSetEntries { get; set; }
+        public Dictionary<string, PrcUiBgmDatabaseModels.PrcBgmStreamSetEntry> StreamSetEntries { get; set; }
 
+        [PrcDictionary("info_id")]
         [PrcHexMapping("assigned_info")]
-        public List<PrcUiBgmDatabaseModels.PrcBgmAssignedInfoEntry> AssignedInfoEntries { get; set; }
+        public Dictionary<string, PrcUiBgmDatabaseModels.PrcBgmAssignedInfoEntry> AssignedInfoEntries { get; set; }
 
+        [PrcDictionary("stream_id")]
         [PrcHexMapping("stream_property")]
-        public List<PrcUiBgmDatabaseModels.PrcBgmStreamPropertyEntry> StreamPropertyEntries { get; set; }
+        public Dictionary<string, PrcUiBgmDatabaseModels.PrcBgmStreamPropertyEntry> StreamPropertyEntries { get; set; }
 
+        [PrcDictionary("ui_chara_id")]
         [PrcHexMapping("fighter_jingle")]
-        public List<PrcUiBgmDatabaseModels.PrcBgmFighterJingleBgmEntry> FighterJingleEntries { get; set; }
+        public Dictionary<string, PrcUiBgmDatabaseModels.PrcBgmFighterJingleBgmEntry> FighterJingleEntries { get; set; }
 
         [PrcFilterMatch("^(bgm)")]
         public List<PcrFilterStruct<PrcUiBgmDatabaseModels.PrcBgmPlaylistEntry>> PlaylistEntries { get; set; }

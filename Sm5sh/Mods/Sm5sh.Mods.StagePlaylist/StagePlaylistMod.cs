@@ -88,7 +88,7 @@ namespace Sm5sh.Mods.StagePlaylist
         {
             var daoUiStageDatabase = _state.LoadResource<PrcUiStageDatabase>(Constants.GameResources.PRC_UI_STAGE_DB_PATH);
 
-            foreach(var daoUiStageEntry in daoUiStageDatabase.DbRootEntries)
+            foreach(var daoUiStageEntry in daoUiStageDatabase.DbRootEntries.Values)
             {
                 var modEntry = _modConfig[daoUiStageEntry.UiStageId.StringValue];
 

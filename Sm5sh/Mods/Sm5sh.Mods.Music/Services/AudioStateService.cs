@@ -198,15 +198,15 @@ namespace Sm5sh.Mods.Music.Services
             var daoBinBgmProperty = _state.LoadResource<BinBgmProperty>(Constants.GameResources.PRC_BGM_PROPERTY_PATH);
             var daoUiBgmDatabase = _state.LoadResource<PrcUiBgmDatabase>(Constants.GameResources.PRC_UI_BGM_DB_PATH);
             var daoUiGameTitleDatabase = _state.LoadResource<PrcUiGameTitleDatabase>(Constants.GameResources.PRC_UI_GAMETITLE_DB_PATH);
-            daoUiBgmDatabase.DbRootEntries = _daoUiBgmDbRootEntries.Values.ToList();
-            daoUiBgmDatabase.StreamSetEntries = _daoUiBgmStreamSetEntries.Values.ToList();
-            daoUiBgmDatabase.AssignedInfoEntries = _daoUiBgmAssignedInfoEntries.Values.ToList();
-            daoUiBgmDatabase.StreamPropertyEntries = _daoUiBgmStreamPropertyEntries.Values.ToList();
+            daoUiBgmDatabase.DbRootEntries = _daoUiBgmDbRootEntries.Values.ToDictionary(p => p.UiBgmId.StringValue, p => p);
+            daoUiBgmDatabase.StreamSetEntries = _daoUiBgmStreamSetEntries.Values.ToDictionary(p => p.StreamSetId.StringValue, p => p);
+            daoUiBgmDatabase.AssignedInfoEntries = _daoUiBgmAssignedInfoEntries.Values.ToDictionary(p => p.InfoId.StringValue, p => p);
+            daoUiBgmDatabase.StreamPropertyEntries = _daoUiBgmStreamPropertyEntries.Values.ToDictionary(p => p.StreamId.StringValue, p => p);
             daoUiBgmDatabase.PlaylistEntries = _daobgmPlaylistsEntries.Select(p => new PcrFilterStruct<PrcBgmPlaylistEntry>()
             {
                 Id = new PrcHash40(p.Key), Values = p.Value
             }).ToList();
-            daoUiGameTitleDatabase.DbRootEntries = _daoUiGameTitleDbRootEntries.Values.ToList();
+            daoUiGameTitleDatabase.DbRootEntries = _daoUiGameTitleDbRootEntries.Values.ToDictionary(p => p.UiGameTitleId.StringValue, p => p);
             daoBinBgmProperty.Entries = _daoBinPropertyEntries.Values.ToList();
 
             return true;
@@ -222,11 +222,11 @@ namespace Sm5sh.Mods.Music.Services
             //Initialize UI_BGM_DB
             var daoUiBgmDatabase = _state.LoadResource<PrcUiBgmDatabase>(Constants.GameResources.PRC_UI_BGM_DB_PATH);
             var daoUiGameTitleDatabase = _state.LoadResource<PrcUiGameTitleDatabase>(Constants.GameResources.PRC_UI_GAMETITLE_DB_PATH);
-            _daoUiBgmDbRootEntries = daoUiBgmDatabase.DbRootEntries.ToDictionary(p => p.UiBgmId.StringValue.Replace(Constants.InternalIds.UI_BGM_ID_PREFIX, string.Empty), p => p);
-            _daoUiBgmStreamSetEntries = daoUiBgmDatabase.StreamSetEntries.ToDictionary(p => p.StreamSetId.StringValue.Replace(Constants.InternalIds.STREAM_SET_PREFIX, string.Empty), p => p);
-            _daoUiBgmAssignedInfoEntries = daoUiBgmDatabase.AssignedInfoEntries.ToDictionary(p => p.InfoId.StringValue.Replace(Constants.InternalIds.INFO_ID_PREFIX, string.Empty), p => p);
-            _daoUiBgmStreamPropertyEntries = daoUiBgmDatabase.StreamPropertyEntries.ToDictionary(p => p.StreamId.StringValue.Replace(Constants.InternalIds.STREAM_PREFIX, string.Empty), p => p);
-            _daoUiGameTitleDbRootEntries = daoUiGameTitleDatabase.DbRootEntries.ToDictionary(p => p.UiGameTitleId.StringValue, p => p);
+            _daoUiBgmDbRootEntries = daoUiBgmDatabase.DbRootEntries.ToDictionary(p => p.Key.Replace(Constants.InternalIds.UI_BGM_ID_PREFIX, string.Empty), p => p.Value);
+            _daoUiBgmStreamSetEntries = daoUiBgmDatabase.StreamSetEntries.ToDictionary(p => p.Key.Replace(Constants.InternalIds.STREAM_SET_PREFIX, string.Empty), p => p.Value);
+            _daoUiBgmAssignedInfoEntries = daoUiBgmDatabase.AssignedInfoEntries.ToDictionary(p => p.Key.Replace(Constants.InternalIds.INFO_ID_PREFIX, string.Empty), p => p.Value);
+            _daoUiBgmStreamPropertyEntries = daoUiBgmDatabase.StreamPropertyEntries.ToDictionary(p => p.Key.Replace(Constants.InternalIds.STREAM_PREFIX, string.Empty), p => p.Value);
+            _daoUiGameTitleDbRootEntries = daoUiGameTitleDatabase.DbRootEntries.ToDictionary(p => p.Key, p => p.Value);
             _daobgmPlaylistsEntries = daoUiBgmDatabase.PlaylistEntries.ToDictionary(p => p.Id.StringValue, p => p.Values);
 
             //Calculate last Name Id

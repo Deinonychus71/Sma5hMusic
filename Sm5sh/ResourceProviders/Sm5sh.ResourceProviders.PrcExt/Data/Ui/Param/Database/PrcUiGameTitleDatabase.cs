@@ -6,8 +6,9 @@ namespace Sm5sh.Data.Ui.Param.Database
 {
     public class PrcUiGameTitleDatabase : IStateManagerDb
     {
+        [PrcDictionary("ui_gametitle_id")]
         [PrcHexMapping("db_root")]
-        public List<PrcUiGameTitleDatabaseModels.PrcGameTitleDbRootEntry> DbRootEntries { get; set; }
+        public Dictionary<string, PrcUiGameTitleDatabaseModels.PrcGameTitleDbRootEntry> DbRootEntries { get; set; }
     }
 
     namespace PrcUiGameTitleDatabaseModels

@@ -29,4 +29,17 @@ namespace Sm5sh.ResourceProviders.Prc.Helpers
             Regex = regex;
         }
     }
+
+    [AttributeUsage(AttributeTargets.Property)]
+    public class PrcIgnore : Attribute { }
+
+    public class PrcDictionary : Attribute
+    {
+        public string Key { get; private set; }
+
+        public PrcDictionary(string key)
+        {
+            Key = key;
+        }
+    }
 }

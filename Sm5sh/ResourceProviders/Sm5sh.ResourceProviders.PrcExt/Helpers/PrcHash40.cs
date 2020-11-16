@@ -17,7 +17,7 @@ namespace Sm5sh.ResourceProviders.Prc.Helpers
         {
             HexValue = hexValue;
             if(paramHashes != null)
-                StringValue = paramHashes.ContainsKey(hexValue) ? paramHashes[hexValue] : $"0x{hexValue:X}";
+                StringValue = paramHashes.ContainsKey(hexValue) ? paramHashes[hexValue] : $"0x{hexValue:x}";
         }
 
         public PrcHash40(string stringValue)

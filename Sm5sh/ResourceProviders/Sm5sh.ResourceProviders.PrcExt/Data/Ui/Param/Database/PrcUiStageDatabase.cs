@@ -6,8 +6,9 @@ namespace Sm5sh.Data.Ui.Param.Database
 {
     public class PrcUiStageDatabase : IStateManagerDb
     {
+        [PrcDictionary("ui_stage_id")]
         [PrcHexMapping("db_root")]
-        public List<PrcUiStageDatabasModels.StageDbRootEntry> DbRootEntries { get; set; }
+        public Dictionary<string, PrcUiStageDatabasModels.StageDbRootEntry> DbRootEntries { get; set; }
     }
 
     namespace PrcUiStageDatabasModels
