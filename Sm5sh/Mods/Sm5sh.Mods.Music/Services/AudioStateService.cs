@@ -207,7 +207,7 @@ namespace Sm5sh.Mods.Music.Services
                 Id = new PrcHash40(p.Key), Values = p.Value
             }).ToList();
             daoUiGameTitleDatabase.DbRootEntries = _daoUiGameTitleDbRootEntries.Values.ToDictionary(p => p.UiGameTitleId.StringValue, p => p);
-            daoBinBgmProperty.Entries = _daoBinPropertyEntries.Values.ToList();
+            daoBinBgmProperty.Entries = _daoBinPropertyEntries;
 
             return true;
         }
@@ -217,7 +217,7 @@ namespace Sm5sh.Mods.Music.Services
         {
             //Load BGM_PROPERTY
             var daoBinBgmProperty = _state.LoadResource<BinBgmProperty>(Constants.GameResources.PRC_BGM_PROPERTY_PATH);
-            _daoBinPropertyEntries = daoBinBgmProperty.Entries.ToDictionary(p => p.NameId, p => p);
+            _daoBinPropertyEntries = daoBinBgmProperty.Entries;
 
             //Initialize UI_BGM_DB
             var daoUiBgmDatabase = _state.LoadResource<PrcUiBgmDatabase>(Constants.GameResources.PRC_UI_BGM_DB_PATH);

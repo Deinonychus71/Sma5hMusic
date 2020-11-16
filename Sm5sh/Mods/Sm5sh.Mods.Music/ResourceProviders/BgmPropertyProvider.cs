@@ -6,6 +6,7 @@ using Sm5sh.Mods.Music.Data.Sound.Config;
 using Sm5sh.Mods.Music.Data.Sound.Config.BgmPropertyStructs;
 using Sm5sh.Mods.Music.Helpers;
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.IO;
 
@@ -62,10 +63,11 @@ namespace Sm5sh.Mods.Music.ResourceProviders
 
             var output = _ymlHelper.ReadYmlFile<List<BgmPropertyEntry>>(tempFile);
 
+
             //Delete temp file
             File.Delete(tempFile);
 
-            return (T)(object)new BinBgmProperty() { Entries = output };
+            return (T)(object)new BinBgmProperty() { Entries = output.ToDictionary(p => p.NameId, p => p) };
         }
 
         public override bool WriteFile<T>(string inputFile, string outputFile, T inputObj)
@@ -77,7 +79,7 @@ namespace Sm5sh.Mods.Music.ResourceProviders
             var tempFile = Path.Combine(_config.Value.TempPath, Constants.Resources.BGM_PROPERTY_TEMP_FILE);
 
             //Serialize
-            _ymlHelper.WriteYmlFile(tempFile, ((BinBgmProperty)(object)inputObj).Entries);
+            _ymlHelper.WriteYmlFile(tempFile, ((BinBgmProperty)(object)inputObj).Entries.Values);
 
             //Build Bgm Property
             try

@@ -6,7 +6,7 @@ namespace Sm5sh.Mods.Music.Data.Sound.Config
 {
     public class BinBgmProperty : IStateManagerDb
     {
-        public List<BgmPropertyStructs.BgmPropertyEntry> Entries { get; set; }
+        public Dictionary<string, BgmPropertyStructs.BgmPropertyEntry> Entries { get; set; }
     }
 
     namespace BgmPropertyStructs
