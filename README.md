@@ -17,7 +17,7 @@ Based on research & guide by Soneek
 2.  In the "Resources" folder, extract ui_bgm_db.prc and ui_gametitle_db.prc in /game/ui/params/database/
 3.  In the "Resources" folder, extract any nus3bank from Ultimate in /nus3bank and rename 'template.nus3bank'
 
-## Mods
+## How to create Music Mods
 1.  Create a folder in /Mods/MusicMods. This folder can contains several audio files and a metadata file 'metadata_mod.json' or 'metadata_mod.csv'. An example is provided.
 2.  IDSP and LOPUS support. BRSTM support through on the fly conversion.
 3.  The 'prefix' can be used to give an unique internal id to songs in case of multiple mods. Keep it short/lowercase (3 characters top). This parameter is optional. If you leave it blank, the id of the song will be used instead.
@@ -26,3 +26,5 @@ Based on research & guide by Soneek
 6.  If you use a new playlist, you must edit the stage db manually to reference it.
 7.  Make sure the fields values "record_type" exist within the game (original, arrange or new_arrange).
 8.  If you enable AudioCaching, the nus3audio files will only be generated once. Be aware that if you use a prefix the name of the files might keep changing and thus generating more files in the cache.
+
+## Daisy-chaining or adding new functionalities
