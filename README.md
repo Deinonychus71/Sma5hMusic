@@ -27,7 +27,7 @@ Based on research & guide by Soneek
 7.  Make sure the fields values "record_type" exist within the game (original, arrange or new_arrange).
 8.  If you enable AudioCaching, the nus3audio files will only be generated once. Be aware that if you use a prefix the name of the files might keep changing and thus generating more files in the cache.
 
-## Daisy-chaining mods - adding new functionalities (WIP)
+## Daisy chaining mods - adding new functionalities (WIP)
 1.  The code was reworked to allow for additional mods/code to execute on top of Sm5shMusic.
 2.  A state manager takes care of load/parsing game file to c# models. Each new mod can request its own game resource in the form of /ui/param/database/xxx (for example)
 3.  This object is kept in memory, and can be modified sequentially by a succession of mod
