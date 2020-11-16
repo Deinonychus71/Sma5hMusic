@@ -3,7 +3,6 @@ using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using Sm5sh.Core.Helpers;
 using Sm5sh.Data.Ui.Param.Database;
-using Sm5sh.Data.Ui.Param.Database.PrcUiStageDatabasModels;
 using Sm5sh.Interfaces;
 using Sm5sh.Mods.StagePlaylist.Helpers;
 using Sm5sh.Mods.StagePlaylist.Models;
@@ -84,7 +83,7 @@ namespace Sm5sh.Mods.StagePlaylist
             return true;
         }
 
-        public override bool SaveChanges()
+        public override bool Build()
         {
             var daoUiStageDatabase = _state.LoadResource<PrcUiStageDatabase>(Constants.GameResources.PRC_UI_STAGE_DB_PATH);
 

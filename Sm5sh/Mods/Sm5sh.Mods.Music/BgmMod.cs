@@ -47,22 +47,15 @@ namespace Sm5sh.Mods.Music
                 var newBgmEntries = newMusicMod.LoadBgmEntries();
                 foreach(var newBgmEntry in newBgmEntries)
                 {
-                    _audioStateService.AddBgmEntry(newBgmEntry.ToneId, newBgmEntry);
+                    _audioStateService.AddOrUpdateBgmEntry(newBgmEntry);
                 }
             }
 
             return true;
         }
 
-        public override bool SaveChanges()
+        public override bool Build()
         {
-            //Save DB Items - MSBT/PRC/BIN
-            if (!_audioStateService.SaveChanges())
-            {
-                _logger.LogError("Error while saving changes to StateService");
-                return false;
-            }
-
             //Save NUS3Audio/Nus3Bank
             foreach(var bgmEntry in _audioStateService.GetModBgmEntries())
             {

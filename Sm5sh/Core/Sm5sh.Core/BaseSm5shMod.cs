@@ -16,6 +16,8 @@ namespace Sm5sh
 
         public virtual bool Init() { return true; }
 
-        public abstract bool SaveChanges();
+        public virtual bool Run() { return true; }
+
+        public virtual bool Build() { return true; }
     }
 }

@@ -47,22 +47,31 @@ namespace Sm5sh.CLI
             //Load Mods
             var mods = _serviceProvider.GetServices<ISm5shMod>();
 
-            //Emulate UI that would init mods
+            //Step that initialize a mod
+            //Execute different checks to ensure the mod can run
+            //Load resource files
+            //Load existing mods
+            _logger.LogInformation("--------------------");
             var initMods = new List<ISm5shMod>();
             foreach(var mod in mods)
             {
-                _logger.LogInformation("Initialize mod {ModeName}", mod.ModName);
+                _logger.LogInformation("{ModeName}: Initialize mod", mod.ModName);
                 if (mod.Init())
                     initMods.Add(mod);
             }
-            //Emulate UI that would save changes from mods
+
+            //Step to activate an eventual build step for a mod.
+            //In UI, this would represent a user building a mod for ARC
+            //Note: All resources managed by State Manager will be build at the end of this phase
+            _logger.LogInformation("--------------------");
             foreach (var mod in initMods)
             {
-                _logger.LogInformation("Save changes for mod {ModeName}", mod.ModName);
-                mod.SaveChanges();
+                _logger.LogInformation("{ModeName}; Build mod changes", mod.ModName);
+                mod.Build();
             }
 
             //Generate Output mod
+            //All resources managed by State Manager are built
             _logger.LogInformation("--------------------");
             _logger.LogInformation("Starting State Manager Mod Generation");
             _state.WriteChanges();

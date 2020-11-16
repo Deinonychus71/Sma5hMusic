@@ -5,6 +5,6 @@
         string ModName { get; }
         bool Init();
 
-        bool SaveChanges();
+        bool Build();
     }
 }

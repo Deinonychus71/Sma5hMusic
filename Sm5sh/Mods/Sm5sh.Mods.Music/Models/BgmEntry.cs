@@ -28,8 +28,6 @@ namespace Sm5sh.Mods.Music.Models
 
         public List<BgmEntryModels.PlaylistEntry> Playlists { get; set; }
 
-        public BgmEntryModels.BgmAudioSource Source { get; set; }
-
         public string FileName { get; set; }
 
         public override string ToString()
@@ -40,12 +38,6 @@ namespace Sm5sh.Mods.Music.Models
 
     namespace BgmEntryModels
     {
-        public enum BgmAudioSource
-        {
-            CoreGame = 0,
-            Mod = 1
-        }
-
         public class AudioCuePoints
         {
             public ulong LoopStartMs { get; set; }

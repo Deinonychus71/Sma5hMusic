@@ -60,7 +60,6 @@ namespace Sm5sh.Mods.Music
                         ToneId = toneId,
                         AudioVolume = 0, //TODO
                         RecordType = song.RecordType,
-                        Source = Models.BgmEntryModels.BgmAudioSource.Mod,
                         Title = song.Title,
                         Author = song.Author,
                         Copyright = song.Copyright,
