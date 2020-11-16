@@ -1,4 +1,4 @@
-# Sm5shMusic
+# Sm5sh.CLI + Sm5shMusic
 Script to add (not replace) musics for Smash Ultimate
 Based on research & guide by Soneek
 
@@ -27,4 +27,17 @@ Based on research & guide by Soneek
 7.  Make sure the fields values "record_type" exist within the game (original, arrange or new_arrange).
 8.  If you enable AudioCaching, the nus3audio files will only be generated once. Be aware that if you use a prefix the name of the files might keep changing and thus generating more files in the cache.
 
-## Daisy-chaining or adding new functionalities
+## Daisy-chaining mods - adding new functionalities (WIP)
+1.  The code was reworked to allow for additional mods/code to execute on top of Sm5shMusic.
+2.  A state manager takes care of load/parsing game file to c# models. Each new mod can request its own game resource in the form of /ui/param/database/xxx (for example)
+3.  This object is kept in memory, and can be modified sequentially by a succession of mod
+4.  When mods are finished running (or a user click Build in future UI), the state manager will write back all the game files to an output folder.
+5.  Look at the Script.cs in Sm5sh.CLI to get started
+6.  For now only a few files / filetypes can be loaded from state manager, register new resource providers to support more formats.
+
+## Todo
+1.  Sm5sh: Volume support, start suddendeath, start transition and whatever can be figured out
+2.  Adding a lot more debug logging
+3.  More cleanup
+4.  Loading external mods/resource providers
+5.  UI (maybe... don't expect it soon / help much appreciated)
