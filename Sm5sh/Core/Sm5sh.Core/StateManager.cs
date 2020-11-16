@@ -15,8 +15,8 @@ namespace Sm5sh
         private readonly IServiceProvider _serviceProvider;
         private readonly ILogger _logger;
         private readonly IOptions<Sm5shOptions> _config;
-        private Dictionary<string, IResourceProvider> _resourceProviders;
-        private Dictionary<string, IStateManagerDb> _resources;
+        private readonly Dictionary<string, IResourceProvider> _resourceProviders;
+        private readonly Dictionary<string, IStateManagerDb> _resources;
 
         public IEnumerable<IStateManagerDb> Resources { get { return _resources.Values; } }
 

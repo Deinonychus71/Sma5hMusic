@@ -14,20 +14,18 @@ namespace Sm5sh.CLI
         private readonly IStateManager _state;
         private readonly IServiceProvider _serviceProvider;
         private readonly IWorkspaceManager _workspace;
-        private readonly IOptions<Sm5shOptions> _config;
 
-        public Script(IServiceProvider serviceProvider, IOptions<Sm5shOptions> config, IWorkspaceManager workspace, IStateManager state, ILogger<Script> logger)
+        public Script(IServiceProvider serviceProvider, IWorkspaceManager workspace, IStateManager state, ILogger<Script> logger)
         {
             _serviceProvider = serviceProvider;
             _workspace = workspace;
             _state = state;
             _logger = logger;
-            _config = config;
         }
 
         public async Task Run()
         {
-            _logger.LogInformation("Sm5shMusic v.01");
+            _logger.LogInformation("Sm5sh.CLI v.02");
             _logger.LogInformation("--------------------");
             _logger.LogInformation("research: soneek");
             _logger.LogInformation("prcEditor: https://github.com/BenHall-7/paracobNET");
