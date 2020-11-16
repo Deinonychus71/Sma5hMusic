@@ -5,10 +5,10 @@ Based on research & guide by Soneek
 **This is highly experimental! Bugs may happen.**
 
 ## Repos of the different tools
-1. prcEditor: https://github.com/BenHall-7/paracobNET
-2. msbtEditor: https://github.com/IcySon55/3DLandMSBTeditor
-3. nus3audio:  https://github.com/jam1garner/nus3audio-rs
-4. bgm-property:  https://github.com/jam1garner/smash-bgm-property
+1. prcEditor: https://github.com/BenHall-7/paracobNET - BenHall-7
+2. msbtEditor: https://github.com/IcySon55/3DLandMSBTeditor - IcySon55 & exelix11
+3. nus3audio:  https://github.com/jam1garner/nus3audio-rs - jam1garner
+4. bgm-property:  https://github.com/jam1garner/smash-bgm-property - jam1garner
 5. VGAudio:  https://github.com/Thealexbarney/VGAudio
 6. CrossArc: https://github.com/Ploaj/ArcCross
 
