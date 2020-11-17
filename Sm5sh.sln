@@ -25,7 +25,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ResourceProviders", "Resour
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Mods", "Mods", "{395A4B58-0CF2-415E-95E3-B34AD0D0EDCB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sm5sh.Mods.StagePlaylist", "Sm5sh\Mods\Sm5sh.Mods.StagePlaylist\Sm5sh.Mods.StagePlaylist.csproj", "{92AFF912-B936-43AB-B6A5-534FA75F5ACC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sm5sh.Mods.StagePlaylist", "Sm5sh\Mods\Sm5sh.Mods.StagePlaylist\Sm5sh.Mods.StagePlaylist.csproj", "{92AFF912-B936-43AB-B6A5-534FA75F5ACC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sm5sh.GUI", "Sm5sh.GUI\Sm5sh.GUI.csproj", "{30EE9CC0-2BB2-4005-8058-1FCAEBAEB0AD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -61,6 +63,10 @@ Global
 		{92AFF912-B936-43AB-B6A5-534FA75F5ACC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{92AFF912-B936-43AB-B6A5-534FA75F5ACC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{92AFF912-B936-43AB-B6A5-534FA75F5ACC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{30EE9CC0-2BB2-4005-8058-1FCAEBAEB0AD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{30EE9CC0-2BB2-4005-8058-1FCAEBAEB0AD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{30EE9CC0-2BB2-4005-8058-1FCAEBAEB0AD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{30EE9CC0-2BB2-4005-8058-1FCAEBAEB0AD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
