@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 
 namespace Sm5sh.Mods.Music.Models
 {
@@ -31,8 +32,12 @@ namespace Sm5sh.Mods.Music.Models
 
         [JsonProperty("record_type")]
         public string RecordType { get; set; }
+
         [JsonProperty("playlists")]
         public List<PlaylistInfo> Playlists { get; set; }
+
+        [JsonProperty("special_category")]
+        public SpecialCategory SpecialCategory { get; set; }
     }
 
     public class Game
@@ -51,5 +56,25 @@ namespace Sm5sh.Mods.Music.Models
     {
         [JsonProperty("id")]
         public string Id { get; set; }
+    }
+
+    public class SpecialCategory
+    {
+        [JsonProperty("category")]
+        public EnumSpecialCategories Category { get; set; }
+
+        [JsonProperty("value")]
+        public string Value { get; set; }
+    }
+
+    public enum EnumSpecialCategories
+    {
+        Unknown,
+        //mario_hurry_up,
+        //mario_maker,
+        [EnumMember(Value = "persona_stage")]
+        Persona,
+        [EnumMember(Value = "sf_pinch")]
+        SF_Pinch,
     }
 }
