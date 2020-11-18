@@ -94,11 +94,12 @@ namespace Sm5sh.Mods.Music
 
         private Models.BgmEntryModels.SpecialCategoryEntry GetSpecialCategory(string toneId, SpecialCategory specialCategory)
         {
+            if (specialCategory == null)
+                return null;
+
             if (specialCategory?.Parameters == null)
-            {
                 _logger.LogWarning("The special category for {ToneId} was disabled. Its configuration was invalid.", toneId);
                 return null;
-            }
 
             switch (specialCategory.Category)
             {
