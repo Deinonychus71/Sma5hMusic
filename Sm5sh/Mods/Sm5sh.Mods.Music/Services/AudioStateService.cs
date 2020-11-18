@@ -130,8 +130,9 @@ namespace Sm5sh.Mods.Music.Services
                     },
                     FileName = _toneIdKeyReferences.ContainsKey(toneId) ? _toneIdKeyReferences[toneId].FileName : null,
                     Playlists = paramBgmPlaylists.Where(p => p.Value.Any(p => p.UiBgmId.HexValue == dbRootEntry.UiBgmId.HexValue)).Select(p => new PlaylistEntry() { Id = p.Key }).ToList(),
-                    IsDlc = dbRootEntry.IsDlc,
+                    IsDlc = dbRootEntry.IsDlc, 
                     IsPatch = dbRootEntry.IsPatch,
+                    SpecialCategory = ToSpecialCategory(setStreamEntry),
                     Title = new Dictionary<string, string>(),
                     Author = new Dictionary<string, string>(),
                     Copyright = new Dictionary<string, string>()
@@ -255,11 +256,13 @@ namespace Sm5sh.Mods.Music.Services
             var setStreamEntry = paramBgmDatabase.StreamSetEntries[keyRefs.StreamSetKey];
             var assignedInfoEntry = paramBgmDatabase.AssignedInfoEntries[keyRefs.AssignedInfoKey];
             var streamPropertyEntry = paramBgmDatabase.StreamPropertyEntries[keyRefs.StreamPropertyKey];
-
+            //DB Root
             dbRootEntry.UiGameTitleId = new PrcHash40(bgmEntry.GameTitle.GameTitleId);
             dbRootEntry.RecordType = new PrcHash40(bgmEntry.RecordType);
             dbRootEntry.IsPatch = bgmEntry.IsPatch;
             dbRootEntry.IsDlc = bgmEntry.IsDlc;
+            //Stream Set
+            setStreamEntry = FromSpecialCategory(setStreamEntry, bgmEntry?.SpecialCategory);
 
             //GameTitle PRC
             if (!paramGameTitleDatabaseRoot.ContainsKey(bgmEntry.GameTitle.GameTitleId))
@@ -395,6 +398,95 @@ namespace Sm5sh.Mods.Music.Services
                     msbtBgm.Entries.Remove(copyrightLabel);
                 }
             }
+        }
+
+        private SpecialCategoryEntry ToSpecialCategory(PrcBgmStreamSetEntry setStreamEntry)
+        {
+            if (setStreamEntry.SpecialCategory?.HexValue == 0)
+                return null;
+
+            var output = new SpecialCategoryEntry()
+            {
+                Id = setStreamEntry.SpecialCategory.HexValue,
+                Parameters = new List<string>()
+            };
+
+            if (setStreamEntry.Info1 != null && setStreamEntry.Info1.HexValue != 0)
+                output.Parameters.Add(setStreamEntry.Info1.StringValue);
+            if (setStreamEntry.Info2 != null && setStreamEntry.Info2.HexValue != 0)
+                output.Parameters.Add(setStreamEntry.Info2.StringValue);
+            if (setStreamEntry.Info3 != null && setStreamEntry.Info3.HexValue != 0)
+                output.Parameters.Add(setStreamEntry.Info3.StringValue);
+            if (setStreamEntry.Info4 != null && setStreamEntry.Info4.HexValue != 0)
+                output.Parameters.Add(setStreamEntry.Info4.StringValue);
+            if (setStreamEntry.Info5 != null && setStreamEntry.Info5.HexValue != 0)
+                output.Parameters.Add(setStreamEntry.Info5.StringValue);
+            if (setStreamEntry.Info6 != null && setStreamEntry.Info6.HexValue != 0)
+                output.Parameters.Add(setStreamEntry.Info6.StringValue);
+            if (setStreamEntry.Info7 != null && setStreamEntry.Info7.HexValue != 0)
+                output.Parameters.Add(setStreamEntry.Info7.StringValue);
+            if (setStreamEntry.Info8 != null && setStreamEntry.Info8.HexValue != 0)
+                output.Parameters.Add(setStreamEntry.Info8.StringValue);
+            if (setStreamEntry.Info9 != null && setStreamEntry.Info9.HexValue != 0)
+                output.Parameters.Add(setStreamEntry.Info9.StringValue);
+            if (setStreamEntry.Info10 != null && setStreamEntry.Info10.HexValue != 0)
+                output.Parameters.Add(setStreamEntry.Info10.StringValue);
+            if (setStreamEntry.Info11 != null && setStreamEntry.Info11.HexValue != 0)
+                output.Parameters.Add(setStreamEntry.Info11.StringValue);
+            if (setStreamEntry.Info12 != null && setStreamEntry.Info12.HexValue != 0)
+                output.Parameters.Add(setStreamEntry.Info12.StringValue);
+            if (setStreamEntry.Info13 != null && setStreamEntry.Info13.HexValue != 0)
+                output.Parameters.Add(setStreamEntry.Info13.StringValue);
+            if (setStreamEntry.Info14 != null && setStreamEntry.Info14.HexValue != 0)
+                output.Parameters.Add(setStreamEntry.Info14.StringValue);
+            if (setStreamEntry.Info15 != null && setStreamEntry.Info15.HexValue != 0)
+                output.Parameters.Add(setStreamEntry.Info15.StringValue);
+
+            return output;
+        }
+
+        public PrcBgmStreamSetEntry FromSpecialCategory(PrcBgmStreamSetEntry setStreamEntry, SpecialCategoryEntry specialEntry)
+        {
+            if (specialEntry == null)
+                return setStreamEntry;
+
+            setStreamEntry.SpecialCategory = new PrcHash40(specialEntry.Id);
+
+            if (specialEntry.Parameters == null)
+                return setStreamEntry;
+
+            if (specialEntry.Parameters.Count > 0)
+                setStreamEntry.Info1 = new PrcHash40(specialEntry.Parameters[0]);
+            if (specialEntry.Parameters.Count > 1)
+                setStreamEntry.Info2 = new PrcHash40(specialEntry.Parameters[1]);
+            if (specialEntry.Parameters.Count > 2)
+                setStreamEntry.Info3 = new PrcHash40(specialEntry.Parameters[2]);
+            if (specialEntry.Parameters.Count > 3)
+                setStreamEntry.Info4 = new PrcHash40(specialEntry.Parameters[3]);
+            if (specialEntry.Parameters.Count > 4)
+                setStreamEntry.Info5 = new PrcHash40(specialEntry.Parameters[4]);
+            if (specialEntry.Parameters.Count > 5)
+                setStreamEntry.Info6 = new PrcHash40(specialEntry.Parameters[5]);
+            if (specialEntry.Parameters.Count > 6)
+                setStreamEntry.Info7 = new PrcHash40(specialEntry.Parameters[6]);
+            if (specialEntry.Parameters.Count > 7)
+                setStreamEntry.Info8 = new PrcHash40(specialEntry.Parameters[7]);
+            if (specialEntry.Parameters.Count > 8)
+                setStreamEntry.Info9 = new PrcHash40(specialEntry.Parameters[8]);
+            if (specialEntry.Parameters.Count > 9)
+                setStreamEntry.Info10 = new PrcHash40(specialEntry.Parameters[9]);
+            if (specialEntry.Parameters.Count > 10)
+                setStreamEntry.Info11 = new PrcHash40(specialEntry.Parameters[10]);
+            if (specialEntry.Parameters.Count > 11)
+                setStreamEntry.Info12 = new PrcHash40(specialEntry.Parameters[11]);
+            if (specialEntry.Parameters.Count > 12)
+                setStreamEntry.Info13 = new PrcHash40(specialEntry.Parameters[12]);
+            if (specialEntry.Parameters.Count > 13)
+                setStreamEntry.Info14 = new PrcHash40(specialEntry.Parameters[13]);
+            if (specialEntry.Parameters.Count > 14)
+                setStreamEntry.Info15 = new PrcHash40(specialEntry.Parameters[14]);
+
+            return setStreamEntry;
         }
 
         #region Utils

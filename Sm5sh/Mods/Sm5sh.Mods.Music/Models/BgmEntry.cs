@@ -30,6 +30,8 @@ namespace Sm5sh.Mods.Music.Models
 
         public string FileName { get; set; }
 
+        public BgmEntryModels.SpecialCategoryEntry SpecialCategory { get; set; }
+
         public override string ToString()
         {
             return ToneId;
@@ -58,5 +60,21 @@ namespace Sm5sh.Mods.Music.Models
                 return Id;
             }
         }
+
+        public enum SpecialCategories
+        {
+            Unknown,
+            PersonaStage,
+            StreetFighterPinch
+        }
+
+        public class SpecialCategoryEntry
+        {
+            public ulong Id { get; set; }
+
+            public List<string> Parameters { get; set; }
+        }
+
+
     }
 }

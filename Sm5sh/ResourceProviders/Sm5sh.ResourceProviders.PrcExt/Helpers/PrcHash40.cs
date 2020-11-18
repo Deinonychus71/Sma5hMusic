@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Sm5sh.ResourceProviders.Prc.Helpers
 {
@@ -22,7 +23,14 @@ namespace Sm5sh.ResourceProviders.Prc.Helpers
 
         public PrcHash40(string stringValue)
         {
-            HexValue = paracobNET.Hash40Util.StringToHash40(stringValue);
+            if (stringValue.StartsWith("0x", System.StringComparison.OrdinalIgnoreCase))
+            {
+                HexValue = Convert.ToUInt64(stringValue, 16);
+            }
+            else
+            {
+                HexValue = paracobNET.Hash40Util.StringToHash40(stringValue);
+            }
             StringValue = stringValue;
         }
 

@@ -5,6 +5,7 @@ using Sm5sh.Core.Helpers;
 using Sm5sh.Mods.Music.Helpers;
 using Sm5sh.Mods.Music.Interfaces;
 using Sm5sh.Mods.Music.Models;
+using Sm5sh.ResourceProviders.Prc.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -63,6 +64,7 @@ namespace Sm5sh.Mods.Music
                         Title = song.Title,
                         Author = song.Author,
                         Copyright = song.Copyright,
+                        
                         GameTitle = new GameTitleEntry()
                         {
                             GameTitleId = game.Id,
@@ -74,7 +76,8 @@ namespace Sm5sh.Mods.Music
                         IsPatch = hasDlcPlaylistId,
                         Playlists = song.Playlists.Select(p => new Models.BgmEntryModels.PlaylistEntry() {  Id = p.Id}).ToList(),
                         FileName = audioFilePath,
-                        AudioCuePoints = audioCuePoints
+                        AudioCuePoints = audioCuePoints,
+                        SpecialCategory = GetSpecialCategory(toneId, song?.SpecialCategory)
                     });
                     index++;
                     _logger.LogInformation("Mod {MusicMod}: Adding song {Song} ({ToneName})", _musicModConfig.Name, song.Id, toneId);
@@ -87,6 +90,38 @@ namespace Sm5sh.Mods.Music
         private string GetMusicModAudioFile(string songFileName)
         {
             return Path.Combine(_musicModPath, songFileName);
+        }
+
+        private Models.BgmEntryModels.SpecialCategoryEntry GetSpecialCategory(string toneId, SpecialCategory specialCategory)
+        {
+            if (specialCategory?.Parameters == null)
+            {
+                _logger.LogWarning("The special category for {ToneId} was disabled. Its configuration was invalid.", toneId);
+                return null;
+            }
+
+            switch (specialCategory.Category)
+            {
+                case SpecialCategories.Persona:
+                    if (specialCategory.Parameters?.Count != 1 || !Constants.InternalIds.SPECIAL_CATEGORY_PERSONA_VALUES.Contains(specialCategory.Parameters[0]))
+                    {
+                        _logger.LogWarning("The special category for {ToneId} was disabled. Its configuration was invalid.", toneId);
+                        return null;
+                    }
+                    var pinchSong = specialCategory.Parameters[0];
+                    if (!pinchSong.StartsWith(Constants.InternalIds.INFO_ID_PREFIX))
+                        pinchSong = $"{Constants.InternalIds.INFO_ID_PREFIX}{pinchSong}";
+                    return new Models.BgmEntryModels.SpecialCategoryEntry() { Id = new PrcHash40(pinchSong).HexValue };
+                case SpecialCategories.SFPinch:
+                    if (specialCategory.Parameters.Count == 0)
+                    {
+                        _logger.LogWarning("The special category for {ToneId} was disabled. Its configuration was invalid.", toneId);
+                        return null;
+                    }
+                    return new Models.BgmEntryModels.SpecialCategoryEntry() { Id = Constants.InternalIds.SPECIAL_CATEGORY_SF_PINCH, Parameters = new List<string>() { specialCategory.Parameters[0] } };
+            }
+
+            return null;
         }
 
         private MusicModConfig LoadMusicModConfig()

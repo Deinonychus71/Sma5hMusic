@@ -61,13 +61,13 @@ namespace Sm5sh.Mods.Music.Models
     public class SpecialCategory
     {
         [JsonProperty("category")]
-        public EnumSpecialCategories Category { get; set; }
+        public SpecialCategories Category { get; set; }
 
-        [JsonProperty("value")]
-        public string Value { get; set; }
+        [JsonProperty("parameters")]
+        public List<string> Parameters { get; set; }
     }
 
-    public enum EnumSpecialCategories
+    public enum SpecialCategories
     {
         Unknown,
         //mario_hurry_up,
@@ -75,6 +75,6 @@ namespace Sm5sh.Mods.Music.Models
         [EnumMember(Value = "persona_stage")]
         Persona,
         [EnumMember(Value = "sf_pinch")]
-        SF_Pinch,
+        SFPinch,
     }
 }
