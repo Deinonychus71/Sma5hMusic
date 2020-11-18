@@ -63,6 +63,16 @@ namespace Sm5sh.Mods.Music.ResourceProviders
 
             var output = _ymlHelper.ReadYmlFile<List<BgmPropertyEntry>>(tempFile);
 
+            if(output.Count == 0)
+            {
+                throw new Exception("Error while generating YML for BGM Property.");
+            }
+
+            if (output[0].NameId.EndsWith('\r'))
+            {
+                throw new Exception("Error while generating YML for BGM Property. Your bgm_hashes may have crlf endings which are known to cause an issue with bgm-property");
+            }
+
 
             //Delete temp file
             File.Delete(tempFile);
