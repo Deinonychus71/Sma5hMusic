@@ -1,0 +1,57 @@
+{
+  "author": "superme",
+  "name": "Cadence of Hyrule Pack",
+  "games": [
+    {
+      "series_id": "zelda",
+      "id": "cadence_of_hyrule",
+      "title": {
+        "us_en": "Cadence of Hyrule"
+      },
+      "songs": [
+        {
+          "file_name": "c49_cad_overworld.idsp",
+          "id": "c49_cad_overworld",
+          "record_type": "arrange",
+          "title": {
+            "us_en": "Overworld (Combat)"
+          },
+          "copyright": {
+            "us_en": "Nintendo"
+          },
+          "author": {
+            "us_en": "Nintendo"
+          },
+          "playlists": [
+            {
+              "id": "zelda"
+            }
+          ],
+          "special_category": {
+            "category": "sf_pinch",
+            "parameters": [ "c50_cad_overworld_2" ]
+          }
+        },
+        {
+          "file_name": "c50_cad_overworld_2.idsp",
+          "id": "c50_cad_overworld_2",
+          "record_type": "arrange",
+          "title": {
+            "us_en": "Overworld (Combat)"
+          },
+          "copyright": {
+            "us_en": "Nintendo"
+          },
+          "author": {
+            "us_en": "Nintendo"
+          },
+          "playlists": [
+            {
+              "id": "zelda"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

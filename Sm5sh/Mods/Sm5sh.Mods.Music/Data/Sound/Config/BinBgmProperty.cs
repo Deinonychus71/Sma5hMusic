@@ -33,6 +33,11 @@ namespace Sm5sh.Mods.Music.Data.Sound.Config
 
             [YamlMember(Alias = "total_samples")]
             public ulong TotalSamples { get; set; }
+
+            public override string ToString()
+            {
+                return NameId;
+            }
         }
     }
 }
