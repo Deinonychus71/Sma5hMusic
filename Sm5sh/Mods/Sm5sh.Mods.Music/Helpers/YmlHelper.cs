@@ -27,7 +27,7 @@ namespace Sm5sh.Mods.Music.Helpers
         {
             //Validate file
             if (!File.Exists(inputFile))
-                throw new Exception($"PRC File does not exist: {inputFile}");
+                throw new Exception($"YML File does not exist: {inputFile}");
 
             //Open file
             var yamlStr = File.ReadAllText(inputFile);
