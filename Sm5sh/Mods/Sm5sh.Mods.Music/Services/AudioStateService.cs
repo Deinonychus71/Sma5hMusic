@@ -411,6 +411,7 @@ namespace Sm5sh.Mods.Music.Services
                 Parameters = new List<string>()
             };
 
+            //TODO: Yeah yeah it's not great. Will need to think about that.
             if (setStreamEntry.Info1 != null && setStreamEntry.Info1.HexValue != 0)
                 output.Parameters.Add(setStreamEntry.Info1.StringValue);
             if (setStreamEntry.Info2 != null && setStreamEntry.Info2.HexValue != 0)
@@ -455,6 +456,7 @@ namespace Sm5sh.Mods.Music.Services
             if (specialEntry.Parameters == null)
                 return setStreamEntry;
 
+            //TODO: Yeah yeah it's not great. Will need to think about that.
             if (specialEntry.Parameters.Count > 0)
                 setStreamEntry.Info1 = new PrcHash40(specialEntry.Parameters[0]);
             if (specialEntry.Parameters.Count > 1)
