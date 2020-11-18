@@ -289,23 +289,26 @@ namespace Sm5sh.Mods.Music.Services
             binBgmPropertyEntries[toneId].NameId = toneId;
 
             //Playlists
-            foreach (var playlistId in bgmEntry.Playlists)
+            if (bgmEntry.Playlists != null)
             {
-                var paramBgmPlaylist = paramBgmDatabase.PlaylistEntries.FirstOrDefault(p => p.Id.StringValue == playlistId.Id)?.Values;
-                if (paramBgmPlaylist == null)
+                foreach (var playlistId in bgmEntry.Playlists)
                 {
-                    paramBgmPlaylist = new List<PrcBgmPlaylistEntry>();
-                    paramBgmDatabase.PlaylistEntries.Add(new PcrFilterStruct<PrcBgmPlaylistEntry>()
+                    var paramBgmPlaylist = paramBgmDatabase.PlaylistEntries.FirstOrDefault(p => p.Id.StringValue == playlistId.Id)?.Values;
+                    if (paramBgmPlaylist == null)
                     {
-                        Id = new PrcHash40(playlistId.Id),
-                        Values = paramBgmPlaylist
-                    });
-                }
+                        paramBgmPlaylist = new List<PrcBgmPlaylistEntry>();
+                        paramBgmDatabase.PlaylistEntries.Add(new PcrFilterStruct<PrcBgmPlaylistEntry>()
+                        {
+                            Id = new PrcHash40(playlistId.Id),
+                            Values = paramBgmPlaylist
+                        });
+                    }
 
-                var newPlaylistEntry = new PrcBgmPlaylistEntry() { UiBgmId = new PrcHash40(dbRootEntry.UiBgmId.StringValue) };
-                newPlaylistEntry.SetOrder((short)paramBgmPlaylist.Count);
-                newPlaylistEntry.SetIncidence(500);
-                paramBgmPlaylist.Add(newPlaylistEntry);
+                    var newPlaylistEntry = new PrcBgmPlaylistEntry() { UiBgmId = new PrcHash40(dbRootEntry.UiBgmId.StringValue) };
+                    newPlaylistEntry.SetOrder((short)paramBgmPlaylist.Count);
+                    newPlaylistEntry.SetIncidence(500);
+                    paramBgmPlaylist.Add(newPlaylistEntry);
+                }
             }
 
             //MSBT
