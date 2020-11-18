@@ -27,5 +27,18 @@ namespace Sm5sh.ResourceProviders.Prc.Helpers
         }
 
         public static PrcHash40 EmptyValue = new PrcHash40(0);
+
+        public override bool Equals(object obj)
+        {
+            if (!(obj is PrcHash40))
+                return false;
+
+            return ((PrcHash40)obj).HexValue == this.HexValue;
+        }
+
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
+        }
     }
 }

@@ -92,17 +92,16 @@ namespace Sm5sh.Mods.Music.Services
             var daoMsbtTitle = GetGameTitleDatabases();
 
             var output = new Dictionary<string, BgmEntry>();
-            foreach (var dbRootEntryKeyValue in paramBgmDbRoot)
+            foreach (var daoBinPropertyKeyValue in daoBinPropertyEntries)
             {
-                var toneId = dbRootEntryKeyValue.Key.Replace(Constants.InternalIds.UI_BGM_ID_PREFIX, string.Empty);
+                var toneId = daoBinPropertyKeyValue.Key;
                 var keyRef = GetToneIdKeyReferences(toneId);
-                
-                //For now, we're only treating songs that have all the data we need
-                if (!paramBgmStreamSet.ContainsKey(keyRef.StreamSetKey) || !paramBgmAssignedInfo.ContainsKey(keyRef.AssignedInfoKey) ||
-                   !paramBgmStreamProperty.ContainsKey(keyRef.StreamPropertyKey) || !daoBinPropertyEntries.ContainsKey(toneId))
+
+                //Very few songs are currently not in the db - therefore not supported for now.
+                if (!paramBgmDbRoot.ContainsKey(keyRef.DbRootKey))
                     continue;
 
-                var dbRootEntry = dbRootEntryKeyValue.Value;
+                var dbRootEntry = paramBgmDbRoot[keyRef.DbRootKey];
                 var setStreamEntry = paramBgmStreamSet[keyRef.StreamSetKey];
                 var assignedInfoEntry = paramBgmAssignedInfo[keyRef.AssignedInfoKey];
                 var streamPropertyEntry = paramBgmStreamProperty[keyRef.StreamPropertyKey];
@@ -318,22 +317,28 @@ namespace Sm5sh.Mods.Music.Services
             {
                 var entries = msbtDb.Value.Entries;
 
-                if (bgmEntry.Title.ContainsKey(msbtDb.Key))
+                if (bgmEntry.Title != null && bgmEntry.Title.ContainsKey(msbtDb.Key) && !string.IsNullOrEmpty(bgmEntry.Title[msbtDb.Key]))
                     entries[titleLabel] = bgmEntry.Title[msbtDb.Key];
-                else if (bgmEntry.Title.ContainsKey(defaultLocale))
+                else if (bgmEntry.Title != null && bgmEntry.Title.ContainsKey(defaultLocale) && !string.IsNullOrEmpty(bgmEntry.Title[msbtDb.Key]))
                     entries[titleLabel] = bgmEntry.Title[defaultLocale];
                 else
                     entries[titleLabel] = "MISSING";
 
-                if (bgmEntry.Author.ContainsKey(msbtDb.Key))
-                    entries[authorLabel] = bgmEntry.Author[msbtDb.Key];
-                else if (bgmEntry.Author.ContainsKey(defaultLocale))
-                    entries[authorLabel] = bgmEntry.Author[defaultLocale];
+                if (bgmEntry.Author != null)
+                {
+                    if (bgmEntry.Author.ContainsKey(msbtDb.Key) && !string.IsNullOrEmpty(bgmEntry.Author[msbtDb.Key]))
+                        entries[authorLabel] = bgmEntry.Author[msbtDb.Key];
+                    else if (bgmEntry.Author.ContainsKey(defaultLocale) && !string.IsNullOrEmpty(bgmEntry.Author[msbtDb.Key]))
+                        entries[authorLabel] = bgmEntry.Author[defaultLocale];
+                }
 
-                if (bgmEntry.Copyright.ContainsKey(msbtDb.Key))
-                    entries[copyrightLabel] = bgmEntry.Copyright[msbtDb.Key];
-                else if (bgmEntry.Copyright.ContainsKey(defaultLocale))
-                    entries[copyrightLabel] = bgmEntry.Copyright[defaultLocale];
+                if (bgmEntry.Copyright != null)
+                {
+                    if (bgmEntry.Copyright.ContainsKey(msbtDb.Key) && !string.IsNullOrEmpty(bgmEntry.Copyright[msbtDb.Key]))
+                        entries[copyrightLabel] = bgmEntry.Copyright[msbtDb.Key];
+                    else if (bgmEntry.Copyright.ContainsKey(defaultLocale) && !string.IsNullOrEmpty(bgmEntry.Copyright[msbtDb.Key]))
+                        entries[copyrightLabel] = bgmEntry.Copyright[defaultLocale];
+                }
             }
             foreach (var msbtDb in GetGameTitleDatabases())
             {

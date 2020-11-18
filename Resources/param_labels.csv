@@ -16754,7 +16754,7 @@ ID,Label
 0x1762dcdfe9,hud_short_message_param
 0x0e4171a509,hud_star_param
 0x04bcbffc31,huey
-0x11cb719cef,huge_area_outside
+0x11cb719cef,set_c01_zld_title
 0x10c61f984a,hugebottle_start
 0x0cfaf466b8,hugh_baldwin
 0x099dd17c80,hulahoop1
