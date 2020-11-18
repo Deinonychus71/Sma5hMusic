@@ -5,10 +5,11 @@ Based on research & guide by Soneek
 **This is highly experimental! Bugs may happen.**
 
 ## Repos of the different tools
-1. prcEditor: https://github.com/BenHall-7/paracobNET
-2. msbtEditor: https://github.com/IcySon55/3DLandMSBTeditor
-3. nus3audio:  https://github.com/jam1garner/nus3audio-rs
-4. bgm-property:  https://github.com/jam1garner/smash-bgm-property
+1. prcEditor: https://github.com/BenHall-7/paracobNET - BenHall-7
+2. paramLabels: https://github.com/ultimate-research/param-labels
+2. msbtEditor: https://github.com/IcySon55/3DLandMSBTeditor - IcySon55 & exelix11
+3. nus3audio:  https://github.com/jam1garner/nus3audio-rs - jam1garner
+4. bgm-property:  https://github.com/jam1garner/smash-bgm-property - jam1garner
 5. VGAudio:  https://github.com/Thealexbarney/VGAudio
 6. CrossArc: https://github.com/Ploaj/ArcCross
 
@@ -40,4 +41,5 @@ Based on research & guide by Soneek
 2.  Adding a lot more debug logging
 3.  More cleanup
 4.  Loading external mods/resource providers
-5.  UI (maybe... don't expect it soon / help much appreciated)
+5.  Add tests against collisions when adding new songs
+6.  UI (maybe... don't expect it soon / help much appreciated)
