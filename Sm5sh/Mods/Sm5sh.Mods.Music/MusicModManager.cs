@@ -108,17 +108,17 @@ namespace Sm5sh.Mods.Music
                         _logger.LogWarning("The special category for {ToneId} was disabled. Its configuration was invalid.", toneId);
                         return null;
                     }
-                    var pinchSong = specialCategory.Parameters[0];
-                    if (!pinchSong.StartsWith(Constants.InternalIds.INFO_ID_PREFIX))
-                        pinchSong = $"{Constants.InternalIds.INFO_ID_PREFIX}{pinchSong}";
-                    return new Models.BgmEntryModels.SpecialCategoryEntry() { Id = new PrcHash40(pinchSong).HexValue };
+                    return new Models.BgmEntryModels.SpecialCategoryEntry() { Id = new PrcHash40(specialCategory.Parameters[0]).HexValue };
                 case SpecialCategories.SFPinch:
                     if (specialCategory.Parameters.Count == 0)
                     {
                         _logger.LogWarning("The special category for {ToneId} was disabled. Its configuration was invalid.", toneId);
                         return null;
                     }
-                    return new Models.BgmEntryModels.SpecialCategoryEntry() { Id = Constants.InternalIds.SPECIAL_CATEGORY_SF_PINCH, Parameters = new List<string>() { specialCategory.Parameters[0] } };
+                    var pinchSong = specialCategory.Parameters[0];
+                    if (!pinchSong.StartsWith(Constants.InternalIds.INFO_ID_PREFIX))
+                        pinchSong = $"{Constants.InternalIds.INFO_ID_PREFIX}{pinchSong}";
+                    return new Models.BgmEntryModels.SpecialCategoryEntry() { Id = Constants.InternalIds.SPECIAL_CATEGORY_SF_PINCH, Parameters = new List<string>() { pinchSong } };
             }
 
             return null;
