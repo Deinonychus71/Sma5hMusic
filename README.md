@@ -41,4 +41,5 @@ Based on research & guide by Soneek
 2.  Adding a lot more debug logging
 3.  More cleanup
 4.  Loading external mods/resource providers
-5.  UI (maybe... don't expect it soon / help much appreciated)
+5.  Add tests against collisions when adding new songs
+6.  UI (maybe... don't expect it soon / help much appreciated)
