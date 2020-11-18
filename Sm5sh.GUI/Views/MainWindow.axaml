@@ -1,40 +1,24 @@
 ﻿<Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:vm="clr-namespace:Sm5sh.GUI.ViewModels;assembly=Sm5sh.GUI"
+        xmlns:uc="clr-namespace:Sm5sh.GUI.UserControls;assembly=Sm5sh.GUI"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        mc:Ignorable="d" MinWidth="1280" MinHeight="720" d:DesignWidth="1280" d:DesignHeight="720"
         x:Class="Sm5sh.GUI.Views.MainWindow"
         Icon="/Assets/avalonia-logo.ico"
         Title="Sm5sh.GUI">
   <Design.DataContext>
     <vm:MainWindowViewModel/>
   </Design.DataContext>
-  <Grid ColumnDefinitions="*" RowDefinitions="Auto,Auto,Auto">
-    <DataGrid CanUserReorderColumns="True" CanUserResizeColumns="True" CanUserSortColumns="True" Items="{Binding BgmEntries}">
-      <DataGrid.Columns>
-        <DataGridTemplateColumn Header="Tone ID" Width="2*">
-          <DataGridTemplateColumn.CellTemplate>
-            <DataTemplate >
-              <ComboBox>
-                <ComboBoxItem>Itest</ComboBoxItem>
-              </ComboBox>
-            </DataTemplate>
-          </DataGridTemplateColumn.CellTemplate>
-        </DataGridTemplateColumn>
-        <DataGridTextColumn Header="Tone ID"
-                            Binding="{Binding ToneId}"
-                            Width="2*" />
-        <DataGridTextColumn Header="Title"
-                            Binding="{Binding Title[us_en]}"
-                            Width="2*" />
-        <DataGridTextColumn Header="Series"
-                            Binding="{Binding GameTitle.SeriesId}"
-                            Width="2*" />
-        <DataGridTextColumn Header="Copyright"
-                            Binding="{Binding GameTitle.Title[us_en]}"
-                            Width="2*" />
-      </DataGrid.Columns>
-    </DataGrid>
+  <Grid RowDefinitions="30,50,*,20">
+    <Grid.ColumnDefinitions>
+      <ColumnDefinition Width="*"></ColumnDefinition>
+      <ColumnDefinition Width="5*"></ColumnDefinition>
+      <ColumnDefinition Width="2*"></ColumnDefinition>
+    </Grid.ColumnDefinitions>
+    <Expander Background="Aqua" ExpandDirection="Right" Grid.Row="2" Grid.Column="0">
+      <uc:BgmFilters ></uc:BgmFilters>
+    </Expander>
   </Grid>
 </Window>
