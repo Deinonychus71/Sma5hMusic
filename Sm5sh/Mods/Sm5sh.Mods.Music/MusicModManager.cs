@@ -64,7 +64,7 @@ namespace Sm5sh.Mods.Music
                     var audioCuePoints = _audioMetadataService.GetCuePoints(audioFilePath);
 
                     var toneId = song.Id;
-                    var hasDlcPlaylistId = song.Playlists.Any(p => CoreConstants.DLC_STAGES.Contains(p.Id));
+                    var hasDlcPlaylistId = song.Playlists != null && song.Playlists.Any(p => CoreConstants.DLC_STAGES.Contains(p.Id));
                     output.Add(new BgmEntry()
                     {
                         ToneId = toneId,
@@ -83,7 +83,7 @@ namespace Sm5sh.Mods.Music
                         },
                         IsDlc = hasDlcPlaylistId,
                         IsPatch = hasDlcPlaylistId,
-                        Playlists = song.Playlists.Select(p => new Models.BgmEntryModels.PlaylistEntry() {  Id = p.Id}).ToList(),
+                        Playlists = song.Playlists?.Select(p => new Models.BgmEntryModels.PlaylistEntry() {  Id = p.Id}).ToList(),
                         FileName = audioFilePath,
                         AudioCuePoints = audioCuePoints,
                         SpecialCategory = GetSpecialCategory(toneId, song?.SpecialCategory, prefixToneIdMapping)
