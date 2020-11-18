@@ -42,7 +42,19 @@ namespace Sm5sh.Mods.Music
             //Process audio mods
             _logger.LogInformation("Mod {MusicMod} by '{Author}' - {NbrSongs} song(s)", _musicModConfig.Name, _musicModConfig.Author, _musicModConfig.Games.Sum(p => p.Songs.Count));
 
-            var index = 0;
+            //Rename song ids with prefix
+            var prefixToneIdMapping = new Dictionary<string, string>();
+            if (!string.IsNullOrEmpty(_musicModConfig.Prefix))
+            {
+                var index = 0;
+                _musicModConfig.Games.ForEach(g => g.Songs.ForEach(s => {
+                    var oldId = s.Id;
+                    s.Id = $"{_musicModConfig.Prefix}{index}_{s.Id}"; 
+                    index++;
+                    prefixToneIdMapping.Add(oldId, s.Id);
+                }));
+            }
+
             var output = new List<BgmEntry>();
             foreach (var game in _musicModConfig.Games)
             {
@@ -52,9 +64,6 @@ namespace Sm5sh.Mods.Music
                     var audioCuePoints = _audioMetadataService.GetCuePoints(audioFilePath);
 
                     var toneId = song.Id;
-                    if (!string.IsNullOrEmpty(_musicModConfig.Prefix))
-                        toneId = $"{_musicModConfig.Prefix}{index}_{song.Id}";
-
                     var hasDlcPlaylistId = song.Playlists.Any(p => CoreConstants.DLC_STAGES.Contains(p.Id));
                     output.Add(new BgmEntry()
                     {
@@ -69,7 +78,7 @@ namespace Sm5sh.Mods.Music
                         {
                             GameTitleId = game.Id,
                             SeriesId = game.SeriesId,
-                            NameId = game.Id.Replace(Constants.InternalIds.GAME_TITLE_ID_PREFIX, string.Empty),
+                            NameId = game.Id.TrimStart(Constants.InternalIds.GAME_TITLE_ID_PREFIX),
                             Title = game.Title
                         },
                         IsDlc = hasDlcPlaylistId,
@@ -77,9 +86,8 @@ namespace Sm5sh.Mods.Music
                         Playlists = song.Playlists.Select(p => new Models.BgmEntryModels.PlaylistEntry() {  Id = p.Id}).ToList(),
                         FileName = audioFilePath,
                         AudioCuePoints = audioCuePoints,
-                        SpecialCategory = GetSpecialCategory(toneId, song?.SpecialCategory)
+                        SpecialCategory = GetSpecialCategory(toneId, song?.SpecialCategory, prefixToneIdMapping)
                     });
-                    index++;
                     _logger.LogInformation("Mod {MusicMod}: Adding song {Song} ({ToneName})", _musicModConfig.Name, song.Id, toneId);
                 }
             }
@@ -92,14 +100,16 @@ namespace Sm5sh.Mods.Music
             return Path.Combine(_musicModPath, songFileName);
         }
 
-        private Models.BgmEntryModels.SpecialCategoryEntry GetSpecialCategory(string toneId, SpecialCategory specialCategory)
+        private Models.BgmEntryModels.SpecialCategoryEntry GetSpecialCategory(string toneId, SpecialCategory specialCategory, Dictionary<string, string> prefixToneIdMapping)
         {
             if (specialCategory == null)
                 return null;
 
             if (specialCategory?.Parameters == null)
+            {
                 _logger.LogWarning("The special category for {ToneId} was disabled. Its configuration was invalid.", toneId);
                 return null;
+            }
 
             switch (specialCategory.Category)
             {
@@ -116,9 +126,9 @@ namespace Sm5sh.Mods.Music
                         _logger.LogWarning("The special category for {ToneId} was disabled. Its configuration was invalid.", toneId);
                         return null;
                     }
-                    var pinchSong = specialCategory.Parameters[0];
-                    if (!pinchSong.StartsWith(Constants.InternalIds.INFO_ID_PREFIX))
-                        pinchSong = $"{Constants.InternalIds.INFO_ID_PREFIX}{pinchSong}";
+                    var pinchSong = specialCategory.Parameters[0].TrimStart(Constants.InternalIds.INFO_ID_PREFIX);
+                    pinchSong = prefixToneIdMapping.ContainsKey(pinchSong) ? prefixToneIdMapping[pinchSong] : pinchSong; //Apply potential prefix
+                    pinchSong = $"{Constants.InternalIds.INFO_ID_PREFIX}{pinchSong}";
                     return new Models.BgmEntryModels.SpecialCategoryEntry() { Id = Constants.InternalIds.SPECIAL_CATEGORY_SF_PINCH, Parameters = new List<string>() { pinchSong } };
             }
 
