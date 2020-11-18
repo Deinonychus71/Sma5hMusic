@@ -3,10 +3,11 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="Sm5sh.GUI.UserControls.BgmList">
+             x:Class="Sm5sh.GUI.Views.BgmListView">
   <Grid>
-    <DataGrid CanUserReorderColumns="True" CanUserResizeColumns="True" CanUserSortColumns="True" Items="{Binding BgmEntries}">
+    <DataGrid CanUserReorderColumns="True" CanUserResizeColumns="True" CanUserSortColumns="True" Items="{Binding Items}">
       <DataGrid.Columns>
+        <!--
         <DataGridTemplateColumn Header="Tone ID" Width="2*">
           <DataGridTemplateColumn.CellTemplate>
             <DataTemplate >
@@ -15,7 +16,7 @@
               </ComboBox>
             </DataTemplate>
           </DataGridTemplateColumn.CellTemplate>
-        </DataGridTemplateColumn>
+        </DataGridTemplateColumn>-->
         <DataGridTextColumn Header="Tone ID"
                             Binding="{Binding ToneId}"
                             Width="2*" />

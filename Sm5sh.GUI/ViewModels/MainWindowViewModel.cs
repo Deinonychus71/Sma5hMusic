@@ -14,16 +14,12 @@ namespace Sm5sh.GUI.ViewModels
     {
         private readonly IAudioStateService _audioState;
 
-        public ObservableCollection<BgmEntry> BgmEntries { get; }
+        public BgmListViewModel BgmList { get; }
 
         public MainWindowViewModel(IAudioStateService audioState, ILogger<MainWindowViewModel> logger)
         {
             _audioState = audioState;
-            BgmEntries = new ObservableCollection<BgmEntry>(_audioState.GetBgmEntries());
-        }
-
-        public MainWindowViewModel()
-        {
+            BgmList = new BgmListViewModel(_audioState.GetBgmEntries());
         }
     }
 }

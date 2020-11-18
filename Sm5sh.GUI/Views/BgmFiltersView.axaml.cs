@@ -2,11 +2,11 @@
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 
-namespace Sm5sh.GUI.UserControls
+namespace Sm5sh.GUI.Views
 {
-    public class BgmList : UserControl
+    public class BgmFiltersView : UserControl
     {
-        public BgmList()
+        public BgmFiltersView()
         {
             this.InitializeComponent();
         }

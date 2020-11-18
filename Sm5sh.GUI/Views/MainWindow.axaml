@@ -1,7 +1,7 @@
 ﻿<Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:vm="clr-namespace:Sm5sh.GUI.ViewModels;assembly=Sm5sh.GUI"
-        xmlns:uc="clr-namespace:Sm5sh.GUI.UserControls;assembly=Sm5sh.GUI"
+        xmlns:vw="clr-namespace:Sm5sh.GUI.Views;assembly=Sm5sh.GUI"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d" MinWidth="1280" MinHeight="720" d:DesignWidth="1280" d:DesignHeight="720"
@@ -11,14 +11,44 @@
   <Design.DataContext>
     <vm:MainWindowViewModel/>
   </Design.DataContext>
-  <Grid RowDefinitions="30,50,*,20">
-    <Grid.ColumnDefinitions>
-      <ColumnDefinition Width="*"></ColumnDefinition>
-      <ColumnDefinition Width="5*"></ColumnDefinition>
-      <ColumnDefinition Width="2*"></ColumnDefinition>
-    </Grid.ColumnDefinitions>
-    <Expander Background="Aqua" ExpandDirection="Right" Grid.Row="2" Grid.Column="0">
-      <uc:BgmFilters ></uc:BgmFilters>
-    </Expander>
+  <Grid RowDefinitions="20,50,*,20">
+    <Menu Grid.Row="0">
+      <MenuItem Header="File">
+        <MenuItem Header="Choose Mod Folder..."></MenuItem>
+        <MenuItem Header="Import Song..."></MenuItem>
+        <Separator></Separator>
+        <MenuItem Header="Export Mod..."></MenuItem>
+        <Separator></Separator>
+        <MenuItem Header="Exit"></MenuItem>
+      </MenuItem>
+      <MenuItem Header="Tools">
+        <MenuItem Header="Export to CSV"></MenuItem>
+        <MenuItem Header="Copy Language"></MenuItem>
+      </MenuItem>
+      <MenuItem Header="Settings">
+        <MenuItem Header="Global Settings"></MenuItem>
+        <Separator></Separator>
+        <MenuItem Header="About"></MenuItem>
+      </MenuItem>
+    </Menu>
+    <Panel Grid.Row="1" Background="Black">
+      <TextBlock Foreground="White">BGM Collection</TextBlock>
+    </Panel>
+    <DockPanel Grid.Row="2">
+      <Expander DockPanel.Dock="Left" Background="Aqua" ExpandDirection="Right">
+        <Expander.Header>
+          <TextBlock>Filters</TextBlock>
+        </Expander.Header>
+        <vw:BgmFiltersView></vw:BgmFiltersView>
+      </Expander>
+      
+      <Expander DockPanel.Dock="Right" Background="Aqua" ExpandDirection="Left">
+        <Expander.Header>
+          <TextBlock>Filters</TextBlock>
+        </Expander.Header>
+        <vw:BgmFiltersView></vw:BgmFiltersView>
+      </Expander>
+      <ContentControl Content="{Binding BgmList}"></ContentControl>
+    </DockPanel>
   </Grid>
 </Window>
