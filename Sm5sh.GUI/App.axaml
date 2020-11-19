@@ -1,10 +1,16 @@
 ﻿<Application xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:cv="clr-namespace:Sm5sh.GUI.Converters;assembly=Sm5sh.GUI"
              xmlns:local="clr-namespace:Sm5sh.GUI"
              x:Class="Sm5sh.GUI.App">
   <Application.DataTemplates>
     <local:ViewLocator/>
   </Application.DataTemplates>
+  <Application.Resources>
+    <cv:SeriesNameConverter x:Key="SeriesNameConverter"/>
+    <cv:MSBTValueConverter x:Key="MSBTValueConverter"/>
+    <cv:RecordTypeConverter x:Key="RecordTypeConverter"/>
+  </Application.Resources>
   <Application.Styles>
     <StyleInclude Source="avares://Avalonia.Themes.Default/DefaultTheme.xaml"/>
     <StyleInclude Source="avares://Avalonia.Themes.Default/Accents/BaseLight.xaml"/>

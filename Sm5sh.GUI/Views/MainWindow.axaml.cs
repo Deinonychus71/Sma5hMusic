@@ -10,7 +10,7 @@ namespace Sm5sh.GUI.Views
         {
             InitializeComponent();
 #if DEBUG
-            this.AttachDevTools();
+            //this.AttachDevTools();
 #endif
         }
 

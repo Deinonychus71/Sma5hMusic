@@ -1,8 +1,6 @@
 ﻿using Avalonia;
-using Avalonia.Logging.Serilog;
 using Avalonia.ReactiveUI;
 using Microsoft.Extensions.Configuration;
-using Splat;
 using Microsoft.Extensions.DependencyInjection;
 using Splat.Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -16,6 +14,7 @@ using Sm5sh.ResourceProviders;
 using System;
 using System.IO;
 using Sm5sh.GUI.ViewModels;
+using VGMMusic;
 
 namespace Sm5sh.GUI
 {
@@ -35,7 +34,7 @@ namespace Sm5sh.GUI
         {
             return AppBuilder.Configure<App>()
                 .UsePlatformDetect()
-                .LogToDebug()
+                .LogToTrace()
                 .UseReactiveUI();
         }
 
@@ -78,6 +77,9 @@ namespace Sm5sh.GUI
 
             //Add ViewModels
             services.AddSingleton<MainWindowViewModel>();
+
+            //Add UI Services
+            services.AddSingleton<IVGMMusicPlayer, VGMMusicPlayer>();
 
             //Add to Splat
             services.UseMicrosoftDependencyResolver();

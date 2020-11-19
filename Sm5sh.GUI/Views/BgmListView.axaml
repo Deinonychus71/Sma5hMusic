@@ -1,34 +1,35 @@
 ﻿<UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:vm="clr-namespace:Sm5sh.GUI.ViewModels;assembly=Sm5sh.GUI"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Sm5sh.GUI.Views.BgmListView">
+  <Design.DataContext>
+    <vm:BgmListViewModel/>
+  </Design.DataContext>
   <Grid>
-    <DataGrid CanUserReorderColumns="True" CanUserResizeColumns="True" CanUserSortColumns="True" Items="{Binding Items}">
+    <DataGrid IsVisible="True" CanUserReorderColumns="True" CanUserResizeColumns="True" 
+              CanUserSortColumns="True" IsReadOnly="True" Items="{Binding Items}">
       <DataGrid.Columns>
-        <!--
-        <DataGridTemplateColumn Header="Tone ID" Width="2*">
-          <DataGridTemplateColumn.CellTemplate>
-            <DataTemplate >
-              <ComboBox>
-                <ComboBoxItem>Itest</ComboBoxItem>
-              </ComboBox>
-            </DataTemplate>
-          </DataGridTemplateColumn.CellTemplate>
-        </DataGridTemplateColumn>-->
-        <DataGridTextColumn Header="Tone ID"
-                            Binding="{Binding ToneId}"
-                            Width="2*" />
-        <DataGridTextColumn Header="Title"
-                            Binding="{Binding Title[us_en]}"
-                            Width="2*" />
-        <DataGridTextColumn Header="Series"
-                            Binding="{Binding GameTitle.SeriesId}"
-                            Width="2*" />
-        <DataGridTextColumn Header="Copyright"
-                            Binding="{Binding GameTitle.Title[us_en]}"
-                            Width="2*" />
+        <DataGridTextColumn Header="Series" Binding="{Binding GameTitle.SeriesId, Mode=OneWay, Converter={StaticResource SeriesNameConverter}}" />
+        <DataGridTextColumn Header="Game">
+          <DataGridTextColumn.Binding>
+            <MultiBinding Mode="OneWay" Converter="{StaticResource MSBTValueConverter}">
+              <Binding Path="GameTitle.Title"/>
+              <Binding RelativeSource="{RelativeSource FindAncestor, AncestorType={x:Type UserControl}}" Path="DataContext.Locale" />
+            </MultiBinding>
+          </DataGridTextColumn.Binding>
+        </DataGridTextColumn>
+        <DataGridTextColumn Header="Title">
+          <DataGridTextColumn.Binding>
+            <MultiBinding Mode="OneWay" Converter="{StaticResource MSBTValueConverter}">
+              <Binding Path="Title"/>
+              <Binding RelativeSource="{RelativeSource FindAncestor, AncestorType={x:Type UserControl}}" Path="DataContext.Locale" />
+            </MultiBinding>
+          </DataGridTextColumn.Binding>
+        </DataGridTextColumn>
+        <DataGridTextColumn Header="Record" Binding="{Binding RecordType, Mode=OneWay, Converter={StaticResource RecordTypeConverter}}" />
       </DataGrid.Columns>
     </DataGrid>
   </Grid>

@@ -11,7 +11,7 @@
   <Design.DataContext>
     <vm:MainWindowViewModel/>
   </Design.DataContext>
-  <Grid RowDefinitions="20,50,*,20">
+  <Grid RowDefinitions="20,50,50,*,20" ColumnDefinitions="*,5*,*">
     <Menu Grid.Row="0">
       <MenuItem Header="File">
         <MenuItem Header="Choose Mod Folder..."></MenuItem>
@@ -31,17 +31,24 @@
         <MenuItem Header="About"></MenuItem>
       </MenuItem>
     </Menu>
-    <Panel Grid.Row="1" Background="Black">
+    <Panel Grid.Row="1" Grid.ColumnSpan="3" Background="Black">
       <TextBlock Foreground="White">BGM Collection</TextBlock>
     </Panel>
+    <StackPanel Grid.Row="2" Grid.RowSpan="2" Background="Yellow"></StackPanel>
+    <ContentControl Grid.Row="3" Grid.Column="1" Content="{Binding BgmList}"></ContentControl>
+    <StackPanel Grid.Row="2" Grid.RowSpan="2" Grid.Column="2" Background="Yellow"></StackPanel>
+    <!--
     <DockPanel Grid.Row="2">
-      <Expander DockPanel.Dock="Left" Background="Aqua" ExpandDirection="Right">
+      <Expander x:Name="expander" DockPanel.Dock="Left" ExpandDirection="Right">
         <Expander.Header>
-          <TextBlock>Filters</TextBlock>
+          <TextBlock>Filters
+          <TextBlock.RenderTransform>
+            <RotateTransform Angle="90" />
+          </TextBlock.RenderTransform>
+        </TextBlock>
         </Expander.Header>
         <vw:BgmFiltersView></vw:BgmFiltersView>
       </Expander>
-      
       <Expander DockPanel.Dock="Right" Background="Aqua" ExpandDirection="Left">
         <Expander.Header>
           <TextBlock>Filters</TextBlock>
@@ -49,6 +56,6 @@
         <vw:BgmFiltersView></vw:BgmFiltersView>
       </Expander>
       <ContentControl Content="{Binding BgmList}"></ContentControl>
-    </DockPanel>
+    </DockPanel>-->
   </Grid>
 </Window>

@@ -1,8 +1,6 @@
 ﻿using Sm5sh.Mods.Music.Models;
-using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Text;
 
 namespace Sm5sh.GUI.ViewModels
 {
@@ -10,9 +8,12 @@ namespace Sm5sh.GUI.ViewModels
     {
         public ObservableCollection<BgmEntry> Items { get; set; }
 
+        public string Locale { get; set; }
+
         public BgmListViewModel(IEnumerable<BgmEntry> items)
         {
+            Locale = "us_en";
             Items = new ObservableCollection<BgmEntry>(items);
-        } 
+        }
     }
 }

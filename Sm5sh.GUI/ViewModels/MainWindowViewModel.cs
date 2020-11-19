@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Text;
+using VGMMusic;
 
 namespace Sm5sh.GUI.ViewModels
 {
@@ -20,6 +21,7 @@ namespace Sm5sh.GUI.ViewModels
         {
             _audioState = audioState;
             BgmList = new BgmListViewModel(_audioState.GetBgmEntries());
+            BgmList.Locale = "us_en";
         }
     }
 }
