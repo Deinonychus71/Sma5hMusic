@@ -6,11 +6,15 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d" MinWidth="1280" MinHeight="720" d:DesignWidth="1280" d:DesignHeight="720"
         x:Class="Sm5sh.GUI.Views.MainWindow"
-        Icon="/Assets/avalonia-logo.ico"
+        Icon="/Assets/avalonia-logo.ico" 
+        xmlns:i="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
+        xmlns:ia="clr-namespace:Avalonia.Xaml.Interactions.Core;assembly=Avalonia.Xaml.Interactions"
         Title="Sm5sh.GUI">
-  <Design.DataContext>
-    <vm:MainWindowViewModel/>
-  </Design.DataContext>
+  <i:Interaction.Behaviors>
+    <ia:EventTriggerBehavior EventName="Opened">
+      <ia:InvokeCommandAction Command="{Binding ResetBgmList}"/>
+    </ia:EventTriggerBehavior>
+  </i:Interaction.Behaviors>
   <Grid RowDefinitions="20,50,50,*,20" ColumnDefinitions="*,5*,*">
     <Menu Grid.Row="0">
       <MenuItem Header="File">
@@ -34,28 +38,9 @@
     <Panel Grid.Row="1" Grid.ColumnSpan="3" Background="Black">
       <TextBlock Foreground="White">BGM Collection</TextBlock>
     </Panel>
-    <StackPanel Grid.Row="2" Grid.RowSpan="2" Background="Yellow"></StackPanel>
-    <ContentControl Grid.Row="3" Grid.Column="1" Content="{Binding BgmList}"></ContentControl>
+    <ContentControl Grid.Row="2" Grid.RowSpan="2" Grid.Column="0" Content="{Binding VMBgmFilters}"></ContentControl>
+    <ComboBox Items="{Binding Locales}" SelectedItem="{Binding SelectedLocale, Mode=TwoWay}" Grid.Row="2" Grid.Column="1"/>
+    <ContentControl Grid.Row="3" Grid.Column="1" Content="{Binding VMBgmList}"></ContentControl>
     <StackPanel Grid.Row="2" Grid.RowSpan="2" Grid.Column="2" Background="Yellow"></StackPanel>
-    <!--
-    <DockPanel Grid.Row="2">
-      <Expander x:Name="expander" DockPanel.Dock="Left" ExpandDirection="Right">
-        <Expander.Header>
-          <TextBlock>Filters
-          <TextBlock.RenderTransform>
-            <RotateTransform Angle="90" />
-          </TextBlock.RenderTransform>
-        </TextBlock>
-        </Expander.Header>
-        <vw:BgmFiltersView></vw:BgmFiltersView>
-      </Expander>
-      <Expander DockPanel.Dock="Right" Background="Aqua" ExpandDirection="Left">
-        <Expander.Header>
-          <TextBlock>Filters</TextBlock>
-        </Expander.Header>
-        <vw:BgmFiltersView></vw:BgmFiltersView>
-      </Expander>
-      <ContentControl Content="{Binding BgmList}"></ContentControl>
-    </DockPanel>-->
   </Grid>
 </Window>

@@ -1,19 +1,24 @@
-﻿using Sm5sh.Mods.Music.Models;
-using System.Collections.Generic;
+﻿using DynamicData;
+using ReactiveUI;
+using System;
 using System.Collections.ObjectModel;
+using System.Reactive.Linq;
 
 namespace Sm5sh.GUI.ViewModels
 {
     public class BgmListViewModel : ViewModelBase
     {
-        public ObservableCollection<BgmEntry> Items { get; set; }
+        private readonly ReadOnlyObservableCollection<BgmEntryListViewModel> _items;
 
-        public string Locale { get; set; }
+        public ReadOnlyObservableCollection<BgmEntryListViewModel> Items { get { return _items; } }
 
-        public BgmListViewModel(IEnumerable<BgmEntry> items)
+        public BgmListViewModel(IObservable<IChangeSet<BgmEntryListViewModel, string>> observableBgmEntries)
         {
-            Locale = "us_en";
-            Items = new ObservableCollection<BgmEntry>(items);
+            observableBgmEntries
+                .ObserveOn(RxApp.MainThreadScheduler)
+                .Bind(out _items)
+                .DisposeMany()
+                .Subscribe();
         }
     }
 }

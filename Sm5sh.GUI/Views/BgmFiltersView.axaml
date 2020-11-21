@@ -1,17 +1,29 @@
 ﻿<UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vm="clr-namespace:Sm5sh.GUI.ViewModels;assembly=Sm5sh.GUI"
+             xmlns:i="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
+             xmlns:ia="clr-namespace:Avalonia.Xaml.Interactions.Core;assembly=Avalonia.Xaml.Interactions"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Sm5sh.GUI.Views.BgmFiltersView">
-  
   <StackPanel>
-    <TextBlock>General information</TextBlock>
-    <Expander>
-      <TextBlock TextWrapping="Wrap" FontSize="18">
-        Here we can have text which can be hidden/shown using the built-in functionality of the Expander control.
-      </TextBlock>
-    </Expander>
+    <TextBlock FontSize="30">FILTERS</TextBlock>
+    <TextBlock>Series</TextBlock>
+    <ComboBox SelectedItem="{Binding SelectedSeries, Mode=TwoWay}" Items="{Binding Series}">
+      <ComboBox.ItemTemplate>
+        <DataTemplate>
+          <TextBlock Text="{Binding SeriesTitle}" FontFamily="{Binding}" />
+        </DataTemplate>
+      </ComboBox.ItemTemplate>
+    </ComboBox>
+    <TextBlock>Game</TextBlock>
+    <ComboBox SelectedItem="{Binding SelectedGame, Mode=TwoWay}" Items="{Binding Games}">
+      <ComboBox.ItemTemplate>
+        <DataTemplate>
+          <TextBlock Text="{Binding GameTitle}" FontFamily="{Binding}" />
+        </DataTemplate>
+      </ComboBox.ItemTemplate>
+    </ComboBox>
   </StackPanel>
 </UserControl>

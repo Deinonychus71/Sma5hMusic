@@ -5,31 +5,14 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Sm5sh.GUI.Views.BgmListView">
-  <Design.DataContext>
-    <vm:BgmListViewModel/>
-  </Design.DataContext>
   <Grid>
     <DataGrid IsVisible="True" CanUserReorderColumns="True" CanUserResizeColumns="True" 
-              CanUserSortColumns="True" IsReadOnly="True" Items="{Binding Items}">
+              CanUserSortColumns="True" IsReadOnly="True" Items="{Binding Items, Mode=OneWay}">
       <DataGrid.Columns>
-        <DataGridTextColumn Header="Series" Binding="{Binding GameTitle.SeriesId, Mode=OneWay, Converter={StaticResource SeriesNameConverter}}" />
-        <DataGridTextColumn Header="Game">
-          <DataGridTextColumn.Binding>
-            <MultiBinding Mode="OneWay" Converter="{StaticResource MSBTValueConverter}">
-              <Binding Path="GameTitle.Title"/>
-              <Binding RelativeSource="{RelativeSource FindAncestor, AncestorType={x:Type UserControl}}" Path="DataContext.Locale" />
-            </MultiBinding>
-          </DataGridTextColumn.Binding>
-        </DataGridTextColumn>
-        <DataGridTextColumn Header="Title">
-          <DataGridTextColumn.Binding>
-            <MultiBinding Mode="OneWay" Converter="{StaticResource MSBTValueConverter}">
-              <Binding Path="Title"/>
-              <Binding RelativeSource="{RelativeSource FindAncestor, AncestorType={x:Type UserControl}}" Path="DataContext.Locale" />
-            </MultiBinding>
-          </DataGridTextColumn.Binding>
-        </DataGridTextColumn>
-        <DataGridTextColumn Header="Record" Binding="{Binding RecordType, Mode=OneWay, Converter={StaticResource RecordTypeConverter}}" />
+        <DataGridTextColumn Header="Series" Binding="{Binding SeriesTitle, Mode=OneWay}" />
+        <DataGridTextColumn Header="Game" Binding="{Binding GameTitle, Mode=OneWay}" />
+        <DataGridTextColumn Header="Title" Binding="{Binding Title, Mode=OneWay}" />
+        <DataGridTextColumn Header="Record" Binding="{Binding RecordType, Mode=OneWay}" />
       </DataGrid.Columns>
     </DataGrid>
   </Grid>
