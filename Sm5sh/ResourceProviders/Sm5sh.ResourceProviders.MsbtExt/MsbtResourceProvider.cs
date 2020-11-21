@@ -72,8 +72,10 @@ namespace Sm5sh.ResourceProviders
                 foreach (var newMsbtEntry in msbtDb.Entries)
                 {
                     var newEntry = msbtFile.AddLabel(newMsbtEntry.Key);
-                    var value = Encoding.Unicode.GetBytes(newMsbtEntry.Value + "\0");
-                    newEntry.Value = Encoding.Unicode.GetBytes(newMsbtEntry.Value + "\0");
+                    var valueStr = newMsbtEntry.Value;
+                    if (string.IsNullOrEmpty(newMsbtEntry.Value))
+                        valueStr = "MISSING";
+                    newEntry.Value = Encoding.Unicode.GetBytes(valueStr + "\0");
                 }
                 msbtFile.Save();
             }

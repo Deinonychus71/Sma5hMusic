@@ -1,7 +1,6 @@
 ﻿using ReactiveUI.Fody.Helpers;
 using Sm5sh.GUI.Helpers;
 using Sm5sh.Mods.Music.Models;
-using System;
 using System.Collections.Generic;
 
 namespace Sm5sh.GUI.ViewModels
@@ -21,7 +20,12 @@ namespace Sm5sh.GUI.ViewModels
         [Reactive]
         public string Title { get; private set; }
         public string Filename { get; private set; }
-        public string RecordType { get; private set; }
+        public string RecordTypeId { get; private set; }
+        public string RecordTypeLabel { get; private set; }
+
+        public string ModName { get; set; }
+        public bool IsMod { get; private set; }
+        public string Source { get; private set; }
 
         public BgmEntryListViewModel() { }
 
@@ -32,7 +36,11 @@ namespace Sm5sh.GUI.ViewModels
             SeriesTitle = Constants.GetSeriesDisplayName(SeriesId);
             GameId = bgmEntry.GameTitle?.GameTitleId;
             Filename = bgmEntry.FileName;
-            RecordType = Constants.GetRecordTypeDisplayName(bgmEntry.RecordType);
+            RecordTypeId = bgmEntry.RecordType;
+            RecordTypeLabel = Constants.GetRecordTypeDisplayName(bgmEntry.RecordType);
+            Source = bgmEntry.Source.ToString();
+            IsMod = bgmEntry.Source == Mods.Music.Models.BgmEntryModels.EntrySource.Mod;
+            ModName = bgmEntry.ModName;
 
             _title = bgmEntry.Title;
             _gameTitle = bgmEntry.GameTitle?.Title;

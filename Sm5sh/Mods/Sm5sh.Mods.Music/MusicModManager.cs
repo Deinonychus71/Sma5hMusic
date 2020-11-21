@@ -73,7 +73,6 @@ namespace Sm5sh.Mods.Music
                         Title = song.Title,
                         Author = song.Author,
                         Copyright = song.Copyright,
-                        
                         GameTitle = new GameTitleEntry()
                         {
                             GameTitleId = game.Id,
@@ -85,6 +84,8 @@ namespace Sm5sh.Mods.Music
                         IsPatch = hasDlcPlaylistId,
                         Playlists = song.Playlists?.Select(p => new Models.BgmEntryModels.PlaylistEntry() {  Id = p.Id}).ToList(),
                         FileName = audioFilePath,
+                        ModName = _musicModConfig.Name,
+                        Source = Models.BgmEntryModels.EntrySource.Mod,
                         AudioCuePoints = audioCuePoints,
                         SpecialCategory = GetSpecialCategory(toneId, song?.SpecialCategory, prefixToneIdMapping)
                     });

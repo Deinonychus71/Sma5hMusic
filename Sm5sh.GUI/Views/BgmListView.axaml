@@ -3,16 +3,34 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:vm="clr-namespace:Sm5sh.GUI.ViewModels;assembly=Sm5sh.GUI"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:i="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
+             xmlns:ia="clr-namespace:Avalonia.Xaml.Interactions.Core;assembly=Avalonia.Xaml.Interactions"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Sm5sh.GUI.Views.BgmListView">
   <Grid>
-    <DataGrid IsVisible="True" CanUserReorderColumns="True" CanUserResizeColumns="True" 
+    <DataGrid AutoSizingColumns="True" IsVisible="True" CanUserReorderColumns="True" CanUserResizeColumns="True"
               CanUserSortColumns="True" IsReadOnly="True" Items="{Binding Items, Mode=OneWay}">
       <DataGrid.Columns>
+        <DataGridTemplateColumn CanUserResize="false" Width="50">
+          <DataGridTemplateColumn.CellTemplate>
+            <DataTemplate>
+              <Button IsEnabled="{Binding IsMod, Mode=OneWay}">
+                &#9654;
+                <i:Interaction.Behaviors>
+                  <ia:EventTriggerBehavior EventName="Click">
+                    <ia:InvokeCommandAction CommandParameter="{Binding Filename}" Command="{Binding Path=DataContext.ActionPlaySong, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type DataGrid}}}"/>
+                  </ia:EventTriggerBehavior>
+                </i:Interaction.Behaviors>
+              </Button>
+            </DataTemplate>
+          </DataGridTemplateColumn.CellTemplate>
+        </DataGridTemplateColumn>
         <DataGridTextColumn Header="Series" Binding="{Binding SeriesTitle, Mode=OneWay}" />
-        <DataGridTextColumn Header="Game" Binding="{Binding GameTitle, Mode=OneWay}" />
-        <DataGridTextColumn Header="Title" Binding="{Binding Title, Mode=OneWay}" />
-        <DataGridTextColumn Header="Record" Binding="{Binding RecordType, Mode=OneWay}" />
+        <DataGridTextColumn MaxWidth="300" Header="Game" Binding="{Binding GameTitle, Mode=OneWay}" />
+        <DataGridTextColumn MaxWidth="400" Header="Title" Binding="{Binding Title, Mode=OneWay}" />
+        <DataGridTextColumn Header="Record" Binding="{Binding RecordTypeLabel, Mode=OneWay}" />
+        <DataGridTextColumn Header="Source" Binding="{Binding Source, Mode=OneWay}" />
+        <DataGridTextColumn Header="Mod Name" Binding="{Binding ModName, Mode=OneWay}" />
       </DataGrid.Columns>
     </DataGrid>
   </Grid>

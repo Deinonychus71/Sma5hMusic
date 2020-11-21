@@ -54,7 +54,7 @@ namespace Sm5sh.GUI.Helpers
 
         public readonly static Dictionary<string, string> CONVERTER_RECORD_TYPE = new Dictionary<string, string>()
         {
-            { "record_none", "" },
+            { "record_none", "None" },
             { "record_arrange", "Remix" },
             { "record_original", "Original" },
             { "record_new_arrange", "New Remix" }

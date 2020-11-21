@@ -28,9 +28,13 @@ namespace Sm5sh.Mods.Music.Models
 
         public List<BgmEntryModels.PlaylistEntry> Playlists { get; set; }
 
+        public BgmEntryModels.SpecialCategoryEntry SpecialCategory { get; set; }
+
         public string FileName { get; set; }
 
-        public BgmEntryModels.SpecialCategoryEntry SpecialCategory { get; set; }
+        public string ModName { get; set; }
+
+        public BgmEntryModels.EntrySource Source { get; set; }
 
         public override string ToString()
         {
@@ -75,6 +79,11 @@ namespace Sm5sh.Mods.Music.Models
             public List<string> Parameters { get; set; }
         }
 
-
+        public enum EntrySource
+        {
+            Unknown = 0,
+            Core = 1,
+            Mod = 2
+        }
     }
 }

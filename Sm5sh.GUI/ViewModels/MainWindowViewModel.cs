@@ -10,6 +10,9 @@ using System.Collections.Generic;
 using System;
 using System.Linq;
 using System.Reactive.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using VGMMusic;
 
 namespace Sm5sh.GUI.ViewModels
 {
@@ -25,7 +28,7 @@ namespace Sm5sh.GUI.ViewModels
         [Reactive]
         public string SelectedLocale { get; set; }
 
-        public MainWindowViewModel(IAudioStateService audioState, ILogger<MainWindowViewModel> logger)
+        public MainWindowViewModel(IAudioStateService audioState, IVGMMusicPlayer musicPlayer, ILogger<MainWindowViewModel> logger)
         {
             SelectedLocale = Constants.DEFAULT_LOCALE;
 
@@ -44,7 +47,7 @@ namespace Sm5sh.GUI.ViewModels
             VMBgmFilters = new BgmFiltersViewModel(observableBgmEntriesList);
 
             //Initialize list
-            VMBgmList = new BgmListViewModel(VMBgmFilters.WhenFiltersAreApplied);
+            VMBgmList = new BgmListViewModel(musicPlayer, VMBgmFilters.WhenFiltersAreApplied);
         }
 
         public void ResetBgmList()

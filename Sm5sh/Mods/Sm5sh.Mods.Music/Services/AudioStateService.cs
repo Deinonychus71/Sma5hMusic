@@ -52,7 +52,7 @@ namespace Sm5sh.Mods.Music.Services
 
         public BgmEntry AddOrUpdateBgmEntry(BgmEntry bgmEntry)
         {
-            var keyRefs = GetToneIdKeyReferences(bgmEntry.ToneId, bgmEntry.FileName);
+            var keyRefs = GetToneIdKeyReferences(bgmEntry.ToneId, bgmEntry);
             var bgmEntries = GetBgmEntriesFromStateManager();
 
             //Create
@@ -129,8 +129,10 @@ namespace Sm5sh.Mods.Music.Services
                         TotalTimeMs = bgmProperty.TotalTimeMs
                     },
                     FileName = _toneIdKeyReferences.ContainsKey(toneId) ? _toneIdKeyReferences[toneId].FileName : null,
+                    ModName = _toneIdKeyReferences.ContainsKey(toneId) ? _toneIdKeyReferences[toneId].ModName : null,
+                    Source = _toneIdKeyReferences.ContainsKey(toneId) ? _toneIdKeyReferences[toneId].Source : EntrySource.Core,
                     Playlists = paramBgmPlaylists.Where(p => p.Value.Any(p => p.UiBgmId.HexValue == dbRootEntry.UiBgmId.HexValue)).Select(p => new PlaylistEntry() { Id = p.Key }).ToList(),
-                    IsDlc = dbRootEntry.IsDlc, 
+                    IsDlc = dbRootEntry.IsDlc,
                     IsPatch = dbRootEntry.IsPatch,
                     SpecialCategory = ToSpecialCategory(setStreamEntry),
                     Title = new Dictionary<string, string>(),
@@ -327,8 +329,6 @@ namespace Sm5sh.Mods.Music.Services
                     entries[titleLabel] = bgmEntry.Title[msbtDb.Key];
                 else if (bgmEntry.Title != null && bgmEntry.Title.ContainsKey(defaultLocale) && !string.IsNullOrEmpty(bgmEntry.Title[msbtDb.Key]))
                     entries[titleLabel] = bgmEntry.Title[defaultLocale];
-                else
-                    entries[titleLabel] = "MISSING";
 
                 if (bgmEntry.Author != null)
                 {
@@ -353,8 +353,6 @@ namespace Sm5sh.Mods.Music.Services
                     entries[gameTitleLabel] = bgmEntry.GameTitle.Title[msbtDb.Key];
                 else if (bgmEntry.GameTitle.Title.ContainsKey(defaultLocale))
                     entries[gameTitleLabel] = bgmEntry.GameTitle.Title[defaultLocale];
-                else
-                    entries[gameTitleLabel] = "MISSING";
             }
         }
 
@@ -505,11 +503,11 @@ namespace Sm5sh.Mods.Music.Services
             return lastNameId;
         }
 
-        private BgmToneKeyReferences GetToneIdKeyReferences(string toneId, string filename = null)
+        private BgmToneKeyReferences GetToneIdKeyReferences(string toneId, BgmEntry bgmEntry = null)
         {
             if (_toneIdKeyReferences.ContainsKey(toneId))
                 return _toneIdKeyReferences[toneId];
-            var output = new BgmToneKeyReferences(toneId, filename);
+            var output = new BgmToneKeyReferences(toneId, bgmEntry);
             _toneIdKeyReferences.Add(toneId, output);
             return output;
         }
@@ -553,19 +551,30 @@ namespace Sm5sh.Mods.Music.Services
         {
             public string ToneId { get; }
             public string FileName { get; }
+            public string ModName { get; set; }
+            public EntrySource Source { get; set; }
             public string DbRootKey { get; }
             public string StreamSetKey { get; }
             public string AssignedInfoKey { get; }
             public string StreamPropertyKey { get; }
 
-            public BgmToneKeyReferences(string toneId, string fileName = null)
+            public BgmToneKeyReferences(string toneId, BgmEntry bgmEntry = null)
             {
                 ToneId = toneId;
                 DbRootKey = $"{Constants.InternalIds.UI_BGM_ID_PREFIX}{toneId}";
                 StreamSetKey = $"{Constants.InternalIds.STREAM_SET_PREFIX}{toneId}";
                 AssignedInfoKey = $"{Constants.InternalIds.INFO_ID_PREFIX}{toneId}";
                 StreamPropertyKey = $"{Constants.InternalIds.STREAM_PREFIX}{toneId}";
-                FileName = fileName;
+                if (bgmEntry != null)
+                {
+                    FileName = bgmEntry.FileName;
+                    ModName = bgmEntry.ModName;
+                    Source = bgmEntry.Source;
+                }
+                else
+                {
+                    Source = EntrySource.Core;
+                }
             }
         }
     }

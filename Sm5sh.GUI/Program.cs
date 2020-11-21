@@ -67,7 +67,7 @@ namespace Sm5sh.GUI
             services.Configure<Sm5shMusicOptions>(configuration);
             services.AddSingleton<ISm5shMod, BgmMod>();
             services.AddSingleton<IResourceProvider, BgmPropertyProvider>();
-            services.AddTransient<IAudioStateService, AudioStateService>();
+            services.AddSingleton<IAudioStateService, AudioStateService>();
             services.AddSingleton<IAudioMetadataService, VGAudioMetadataService>();
             services.AddSingleton<INus3AudioService, Nus3AudioService>();
 
