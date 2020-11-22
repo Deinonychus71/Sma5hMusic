@@ -48,7 +48,8 @@ namespace Sm5sh.GUI
                .Build();
 
             var loggerFactory = LoggerFactory.Create(builder => builder
-                .AddFile(Path.Combine(configuration.GetValue<string>("LogPath"), "log_{Date}.txt"), Microsoft.Extensions.Logging.LogLevel.Debug, retainedFileCountLimit: 7));
+                .AddFile(Path.Combine(configuration.GetValue<string>("LogPath"), "log_{Date}.txt"), LogLevel.Debug, retainedFileCountLimit: 7)
+                .AddProvider(new CustomConsoleLoggerProvider(LogLevel.Debug)));
 
             services.AddLogging();
             services.AddOptions();

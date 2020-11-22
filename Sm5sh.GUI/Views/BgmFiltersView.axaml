@@ -5,69 +5,63 @@
              xmlns:ia="clr-namespace:Avalonia.Xaml.Interactions.Core;assembly=Avalonia.Xaml.Interactions"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450" Padding="10"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Sm5sh.GUI.Views.BgmFiltersView">
+  <UserControl.Styles>
+    <StyleInclude Source="/Assets/FilterStyles.xaml" />
+  </UserControl.Styles>
   <StackPanel>
-    <TextBlock FontSize="30">FILTERS</TextBlock>
-    <Panel>
-      <StackPanel>
-        <TextBlock>Source</TextBlock>
-        <ComboBox SelectedItem="{Binding SelectedSource, Mode=TwoWay}" Items="{Binding Sources}">
-          <ComboBox.ItemTemplate>
-            <DataTemplate>
-              <TextBlock Text="{Binding Label}" FontFamily="{Binding}" />
-            </DataTemplate>
-          </ComboBox.ItemTemplate>
-        </ComboBox>
-      </StackPanel>
-    </Panel>
-    <Panel IsVisible="{Binding IsModSelected, Mode=TwoWay}">
-      <StackPanel>
-        <TextBlock>Mods</TextBlock>
-        <ComboBox SelectedItem="{Binding SelectedMod, Mode=TwoWay}" Items="{Binding Mods}">
-          <ComboBox.ItemTemplate>
-            <DataTemplate>
-              <TextBlock Text="{Binding ModName}" FontFamily="{Binding}" />
-            </DataTemplate>
-          </ComboBox.ItemTemplate>
-        </ComboBox>
-      </StackPanel>
-    </Panel>
-    <Panel>
-      <StackPanel>
-        <TextBlock>Series</TextBlock>
-        <ComboBox SelectedItem="{Binding SelectedSeries, Mode=TwoWay}" Items="{Binding Series}">
-          <ComboBox.ItemTemplate>
-            <DataTemplate>
-              <TextBlock Text="{Binding SeriesTitle}" FontFamily="{Binding}" />
-            </DataTemplate>
-          </ComboBox.ItemTemplate>
-        </ComboBox>
-      </StackPanel>
-    </Panel>
-    <Panel>
-      <StackPanel>
-        <TextBlock>Game</TextBlock>
-        <ComboBox SelectedItem="{Binding SelectedGame, Mode=TwoWay}" Items="{Binding Games}">
-          <ComboBox.ItemTemplate>
-            <DataTemplate>
-              <TextBlock Text="{Binding GameTitle}" FontFamily="{Binding}" />
-            </DataTemplate>
-          </ComboBox.ItemTemplate>
-        </ComboBox>
-      </StackPanel>
-    </Panel>
-    <Panel>
-      <StackPanel>
-        <TextBlock>Record Type</TextBlock>
-        <ComboBox SelectedItem="{Binding SelectedRecordType, Mode=TwoWay}" Items="{Binding RecordTypes}">
-          <ComboBox.ItemTemplate>
-            <DataTemplate>
-              <TextBlock Text="{Binding Label}" FontFamily="{Binding}" />
-            </DataTemplate>
-          </ComboBox.ItemTemplate>
-        </ComboBox>
-      </StackPanel>
-    </Panel>
+    <StackPanel Classes="filterBlock" IsVisible="{Binding IsModSelected, Mode=TwoWay}">
+      <TextBlock Classes="filterHeader">Mods</TextBlock>
+      <ComboBox Classes="filterDropDown" SelectedItem="{Binding SelectedMod, Mode=TwoWay}" Items="{Binding Mods}">
+        <ComboBox.ItemTemplate>
+          <DataTemplate>
+            <TextBlock Text="{Binding ModName}" FontFamily="{Binding}" />
+          </DataTemplate>
+        </ComboBox.ItemTemplate>
+      </ComboBox>
+    </StackPanel>
+    <StackPanel Classes="filterBlock">
+      <TextBlock Classes="filterHeader">Series</TextBlock>
+      <ComboBox Classes="filterDropDown" SelectedItem="{Binding SelectedSeries, Mode=TwoWay}" Items="{Binding Series}">
+        <ComboBox.ItemTemplate>
+          <DataTemplate>
+            <TextBlock Text="{Binding SeriesTitle}" FontFamily="{Binding}" />
+          </DataTemplate>
+        </ComboBox.ItemTemplate>
+      </ComboBox>
+    </StackPanel>
+    <StackPanel Classes="filterBlock">
+      <TextBlock Classes="filterHeader">Game</TextBlock>
+      <ComboBox Classes="filterDropDown" SelectedItem="{Binding SelectedGame, Mode=TwoWay}" Items="{Binding Games}">
+        <ComboBox.ItemTemplate>
+          <DataTemplate>
+            <TextBlock Text="{Binding GameTitle}" FontFamily="{Binding}" />
+          </DataTemplate>
+        </ComboBox.ItemTemplate>
+      </ComboBox>
+    </StackPanel>
+    <StackPanel Classes="filterBlock">
+      <TextBlock Classes="filterHeader">Record Type</TextBlock>
+      <ComboBox Classes="filterDropDown" SelectedItem="{Binding SelectedRecordType, Mode=TwoWay}" Items="{Binding RecordTypes}">
+        <ComboBox.ItemTemplate>
+          <DataTemplate>
+            <TextBlock Text="{Binding Label}" FontFamily="{Binding}" />
+          </DataTemplate>
+        </ComboBox.ItemTemplate>
+      </ComboBox>
+    </StackPanel>
+    <StackPanel Classes="filterBlock">
+      <TextBlock Classes="filterHeader">Source</TextBlock>
+      <CheckBox IsChecked="{Binding SelectedCoreSongs, Mode=TwoWay}">Show Core Songs</CheckBox>
+      <CheckBox IsChecked="{Binding SelectedModSongs, Mode=TwoWay}">Show Mod Songs</CheckBox>
+    </StackPanel>
+    <StackPanel Classes="filterBlock">
+      <TextBlock Classes="filterHeader">Advanced</TextBlock>
+      <CheckBox IsChecked="{Binding SelectedShowInSoundTest, Mode=TwoWay}">Show in Sound Test</CheckBox>
+      <CheckBox IsChecked="{Binding SelectedShowHiddenSongs, Mode=TwoWay}">Show Hidden Songs</CheckBox>
+      <CheckBox IsChecked="{Binding SelectedCharacterVictorySongs, Mode=TwoWay}">Show Pinch Songs</CheckBox>
+      <CheckBox IsChecked="{Binding SelectedPinchSongs, Mode=TwoWay}">Show Character Victory Songs</CheckBox>
+    </StackPanel>
   </StackPanel>
 </UserControl>

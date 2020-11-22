@@ -80,8 +80,7 @@ namespace Sm5sh.Mods.Music
                             NameId = game.Id.TrimStart(Constants.InternalIds.GAME_TITLE_ID_PREFIX),
                             Title = game.Title
                         },
-                        IsDlc = hasDlcPlaylistId,
-                        IsPatch = hasDlcPlaylistId,
+                        IsDlcOrPatch = hasDlcPlaylistId,
                         Playlists = song.Playlists?.Select(p => new Models.BgmEntryModels.PlaylistEntry() {  Id = p.Id}).ToList(),
                         FileName = audioFilePath,
                         ModName = _musicModConfig.Name,

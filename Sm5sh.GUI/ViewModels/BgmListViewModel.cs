@@ -1,5 +1,6 @@
 ﻿using DynamicData;
 using ReactiveUI;
+using ReactiveUI.Fody.Helpers;
 using System;
 using System.Collections.ObjectModel;
 using System.Reactive;
@@ -15,6 +16,12 @@ namespace Sm5sh.GUI.ViewModels
 
         public ReadOnlyObservableCollection<BgmEntryListViewModel> Items { get { return _items; } }
 
+        [Reactive]
+        public BgmEntryListViewModel SelectedBgmEntry { get; private set; }
+
+        [Reactive]
+        public int BgmEntriesCount { get; private set; }
+
         public ReactiveCommand<string, Unit> ActionPlaySong { get; }
 
         public BgmListViewModel(IVGMMusicPlayer musicPlayer, IObservable<IChangeSet<BgmEntryListViewModel, string>> observableBgmEntries)
@@ -25,7 +32,7 @@ namespace Sm5sh.GUI.ViewModels
                 .ObserveOn(RxApp.MainThreadScheduler)
                 .Bind(out _items)
                 .DisposeMany()
-                .Subscribe();
+                .Subscribe((o) => BgmEntriesCount = o.Count);
 
             ActionPlaySong = ReactiveCommand.Create<string>(PlaySong);
         }

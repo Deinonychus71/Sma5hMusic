@@ -1,6 +1,4 @@
-﻿using Sm5sh.Helpers;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 
 namespace Sm5sh.Mods.Music.Models
 {
@@ -22,13 +20,14 @@ namespace Sm5sh.Mods.Music.Models
 
         public float AudioVolume { get; set; }
 
-        public bool IsDlc { get; set; }
-
-        public bool IsPatch { get; set; }
+        public bool IsDlcOrPatch { get; set; }
 
         public List<BgmEntryModels.PlaylistEntry> Playlists { get; set; }
 
         public BgmEntryModels.SpecialCategoryEntry SpecialCategory { get; set; }
+
+        public bool HiddenInSoundTest { get; set; }
+        public int SoundTestIndex { get; set; }
 
         public string FileName { get; set; }
 

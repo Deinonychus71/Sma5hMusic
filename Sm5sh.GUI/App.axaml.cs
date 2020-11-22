@@ -19,14 +19,6 @@ namespace Sm5sh.GUI
         {
             if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             {
-                var stateManager = Locator.Current.GetService<IStateManager>();
-                var mods = Locator.Current.GetServices<ISm5shMod>();
-                stateManager.Init();
-                foreach (var mod in mods)
-                {
-                    mod.Init();
-                }
-
                 desktop.MainWindow = new MainWindow
                 {
                     DataContext = Locator.Current.GetService<MainWindowViewModel>(),

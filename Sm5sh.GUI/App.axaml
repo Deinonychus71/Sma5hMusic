@@ -12,8 +12,9 @@
     <cv:RecordTypeConverter x:Key="RecordTypeConverter"/>
   </Application.Resources>
   <Application.Styles>
-    <StyleInclude Source="avares://Avalonia.Themes.Default/DefaultTheme.xaml"/>
-    <StyleInclude Source="avares://Avalonia.Themes.Default/Accents/BaseLight.xaml"/>
-    <StyleInclude Source="avares://Avalonia.Controls.DataGrid/Themes/Default.xaml"/>
+    <StyleInclude Source="avares://Avalonia.Themes.Fluent/Accents/FluentDark.xaml"/>
+    <StyleInclude Source="avares://Avalonia.Themes.Fluent/FluentTheme.xaml"/>
+    <StyleInclude Source="avares://Avalonia.Controls.DataGrid/Themes/Fluent.xaml"/>
+    <StyleInclude Source="/Assets/Styles.xaml" />
   </Application.Styles>
 </Application>

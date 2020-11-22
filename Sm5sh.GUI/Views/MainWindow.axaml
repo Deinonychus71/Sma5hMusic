@@ -15,7 +15,7 @@
       <ia:InvokeCommandAction Command="{Binding ResetBgmList}"/>
     </ia:EventTriggerBehavior>
   </i:Interaction.Behaviors>
-  <Grid RowDefinitions="20,50,50,*,20" ColumnDefinitions="*,5*,*">
+  <Grid RowDefinitions="20,50,50,*,5,0" ColumnDefinitions="*,5*,*">
     <Menu Grid.Row="0">
       <MenuItem Header="File">
         <MenuItem Header="Choose Mod Folder..."></MenuItem>
@@ -38,9 +38,11 @@
     <Panel Grid.Row="1" Grid.ColumnSpan="3" Background="Black">
       <TextBlock Foreground="White">BGM Collection</TextBlock>
     </Panel>
-    <ContentControl Grid.Row="2" Grid.RowSpan="2" Grid.Column="0" Content="{Binding VMBgmFilters}"></ContentControl>
+    <ContentControl Grid.Row="3" Grid.Column="0" Content="{Binding VMBgmFilters}"></ContentControl>
     <ComboBox Items="{Binding Locales}" SelectedItem="{Binding SelectedLocale, Mode=TwoWay}" Grid.Row="2" Grid.Column="1"/>
     <ContentControl Grid.Row="3" Grid.Column="1" Content="{Binding VMBgmList}"></ContentControl>
-    <StackPanel Grid.Row="2" Grid.RowSpan="2" Grid.Column="2" Background="Yellow"></StackPanel>
+    <ContentControl Grid.Row="3" Grid.Column="2" Content="{Binding VMBgmProperties}"></ContentControl>
+    <GridSplitter Background="Gray" ResizeDirection="Rows" Grid.Row="4" Grid.ColumnSpan="3"/>
+    <vw:DebugConsole Grid.Row="5" Grid.ColumnSpan="3" />
   </Grid>
 </Window>

@@ -22,10 +22,11 @@ namespace Sm5sh.GUI.ViewModels
         public string Filename { get; private set; }
         public string RecordTypeId { get; private set; }
         public string RecordTypeLabel { get; private set; }
+        public bool HiddenInSoundTest { get; private set; }
 
         public string ModName { get; set; }
         public bool IsMod { get; private set; }
-        public string Source { get; private set; }
+        public Mods.Music.Models.BgmEntryModels.EntrySource Source { get; private set; }
 
         public BgmEntryListViewModel() { }
 
@@ -38,9 +39,10 @@ namespace Sm5sh.GUI.ViewModels
             Filename = bgmEntry.FileName;
             RecordTypeId = bgmEntry.RecordType;
             RecordTypeLabel = Constants.GetRecordTypeDisplayName(bgmEntry.RecordType);
-            Source = bgmEntry.Source.ToString();
-            IsMod = bgmEntry.Source == Mods.Music.Models.BgmEntryModels.EntrySource.Mod;
+            Source = bgmEntry.Source;
             ModName = bgmEntry.ModName;
+            HiddenInSoundTest = bgmEntry.HiddenInSoundTest;
+            IsMod = Source == Mods.Music.Models.BgmEntryModels.EntrySource.Mod;
 
             _title = bgmEntry.Title;
             _gameTitle = bgmEntry.GameTitle?.Title;

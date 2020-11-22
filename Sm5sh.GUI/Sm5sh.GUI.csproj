@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
@@ -11,6 +11,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Remove="appsettings.json" />
+    <None Remove="Assets\FilterStyles.xaml" />
+    <None Remove="Assets\Styles.xaml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="appsettings.json">
@@ -37,11 +39,23 @@
     <ProjectReference Include="..\Sm5sh\Mods\Sm5sh.Mods.StagePlaylist\Sm5sh.Mods.StagePlaylist.csproj" />
   </ItemGroup>
   <ItemGroup>
+    <AvaloniaResource Update="Assets\FilterStyles.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </AvaloniaResource>
+    <AvaloniaResource Update="Assets\Styles.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </AvaloniaResource>
+  </ItemGroup>
+  <ItemGroup>
     <Compile Update="Views\BgmFiltersView.axaml.cs">
       <DependentUpon>BgmFiltersView.axaml</DependentUpon>
     </Compile>
     <Compile Update="Views\BgmListView.axaml.cs">
       <DependentUpon>BgmListView.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\BgmPropertiesView.axaml.cs">
+      <DependentUpon>BgmPropertiesView.axaml</DependentUpon>
     </Compile>
   </ItemGroup>
 </Project>

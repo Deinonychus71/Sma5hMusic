@@ -8,14 +8,13 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Sm5sh.GUI.Views.BgmListView">
   <Grid>
-    <DataGrid AutoSizingColumns="True" IsVisible="True" CanUserReorderColumns="True" CanUserResizeColumns="True"
+    <DataGrid IsVisible="True" SelectionMode="Single" SelectedItem="{Binding SelectedBgmEntry, Mode=TwoWay}" CanUserReorderColumns="True" CanUserResizeColumns="True"
               CanUserSortColumns="True" IsReadOnly="True" Items="{Binding Items, Mode=OneWay}">
       <DataGrid.Columns>
         <DataGridTemplateColumn CanUserResize="false" Width="50">
           <DataGridTemplateColumn.CellTemplate>
             <DataTemplate>
-              <Button IsEnabled="{Binding IsMod, Mode=OneWay}">
-                &#9654;
+              <Button IsEnabled="{Binding IsMod, Mode=OneWay}" Content="&#9654;">
                 <i:Interaction.Behaviors>
                   <ia:EventTriggerBehavior EventName="Click">
                     <ia:InvokeCommandAction CommandParameter="{Binding Filename}" Command="{Binding Path=DataContext.ActionPlaySong, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type DataGrid}}}"/>

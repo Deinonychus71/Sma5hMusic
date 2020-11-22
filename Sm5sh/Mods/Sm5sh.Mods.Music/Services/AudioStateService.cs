@@ -132,8 +132,8 @@ namespace Sm5sh.Mods.Music.Services
                     ModName = _toneIdKeyReferences.ContainsKey(toneId) ? _toneIdKeyReferences[toneId].ModName : null,
                     Source = _toneIdKeyReferences.ContainsKey(toneId) ? _toneIdKeyReferences[toneId].Source : EntrySource.Core,
                     Playlists = paramBgmPlaylists.Where(p => p.Value.Any(p => p.UiBgmId.HexValue == dbRootEntry.UiBgmId.HexValue)).Select(p => new PlaylistEntry() { Id = p.Key }).ToList(),
-                    IsDlc = dbRootEntry.IsDlc,
-                    IsPatch = dbRootEntry.IsPatch,
+                    IsDlcOrPatch = dbRootEntry.IsDlc,
+                    HiddenInSoundTest = ToHiddenInSoundTestStatus(dbRootEntry),
                     SpecialCategory = ToSpecialCategory(setStreamEntry),
                     Title = new Dictionary<string, string>(),
                     Author = new Dictionary<string, string>(),
@@ -176,9 +176,7 @@ namespace Sm5sh.Mods.Music.Services
             var paramBgmDatabase = _state.LoadResource<PrcUiBgmDatabase>(Constants.GameResources.PRC_UI_BGM_DB_PATH);
             var paramBgmDbRoot = paramBgmDatabase.DbRootEntries;
             var daoBinBgmProperty = _state.LoadResource<BinBgmProperty>(Constants.GameResources.PRC_BGM_PROPERTY_PATH);
-
-            //var saveNoIndex = (short)(_daoUiBgmDbRootEntries.Values.OrderByDescending(p => p.SaveNo).First().SaveNo + 1); //Not working past top save_no id
-            var testDispOrderIndex = (short)(paramBgmDbRoot.Values.OrderByDescending(p => p.TestDispOrder).First().TestDispOrder + 1);
+            
             var menuValueIndex = paramBgmDbRoot.Values.OrderByDescending(p => p.MenuValue).First().MenuValue + 1;
 
             //New entry - with default values
@@ -194,8 +192,8 @@ namespace Sm5sh.Mods.Music.Services
                 UiGameTitleId3 = new PrcHash40(Constants.InternalIds.GAME_TITLE_ID_DEFAULT),
                 UiGameTitleId4 = new PrcHash40(Constants.InternalIds.GAME_TITLE_ID_DEFAULT),
                 NameId = GetNewBgmId(),
-                SaveNo = 0,
-                TestDispOrder = testDispOrderIndex,
+                SaveNo = -1,
+                TestDispOrder = -1,
                 MenuValue = menuValueIndex,
                 JpRegion = true,
                 OtherRegion = true,
@@ -261,8 +259,9 @@ namespace Sm5sh.Mods.Music.Services
             //DB Root
             dbRootEntry.UiGameTitleId = new PrcHash40(bgmEntry.GameTitle.GameTitleId);
             dbRootEntry.RecordType = new PrcHash40(bgmEntry.RecordType);
-            dbRootEntry.IsPatch = bgmEntry.IsPatch;
-            dbRootEntry.IsDlc = bgmEntry.IsDlc;
+            dbRootEntry.IsPatch = bgmEntry.IsDlcOrPatch;
+            dbRootEntry.IsDlc = bgmEntry.IsDlcOrPatch;
+            dbRootEntry = FromHiddenInSoundTestStatus(paramBgmDatabase.DbRootEntries, dbRootEntry, bgmEntry.HiddenInSoundTest);
             //Stream Set
             setStreamEntry = FromSpecialCategory(setStreamEntry, bgmEntry?.SpecialCategory);
 
@@ -447,7 +446,7 @@ namespace Sm5sh.Mods.Music.Services
             return output;
         }
 
-        public PrcBgmStreamSetEntry FromSpecialCategory(PrcBgmStreamSetEntry setStreamEntry, SpecialCategoryEntry specialEntry)
+        private PrcBgmStreamSetEntry FromSpecialCategory(PrcBgmStreamSetEntry setStreamEntry, SpecialCategoryEntry specialEntry)
         {
             if (specialEntry == null)
                 return setStreamEntry;
@@ -490,6 +489,34 @@ namespace Sm5sh.Mods.Music.Services
                 setStreamEntry.Info15 = new PrcHash40(specialEntry.Parameters[14]);
 
             return setStreamEntry;
+        }
+
+        private bool ToHiddenInSoundTestStatus(PrcBgmDbRootEntry dbRootEntry)
+        {
+            return dbRootEntry.SaveNo == -1 && dbRootEntry.TestDispOrder == -1;
+        }
+
+        private PrcBgmDbRootEntry FromHiddenInSoundTestStatus(Dictionary<string, PrcBgmDbRootEntry> paramBgmDbRoot, PrcBgmDbRootEntry dbRootEntry, bool isHiddenInSoundTest)
+        {
+            if(isHiddenInSoundTest)
+            {
+                dbRootEntry.TestDispOrder = -1;
+                dbRootEntry.SaveNo = -1;
+            }
+            else
+            {
+                if(dbRootEntry.TestDispOrder == -1)
+                {
+                    var testDispOrderIndex = (short)(paramBgmDbRoot.Values.OrderByDescending(p => p.TestDispOrder).First().TestDispOrder + 1);
+                    dbRootEntry.TestDispOrder = testDispOrderIndex;
+                }
+                if(dbRootEntry.SaveNo == -1)
+                {
+                    //var saveNoIndex = (short)(_daoUiBgmDbRootEntries.Values.OrderByDescending(p => p.SaveNo).First().SaveNo + 1); //Not working past top save_no id
+                    dbRootEntry.SaveNo = 0;
+                }
+            }
+            return dbRootEntry;
         }
 
         #region Utils

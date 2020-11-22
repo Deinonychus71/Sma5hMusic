@@ -19,14 +19,12 @@ namespace Sm5sh.GUI.ViewModels
         private readonly ReadOnlyObservableCollection<BgmEntryListViewModel> _games;
         private readonly ReadOnlyObservableCollection<BgmEntryListViewModel> _mods;
         private readonly List<ComboItem> _recordTypes;
-        private readonly List<ComboItem> _sources;
         private IChangeSet<BgmEntryListViewModel, string> _allChangeSet;
 
         public ReadOnlyObservableCollection<BgmEntryListViewModel> Series { get { return _series; } }
         public ReadOnlyObservableCollection<BgmEntryListViewModel> Games { get { return _games; } }
         public ReadOnlyObservableCollection<BgmEntryListViewModel> Mods { get { return _mods; } }
         public IEnumerable<ComboItem> RecordTypes { get { return _recordTypes; } }
-        public IEnumerable<ComboItem> Sources { get { return _sources; } }
 
         [Reactive]
         public bool IsModSelected { get; set; }
@@ -40,8 +38,18 @@ namespace Sm5sh.GUI.ViewModels
         [Reactive]
         public ComboItem SelectedRecordType { get; set; }
         [Reactive]
-        public ComboItem SelectedSource { get; set; }
-       
+        public bool SelectedShowInSoundTest { get; set; }
+        [Reactive]
+        public bool SelectedShowHiddenSongs { get; set; }
+        [Reactive]
+        public bool SelectedCharacterVictorySongs { get; set; }
+        [Reactive]
+        public bool SelectedPinchSongs { get; set; }
+        [Reactive]
+        public bool SelectedCoreSongs { get; set; }
+        [Reactive]
+        public bool SelectedModSongs { get; set; }
+
         public IObservable<IChangeSet<BgmEntryListViewModel, string>> WhenFiltersAreApplied { get; }
 
 
@@ -49,14 +57,17 @@ namespace Sm5sh.GUI.ViewModels
         {
             _allChangeSet = GetAllChangeSet();
             _recordTypes = GetRecordTypes();
-            _sources = GetSources();
 
-            var whenAnyPropertyChanged = this.WhenAnyPropertyChanged("SelectedSeries", "SelectedGame", 
-                "SelectedRecordType", "SelectedSource", "SelectedMod");
+            var whenAnyPropertyChanged = this.WhenAnyPropertyChanged("SelectedSeries", "SelectedGame",
+                "SelectedRecordType", "SelectedMod", "SelectedShowInSoundTest", "SelectedShowHiddenSongs", 
+                "SelectedCharacterVictorySongs", "SelectedPinchSongs", "SelectedCoreSongs", "SelectedModSongs");
             WhenFiltersAreApplied = observableBgmEntries
                 .AutoRefreshOnObservable(p => whenAnyPropertyChanged)
                 .Filter(p =>
-                    (SelectedSource == null || SelectedSource.AllFlag || p.Source == SelectedSource.Id) &&
+                    (SelectedShowHiddenSongs || (!SelectedShowHiddenSongs && !p.HiddenInSoundTest)) &&
+                    (SelectedShowInSoundTest || (!SelectedShowInSoundTest && p.HiddenInSoundTest)) &&
+                    (SelectedModSongs || (!SelectedModSongs && p.Source == Sm5sh.Mods.Music.Models.BgmEntryModels.EntrySource.Core)) &&
+                    (SelectedCoreSongs || (!SelectedCoreSongs && p.Source == Sm5sh.Mods.Music.Models.BgmEntryModels.EntrySource.Mod)) &&
                     (SelectedMod == null || SelectedMod.AllFlag || p.ModName == SelectedMod.ModName) &&
                     (SelectedRecordType == null || SelectedRecordType.AllFlag || p.RecordTypeId == SelectedRecordType.Id) &&
                     (SelectedSeries == null || SelectedSeries.AllFlag || p.SeriesId == SelectedSeries.SeriesId) &&
@@ -99,11 +110,12 @@ namespace Sm5sh.GUI.ViewModels
                 .Bind(out _games)
                 .DisposeMany()
                 .Subscribe();
-            
+
+            SelectedShowInSoundTest = true;
+            SelectedModSongs = true;
+            SelectedCoreSongs = true;
             SelectedRecordType = _recordTypes[0];
-            SelectedSource = _sources[0];
             this.WhenAnyValue(p => p.SelectedSeries).Subscribe((o) => SelectedGame = _allChangeSet.First().Current);
-            this.WhenAnyValue(p => p.SelectedSource).Subscribe((o) => IsModSelected = SelectedSource.Id != "Core");
         }
 
         private IChangeSet<BgmEntryListViewModel, string> GetAllChangeSet()
@@ -127,12 +139,6 @@ namespace Sm5sh.GUI.ViewModels
             var recordTypes = new List<ComboItem>() { new ComboItem("All", "All", true) };
             recordTypes.AddRange(Constants.CONVERTER_RECORD_TYPE.Select(p => new ComboItem(p.Key, p.Value)));
             return recordTypes;
-        }
-
-        private List<ComboItem> GetSources()
-        {
-            var sources = new List<ComboItem>() { new ComboItem("All", "All", true), new ComboItem("Core", "Core"), new ComboItem("Mod", "Mod") };
-            return sources;
         }
     }
 }
