@@ -71,7 +71,7 @@ namespace Sm5sh.Mods.Music
                     var cachedAudioFile = Path.Combine(_config.Value.Sm5shMusic.CachePath, string.Format(Constants.GameResources.NUS3AUDIO_FILE, bgmEntry.ToneId));
                     if (!File.Exists(cachedAudioFile))
                     {
-                        _nus3AudioService.GenerateNus3Audio(bgmEntry.ToneId, bgmEntry.FileName, cachedAudioFile);
+                        _nus3AudioService.GenerateNus3Audio(bgmEntry.ToneId, bgmEntry.Mod?.Filename, cachedAudioFile);
                     }
                     else
                     {
@@ -82,7 +82,7 @@ namespace Sm5sh.Mods.Music
                 }
                 else
                 {
-                    _nus3AudioService.GenerateNus3Audio(bgmEntry.ToneId, bgmEntry.FileName, nusAudioOutputFile);
+                    _nus3AudioService.GenerateNus3Audio(bgmEntry.ToneId, bgmEntry.Mod?.Filename, nusAudioOutputFile);
                 }
             }
 

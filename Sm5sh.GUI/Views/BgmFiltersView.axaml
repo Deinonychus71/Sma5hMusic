@@ -14,8 +14,13 @@
     <Border Classes="headerBorder">
       <Label Classes="headerTitle">Filters</Label>
     </Border>
-    <StackPanel Classes="filterBlock" IsVisible="{Binding IsModSelected, Mode=TwoWay}">
-      <TextBlock Classes="filterHeader">Mods</TextBlock>
+    <StackPanel Classes="filterBlock">
+      <TextBlock Classes="filterHeader">Source</TextBlock>
+      <CheckBox IsChecked="{Binding SelectedCoreSongs, Mode=TwoWay}" ToolTip.Tip="Will display core game songs">Show Core Songs</CheckBox>
+      <CheckBox IsChecked="{Binding SelectedModSongs, Mode=TwoWay}" ToolTip.Tip="Will display mod game songs">Show Mod Songs</CheckBox>
+    </StackPanel>
+    <StackPanel Classes="filterBlock" IsVisible="{Binding SelectedModSongs, Mode=OneWay}">
+      <TextBlock Classes="filterHeader" ToolTip.Tip="Only display songs from a mod folder">Mods</TextBlock>
       <ComboBox Classes="filterDropDown" SelectedItem="{Binding SelectedMod, Mode=TwoWay}" Items="{Binding Mods}">
         <ComboBox.ItemTemplate>
           <DataTemplate>
@@ -25,7 +30,7 @@
       </ComboBox>
     </StackPanel>
     <StackPanel Classes="filterBlock">
-      <TextBlock Classes="filterHeader">Series</TextBlock>
+      <TextBlock Classes="filterHeader" ToolTip.Tip="Only display songs from a specific series">Series</TextBlock>
       <ComboBox Classes="filterDropDown" SelectedItem="{Binding SelectedSeries, Mode=TwoWay}" Items="{Binding Series}">
         <ComboBox.ItemTemplate>
           <DataTemplate>
@@ -35,7 +40,7 @@
       </ComboBox>
     </StackPanel>
     <StackPanel Classes="filterBlock">
-      <TextBlock Classes="filterHeader">Game</TextBlock>
+      <TextBlock Classes="filterHeader" ToolTip.Tip="Only display songs from a specific game">Game</TextBlock>
       <ComboBox Classes="filterDropDown" SelectedItem="{Binding SelectedGame, Mode=TwoWay}" Items="{Binding Games}">
         <ComboBox.ItemTemplate>
           <DataTemplate>
@@ -45,7 +50,7 @@
       </ComboBox>
     </StackPanel>
     <StackPanel Classes="filterBlock">
-      <TextBlock Classes="filterHeader">Record Type</TextBlock>
+      <TextBlock Classes="filterHeader" ToolTip.Tip="Only display songs with a specific record type">Record Type</TextBlock>
       <ComboBox Classes="filterDropDown" SelectedItem="{Binding SelectedRecordType, Mode=TwoWay}" Items="{Binding RecordTypes}">
         <ComboBox.ItemTemplate>
           <DataTemplate>
@@ -55,16 +60,11 @@
       </ComboBox>
     </StackPanel>
     <StackPanel Classes="filterBlock">
-      <TextBlock Classes="filterHeader">Source</TextBlock>
-      <CheckBox IsChecked="{Binding SelectedCoreSongs, Mode=TwoWay}">Show Core Songs</CheckBox>
-      <CheckBox IsChecked="{Binding SelectedModSongs, Mode=TwoWay}">Show Mod Songs</CheckBox>
-    </StackPanel>
-    <StackPanel Classes="filterBlock">
       <TextBlock Classes="filterHeader">Advanced</TextBlock>
-      <CheckBox IsChecked="{Binding SelectedShowInSoundTest, Mode=TwoWay}">Show in Sound Test</CheckBox>
-      <CheckBox IsChecked="{Binding SelectedShowHiddenSongs, Mode=TwoWay}">Show Hidden Songs</CheckBox>
-      <CheckBox IsChecked="{Binding SelectedCharacterVictorySongs, Mode=TwoWay}">Show Pinch Songs</CheckBox>
-      <CheckBox IsChecked="{Binding SelectedPinchSongs, Mode=TwoWay}">Show Character Victory Songs</CheckBox>
+      <CheckBox IsChecked="{Binding SelectedShowInSoundTest, Mode=TwoWay}" ToolTip.Tip="Will display songs that can be seen in Sound Test">Show in Sound Test</CheckBox>
+      <CheckBox IsChecked="{Binding SelectedShowHiddenSongs, Mode=TwoWay}" ToolTip.Tip="Will display songs that cannot be seen in Sound Test">Show Hidden Songs</CheckBox>
+      <CheckBox IsChecked="{Binding SelectedCharacterVictorySongs, Mode=TwoWay}" ToolTip.Tip="Will display pinch songs. Pinch songs play during last stock or with 1 minute left">Show Pinch Songs</CheckBox>
+      <CheckBox IsChecked="{Binding SelectedPinchSongs, Mode=TwoWay}" ToolTip.Tip="Will display Character Victory songs">Show Victory Songs</CheckBox>
     </StackPanel>
   </StackPanel>
 </UserControl>

@@ -27,11 +27,9 @@ namespace Sm5sh.Mods.Music.Models
         public BgmEntryModels.SpecialCategoryEntry SpecialCategory { get; set; }
 
         public bool HiddenInSoundTest { get; set; }
-        public int SoundTestIndex { get; set; }
+        public short SoundTestIndex { get; set; }
 
-        public string FileName { get; set; }
-
-        public string ModName { get; set; }
+        public BgmEntryModels.ModEntry Mod { get; set; }
 
         public BgmEntryModels.EntrySource Source { get; set; }
 
@@ -76,6 +74,14 @@ namespace Sm5sh.Mods.Music.Models
             public ulong Id { get; set; }
 
             public List<string> Parameters { get; set; }
+        }
+
+        public class ModEntry
+        {
+            public string ModName { get; set; }
+            public string ModAuthor { get; set; }
+            public string ModWebsite { get; set; }
+            public string Filename { get; set; }
         }
 
         public enum EntrySource

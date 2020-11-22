@@ -1,0 +1,27 @@
+﻿<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <Style Selector="Label.label">
+    <Setter Property="FontSize" Value="14"/>
+    <Setter Property="HorizontalAlignment" Value="Stretch"/>
+    <Setter Property="Margin" Value="0,1,0,0"/>
+  </Style>
+  <Style Selector="TextBox.value">
+    <Setter Property="HorizontalAlignment" Value="Stretch"/>
+    <Setter Property="MinWidth" Value="200"/>
+    <Setter Property="Margin" Value="0,1,0,0"/>
+    <Setter Property="FontFamily" Value="Microsoft YaHei,Simsun,苹方-简,宋体-简"/>
+  </Style>
+  <Style Selector="NumericUpDown.value">
+    <Setter Property="HorizontalAlignment" Value="Stretch"/>
+    <Setter Property="MinWidth" Value="200"/>
+    <Setter Property="Margin" Value="0,1,0,0"/>
+    <Setter Property="Increment" Value="1"/>
+  </Style>
+  <Style Selector="StackPanel.propertyBlock">
+    <Setter Property="Margin" Value="13,13,13,2"/>
+    <Setter Property="HorizontalAlignment" Value="Stretch"/>
+  </Style>
+  <Style Selector="ComboBox.filterDropDown">
+    <Setter Property="HorizontalAlignment" Value="Stretch"/>
+  </Style>
+</Styles>

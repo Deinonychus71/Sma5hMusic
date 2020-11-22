@@ -11,6 +11,8 @@ namespace Sm5sh.Mods.Music.Models
         public string Name { get; set; }
         [JsonProperty("author")]
         public string Author { get; set; }
+        [JsonProperty("website")]
+        public string Website { get; set; }
         [JsonProperty("prefix")]
         public string Prefix { get; set; }
         [JsonProperty("games")]

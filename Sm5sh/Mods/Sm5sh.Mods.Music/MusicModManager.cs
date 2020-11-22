@@ -58,6 +58,14 @@ namespace Sm5sh.Mods.Music
             var output = new List<BgmEntry>();
             foreach (var game in _musicModConfig.Games)
             {
+                var gameEntry = new GameTitleEntry()
+                {
+                    GameTitleId = game.Id,
+                    SeriesId = game.SeriesId,
+                    NameId = game.Id.TrimStart(Constants.InternalIds.GAME_TITLE_ID_PREFIX),
+                    Title = game.Title
+                };
+
                 foreach (var song in game.Songs)
                 {
                     var audioFilePath = GetMusicModAudioFile(song.FileName);
@@ -73,17 +81,16 @@ namespace Sm5sh.Mods.Music
                         Title = song.Title,
                         Author = song.Author,
                         Copyright = song.Copyright,
-                        GameTitle = new GameTitleEntry()
-                        {
-                            GameTitleId = game.Id,
-                            SeriesId = game.SeriesId,
-                            NameId = game.Id.TrimStart(Constants.InternalIds.GAME_TITLE_ID_PREFIX),
-                            Title = game.Title
-                        },
+                        GameTitle = gameEntry,
                         IsDlcOrPatch = hasDlcPlaylistId,
                         Playlists = song.Playlists?.Select(p => new Models.BgmEntryModels.PlaylistEntry() {  Id = p.Id}).ToList(),
-                        FileName = audioFilePath,
-                        ModName = _musicModConfig.Name,
+                        Mod = new Models.BgmEntryModels.ModEntry()
+                        {
+                            Filename = audioFilePath,
+                            ModName = _musicModConfig.Name,
+                            ModAuthor = _musicModConfig.Author,
+                            ModWebsite = _musicModConfig.Website
+                        },
                         Source = Models.BgmEntryModels.EntrySource.Mod,
                         AudioCuePoints = audioCuePoints,
                         SpecialCategory = GetSpecialCategory(toneId, song?.SpecialCategory, prefixToneIdMapping)

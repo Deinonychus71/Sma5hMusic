@@ -13,6 +13,7 @@
     <None Remove="appsettings.json" />
     <None Remove="Assets\FilterStyles.xaml" />
     <None Remove="Assets\ListsStyles.xaml" />
+    <None Remove="Assets\PropertiesStyles.xaml" />
     <None Remove="Assets\Styles.xaml" />
   </ItemGroup>
   <ItemGroup>
@@ -40,6 +41,10 @@
     <ProjectReference Include="..\Sm5sh\Mods\Sm5sh.Mods.StagePlaylist\Sm5sh.Mods.StagePlaylist.csproj" />
   </ItemGroup>
   <ItemGroup>
+    <AvaloniaResource Update="Assets\PropertiesStyles.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </AvaloniaResource>
     <AvaloniaResource Update="Assets\ListsStyles.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

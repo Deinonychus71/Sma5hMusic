@@ -27,9 +27,6 @@ namespace Sm5sh.GUI.ViewModels
         public IEnumerable<ComboItem> RecordTypes { get { return _recordTypes; } }
 
         [Reactive]
-        public bool IsModSelected { get; set; }
-
-        [Reactive]
         public BgmEntryListViewModel SelectedMod { get; set; }
         [Reactive]
         public BgmEntryListViewModel SelectedSeries { get; set; }

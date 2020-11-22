@@ -42,7 +42,7 @@ namespace Sm5sh.Mods.Music.Services
 
         public IEnumerable<BgmEntry> GetModBgmEntries()
         {
-            return GetBgmEntries().Where(p => !string.IsNullOrEmpty(p.FileName));
+            return GetBgmEntries().Where(p => p.Source == EntrySource.Mod);
         }
 
         public BgmEntry GetBgmEntry(string toneId)
@@ -128,8 +128,8 @@ namespace Sm5sh.Mods.Music.Services
                         TotalSamples = bgmProperty.TotalSamples,
                         TotalTimeMs = bgmProperty.TotalTimeMs
                     },
-                    FileName = _toneIdKeyReferences.ContainsKey(toneId) ? _toneIdKeyReferences[toneId].FileName : null,
-                    ModName = _toneIdKeyReferences.ContainsKey(toneId) ? _toneIdKeyReferences[toneId].ModName : null,
+                    SoundTestIndex = dbRootEntry.TestDispOrder,
+                    Mod = _toneIdKeyReferences.ContainsKey(toneId) ? _toneIdKeyReferences[toneId].Mod : null,
                     Source = _toneIdKeyReferences.ContainsKey(toneId) ? _toneIdKeyReferences[toneId].Source : EntrySource.Core,
                     Playlists = paramBgmPlaylists.Where(p => p.Value.Any(p => p.UiBgmId.HexValue == dbRootEntry.UiBgmId.HexValue)).Select(p => new PlaylistEntry() { Id = p.Key }).ToList(),
                     IsDlcOrPatch = dbRootEntry.IsDlc,
@@ -577,8 +577,7 @@ namespace Sm5sh.Mods.Music.Services
         public class BgmToneKeyReferences
         {
             public string ToneId { get; }
-            public string FileName { get; }
-            public string ModName { get; set; }
+            public ModEntry Mod { get; set; }
             public EntrySource Source { get; set; }
             public string DbRootKey { get; }
             public string StreamSetKey { get; }
@@ -594,8 +593,7 @@ namespace Sm5sh.Mods.Music.Services
                 StreamPropertyKey = $"{Constants.InternalIds.STREAM_PREFIX}{toneId}";
                 if (bgmEntry != null)
                 {
-                    FileName = bgmEntry.FileName;
-                    ModName = bgmEntry.ModName;
+                    Mod = bgmEntry.Mod;
                     Source = bgmEntry.Source;
                 }
                 else
