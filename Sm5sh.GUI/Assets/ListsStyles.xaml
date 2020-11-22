@@ -2,6 +2,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
   <Style Selector="DataGrid.BgmList">
     <Setter Property="SelectionMode" Value="Single"/>
+    <Setter Property="ColumnHeaderHeight" Value="40"/>
     <Setter Property="CanUserReorderColumns" Value="True"/>
     <Setter Property="CanUserResizeColumns" Value="True"/>
     <Setter Property="CanUserSortColumns" Value="True"/>

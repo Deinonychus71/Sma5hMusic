@@ -1,8 +1,17 @@
 ﻿<Styles xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-  <Style Selector="TextBlock.h1">
+  <Styles.Resources>
+    <SolidColorBrush x:Key="BrushGrayDark">#202020</SolidColorBrush>
+  </Styles.Resources>
+  <Style Selector="Label.headerTitle">
     <Setter Property="FontSize" Value="24"/>
     <Setter Property="FontWeight" Value="Bold"/>
+    <Setter Property="Margin" Value="13"/>
+    <Setter Property="HorizontalAlignment" Value="Center"/>
+  </Style>
+  <Style Selector="Border.headerBorder">
+    <Setter Property="BorderBrush" Value="{StaticResource BrushGrayDark}"/>
+    <Setter Property="BorderThickness" Value="0,0,0,2"/>
   </Style>
   <Style Selector="ContentControl.list">
     <Setter Property="Background" Value="#202020"/>

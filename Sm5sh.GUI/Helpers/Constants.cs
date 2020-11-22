@@ -60,6 +60,24 @@ namespace Sm5sh.GUI.Helpers
             { "record_new_arrange", "New Remix" }
         };
 
+        public readonly static Dictionary<string, string> CONVERTER_LOCALE = new Dictionary<string, string>()
+        {
+            { "eu_de", "German" },
+            { "eu_en", "English (UK)" },
+            { "eu_sp", "Spanish (Spain)" },
+            { "eu_fr", "French (France)" },
+            { "eu_it", "Italian" },
+            { "eu_nl", "Dutch" },
+            { "eu_ru", "Russian" },
+            { "jp_ja", "Japanese" },
+            { "kr_ko", "Korean" },
+            { "us_en", "English (US)" },
+            { "us_es", "Spanish (US)" },
+            { "us_fr", "French (Canada)" },
+            { "zh_cn", "Chinese (Simplified)" },
+            { "zh_tw", "Chinese (Traditional)" }
+        };
+
         public static string GetSeriesDisplayName(string key)
         {
             if (string.IsNullOrEmpty(key))

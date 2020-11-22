@@ -12,8 +12,6 @@ using Sm5sh.Interfaces;
 using Splat;
 using System.Threading.Tasks;
 using ILogger = Microsoft.Extensions.Logging.ILogger;
-using System;
-using System.Reactive;
 
 namespace Sm5sh.GUI.ViewModels
 {
