@@ -1,0 +1,11 @@
+﻿<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <Style Selector="DataGrid.BgmList">
+    <Setter Property="SelectionMode" Value="Single"/>
+    <Setter Property="CanUserReorderColumns" Value="True"/>
+    <Setter Property="CanUserResizeColumns" Value="True"/>
+    <Setter Property="CanUserSortColumns" Value="True"/>
+    <Setter Property="IsReadOnly" Value="True"/>
+    <!--<Setter Property="AutoSizingColumns" Value="True"/>-->
+  </Style>
+</Styles>

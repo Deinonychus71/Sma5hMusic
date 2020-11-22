@@ -4,4 +4,7 @@
     <Setter Property="FontSize" Value="24"/>
     <Setter Property="FontWeight" Value="Bold"/>
   </Style>
+  <Style Selector="ContentControl.list">
+    <Setter Property="Background" Value="#202020"/>
+  </Style>
 </Styles>

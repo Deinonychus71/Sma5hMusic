@@ -97,12 +97,15 @@ namespace VGMMusic
             {
                 using (var outputDevice = new WaveOutEvent())
                 {
-                    outputDevice.Init(_reader);
-                    outputDevice.Play();
-                    IsPlaying = true;
-                    while (outputDevice.PlaybackState == PlaybackState.Playing && !_requestStop)
+                    if (_reader != null)
                     {
-                        Thread.Sleep(1000);
+                        outputDevice.Init(_reader);
+                        outputDevice.Play();
+                        IsPlaying = true;
+                        while (outputDevice.PlaybackState == PlaybackState.Playing && !_requestStop)
+                        {
+                            Thread.Sleep(500);
+                        }
                     }
                 }
                 _requestStop = false;

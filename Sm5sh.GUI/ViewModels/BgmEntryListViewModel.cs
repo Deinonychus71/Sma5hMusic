@@ -2,6 +2,7 @@
 using Sm5sh.GUI.Helpers;
 using Sm5sh.Mods.Music.Models;
 using System.Collections.Generic;
+using VGMMusic;
 
 namespace Sm5sh.GUI.ViewModels
 {
@@ -28,10 +29,14 @@ namespace Sm5sh.GUI.ViewModels
         public bool IsMod { get; private set; }
         public Mods.Music.Models.BgmEntryModels.EntrySource Source { get; private set; }
 
+        public MusicPlayerViewModel MusicPlayer { get; set; }
+
         public BgmEntryListViewModel() { }
 
-        public BgmEntryListViewModel(BgmEntry bgmEntry)
+        public BgmEntryListViewModel(IVGMMusicPlayer musicPlayer, BgmEntry bgmEntry)
         {
+            MusicPlayer = new MusicPlayerViewModel(musicPlayer, bgmEntry.FileName);
+
             ToneId = bgmEntry.ToneId;
             SeriesId = bgmEntry.GameTitle?.SeriesId;
             SeriesTitle = Constants.GetSeriesDisplayName(SeriesId);

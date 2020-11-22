@@ -13,6 +13,7 @@ using Splat;
 using System.Threading.Tasks;
 using ILogger = Microsoft.Extensions.Logging.ILogger;
 using System;
+using System.Reactive;
 
 namespace Sm5sh.GUI.ViewModels
 {
@@ -42,7 +43,7 @@ namespace Sm5sh.GUI.ViewModels
             _bgmEntries = new RangeObservableCollection<BgmEntry>();
             var whenLocaleChanged = this.WhenAnyValue(p => p.SelectedLocale);
             var observableBgmEntriesList = _bgmEntries.ToObservableChangeSet(p => p.ToneId)
-                .Transform(p => new BgmEntryListViewModel(p))
+                .Transform(p => new BgmEntryListViewModel(musicPlayer, p))
                 .AutoRefreshOnObservable(p => whenLocaleChanged)
                 .ForEachChange(o => o.Current.LoadLocalized(SelectedLocale));
 
