@@ -59,12 +59,6 @@ namespace Sm5sh.Mods.Music.Services
             //VERIFY HASH
             //TODO TODO TODO
 
-            if (bgmEntry.Mod?.ModPath == null)
-            {
-                _logger.LogError("Attempting to register a song without a mod assigned.");
-                return null;
-            }
-
             var keyRefs = GetToneIdKeyReferences(bgmEntry.ToneId, bgmEntry);
             var bgmEntries = GetBgmEntriesFromStateManager();
 
@@ -306,6 +300,7 @@ namespace Sm5sh.Mods.Music.Services
             //Playlists
             if (bgmEntry.Playlists != null)
             {
+                //TODO BROKEN FOR SONG UPDATES!!
                 foreach (var playlistId in bgmEntry.Playlists)
                 {
                     var paramBgmPlaylist = paramBgmDatabase.PlaylistEntries.FirstOrDefault(p => p.Id.StringValue == playlistId.Id)?.Values;

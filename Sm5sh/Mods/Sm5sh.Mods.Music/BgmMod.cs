@@ -56,6 +56,12 @@ namespace Sm5sh.Mods.Music
 
         public override bool Build()
         {
+            var test = _audioStateService.GetBgmEntries();
+            foreach(var t in test)
+            {
+                _audioStateService.AddOrUpdateBgmEntry(t);
+            }
+
             //Save NUS3Audio/Nus3Bank
             foreach(var bgmEntry in _audioStateService.GetModBgmEntries())
             {
