@@ -55,20 +55,8 @@ namespace Sm5sh.CLI
             services.AddSingleton(loggerFactory);
 
             //Sm5sh Core
-            services.Configure<Sm5shOptions>(configuration);
-            services.AddSingleton<IProcessService, ProcessService>();
-            services.AddSingleton<IStateManager, StateManager>();
-            services.AddSingleton<IResourceProvider, MsbtResourceProvider>();
-            services.AddSingleton<IResourceProvider, PrcResourceProvider>();
-
-            //MODS - TODO LOAD DYNAMICALLY?
-            //Mod Music
-            services.Configure<Sm5shMusicOptions>(configuration);
-            services.AddSingleton<ISm5shMod, BgmMod>();
-            services.AddSingleton<IResourceProvider, BgmPropertyProvider>();
-            services.AddTransient<IAudioStateService, AudioStateService>();
-            services.AddSingleton<IAudioMetadataService, VGAudioMetadataService>();
-            services.AddSingleton<INus3AudioService, Nus3AudioService>();
+            services.AddSm5shCore(configuration);
+            services.AddSm5shMusic(configuration);
 
             //Mod Stage Playlist
             services.Configure<Sm5shStagePlaylistOptions>(configuration);
