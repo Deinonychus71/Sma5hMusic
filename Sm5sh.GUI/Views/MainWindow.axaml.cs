@@ -1,16 +1,14 @@
 ﻿using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
+using Sm5sh.GUI.Interfaces;
 
 namespace Sm5sh.GUI.Views
 {
-    public class MainWindow : Window
+    public class MainWindow : Window, IDialogWindow
     {
         public MainWindow()
         {
             InitializeComponent();
-#if DEBUG
-            //this.AttachDevTools();
-#endif
         }
 
         private void InitializeComponent()

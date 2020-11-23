@@ -34,14 +34,7 @@
             <Style Selector="MenuItem > MenuItem">
               <Setter Property="Header" Value="{Binding Label}"/>
               <Setter Property="Command" Value="{Binding Path=DataContext.AddNewBgmEntry, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=DockPanel}}"/>
-              <Setter Property="CommandParameter">
-                <Setter.Value>
-                  <MultiBinding Converter="{StaticResource ParametizedDialogConverter}">
-                    <Binding Path="Id" />
-                    <Binding Path="$parent[Window]" />
-                  </MultiBinding>
-                </Setter.Value>
-              </Setter>
+              <Setter Property="CommandParameter" Value="{Binding Id}"/>
             </Style>
           </MenuItem.Styles>
         </MenuItem>

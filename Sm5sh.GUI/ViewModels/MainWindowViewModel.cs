@@ -17,6 +17,7 @@ namespace Sm5sh.GUI.ViewModels
     public class MainWindowViewModel : ViewModelBase
     {
         private readonly IAudioStateService _audioState;
+        private readonly IServiceProvider _serviceProvider;
         private readonly ILogger _logger;
         private readonly RangeObservableCollection<BgmEntry> _bgmEntries;
 
@@ -24,6 +25,7 @@ namespace Sm5sh.GUI.ViewModels
 
         public MainWindowViewModel(IServiceProvider serviceProvider, IAudioStateService audioState, IVGMMusicPlayer musicPlayer, ILogger<MainWindowViewModel> logger)
         {
+            _serviceProvider = serviceProvider;
             _logger = logger;
 
             //DI
@@ -42,8 +44,8 @@ namespace Sm5sh.GUI.ViewModels
         {
             Task.Run(() =>
             {
-                var stateManager = Locator.Current.GetService<IStateManager>();
-                var mods = Locator.Current.GetServices<ISm5shMod>();
+                var stateManager = _serviceProvider.GetService<IStateManager>();
+                var mods = _serviceProvider.GetServices<ISm5shMod>();
                 stateManager.Init();
                 foreach (var mod in mods)
                 {

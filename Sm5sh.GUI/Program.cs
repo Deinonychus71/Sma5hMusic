@@ -15,6 +15,10 @@ using System;
 using System.IO;
 using Sm5sh.GUI.ViewModels;
 using VGMMusic;
+using Sm5sh.GUI.Helpers;
+using Sm5sh.GUI.Views;
+using Sm5sh.GUI.Interfaces;
+using Sm5sh.GUI.Dialogs;
 
 namespace Sm5sh.GUI
 {
@@ -76,12 +80,14 @@ namespace Sm5sh.GUI
             services.Configure<Sm5shStagePlaylistOptions>(configuration);
             services.AddSingleton<ISm5shMod, StagePlaylistMod>();
 
-            //Add ViewModels
+            //Add UI ViewModels
+            services.AddSingleton<IDialogWindow, MainWindow>();
             services.AddSingleton<MainWindowViewModel>();
             services.AddSingleton<BgmPropertiesWindowViewModel>();
 
             //Add UI Services
             services.AddSingleton<IVGMMusicPlayer, VGMMusicPlayer>();
+            services.AddSingleton<IFileDialog, FileDialog>();
 
             //Add to Splat
             services.UseMicrosoftDependencyResolver();

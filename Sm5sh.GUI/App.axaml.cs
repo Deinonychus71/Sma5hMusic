@@ -1,6 +1,8 @@
 ﻿using Avalonia;
+using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
+using Sm5sh.GUI.Interfaces;
 using Sm5sh.GUI.ViewModels;
 using Sm5sh.GUI.Views;
 using Sm5sh.Interfaces;
@@ -19,10 +21,13 @@ namespace Sm5sh.GUI
         {
             if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             {
-                desktop.MainWindow = new MainWindow
+                var mainWindow = Locator.Current.GetService<IDialogWindow>() as Window;
+                mainWindow.DataContext = Locator.Current.GetService<MainWindowViewModel>();
+                desktop.MainWindow = mainWindow;
+                /*desktop.MainWindow = new MainWindow
                 {
                     DataContext = Locator.Current.GetService<MainWindowViewModel>(),
-                };
+                };*/
             }
 
             base.OnFrameworkInitializationCompleted();

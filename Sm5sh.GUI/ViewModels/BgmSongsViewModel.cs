@@ -12,18 +12,16 @@ using System.Collections.ObjectModel;
 using System.Reactive;
 using System.Linq;
 using Sm5sh.GUI.Models;
-using Splat;
-using Sm5sh.GUI.Views;
-using Avalonia.Controls;
 using System.Threading.Tasks;
 using Avalonia;
-using Avalonia.Threading;
+using Sm5sh.GUI.Interfaces;
 
 namespace Sm5sh.GUI.ViewModels
 {
     public class BgmSongsViewModel : ViewModelBase
     {
         private readonly ILogger _logger;
+        private readonly IFileDialog _fileDialog;
         private readonly ReadOnlyObservableCollection<ComboItem> _mods;
 
         public BgmListViewModel VMBgmList { get; }
@@ -33,9 +31,10 @@ namespace Sm5sh.GUI.ViewModels
         [Reactive]
         public string SelectedLocale { get; set; }
 
-        public BgmSongsViewModel(IServiceProvider serviceProvider, ILogger<BgmSongsViewModel> logger, IObservable<IChangeSet<BgmEntryListViewModel, string>> observableBgmEntriesList)
+        public BgmSongsViewModel(IServiceProvider serviceProvider, IFileDialog fileDialog, ILogger<BgmSongsViewModel> logger, IObservable<IChangeSet<BgmEntryListViewModel, string>> observableBgmEntriesList)
         {
             _logger = logger;
+            _fileDialog = fileDialog;
             SelectedLocale = Constants.DEFAULT_LOCALE;
 
             var whenLocaleChanged = this.WhenAnyValue(p => p.SelectedLocale);
@@ -76,25 +75,9 @@ namespace Sm5sh.GUI.ViewModels
             SelectedLocale = locale;
         }
 
-        public async Task AddNewBgmEntry(ParametizedDialogHelper dialogHelper)
+        public async Task AddNewBgmEntry(string modPath)
         {
-            var filePicker = new OpenFileDialog()
-            {
-                Filters = new System.Collections.Generic.List<FileDialogFilter>()
-                {
-                    new FileDialogFilter(){ Extensions = new System.Collections.Generic.List<string>()
-                    {
-                        ".brstm", ".lopus", ".idsp"
-                    }
-                    }
-                }
-            };
-            await Dispatcher.UIThread.InvokeAsync(() =>
-            {
-                filePicker.ShowAsync(dialogHelper.Window);
-            }, DispatcherPriority.Background);
-            
-            
+            var results = await _fileDialog.OpenFileDialogAudio();
             //var result = await filePicker.ShowAsync(dialogHelper.Window);
 
             /*var win = new BgmPropertiesWindow()
