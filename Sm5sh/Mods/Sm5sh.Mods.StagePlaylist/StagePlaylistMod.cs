@@ -89,9 +89,9 @@ namespace Sm5sh.Mods.StagePlaylist
 
             foreach(var daoUiStageEntry in daoUiStageDatabase.DbRootEntries.Values)
             {
-                var modEntry = _modConfig[daoUiStageEntry.UiStageId.StringValue];
+                var modEntry = _modConfig[daoUiStageEntry.UiStageId];
 
-                daoUiStageEntry.BgmSetId = new PrcHash40(modEntry.PlaylistId);
+                daoUiStageEntry.BgmSetId = modEntry.PlaylistId;
                 daoUiStageEntry.BgmSettingNo = modEntry.OrderId;
             }
 

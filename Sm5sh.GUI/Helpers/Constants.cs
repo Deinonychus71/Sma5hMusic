@@ -78,12 +78,15 @@ namespace Sm5sh.GUI.Helpers
             { "zh_tw", "Chinese (Traditional)" }
         };
 
-        public readonly static Dictionary<ulong, string> CONVERTER_SPECIAL_CATEGORY = new Dictionary<ulong, string>()
+        public readonly static Dictionary<string, string> CONVERTER_SPECIAL_CATEGORY = new Dictionary<string, string>()
         {
-            { 0x105274ba4f, "Pinch Songs" },
-            { 0x11ff737d4d, "Persona 3 Stage" },
-            { 0x116117e8ee, "Persona 4 Stage" },
-            { 0x111610d878, "Persona 5 Stage" },
+            { "0x105274ba4f", "Pinch Songs" },
+            { "0x11ff737d4d", "Persona 3 Stage" },
+            { "0x116117e8ee", "Persona 4 Stage" },
+            { "0x111610d878", "Persona 5 Stage" },
+            { "jack_mementoes_p3", "Persona 3 Stage" },
+            { "jack_mementoes_p4", "Persona 4 Stage" },
+            { "jack_mementoes_p5", "Persona 5 Stage" },
         };
 
         public static string GetSeriesDisplayName(string key)
@@ -107,7 +110,7 @@ namespace Sm5sh.GUI.Helpers
             return CONVERTER_LOCALE.ContainsKey(key) ? CONVERTER_LOCALE[key] : key;
         }
 
-        public static string GetSpecialCategoryDisplayName(ulong key)
+        public static string GetSpecialCategoryDisplayName(string key)
         {
             return CONVERTER_SPECIAL_CATEGORY.ContainsKey(key) ? CONVERTER_SPECIAL_CATEGORY[key] : $"0x{key:x}";
         }

@@ -94,7 +94,7 @@ namespace Sm5sh.Mods.Music.Services
             var paramBgmStreamSet = paramBgmDatabase.StreamSetEntries;
             var paramBgmAssignedInfo = paramBgmDatabase.AssignedInfoEntries;
             var paramBgmStreamProperty = paramBgmDatabase.StreamPropertyEntries;
-            var paramBgmPlaylists = paramBgmDatabase.PlaylistEntries.ToDictionary(p => p.Id.StringValue, p => p.Values);
+            var paramBgmPlaylists = paramBgmDatabase.PlaylistEntries.ToDictionary(p => p.Id, p => p.Values);
 
             //Load MSBT
             var daoMsbtBgms = GetBgmDatabases();
@@ -114,7 +114,7 @@ namespace Sm5sh.Mods.Music.Services
                 var setStreamEntry = paramBgmStreamSet[keyRef.StreamSetKey];
                 var assignedInfoEntry = paramBgmAssignedInfo[keyRef.AssignedInfoKey];
                 var streamPropertyEntry = paramBgmStreamProperty[keyRef.StreamPropertyKey];
-                var gameTitleEntry = paramGameTitleDbRoot[dbRootEntry.UiGameTitleId.StringValue];
+                var gameTitleEntry = paramGameTitleDbRoot[dbRootEntry.UiGameTitleId];
                 var bgmProperty = daoBinPropertyKeyValue.Value;
 
                 var newBgmEntry = new BgmEntry()
@@ -122,12 +122,12 @@ namespace Sm5sh.Mods.Music.Services
                     ToneId = toneId,
                     GameTitle = new GameTitleEntry()
                     {
-                        GameTitleId = dbRootEntry.UiGameTitleId.StringValue,
+                        GameTitleId = dbRootEntry.UiGameTitleId,
                         NameId = dbRootEntry.NameId,
-                        SeriesId = gameTitleEntry.UiSeriesId.StringValue,
+                        SeriesId = gameTitleEntry.UiSeriesId,
                         Title = new Dictionary<string, string>()
                     },
-                    RecordType = dbRootEntry.RecordType.StringValue,
+                    RecordType = dbRootEntry.RecordType,
                     AudioCuePoints = new AudioCuePoints()
                     {
                         LoopEndMs = bgmProperty.LoopEndMs,
@@ -140,7 +140,7 @@ namespace Sm5sh.Mods.Music.Services
                     SoundTestIndex = dbRootEntry.TestDispOrder,
                     Mod = _toneIdKeyReferences.ContainsKey(toneId) ? _toneIdKeyReferences[toneId].Mod : null,
                     Filename = _toneIdKeyReferences.ContainsKey(toneId) ? _toneIdKeyReferences[toneId].Filename : null,
-                    Playlists = paramBgmPlaylists.Where(p => p.Value.Any(p => p.UiBgmId.HexValue == dbRootEntry.UiBgmId.HexValue)).Select(p => new PlaylistEntry() { Id = p.Key }).ToList(),
+                    Playlists = paramBgmPlaylists.Where(p => p.Value.Any(p => p.UiBgmId == dbRootEntry.UiBgmId)).Select(p => new PlaylistEntry() { Id = p.Key }).ToList(),
                     IsDlcOrPatch = dbRootEntry.IsDlc,
                     HiddenInSoundTest = ToHiddenInSoundTestStatus(dbRootEntry),
                     SpecialCategory = ToSpecialCategory(setStreamEntry),
@@ -191,15 +191,15 @@ namespace Sm5sh.Mods.Music.Services
             //New entry - with default values
             paramBgmDbRoot.Add(keyRefs.DbRootKey, new PrcBgmDbRootEntry()
             {
-                UiBgmId = new PrcHash40(keyRefs.DbRootKey),
-                StreamSetId = new PrcHash40(keyRefs.StreamSetKey),
-                Rarity = new PrcHash40(Constants.InternalIds.RARITY_DEFAULT),
-                RecordType = new PrcHash40(Constants.InternalIds.RECORD_TYPE_DEFAULT),
-                UiGameTitleId = new PrcHash40(Constants.InternalIds.GAME_TITLE_ID_DEFAULT),
-                UiGameTitleId1 = new PrcHash40(Constants.InternalIds.GAME_TITLE_ID_DEFAULT),
-                UiGameTitleId2 = new PrcHash40(Constants.InternalIds.GAME_TITLE_ID_DEFAULT),
-                UiGameTitleId3 = new PrcHash40(Constants.InternalIds.GAME_TITLE_ID_DEFAULT),
-                UiGameTitleId4 = new PrcHash40(Constants.InternalIds.GAME_TITLE_ID_DEFAULT),
+                UiBgmId = keyRefs.DbRootKey,
+                StreamSetId = keyRefs.StreamSetKey,
+                Rarity = Constants.InternalIds.RARITY_DEFAULT,
+                RecordType = Constants.InternalIds.RECORD_TYPE_DEFAULT,
+                UiGameTitleId = Constants.InternalIds.GAME_TITLE_ID_DEFAULT,
+                UiGameTitleId1 = Constants.InternalIds.GAME_TITLE_ID_DEFAULT,
+                UiGameTitleId2 = Constants.InternalIds.GAME_TITLE_ID_DEFAULT,
+                UiGameTitleId3 = Constants.InternalIds.GAME_TITLE_ID_DEFAULT,
+                UiGameTitleId4 = Constants.InternalIds.GAME_TITLE_ID_DEFAULT,
                 NameId = GetNewBgmId(),
                 SaveNo = -1,
                 TestDispOrder = -1,
@@ -219,22 +219,21 @@ namespace Sm5sh.Mods.Music.Services
             });
             paramBgmDatabase.StreamSetEntries.Add(keyRefs.StreamSetKey, new PrcBgmStreamSetEntry()
             {
-                StreamSetId = new PrcHash40(keyRefs.StreamSetKey),
-                SpecialCategory = new PrcHash40(0),
-                Info0 = new PrcHash40(keyRefs.AssignedInfoKey)
+                StreamSetId = keyRefs.StreamSetKey,
+                Info0 = keyRefs.AssignedInfoKey
             });
             paramBgmDatabase.AssignedInfoEntries.Add(keyRefs.AssignedInfoKey, new PrcBgmAssignedInfoEntry()
             {
-                InfoId = new PrcHash40(keyRefs.AssignedInfoKey),
-                StreamId = new PrcHash40(keyRefs.StreamPropertyKey),
-                Condition = new PrcHash40(Constants.InternalIds.SOUND_CONDITION),
-                ConditionProcess = new PrcHash40(0x1b9fe75d3f),
+                InfoId = keyRefs.AssignedInfoKey,
+                StreamId = keyRefs.StreamPropertyKey,
+                Condition = Constants.InternalIds.SOUND_CONDITION,
+                ConditionProcess = "0x1b9fe75d3f",
                 ChangeFadoutFrame = 55,
                 MenuChangeFadeOutFrame = 55
             });
             paramBgmDatabase.StreamPropertyEntries.Add(keyRefs.StreamPropertyKey, new PrcBgmStreamPropertyEntry()
             {
-                StreamId = new PrcHash40(keyRefs.StreamPropertyKey),
+                StreamId = keyRefs.StreamPropertyKey,
                 DateName0 = keyRefs.ToneId,
                 Loop = 1,
                 EndPoint = "00:00:15.000",
@@ -253,7 +252,7 @@ namespace Sm5sh.Mods.Music.Services
             var binBgmPropertyEntries = _state.LoadResource<BinBgmProperty>(Constants.GameResources.PRC_BGM_PROPERTY_PATH).Entries;
 
             var defaultLocale = _config.Value.Sm5shMusic.DefaultLocale;
-            var coreSeriesGames = paramGameTitleDatabaseRoot.Values.Select(p => p.UiSeriesId.StringValue).Distinct(); //Not handling series addition right now.
+            var coreSeriesGames = paramGameTitleDatabaseRoot.Values.Select(p => p.UiSeriesId).Distinct(); //Not handling series addition right now.
 
             var toneId = keyRefs.ToneId;
 
@@ -266,8 +265,8 @@ namespace Sm5sh.Mods.Music.Services
             var assignedInfoEntry = paramBgmDatabase.AssignedInfoEntries[keyRefs.AssignedInfoKey];
             var streamPropertyEntry = paramBgmDatabase.StreamPropertyEntries[keyRefs.StreamPropertyKey];
             //DB Root
-            dbRootEntry.UiGameTitleId = new PrcHash40(bgmEntry.GameTitle.GameTitleId);
-            dbRootEntry.RecordType = new PrcHash40(bgmEntry.RecordType);
+            dbRootEntry.UiGameTitleId = bgmEntry.GameTitle.GameTitleId;
+            dbRootEntry.RecordType = bgmEntry.RecordType;
             dbRootEntry.IsPatch = bgmEntry.IsDlcOrPatch;
             dbRootEntry.IsDlc = bgmEntry.IsDlcOrPatch;
             dbRootEntry.TestDispOrder = bgmEntry.SoundTestIndex;
@@ -285,8 +284,8 @@ namespace Sm5sh.Mods.Music.Services
                 {
                     NameId = bgmEntry.GameTitle.NameId,
                     Release = paramGameTitleDatabaseRoot.Values.OrderByDescending(p => p.Release).First().Release + 1,
-                    UiGameTitleId = new PrcHash40(bgmEntry.GameTitle.GameTitleId),
-                    UiSeriesId = new PrcHash40(seriesId)
+                    UiGameTitleId = bgmEntry.GameTitle.GameTitleId,
+                    UiSeriesId = seriesId
                 });
             }
 
@@ -305,18 +304,18 @@ namespace Sm5sh.Mods.Music.Services
                 //TODO BROKEN FOR SONG UPDATES!!
                 foreach (var playlistId in bgmEntry.Playlists)
                 {
-                    var paramBgmPlaylist = paramBgmDatabase.PlaylistEntries.FirstOrDefault(p => p.Id.StringValue == playlistId.Id)?.Values;
+                    var paramBgmPlaylist = paramBgmDatabase.PlaylistEntries.FirstOrDefault(p => p.Id == playlistId.Id)?.Values;
                     if (paramBgmPlaylist == null)
                     {
                         paramBgmPlaylist = new List<PrcBgmPlaylistEntry>();
                         paramBgmDatabase.PlaylistEntries.Add(new PcrFilterStruct<PrcBgmPlaylistEntry>()
                         {
-                            Id = new PrcHash40(playlistId.Id),
+                            Id = playlistId.Id,
                             Values = paramBgmPlaylist
                         });
                     }
 
-                    var newPlaylistEntry = new PrcBgmPlaylistEntry() { UiBgmId = new PrcHash40(dbRootEntry.UiBgmId.StringValue) };
+                    var newPlaylistEntry = new PrcBgmPlaylistEntry() { UiBgmId = dbRootEntry.UiBgmId };
                     newPlaylistEntry.SetOrder((short)paramBgmPlaylist.Count);
                     newPlaylistEntry.SetIncidence(500);
                     paramBgmPlaylist.Add(newPlaylistEntry);
@@ -325,7 +324,7 @@ namespace Sm5sh.Mods.Music.Services
 
             //MSBT
             var nameId = dbRootEntry.NameId;
-            var gameTitleEntry = paramGameTitleDatabaseRoot[dbRootEntry.UiGameTitleId.StringValue];
+            var gameTitleEntry = paramGameTitleDatabaseRoot[dbRootEntry.UiGameTitleId];
             var gameTitleId = gameTitleEntry.NameId;
             var gameTitleLabel = string.Format(Constants.InternalIds.MSBT_GAME_TITLE, gameTitleId);
             var titleLabel = string.Format(Constants.InternalIds.MSBT_BGM_TITLE, nameId);
@@ -393,7 +392,7 @@ namespace Sm5sh.Mods.Music.Services
 
             //PLAYLISTS
             foreach (var playlist in paramBgmDatabase.PlaylistEntries)
-                playlist.Values.RemoveAll(p => p.UiBgmId.StringValue == keyRefs.DbRootKey);
+                playlist.Values.RemoveAll(p => p.UiBgmId == keyRefs.DbRootKey);
 
             //MSBT
             if (dbRootRef != null)
@@ -415,41 +414,41 @@ namespace Sm5sh.Mods.Music.Services
         {
             var output = new SpecialCategoryEntry()
             {
-                Id = setStreamEntry.SpecialCategory != null ? setStreamEntry.SpecialCategory.HexValue : 0,
+                Id = setStreamEntry.SpecialCategory,
                 Parameters = new List<string>()
             };
 
             //TODO: Yeah yeah it's not great. Will need to think about that.
-            if (setStreamEntry.Info1 != null && setStreamEntry.Info1.HexValue != 0)
-                output.Parameters.Add(setStreamEntry.Info1.StringValue);
-            if (setStreamEntry.Info2 != null && setStreamEntry.Info2.HexValue != 0)
-                output.Parameters.Add(setStreamEntry.Info2.StringValue);
-            if (setStreamEntry.Info3 != null && setStreamEntry.Info3.HexValue != 0)
-                output.Parameters.Add(setStreamEntry.Info3.StringValue);
-            if (setStreamEntry.Info4 != null && setStreamEntry.Info4.HexValue != 0)
-                output.Parameters.Add(setStreamEntry.Info4.StringValue);
-            if (setStreamEntry.Info5 != null && setStreamEntry.Info5.HexValue != 0)
-                output.Parameters.Add(setStreamEntry.Info5.StringValue);
-            if (setStreamEntry.Info6 != null && setStreamEntry.Info6.HexValue != 0)
-                output.Parameters.Add(setStreamEntry.Info6.StringValue);
-            if (setStreamEntry.Info7 != null && setStreamEntry.Info7.HexValue != 0)
-                output.Parameters.Add(setStreamEntry.Info7.StringValue);
-            if (setStreamEntry.Info8 != null && setStreamEntry.Info8.HexValue != 0)
-                output.Parameters.Add(setStreamEntry.Info8.StringValue);
-            if (setStreamEntry.Info9 != null && setStreamEntry.Info9.HexValue != 0)
-                output.Parameters.Add(setStreamEntry.Info9.StringValue);
-            if (setStreamEntry.Info10 != null && setStreamEntry.Info10.HexValue != 0)
-                output.Parameters.Add(setStreamEntry.Info10.StringValue);
-            if (setStreamEntry.Info11 != null && setStreamEntry.Info11.HexValue != 0)
-                output.Parameters.Add(setStreamEntry.Info11.StringValue);
-            if (setStreamEntry.Info12 != null && setStreamEntry.Info12.HexValue != 0)
-                output.Parameters.Add(setStreamEntry.Info12.StringValue);
-            if (setStreamEntry.Info13 != null && setStreamEntry.Info13.HexValue != 0)
-                output.Parameters.Add(setStreamEntry.Info13.StringValue);
-            if (setStreamEntry.Info14 != null && setStreamEntry.Info14.HexValue != 0)
-                output.Parameters.Add(setStreamEntry.Info14.StringValue);
-            if (setStreamEntry.Info15 != null && setStreamEntry.Info15.HexValue != 0)
-                output.Parameters.Add(setStreamEntry.Info15.StringValue);
+            if (!string.IsNullOrEmpty(setStreamEntry.Info1))
+                output.Parameters.Add(setStreamEntry.Info1);
+            if (!string.IsNullOrEmpty(setStreamEntry.Info2))
+                output.Parameters.Add(setStreamEntry.Info2);
+            if (!string.IsNullOrEmpty(setStreamEntry.Info3))
+                output.Parameters.Add(setStreamEntry.Info3);
+            if (!string.IsNullOrEmpty(setStreamEntry.Info4))
+                output.Parameters.Add(setStreamEntry.Info4);
+            if (!string.IsNullOrEmpty(setStreamEntry.Info5))
+                output.Parameters.Add(setStreamEntry.Info5);
+            if (!string.IsNullOrEmpty(setStreamEntry.Info6))
+                output.Parameters.Add(setStreamEntry.Info6);
+            if (!string.IsNullOrEmpty(setStreamEntry.Info7))
+                output.Parameters.Add(setStreamEntry.Info7);
+            if (!string.IsNullOrEmpty(setStreamEntry.Info8))
+                output.Parameters.Add(setStreamEntry.Info8);
+            if (!string.IsNullOrEmpty(setStreamEntry.Info9))
+                output.Parameters.Add(setStreamEntry.Info9);
+            if (!string.IsNullOrEmpty(setStreamEntry.Info10))
+                output.Parameters.Add(setStreamEntry.Info10);
+            if (!string.IsNullOrEmpty(setStreamEntry.Info11))
+                output.Parameters.Add(setStreamEntry.Info11);
+            if (!string.IsNullOrEmpty(setStreamEntry.Info12))
+                output.Parameters.Add(setStreamEntry.Info12);
+            if (!string.IsNullOrEmpty(setStreamEntry.Info13))
+                output.Parameters.Add(setStreamEntry.Info13);
+            if (!string.IsNullOrEmpty(setStreamEntry.Info14))
+                output.Parameters.Add(setStreamEntry.Info14);
+            if (!string.IsNullOrEmpty(setStreamEntry.Info15))
+                output.Parameters.Add(setStreamEntry.Info15);
 
             return output;
         }
@@ -459,42 +458,42 @@ namespace Sm5sh.Mods.Music.Services
             if (specialEntry == null)
                 return setStreamEntry;
 
-            setStreamEntry.SpecialCategory = new PrcHash40(specialEntry.Id);
+            setStreamEntry.SpecialCategory = specialEntry.Id;
 
             if (specialEntry.Parameters == null)
                 return setStreamEntry;
 
             //TODO: Yeah yeah it's not great. Will need to think about that.
             if (specialEntry.Parameters.Count > 0)
-                setStreamEntry.Info1 = new PrcHash40(specialEntry.Parameters[0]);
+                setStreamEntry.Info1 = specialEntry.Parameters[0];
             if (specialEntry.Parameters.Count > 1)
-                setStreamEntry.Info2 = new PrcHash40(specialEntry.Parameters[1]);
+                setStreamEntry.Info2 = specialEntry.Parameters[1];
             if (specialEntry.Parameters.Count > 2)
-                setStreamEntry.Info3 = new PrcHash40(specialEntry.Parameters[2]);
+                setStreamEntry.Info3 = specialEntry.Parameters[2];
             if (specialEntry.Parameters.Count > 3)
-                setStreamEntry.Info4 = new PrcHash40(specialEntry.Parameters[3]);
+                setStreamEntry.Info4 = specialEntry.Parameters[3];
             if (specialEntry.Parameters.Count > 4)
-                setStreamEntry.Info5 = new PrcHash40(specialEntry.Parameters[4]);
+                setStreamEntry.Info5 = specialEntry.Parameters[4];
             if (specialEntry.Parameters.Count > 5)
-                setStreamEntry.Info6 = new PrcHash40(specialEntry.Parameters[5]);
+                setStreamEntry.Info6 = specialEntry.Parameters[5];
             if (specialEntry.Parameters.Count > 6)
-                setStreamEntry.Info7 = new PrcHash40(specialEntry.Parameters[6]);
+                setStreamEntry.Info7 = specialEntry.Parameters[6];
             if (specialEntry.Parameters.Count > 7)
-                setStreamEntry.Info8 = new PrcHash40(specialEntry.Parameters[7]);
+                setStreamEntry.Info8 = specialEntry.Parameters[7];
             if (specialEntry.Parameters.Count > 8)
-                setStreamEntry.Info9 = new PrcHash40(specialEntry.Parameters[8]);
+                setStreamEntry.Info9 = specialEntry.Parameters[8];
             if (specialEntry.Parameters.Count > 9)
-                setStreamEntry.Info10 = new PrcHash40(specialEntry.Parameters[9]);
+                setStreamEntry.Info10 = specialEntry.Parameters[9];
             if (specialEntry.Parameters.Count > 10)
-                setStreamEntry.Info11 = new PrcHash40(specialEntry.Parameters[10]);
+                setStreamEntry.Info11 = specialEntry.Parameters[10];
             if (specialEntry.Parameters.Count > 11)
-                setStreamEntry.Info12 = new PrcHash40(specialEntry.Parameters[11]);
+                setStreamEntry.Info12 = specialEntry.Parameters[11];
             if (specialEntry.Parameters.Count > 12)
-                setStreamEntry.Info13 = new PrcHash40(specialEntry.Parameters[12]);
+                setStreamEntry.Info13 = specialEntry.Parameters[12];
             if (specialEntry.Parameters.Count > 13)
-                setStreamEntry.Info14 = new PrcHash40(specialEntry.Parameters[13]);
+                setStreamEntry.Info14 = specialEntry.Parameters[13];
             if (specialEntry.Parameters.Count > 14)
-                setStreamEntry.Info15 = new PrcHash40(specialEntry.Parameters[14]);
+                setStreamEntry.Info15 = specialEntry.Parameters[14];
 
             return setStreamEntry;
         }

@@ -84,7 +84,7 @@ namespace Sm5sh.Mods.Music
                         SoundTestIndex = -1, //Mods don't manage that
                         SpecialCategory = song.SpecialCategory != null ? new Models.BgmEntryModels.SpecialCategoryEntry()
                         {
-                            Id = new PrcHash40(song.SpecialCategory.Category).HexValue,
+                            Id = song.SpecialCategory.Category,
                             Parameters = song.SpecialCategory.Parameters
                         } : null
                     });
@@ -185,7 +185,7 @@ namespace Sm5sh.Mods.Music
                 Playlists = bgmEntry.Playlists.Select(p => new PlaylistInfo() { Id = p.Id }).ToList()
             };
             if (bgmEntry.SpecialCategory != null)
-                modSong.SpecialCategory = new SpecialCategory() { Category = new PrcHash40(bgmEntry.SpecialCategory.Id).StringValue, Parameters = bgmEntry.SpecialCategory.Parameters };
+                modSong.SpecialCategory = new SpecialCategory() { Category = bgmEntry.SpecialCategory.Id, Parameters = bgmEntry.SpecialCategory.Parameters };
 
             var game = _musicModConfig.Games.FirstOrDefault(p => p.Id == bgmEntry.GameTitle.GameTitleId);
             if(game == null)

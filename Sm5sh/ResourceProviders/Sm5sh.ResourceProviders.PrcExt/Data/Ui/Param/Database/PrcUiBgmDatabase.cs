@@ -39,32 +39,32 @@ namespace Sm5sh.Data.Ui.Param.Database
 
         public class PrcBgmDbRootEntry
         {
-            [PrcHexMapping("ui_bgm_id")]
-            public PrcHash40 UiBgmId { get; set; }
+            [PrcHexMapping("ui_bgm_id", true)]
+            public string UiBgmId { get; set; }
 
-            [PrcHexMapping("stream_set_id")]
-            public PrcHash40 StreamSetId { get; set; }
+            [PrcHexMapping("stream_set_id", true)]
+            public string StreamSetId { get; set; }
 
-            [PrcHexMapping("rarity")]
-            public PrcHash40 Rarity { get; set; }
+            [PrcHexMapping("rarity", true)]
+            public string Rarity { get; set; }
 
-            [PrcHexMapping("record_type")]
-            public PrcHash40 RecordType { get; set; }
+            [PrcHexMapping("record_type", true)]
+            public string RecordType { get; set; }
 
-            [PrcHexMapping("ui_gametitle_id")]
-            public PrcHash40 UiGameTitleId { get; set; }
+            [PrcHexMapping("ui_gametitle_id", true)]
+            public string UiGameTitleId { get; set; }
 
-            [PrcHexMapping("ui_gametitle_id_1")]
-            public PrcHash40 UiGameTitleId1 { get; set; }
+            [PrcHexMapping("ui_gametitle_id_1", true)]
+            public string UiGameTitleId1 { get; set; }
 
-            [PrcHexMapping("ui_gametitle_id_2")]
-            public PrcHash40 UiGameTitleId2 { get; set; }
+            [PrcHexMapping("ui_gametitle_id_2", true)]
+            public string UiGameTitleId2 { get; set; }
 
-            [PrcHexMapping("ui_gametitle_id_3")]
-            public PrcHash40 UiGameTitleId3 { get; set; }
+            [PrcHexMapping("ui_gametitle_id_3", true)]
+            public string UiGameTitleId3 { get; set; }
 
-            [PrcHexMapping("ui_gametitle_id_4")]
-            public PrcHash40 UiGameTitleId4 { get; set; }
+            [PrcHexMapping("ui_gametitle_id_4", true)]
+            public string UiGameTitleId4 { get; set; }
 
             [PrcHexMapping("name_id")]
             public string NameId { get; set; }
@@ -114,14 +114,14 @@ namespace Sm5sh.Data.Ui.Param.Database
             [PrcHexMapping("is_patch")]
             public bool IsPatch { get; set; }
 
-            [PrcHexMapping(0x0ff71e57ec)]
-            public PrcHash40 Unk3 { get; set; }
+            [PrcHexMapping(0x0ff71e57ec, true)]
+            public string Unk3 { get; set; }
 
-            [PrcHexMapping(0x14341640b8)]
-            public PrcHash40 Unk4 { get; set; }
+            [PrcHexMapping(0x14341640b8, true)]
+            public string Unk4 { get; set; }
 
-            [PrcHexMapping(0x1560c0949b)]
-            public PrcHash40 Unk5 { get; set; }
+            [PrcHexMapping(0x1560c0949b, true)]
+            public string Unk5 { get; set; }
 
             public override string ToString()
             {
@@ -131,14 +131,14 @@ namespace Sm5sh.Data.Ui.Param.Database
 
         public class PrcBgmStageBgmEntry
         {
-            [PrcHexMapping("ui_bgm_id")]
-            public PrcHash40 UiBgmId { get; set; }
+            [PrcHexMapping("ui_bgm_id", true)]
+            public string UiBgmId { get; set; }
 
-            [PrcHexMapping("stream_set_id")]
-            public PrcHash40 StreamSetId { get; set; }
+            [PrcHexMapping("stream_set_id", true)]
+            public string StreamSetId { get; set; }
 
-            [PrcHexMapping("ui_stage_id")]
-            public PrcHash40 UiStageId { get; set; }
+            [PrcHexMapping("ui_stage_id", true)]
+            public string UiStageId { get; set; }
 
             public override string ToString()
             {
@@ -148,59 +148,59 @@ namespace Sm5sh.Data.Ui.Param.Database
 
         public class PrcBgmStreamSetEntry
         {
-            [PrcHexMapping("stream_set_id")]
-            public PrcHash40 StreamSetId { get; set; }
+            [PrcHexMapping("stream_set_id", true)]
+            public string StreamSetId { get; set; }
 
-            [PrcHexMapping("special_category")]
-            public PrcHash40 SpecialCategory { get; set; }
+            [PrcHexMapping("special_category", true)]
+            public string SpecialCategory { get; set; }
 
-            [PrcHexMapping("info0")]
-            public PrcHash40 Info0 { get; set; }
+            [PrcHexMapping("info0", true)]
+            public string Info0 { get; set; }
 
-            [PrcHexMapping("info1")]
-            public PrcHash40 Info1 { get; set; }
+            [PrcHexMapping("info1", true)]
+            public string Info1 { get; set; }
 
-            [PrcHexMapping("info2")]
-            public PrcHash40 Info2 { get; set; }
+            [PrcHexMapping("info2", true)]
+            public string Info2 { get; set; }
 
-            [PrcHexMapping("info3")]
-            public PrcHash40 Info3 { get; set; }
+            [PrcHexMapping("info3", true)]
+            public string Info3 { get; set; }
 
-            [PrcHexMapping("info4")]
-            public PrcHash40 Info4 { get; set; }
+            [PrcHexMapping("info4", true)]
+            public string Info4 { get; set; }
 
-            [PrcHexMapping("info5")]
-            public PrcHash40 Info5 { get; set; }
+            [PrcHexMapping("info5", true)]
+            public string Info5 { get; set; }
 
-            [PrcHexMapping("info6")]
-            public PrcHash40 Info6 { get; set; }
+            [PrcHexMapping("info6", true)]
+            public string Info6 { get; set; }
 
-            [PrcHexMapping("info7")]
-            public PrcHash40 Info7 { get; set; }
+            [PrcHexMapping("info7", true)]
+            public string Info7 { get; set; }
 
-            [PrcHexMapping("info8")]
-            public PrcHash40 Info8 { get; set; }
+            [PrcHexMapping("info8", true)]
+            public string Info8 { get; set; }
 
-            [PrcHexMapping("info9")]
-            public PrcHash40 Info9 { get; set; }
+            [PrcHexMapping("info9", true)]
+            public string Info9 { get; set; }
 
-            [PrcHexMapping("info10")]
-            public PrcHash40 Info10 { get; set; }
+            [PrcHexMapping("info10", true)]
+            public string Info10 { get; set; }
 
-            [PrcHexMapping("info11")]
-            public PrcHash40 Info11 { get; set; }
+            [PrcHexMapping("info11", true)]
+            public string Info11 { get; set; }
 
-            [PrcHexMapping("info12")]
-            public PrcHash40 Info12 { get; set; }
+            [PrcHexMapping("info12", true)]
+            public string Info12 { get; set; }
 
-            [PrcHexMapping("info13")]
-            public PrcHash40 Info13 { get; set; }
+            [PrcHexMapping("info13", true)]
+            public string Info13 { get; set; }
 
-            [PrcHexMapping("info14")]
-            public PrcHash40 Info14 { get; set; }
+            [PrcHexMapping("info14", true)]
+            public string Info14 { get; set; }
 
-            [PrcHexMapping("info15")]
-            public PrcHash40 Info15 { get; set; }
+            [PrcHexMapping("info15", true)]
+            public string Info15 { get; set; }
 
             public override string ToString()
             {
@@ -210,17 +210,17 @@ namespace Sm5sh.Data.Ui.Param.Database
 
         public class PrcBgmAssignedInfoEntry
         {
-            [PrcHexMapping("info_id")]
-            public PrcHash40 InfoId { get; set; }
+            [PrcHexMapping("info_id", true)]
+            public string InfoId { get; set; }
 
-            [PrcHexMapping("stream_id")]
-            public PrcHash40 StreamId { get; set; }
+            [PrcHexMapping("stream_id", true)]
+            public string StreamId { get; set; }
 
-            [PrcHexMapping("condition")]
-            public PrcHash40 Condition { get; set; }
+            [PrcHexMapping("condition", true)]
+            public string Condition { get; set; }
 
-            [PrcHexMapping("condition_process")]
-            public PrcHash40 ConditionProcess { get; set; }
+            [PrcHexMapping("condition_process", true)]
+            public string ConditionProcess { get; set; }
 
             [PrcHexMapping("start_frame")]
             public int StartFrame { get; set; }
@@ -257,8 +257,8 @@ namespace Sm5sh.Data.Ui.Param.Database
 
         public class PrcBgmStreamPropertyEntry
         {
-            [PrcHexMapping("stream_id")]
-            public PrcHash40 StreamId { get; set; }
+            [PrcHexMapping("stream_id", true)]
+            public string StreamId { get; set; }
 
             [PrcHexMapping("data_name0")]
             public string DateName0 { get; set; }
@@ -313,8 +313,8 @@ namespace Sm5sh.Data.Ui.Param.Database
 
         public class PrcBgmFighterJingleBgmEntry
         {
-            [PrcHexMapping("ui_chara_id")]
-            public PrcHash40 UiCharaId { get; set; }
+            [PrcHexMapping("ui_chara_id", true)]
+            public string UiCharaId { get; set; }
 
             [PrcHexMapping("data_name")]
             public string DataName { get; set; }
@@ -327,8 +327,8 @@ namespace Sm5sh.Data.Ui.Param.Database
 
         public class PrcBgmPlaylistEntry
         {
-            [PrcHexMapping("ui_bgm_id")]
-            public PrcHash40 UiBgmId { get; set; }
+            [PrcHexMapping("ui_bgm_id", true)]
+            public string UiBgmId { get; set; }
 
             [PrcHexMapping("order0")]
             public short Order0 { get; set; }

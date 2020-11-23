@@ -15,8 +15,8 @@ namespace Sm5sh.Data.Ui.Param.Database
     {
         public class StageDbRootEntry
         {
-            [PrcHexMapping("ui_stage_id")]
-            public PrcHash40 UiStageId { get; set; }
+            [PrcHexMapping("ui_stage_id", true)]
+            public string UiStageId { get; set; }
 
             [PrcHexMapping("name_id")]
             public string NameId { get; set; }
@@ -24,8 +24,8 @@ namespace Sm5sh.Data.Ui.Param.Database
             [PrcHexMapping("save_no")]
             public short Save_no { get; set; }
 
-            [PrcHexMapping("ui_series_id")]
-            public PrcHash40 UiSeriesId { get; set; }
+            [PrcHexMapping("ui_series_id", true)]
+            public string UiSeriesId { get; set; }
 
             [PrcHexMapping("can_select")]
             public bool CanSelect { get; set; }
@@ -33,11 +33,11 @@ namespace Sm5sh.Data.Ui.Param.Database
             [PrcHexMapping("disp_order")]
             public sbyte DispOrder { get; set; }
 
-            [PrcHexMapping("stage_place_id")]
-            public PrcHash40 StagePlaceId { get; set; }
+            [PrcHexMapping("stage_place_id", true)]
+            public string StagePlaceId { get; set; }
 
-            [PrcHexMapping("secret_stage_place_id")]
-            public PrcHash40 SecretStagePlaceId { get; set; }
+            [PrcHexMapping("secret_stage_place_id", true)]
+            public string SecretStagePlaceId { get; set; }
 
             [PrcHexMapping("can_demo")]
             public bool CanDemo { get; set; }
@@ -51,14 +51,14 @@ namespace Sm5sh.Data.Ui.Param.Database
             [PrcHexMapping(0x10005d116c)]
             public bool Unk3 { get; set; }
 
-            [PrcHexMapping("secret_command_id")]
-            public PrcHash40 SecretCommandId { get; set; }
+            [PrcHexMapping("secret_command_id", true)]
+            public string SecretCommandId { get; set; }
 
-            [PrcHexMapping("secret_command_id_joycon")]
-            public PrcHash40 SecretCommandIdJoycon { get; set; }
+            [PrcHexMapping("secret_command_id_joycon", true)]
+            public string SecretCommandIdJoycon { get; set; }
 
-            [PrcHexMapping("bgm_set_id")]
-            public PrcHash40 BgmSetId { get; set; }
+            [PrcHexMapping("bgm_set_id", true)]
+            public string BgmSetId { get; set; }
 
             [PrcHexMapping("bgm_setting_no")]
             public byte BgmSettingNo { get; set; }
@@ -72,8 +72,8 @@ namespace Sm5sh.Data.Ui.Param.Database
             [PrcHexMapping("is_patch")]
             public bool IsPatch { get; set; }
 
-            [PrcHexMapping("dlc_chara_id")]
-            public PrcHash40 DlcCharaId { get; set; }
+            [PrcHexMapping("dlc_chara_id", true)]
+            public string DlcCharaId { get; set; }
 
             public override string ToString()
             {

@@ -62,7 +62,7 @@ namespace Sm5sh.Mods.Music.Models
 
         public class SpecialCategoryEntry
         {
-            public ulong Id { get; set; }
+            public string Id { get; set; }
 
             public List<string> Parameters { get; set; }
         }
