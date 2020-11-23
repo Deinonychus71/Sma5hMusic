@@ -1,0 +1,50 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             xmlns:i="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
+        xmlns:ia="clr-namespace:Avalonia.Xaml.Interactions.Core;assembly=Avalonia.Xaml.Interactions"
+             x:Class="Sm5sh.GUI.Views.BgmSongsView"
+             x:Name="SongsWindow">
+  <Grid ColumnDefinitions="*,5*,*" RowDefinitions="30,20,*">
+    <ContentControl Grid.Column="0" Grid.Row="2" Content="{Binding VMBgmFilters}"></ContentControl>
+    <DockPanel Grid.Column="1" Grid.Row="0">
+      <Menu DockPanel.Dock="Right">
+        <MenuItem Header="{Binding SelectedLocale, Converter={StaticResource LocaleNameConverter}}">
+          <MenuItem Header="English (US)" Command="{Binding ChangeLocale}" CommandParameter="us_en"></MenuItem>
+          <MenuItem Header="Spain (US)" Command="{Binding ChangeLocale}" CommandParameter="us_es"></MenuItem>
+          <MenuItem Header="French (Canada)" Command="{Binding ChangeLocale}" CommandParameter="us_fr"></MenuItem>
+          <MenuItem Header="English (UK)" Command="{Binding ChangeLocale}" CommandParameter="eu_en"></MenuItem>
+          <MenuItem Header="German" Command="{Binding ChangeLocale}" CommandParameter="eu_de"></MenuItem>
+          <MenuItem Header="Spanish (Spain)" Command="{Binding ChangeLocale}" CommandParameter="eu_sp"></MenuItem>
+          <MenuItem Header="French (France)" Command="{Binding ChangeLocale}" CommandParameter="eu_fr"></MenuItem>
+          <MenuItem Header="Italian" Command="{Binding ChangeLocale}" CommandParameter="eu_it"></MenuItem>
+          <MenuItem Header="Dutch" Command="{Binding ChangeLocale}" CommandParameter="eu_nl"></MenuItem>
+          <MenuItem Header="Russian" Command="{Binding ChangeLocale}" CommandParameter="eu_ru"></MenuItem>
+          <MenuItem Header="Japanese" Command="{Binding ChangeLocale}" CommandParameter="jp_ja"></MenuItem>
+          <MenuItem Header="Chinese (Simplified)" Command="{Binding ChangeLocale}" CommandParameter="zh_cn"></MenuItem>
+          <MenuItem Header="Chinese (Traditional)" Command="{Binding ChangeLocale}" CommandParameter="zh_tw"></MenuItem>
+          <MenuItem Header="Korean" Command="{Binding ChangeLocale}" CommandParameter="kr_ko"></MenuItem>
+        </MenuItem>
+      </Menu>
+      <Menu DockPanel.Dock="Left">
+        <MenuItem Header="Import Song" Items="{Binding Mods}">
+          <MenuItem.Styles>
+            <Style Selector="MenuItem">
+              <Setter Property="Header" Value="{Binding ModName}"/>
+              <Setter Property="Command" Value="{Binding AddNewBgmEntry}"/>
+              <Setter Property="CommandParameter" Value="{Binding $parent[Window]}"/>
+            </Style>
+          </MenuItem.Styles>
+        </MenuItem>
+        <MenuItem Header="Reorder Songs">
+          <MenuItem Header="By Index..."/>
+          <MenuItem Header="By Series..."></MenuItem>
+        </MenuItem>
+      </Menu>
+    </DockPanel>
+    <ContentControl Grid.Column="1" Grid.Row="1" Grid.RowSpan="2" Classes="list" Content="{Binding VMBgmList}"/>
+    <ContentControl Grid.Column="2" Grid.Row="2" Content="{Binding VMBgmProperties}"/>
+  </Grid>
+</UserControl>

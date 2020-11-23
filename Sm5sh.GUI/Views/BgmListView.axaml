@@ -11,7 +11,7 @@
     <StyleInclude Source="/Assets/ListsStyles.xaml" />
   </UserControl.Styles>
   <Grid>
-    <DataGrid SelectionMode="Extended" Classes="BgmList" SelectedItem="{Binding SelectedBgmEntry, Mode=TwoWay}" Items="{Binding Items, Mode=OneWay}">
+    <DataGrid SelectionMode="Single" Classes="BgmList" SelectedItem="{Binding SelectedBgmEntry, Mode=TwoWay}" Items="{Binding Items, Mode=OneWay}">
       <DataGrid.Columns>
         <DataGridTemplateColumn CanUserResize="false" Width="50">
           <DataGridTemplateColumn.CellTemplate>

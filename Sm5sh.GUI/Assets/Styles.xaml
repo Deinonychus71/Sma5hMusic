@@ -9,6 +9,15 @@
     <Setter Property="Margin" Value="13"/>
     <Setter Property="HorizontalAlignment" Value="Center"/>
   </Style>
+  <Style Selector="Label.title">
+    <Setter Property="FontSize" Value="32"/>
+    <Setter Property="FontWeight" Value="Bold"/>
+    <Setter Property="Margin" Value="13"/>
+    <Setter Property="HorizontalAlignment" Value="Center"/>
+  </Style>
+  <Style Selector="Image.logo">
+    <Setter Property="Margin" Value="13,5,0,0"/>
+  </Style>
   <Style Selector="Border.headerBorder">
     <Setter Property="BorderBrush" Value="{StaticResource BrushGrayDark}"/>
     <Setter Property="BorderThickness" Value="0,0,0,2"/>

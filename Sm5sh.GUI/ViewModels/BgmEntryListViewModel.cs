@@ -3,6 +3,9 @@ using Sm5sh.GUI.Helpers;
 using Sm5sh.Mods.Music.Models;
 using System.Collections.Generic;
 using VGMMusic;
+using System.Linq;
+using System;
+using System.IO;
 
 namespace Sm5sh.GUI.ViewModels
 {
@@ -31,14 +34,17 @@ namespace Sm5sh.GUI.ViewModels
         public string RecordTypeLabel { get; private set; }
         public bool HiddenInSoundTest { get; private set; }
         public short SoundTestIndex { get; private set; }
-
         public string ModName { get; set; }
         public string ModAuthor { get; set; }
         public string ModWebsite { get; set; }
+        public string ModPath { get; set; }
         public bool IsMod { get; private set; }
         public Mods.Music.Models.BgmEntryModels.EntrySource Source { get; private set; }
-
+        public string PlaylistIds { get; private set; }
+        public string SpecialCategoryLabel { get; private set; }
+        public string SpecialParam1Label { get; private set; }
         public MusicPlayerViewModel MusicPlayer { get; set; }
+
 
         public BgmEntryListViewModel() { }
 
@@ -52,13 +58,23 @@ namespace Sm5sh.GUI.ViewModels
             GameId = bgmEntry.GameTitle?.GameTitleId;
             RecordTypeId = bgmEntry.RecordType;
             RecordTypeLabel = Constants.GetRecordTypeDisplayName(bgmEntry.RecordType);
+            PlaylistIds = string.Join(Environment.NewLine, bgmEntry.Playlists.Select(p => p.Id));
             
             HiddenInSoundTest = bgmEntry.HiddenInSoundTest;
             SoundTestIndex = bgmEntry.SoundTestIndex;
 
+            if (bgmEntry.SpecialCategory != null)
+            {
+                SpecialCategoryLabel = Constants.GetSpecialCategoryDisplayName(bgmEntry.SpecialCategory.Id);
+                if (bgmEntry.SpecialCategory.Parameters.Count >= 1)
+                    SpecialParam1Label = bgmEntry.SpecialCategory.Parameters[0];
+            }
+
             Source = bgmEntry.Source;
             IsMod = Source == Mods.Music.Models.BgmEntryModels.EntrySource.Mod;
             Filename = bgmEntry.Mod?.Filename;
+            if(!string.IsNullOrEmpty(Filename))
+                ModPath = Path.GetDirectoryName(Filename);
             ModName = bgmEntry.Mod?.ModName;
             ModAuthor = bgmEntry.Mod?.ModAuthor;
             ModWebsite = bgmEntry.Mod?.ModWebsite;

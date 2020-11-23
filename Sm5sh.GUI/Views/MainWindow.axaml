@@ -4,7 +4,7 @@
         xmlns:vw="clr-namespace:Sm5sh.GUI.Views;assembly=Sm5sh.GUI"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        mc:Ignorable="d" MinWidth="1280" MinHeight="720" d:DesignWidth="1280" d:DesignHeight="720"
+        mc:Ignorable="d" MinWidth="1920" MinHeight="1080" d:DesignWidth="1280" d:DesignHeight="720"
         x:Class="Sm5sh.GUI.Views.MainWindow"
         Icon="/Assets/avalonia-logo.ico" 
         xmlns:i="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
@@ -18,16 +18,16 @@
   <Grid RowDefinitions="20,70,*,5,0" ColumnDefinitions="*">
     <Menu Grid.Row="0">
       <MenuItem Header="File">
-        <MenuItem Header="Choose Mod Folder..."></MenuItem>
+        <MenuItem Header="Choose Mod Workspace..."></MenuItem>
         <MenuItem Header="Import Song..."></MenuItem>
         <Separator></Separator>
+        <MenuItem Header="Save Changes..."></MenuItem>
         <MenuItem Header="Export Mod..."></MenuItem>
         <Separator></Separator>
         <MenuItem Header="Exit"></MenuItem>
       </MenuItem>
       <MenuItem Header="Tools">
         <MenuItem Header="Export to CSV"></MenuItem>
-        <MenuItem Header="Copy Language"></MenuItem>
       </MenuItem>
       <MenuItem Header="Settings">
         <MenuItem Header="Global Settings"></MenuItem>
@@ -35,22 +35,17 @@
         <MenuItem Header="About"></MenuItem>
       </MenuItem>
     </Menu>
-    <TabStrip Grid.Row="1"  Name="TabsMenu" HorizontalAlignment="Right" Margin="10">
-      <TabStripItem Content="Songs"/>
-      <TabStripItem Content="Playlists"/>
-      <TabStripItem Content="Stages" />
-    </TabStrip>
+    <DockPanel Grid.Row="1">
+      <Image Classes="logo" Source="/Assets/smash_logo.png"/>
+      <Label DockPanel.Dock="Left" Classes="title">Sm5sh Music</Label>
+      <TabStrip DockPanel.Dock="Right" Name="TabsMenu" HorizontalAlignment="Right" Margin="10">
+        <TabStripItem Content="Songs"/>
+        <TabStripItem Content="Playlists"/>
+        <TabStripItem Content="Stages" />
+      </TabStrip>
+    </DockPanel>
     <Carousel Grid.Row="2" SelectedIndex="{Binding #TabsMenu.SelectedIndex}">
-      <Grid ColumnDefinitions="*,5*,*" RowDefinitions="30,20,*">
-        <ContentControl Grid.Column="0" Grid.Row="2" Content="{Binding VMBgmFilters}"></ContentControl>
-        <DockPanel Grid.Column="1" Grid.Row="0">
-          <ComboBox DockPanel.Dock="Right" Items="{Binding Locales}" SelectedItem="{Binding SelectedLocale, Mode=TwoWay}" />
-          <Button DockPanel.Dock="Left" Content="Import Song"></Button>
-          <Button DockPanel.Dock="Left" Content="Reorder"></Button>
-        </DockPanel>
-        <ContentControl Grid.Column="1" Grid.Row="1" Grid.RowSpan="2" Classes="list" Content="{Binding VMBgmList}"></ContentControl>
-        <ContentControl Grid.Column="2" Grid.Row="2" Content="{Binding VMBgmProperties}"></ContentControl>
-      </Grid>
+      <ContentControl Content="{Binding VMBgmSongs}"></ContentControl>
       <TextBox></TextBox>
       <TextBox></TextBox>
     </Carousel >

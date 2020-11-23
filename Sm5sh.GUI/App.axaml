@@ -10,6 +10,8 @@
     <cv:SeriesNameConverter x:Key="SeriesNameConverter"/>
     <cv:MSBTValueConverter x:Key="MSBTValueConverter"/>
     <cv:RecordTypeConverter x:Key="RecordTypeConverter"/>
+    <cv:FilePathConverter x:Key="FilePathConverter"/>
+    <cv:LocaleNameConverter x:Key="LocaleNameConverter"/>
   </Application.Resources>
   <Application.Styles>
     <StyleInclude Source="avares://Avalonia.Themes.Fluent/Accents/FluentDark.xaml"/>

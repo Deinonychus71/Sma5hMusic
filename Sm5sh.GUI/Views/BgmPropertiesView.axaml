@@ -11,7 +11,7 @@
     <Border Classes="headerBorder" DockPanel.Dock="Top">
       <Label Classes="headerTitle">Properties</Label>
     </Border>
-    <TabControl TabStripPlacement="Bottom" DockPanel.Dock="Bottom">
+    <TabControl IsVisible="{Binding SelectedBgmEntry, Converter={x:Static ObjectConverters.IsNotNull}}" TabStripPlacement="Bottom" DockPanel.Dock="Bottom">
       <TabItem Header="General" FontSize="14">
         <WrapPanel HorizontalAlignment="Stretch">
           <StackPanel Classes="propertyBlock">
@@ -24,19 +24,19 @@
           </StackPanel>
           <StackPanel Classes="propertyBlock">
             <Label Classes="label">Game</Label>
-            <TextBox Classes="value" IsReadOnly="{Binding !IsEditMode}" Text="{Binding SelectedBgmEntry.GameTitle, Mode=OneWay}"></TextBox>
+            <TextBox Classes="value valueLabel" IsReadOnly="{Binding !IsEditMode}" Text="{Binding SelectedBgmEntry.GameTitle, Mode=OneWay}"></TextBox>
           </StackPanel>
           <StackPanel Classes="propertyBlock">
             <Label Classes="label">Title</Label>
-            <TextBox Classes="value" IsReadOnly="{Binding !IsEditMode}" Text="{Binding SelectedBgmEntry.Title, Mode=OneWay}"></TextBox>
+            <TextBox Classes="value valueLabel" IsReadOnly="{Binding !IsEditMode}" Text="{Binding SelectedBgmEntry.Title, Mode=OneWay}"></TextBox>
           </StackPanel>
           <StackPanel Classes="propertyBlock">
             <Label Classes="label">Author</Label>
-            <TextBox Classes="value" IsReadOnly="{Binding !IsEditMode}" Text="{Binding SelectedBgmEntry.Author, Mode=OneWay}"></TextBox>
+            <TextBox Classes="value valueLabel" IsReadOnly="{Binding !IsEditMode}" Text="{Binding SelectedBgmEntry.Author, Mode=OneWay}"></TextBox>
           </StackPanel>
           <StackPanel Classes="propertyBlock">
             <Label Classes="label">Copyright</Label>
-            <TextBox Classes="value" IsReadOnly="{Binding !IsEditMode}" Text="{Binding SelectedBgmEntry.Copyright, Mode=OneWay}"></TextBox>
+            <TextBox Classes="value valueLabel" IsReadOnly="{Binding !IsEditMode}" Text="{Binding SelectedBgmEntry.Copyright, Mode=OneWay}"></TextBox>
           </StackPanel>
           <StackPanel Classes="propertyBlock">
             <Label Classes="label">Record Type</Label>
@@ -45,14 +45,17 @@
         </WrapPanel>
       </TabItem>
       <TabItem IsVisible="{Binding SelectedBgmEntry.IsMod}" Header="Mod" FontSize="14">
-        <WrapPanel HorizontalAlignment="Stretch">
+        <WrapPanel IsVisible="{Binding SelectedBgmEntry.IsMod}" HorizontalAlignment="Stretch">
           <StackPanel Classes="propertyBlock">
             <Label Classes="label">Mod</Label>
             <TextBox Classes="value" IsReadOnly="{Binding !IsEditMode}" Text="{Binding SelectedBgmEntry.ModName, Mode=OneWay}"></TextBox>
           </StackPanel>
           <StackPanel Classes="propertyBlock">
             <Label Classes="label">Filename</Label>
-            <TextBox Classes="value" IsReadOnly="{Binding !IsEditMode}" Text="{Binding SelectedBgmEntry.Filename, Mode=OneWay}"></TextBox>
+            <StackPanel Orientation="Horizontal">
+              <ContentControl Content="{Binding SelectedBgmEntry.MusicPlayer}"/>
+              <TextBox Classes="value valueSoundPreview" IsReadOnly="{Binding !IsEditMode}" Text="{Binding SelectedBgmEntry.Filename, Mode=OneWay, Converter={StaticResource FilePathConverter}}}"></TextBox>
+            </StackPanel>
           </StackPanel>
           <StackPanel Classes="propertyBlock">
             <Label Classes="label">Author</Label>
@@ -71,8 +74,15 @@
             <NumericUpDown Classes="value" IsReadOnly="{Binding !IsEditMode}" Value="{Binding SelectedBgmEntry.SoundTestIndex}" Minimum="-1" />
           </StackPanel>
           <StackPanel Classes="propertyBlock">
+            <Label Classes="label">Playlists</Label>
+            <TextBox Classes="value" IsReadOnly="{Binding !IsEditMode}" Text="{Binding SelectedBgmEntry.PlaylistIds, Mode=OneWay}"></TextBox>
+          </StackPanel>
+          <StackPanel Classes="propertyBlock">
             <Label Classes="label">Special</Label>
-            <TextBox Classes="value" IsReadOnly="{Binding !IsEditMode}" Text="{Binding SelectedBgmEntry.Filename, Mode=OneWay}"></TextBox>
+            <Label Classes="subLabel">Type</Label>
+            <TextBox Classes="value" IsReadOnly="{Binding !IsEditMode}" Text="{Binding SelectedBgmEntry.SpecialCategoryLabel}"></TextBox>
+            <Label Classes="subLabel">Parameter</Label>
+            <TextBox Classes="value" IsReadOnly="{Binding !IsEditMode}" Text="{Binding SelectedBgmEntry.SpecialParam1Label}"></TextBox>
           </StackPanel>
         </WrapPanel>
       </TabItem>

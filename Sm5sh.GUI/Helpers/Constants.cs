@@ -78,6 +78,14 @@ namespace Sm5sh.GUI.Helpers
             { "zh_tw", "Chinese (Traditional)" }
         };
 
+        public readonly static Dictionary<ulong, string> CONVERTER_SPECIAL_CATEGORY = new Dictionary<ulong, string>()
+        {
+            { 0x105274ba4f, "Pinch Songs" },
+            { 0x11ff737d4d, "Persona 3 Stage" },
+            { 0x116117e8ee, "Persona 4 Stage" },
+            { 0x111610d878, "Persona 5 Stage" },
+        };
+
         public static string GetSeriesDisplayName(string key)
         {
             if (string.IsNullOrEmpty(key))
@@ -90,6 +98,18 @@ namespace Sm5sh.GUI.Helpers
             if (string.IsNullOrEmpty(key))
                 return key;
             return CONVERTER_RECORD_TYPE.ContainsKey(key) ? CONVERTER_RECORD_TYPE[key] : key;
+        }
+
+        public static string GetLocaleDisplayName(string key)
+        {
+            if (string.IsNullOrEmpty(key))
+                return key;
+            return CONVERTER_LOCALE.ContainsKey(key) ? CONVERTER_LOCALE[key] : key;
+        }
+
+        public static string GetSpecialCategoryDisplayName(ulong key)
+        {
+            return CONVERTER_SPECIAL_CATEGORY.ContainsKey(key) ? CONVERTER_SPECIAL_CATEGORY[key] : $"0x{key:x}";
         }
     }
 }
