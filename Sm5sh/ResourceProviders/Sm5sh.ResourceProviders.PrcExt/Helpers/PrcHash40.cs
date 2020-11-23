@@ -1,10 +1,12 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 
 namespace Sm5sh.ResourceProviders.Prc.Helpers
 {
     public class PrcHash40
     {
+        [JsonProperty]
         public string StringValue { get; private set; }
 
         public ulong HexValue { get; set; }
@@ -33,6 +35,8 @@ namespace Sm5sh.ResourceProviders.Prc.Helpers
             }
             StringValue = stringValue;
         }
+
+        public PrcHash40() { }
 
         public static PrcHash40 EmptyValue = new PrcHash40(0);
 

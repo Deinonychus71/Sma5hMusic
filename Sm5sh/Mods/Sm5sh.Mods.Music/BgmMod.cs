@@ -57,7 +57,7 @@ namespace Sm5sh.Mods.Music
         public override bool Build()
         {
             //Save NUS3Audio/Nus3Bank
-            foreach(var bgmEntry in _audioStateService.GetModBgmEntries())
+            foreach (var bgmEntry in _audioStateService.GetModBgmEntries())
             {
                 var nusBankOutputFile = Path.Combine(_config.Value.OutputPath, "stream;", "sound", "bgm", string.Format(Constants.GameResources.NUS3BANK_FILE, bgmEntry.ToneId));
                 var nusAudioOutputFile = Path.Combine(_config.Value.OutputPath, "stream;", "sound", "bgm", string.Format(Constants.GameResources.NUS3AUDIO_FILE, bgmEntry.ToneId));

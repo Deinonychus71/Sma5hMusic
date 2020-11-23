@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.IO;
 using Sm5sh.Interfaces;
 using Sm5sh.Attributes;
+using Newtonsoft.Json;
 
 namespace Sm5sh
 {
@@ -16,6 +17,7 @@ namespace Sm5sh
         private readonly ILogger _logger;
         private readonly IOptions<Sm5shOptions> _config;
         private readonly Dictionary<string, IResourceProvider> _resourceProviders;
+        private readonly Dictionary<string, IStateManagerDb> _originalResources;
         private readonly Dictionary<string, IStateManagerDb> _resources;
 
         public IEnumerable<IStateManagerDb> Resources { get { return _resources.Values; } }
@@ -26,6 +28,7 @@ namespace Sm5sh
             _logger = logger;
             _config = config;
             _resources = new Dictionary<string, IStateManagerDb>();
+            _originalResources = new Dictionary<string, IStateManagerDb>();
             _resourceProviders = InitializeResourceProviders();
         }
 
@@ -48,11 +51,12 @@ namespace Sm5sh
                 }
 
                 var newResource = resourceProvider.ReadFile<T>(gameResourceFile);
+                _originalResources.Add(gameRelativeResourcePath, JsonClone(newResource));
                 _resources.Add(gameRelativeResourcePath, newResource);
 
                 _logger.LogInformation("Loaded Resource {GameResource} with provider {ResourceProvider}", gameRelativeResourcePath, resourceProvider.GetType().Name);
 
-                return newResource;
+                return JsonClone(newResource);
             }
 
             if (optional)
@@ -60,6 +64,22 @@ namespace Sm5sh
 
             throw new Exception("Resource could not be loaded. Make sure that a proper resource provider is configured");
         }
+
+        public void UnloadResources()
+        {
+            _resources.Clear();
+            _originalResources.Clear();
+        }
+
+        public void ResetResource()
+        {
+            _resources.Clear();
+            foreach(var resource in _originalResources)
+            {
+                _resources.Add(resource.Key, JsonClone(resource.Value));
+            }
+        }
+
 
         public bool WriteChanges()
         {
@@ -102,6 +122,11 @@ namespace Sm5sh
                 return _resourceProviders[ext];
 
             throw new Exception("Resource could not be loaded. Make sure that a proper resource provider is configured");
+        }
+
+        private T JsonClone<T>(T input)
+        {
+            return JsonConvert.DeserializeObject<T>(JsonConvert.SerializeObject(input));
         }
 
         private Dictionary<string, IResourceProvider> InitializeResourceProviders()

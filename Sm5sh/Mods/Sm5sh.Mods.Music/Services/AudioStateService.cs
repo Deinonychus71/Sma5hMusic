@@ -47,7 +47,7 @@ namespace Sm5sh.Mods.Music.Services
 
         public BgmEntry GetBgmEntry(string toneId)
         {
-            return GetBgmEntries().FirstOrDefault(p => p.ToneId == toneId);
+            return GetBgmEntriesFromStateManager(p => p.Key == toneId).Values.FirstOrDefault();
         }
 
         public BgmEntry AddOrUpdateBgmEntry(BgmEntry bgmEntry)
@@ -79,11 +79,13 @@ namespace Sm5sh.Mods.Music.Services
         }
 
         #region Private
-        private Dictionary<string, BgmEntry> GetBgmEntriesFromStateManager()
+        private Dictionary<string, BgmEntry> GetBgmEntriesFromStateManager(Func<KeyValuePair<string, BgmPropertyEntry>, bool> predicate = null)
         {
             //Load BGM_PROPERTY
             var daoBinBgmProperty = _state.LoadResource<BinBgmProperty>(Constants.GameResources.PRC_BGM_PROPERTY_PATH);
-            var daoBinPropertyEntries = daoBinBgmProperty.Entries;
+            var daoBinPropertyEntries = daoBinBgmProperty.Entries.AsEnumerable();
+            if (predicate != null)
+                daoBinPropertyEntries = daoBinPropertyEntries.Where(predicate);
 
             //Load UI_BGM_DB / UI_GAMETITLE_DB
             var paramBgmDatabase = _state.LoadResource<PrcUiBgmDatabase>(Constants.GameResources.PRC_UI_BGM_DB_PATH);
@@ -113,7 +115,7 @@ namespace Sm5sh.Mods.Music.Services
                 var assignedInfoEntry = paramBgmAssignedInfo[keyRef.AssignedInfoKey];
                 var streamPropertyEntry = paramBgmStreamProperty[keyRef.StreamPropertyKey];
                 var gameTitleEntry = paramGameTitleDbRoot[dbRootEntry.UiGameTitleId.StringValue];
-                var bgmProperty = daoBinPropertyEntries[toneId];
+                var bgmProperty = daoBinPropertyKeyValue.Value;
 
                 var newBgmEntry = new BgmEntry()
                 {
