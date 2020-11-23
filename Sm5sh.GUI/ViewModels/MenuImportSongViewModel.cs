@@ -1,5 +1,9 @@
 ﻿using Avalonia.Controls;
+using Microsoft.Extensions.DependencyInjection;
 using ReactiveUI;
+using Sm5sh.GUI.Views;
+using Splat;
+using System;
 using System.Reactive;
 
 namespace Sm5sh.GUI.ViewModels
@@ -17,6 +21,11 @@ namespace Sm5sh.GUI.ViewModels
 
         public void AddNewBgmEntry(Window parent)
         {
+            var win = new BgmPropertiesWindow()
+            {
+                DataContext = Locator.Current.GetService<BgmPropertiesWindowViewModel>()
+            };
+            win.ShowDialog<BgmPropertiesWindow>(parent);
         }
     }
 }

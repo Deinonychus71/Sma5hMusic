@@ -78,6 +78,7 @@ namespace Sm5sh.GUI
 
             //Add ViewModels
             services.AddSingleton<MainWindowViewModel>();
+            services.AddSingleton<BgmPropertiesWindowViewModel>();
 
             //Add UI Services
             services.AddSingleton<IVGMMusicPlayer, VGMMusicPlayer>();
