@@ -20,7 +20,6 @@ namespace Sm5sh.GUI.ViewModels
     public class BgmSongsViewModel : ViewModelBase
     {
         private readonly ILogger _logger;
-        private readonly RangeObservableCollection<string> _locales = new RangeObservableCollection<string>(new List<string>() { "us_en", "jp_ja" });
         private readonly ReadOnlyObservableCollection<MenuImportSongViewModel> _mods;
 
         public BgmListViewModel VMBgmList { get; }
