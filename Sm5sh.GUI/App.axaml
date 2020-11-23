@@ -12,6 +12,7 @@
     <cv:RecordTypeConverter x:Key="RecordTypeConverter"/>
     <cv:FilePathConverter x:Key="FilePathConverter"/>
     <cv:LocaleNameConverter x:Key="LocaleNameConverter"/>
+    <cv:ParametizedDialogConverter x:Key="ParametizedDialogConverter"/>
   </Application.Resources>
   <Application.Styles>
     <StyleInclude Source="avares://Avalonia.Themes.Fluent/Accents/FluentDark.xaml"/>

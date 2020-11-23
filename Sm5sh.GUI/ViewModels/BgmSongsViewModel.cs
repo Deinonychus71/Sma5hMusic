@@ -6,24 +6,30 @@ using Sm5sh.GUI.Helpers;
 using ILogger = Microsoft.Extensions.Logging.ILogger;
 using System;
 using Microsoft.Extensions.DependencyInjection;
-using Avalonia.Controls;
 using DynamicData.Binding;
 using System.Reactive.Linq;
 using System.Collections.ObjectModel;
 using System.Reactive;
 using System.Linq;
+using Sm5sh.GUI.Models;
+using Splat;
+using Sm5sh.GUI.Views;
+using Avalonia.Controls;
+using System.Threading.Tasks;
+using Avalonia;
+using Avalonia.Threading;
 
 namespace Sm5sh.GUI.ViewModels
 {
     public class BgmSongsViewModel : ViewModelBase
     {
         private readonly ILogger _logger;
-        private readonly ReadOnlyObservableCollection<MenuImportSongViewModel> _mods;
+        private readonly ReadOnlyObservableCollection<ComboItem> _mods;
 
         public BgmListViewModel VMBgmList { get; }
         public BgmFiltersViewModel VMBgmFilters { get; }
         public BgmPropertiesViewModel VMBgmProperties { get; }
-        public ReadOnlyObservableCollection<MenuImportSongViewModel> Mods { get { return _mods; } }
+        public ReadOnlyObservableCollection<ComboItem> Mods { get { return _mods; } }
         [Reactive]
         public string SelectedLocale { get; set; }
 
@@ -44,11 +50,11 @@ namespace Sm5sh.GUI.ViewModels
                 .Group(p => p.ModPath, modsChanged.Select(_ => Unit.Default))
                 .Transform(p => {
                     var firstItem = p.Cache.Items.First();
-                    var newMenuItem = new MenuImportSongViewModel(firstItem.ModPath, $"To {firstItem.ModName}...");
+                    var newMenuItem = new ComboItem(firstItem.ModPath, $"To {firstItem.ModName}...");
                     return newMenuItem;
                     })
                 //.Prepend(_allChangeSet)
-                .Sort(SortExpressionComparer<MenuImportSongViewModel>.Ascending(p => p.ModName), SortOptimisations.IgnoreEvaluates)
+                .Sort(SortExpressionComparer<ComboItem>.Ascending(p => p.Label), SortOptimisations.IgnoreEvaluates)
                 .ObserveOn(RxApp.MainThreadScheduler)
                 .Bind(out _mods)
                 .DisposeMany()
@@ -70,8 +76,31 @@ namespace Sm5sh.GUI.ViewModels
             SelectedLocale = locale;
         }
 
-        public void AddNewBgmEntry(Window parent)
+        public async Task AddNewBgmEntry(ParametizedDialogHelper dialogHelper)
         {
+            var filePicker = new OpenFileDialog()
+            {
+                Filters = new System.Collections.Generic.List<FileDialogFilter>()
+                {
+                    new FileDialogFilter(){ Extensions = new System.Collections.Generic.List<string>()
+                    {
+                        ".brstm", ".lopus", ".idsp"
+                    }
+                    }
+                }
+            };
+            await Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                filePicker.ShowAsync(dialogHelper.Window);
+            }, DispatcherPriority.Background);
+            
+            
+            //var result = await filePicker.ShowAsync(dialogHelper.Window);
+
+            /*var win = new BgmPropertiesWindow()
+            {
+                DataContext = Locator.Current.GetService<BgmPropertiesWindowViewModel>()
+            };*/
         }
     }
 }

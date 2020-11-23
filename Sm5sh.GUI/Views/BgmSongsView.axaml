@@ -29,12 +29,19 @@
         </MenuItem>
       </Menu>
       <Menu DockPanel.Dock="Left">
-        <MenuItem Header="Import Song" Items="{Binding Mods}">
+        <MenuItem Header="Import Song" Items="{Binding Mods}" IsEnabled="True">
           <MenuItem.Styles>
-            <Style Selector="MenuItem">
-              <Setter Property="Header" Value="{Binding ModName}"/>
-              <Setter Property="Command" Value="{Binding AddNewBgmEntry}"/>
-              <Setter Property="CommandParameter" Value="{Binding $parent[Window]}"/>
+            <Style Selector="MenuItem > MenuItem">
+              <Setter Property="Header" Value="{Binding Label}"/>
+              <Setter Property="Command" Value="{Binding Path=DataContext.AddNewBgmEntry, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=DockPanel}}"/>
+              <Setter Property="CommandParameter">
+                <Setter.Value>
+                  <MultiBinding Converter="{StaticResource ParametizedDialogConverter}">
+                    <Binding Path="Id" />
+                    <Binding Path="$parent[Window]" />
+                  </MultiBinding>
+                </Setter.Value>
+              </Setter>
             </Style>
           </MenuItem.Styles>
         </MenuItem>
