@@ -1,4 +1,5 @@
 ﻿using DynamicData;
+using DynamicData.Binding;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using System;
@@ -26,6 +27,7 @@ namespace Sm5sh.GUI.ViewModels
         public BgmListViewModel(IVGMMusicPlayer musicPlayer, IObservable<IChangeSet<BgmEntryListViewModel, string>> observableBgmEntries)
         {
             observableBgmEntries
+                .Sort(SortExpressionComparer<BgmEntryListViewModel>.Ascending(p => p.HiddenInSoundTest).ThenByAscending(p => p.SoundTestIndex), SortOptimisations.IgnoreEvaluates)
                 .ObserveOn(RxApp.MainThreadScheduler)
                 .Bind(out _items)
                 .DisposeMany()

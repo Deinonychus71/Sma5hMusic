@@ -78,6 +78,16 @@ namespace Sm5sh.GUI.ViewModels
         public async Task AddNewBgmEntry(string modPath)
         {
             var results = await _fileDialog.OpenFileDialogAudio();
+
+            if (results.Length == 0)
+                return;
+
+            //TODO
+            _logger.LogInformation("Adding {NbrFiles} files to Mod {ModPath}", results.Length, modPath);
+            //VERIFY THAT IDS ARE UNIQUE IN TEMP
+            //VERIFY THAT NOT IN MODS OR CORE DB
+            //VERIFY HASH
+
             //var result = await filePicker.ShowAsync(dialogHelper.Window);
 
             /*var win = new BgmPropertiesWindow()

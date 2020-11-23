@@ -1,7 +1,6 @@
 ﻿using ReactiveUI.Fody.Helpers;
 using Sm5sh.GUI.Helpers;
 using Sm5sh.Mods.Music.Models;
-using System.Collections.Generic;
 using VGMMusic;
 using System.Linq;
 using System;
@@ -11,12 +10,10 @@ namespace Sm5sh.GUI.ViewModels
 {
     public class BgmEntryListViewModel : ViewModelBase
     {
-        private readonly Dictionary<string, string> _title;
-        private readonly Dictionary<string, string> _author;
-        private readonly Dictionary<string, string> _copyright;
-        private readonly Dictionary<string, string> _gameTitle;
+        private readonly BgmEntry _refBgmEntry;
 
         public bool AllFlag { get; set; }
+
         public string ToneId { get; private set; }
         public string SeriesId { get; set; }
         public string GameId { get; set; }
@@ -38,72 +35,70 @@ namespace Sm5sh.GUI.ViewModels
         public string ModAuthor { get; set; }
         public string ModWebsite { get; set; }
         public string ModPath { get; set; }
-        public bool IsMod { get; private set; }
         public Mods.Music.Models.BgmEntryModels.EntrySource Source { get; private set; }
         public string PlaylistIds { get; private set; }
         public string SpecialCategoryLabel { get; private set; }
         public string SpecialParam1Label { get; private set; }
+
         public MusicPlayerViewModel MusicPlayer { get; set; }
+        public bool IsMod { get { return Source == Mods.Music.Models.BgmEntryModels.EntrySource.Mod; } }
 
-
-        public BgmEntryListViewModel() { }
 
         public BgmEntryListViewModel(IVGMMusicPlayer musicPlayer, BgmEntry bgmEntry)
         {
-            MusicPlayer = new MusicPlayerViewModel(musicPlayer, bgmEntry.Mod?.Filename);
+            _refBgmEntry = bgmEntry;
 
+            if (bgmEntry.Source == Mods.Music.Models.BgmEntryModels.EntrySource.Mod)
+                MusicPlayer = new MusicPlayerViewModel(musicPlayer, bgmEntry.Mod?.Filename);
+
+            //1:1 Mapping with BgmEntry
+            Source = bgmEntry.Source;
             ToneId = bgmEntry.ToneId;
-            SeriesId = bgmEntry.GameTitle?.SeriesId;
-            SeriesTitle = Constants.GetSeriesDisplayName(SeriesId);
-            GameId = bgmEntry.GameTitle?.GameTitleId;
             RecordTypeId = bgmEntry.RecordType;
+            SoundTestIndex = bgmEntry.SoundTestIndex;
+            HiddenInSoundTest = bgmEntry.HiddenInSoundTest;
+            SeriesId = bgmEntry.GameTitle?.SeriesId;
+            GameId = bgmEntry.GameTitle?.GameTitleId;
+            Filename = bgmEntry.Mod?.Filename;
+            ModName = bgmEntry.Mod?.ModName;
+            ModAuthor = bgmEntry.Mod?.ModAuthor;
+            ModWebsite = bgmEntry.Mod?.ModWebsite;
+
+            //Calculated Fields
+            SeriesTitle = Constants.GetSeriesDisplayName(SeriesId);
             RecordTypeLabel = Constants.GetRecordTypeDisplayName(bgmEntry.RecordType);
             PlaylistIds = string.Join(Environment.NewLine, bgmEntry.Playlists.Select(p => p.Id));
-            
-            HiddenInSoundTest = bgmEntry.HiddenInSoundTest;
-            SoundTestIndex = bgmEntry.SoundTestIndex;
-
             if (bgmEntry.SpecialCategory != null)
             {
                 SpecialCategoryLabel = Constants.GetSpecialCategoryDisplayName(bgmEntry.SpecialCategory.Id);
                 if (bgmEntry.SpecialCategory.Parameters.Count >= 1)
                     SpecialParam1Label = bgmEntry.SpecialCategory.Parameters[0];
             }
-
-            Source = bgmEntry.Source;
-            IsMod = Source == Mods.Music.Models.BgmEntryModels.EntrySource.Mod;
-            Filename = bgmEntry.Mod?.Filename;
-            if(!string.IsNullOrEmpty(Filename))
+            if (!string.IsNullOrEmpty(Filename))
                 ModPath = Path.GetDirectoryName(Filename);
-            ModName = bgmEntry.Mod?.ModName;
-            ModAuthor = bgmEntry.Mod?.ModAuthor;
-            ModWebsite = bgmEntry.Mod?.ModWebsite;
-
-            _title = bgmEntry.Title;
-            _gameTitle = bgmEntry.GameTitle?.Title;
-            _author = bgmEntry.Author;
-            _copyright = bgmEntry.Copyright;
         }
+
+        public BgmEntryListViewModel() { }
 
         public void LoadLocalized(string locale)
         {
-            if (_gameTitle != null && _gameTitle.ContainsKey(locale))
-                GameTitle = _gameTitle[locale];
+            if (_refBgmEntry.GameTitle.Title != null && _refBgmEntry.GameTitle.Title.ContainsKey(locale))
+                GameTitle = _refBgmEntry.GameTitle.Title[locale];
             else
                 GameTitle = string.Empty;
 
-            if (_title != null && _title.ContainsKey(locale))
-                Title = _title[locale];
+            if (_refBgmEntry.Title != null && _refBgmEntry.Title.ContainsKey(locale))
+                Title = _refBgmEntry.Title[locale];
             else
                 Title = string.Empty;
 
-            if (_copyright != null && _copyright.ContainsKey(locale))
-                Copyright = _copyright[locale];
+            if (_refBgmEntry.Copyright != null && _refBgmEntry.Copyright.ContainsKey(locale))
+                Copyright = _refBgmEntry.Copyright[locale];
             else
                 Copyright = string.Empty;
 
-            if (_author != null && _author.ContainsKey(locale))
-                Author = _author[locale];
+            if (_refBgmEntry.Author != null && _refBgmEntry.Author.ContainsKey(locale))
+                Author = _refBgmEntry.Author[locale];
             else
                 Author = string.Empty;
         }

@@ -29,7 +29,7 @@
         </MenuItem>
       </Menu>
       <Menu DockPanel.Dock="Left">
-        <MenuItem Header="Import Song" Items="{Binding Mods}" IsEnabled="True">
+        <MenuItem Header="Import Songs..." Items="{Binding Mods}" IsEnabled="True">
           <MenuItem.Styles>
             <Style Selector="MenuItem > MenuItem">
               <Setter Property="Header" Value="{Binding Label}"/>
@@ -38,7 +38,7 @@
             </Style>
           </MenuItem.Styles>
         </MenuItem>
-        <MenuItem Header="Reorder Songs">
+        <MenuItem Header="Reorder Songs...">
           <MenuItem Header="By Index..."/>
           <MenuItem Header="By Series..."></MenuItem>
         </MenuItem>
