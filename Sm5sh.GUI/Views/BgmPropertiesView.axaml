@@ -81,8 +81,14 @@
             <Label Classes="label">Special</Label>
             <Label Classes="subLabel">Type</Label>
             <TextBox Classes="value" IsReadOnly="{Binding !IsEditMode}" Text="{Binding SelectedBgmEntry.SpecialCategoryLabel}"></TextBox>
-            <Label Classes="subLabel">Parameter</Label>
+            <Label Classes="subLabel">Info 1</Label>
             <TextBox Classes="value" IsReadOnly="{Binding !IsEditMode}" Text="{Binding SelectedBgmEntry.SpecialParam1Label}"></TextBox>
+            <Label Classes="subLabel">Info 2</Label>
+            <TextBox Classes="value" IsReadOnly="{Binding !IsEditMode}" Text="{Binding SelectedBgmEntry.SpecialParam2Label}"></TextBox>
+            <Label Classes="subLabel">Info 3</Label>
+            <TextBox Classes="value" IsReadOnly="{Binding !IsEditMode}" Text="{Binding SelectedBgmEntry.SpecialParam3Label}"></TextBox>
+            <Label Classes="subLabel">Info 4</Label>
+            <TextBox Classes="value" IsReadOnly="{Binding !IsEditMode}" Text="{Binding SelectedBgmEntry.SpecialParam4Label}"></TextBox>
           </StackPanel>
         </WrapPanel>
       </TabItem>

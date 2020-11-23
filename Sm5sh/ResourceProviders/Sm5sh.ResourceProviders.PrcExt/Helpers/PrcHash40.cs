@@ -11,7 +11,7 @@ namespace Sm5sh.ResourceProviders.Prc.Helpers
 
         public override string ToString()
         {
-            return $"{StringValue} - 0x{HexValue:X}";
+            return $"{StringValue} - 0x{HexValue:x}";
         }
 
         public PrcHash40(ulong hexValue, Dictionary<ulong, string> paramHashes = null)

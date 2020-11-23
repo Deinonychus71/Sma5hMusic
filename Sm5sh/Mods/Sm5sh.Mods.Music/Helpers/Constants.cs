@@ -1,4 +1,7 @@
-﻿namespace Sm5sh.Mods.Music.Helpers
+﻿using Sm5sh.Mods.Music.Models;
+using System.Collections.Generic;
+
+namespace Sm5sh.Mods.Music.Helpers
 {
     internal class Constants
     {
@@ -34,6 +37,8 @@
 
         internal class InternalIds
         {
+            public const string NUS3AUDIO_FILE_PREFIX = "bgm_";
+
             public const string UI_BGM_ID_PREFIX = "ui_bgm_";
             public const string STREAM_SET_PREFIX = "set_";
             public const string INFO_ID_PREFIX = "info_";
@@ -56,9 +61,6 @@
             public const string RECORD_TYPE_DEFAULT = "record_none";
             public const string RARITY_DEFAULT = "bgm_rarity_0";
             public const string SOUND_CONDITION = "sound_condition_none";
-
-            public const ulong SPECIAL_CATEGORY_SF_PINCH = 0x105274ba4f;
-            public static readonly string[] SPECIAL_CATEGORY_PERSONA_VALUES = new string[] { "jack_mementoes_p3", "jack_mementoes_p4", "jack_mementoes_p4" };
         }
 
         public static string[] VALID_RECORD_TYPES = new string[]

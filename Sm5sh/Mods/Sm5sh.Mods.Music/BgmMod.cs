@@ -44,7 +44,7 @@ namespace Sm5sh.Mods.Music
             foreach (var musicModFolder in Directory.GetDirectories(_config.Value.Sm5shMusic.ModPath))
             {
                 var newMusicMod = ActivatorUtilities.CreateInstance<MusicModManager>(_serviceProvider, musicModFolder);
-                var newBgmEntries = newMusicMod.LoadBgmEntries();
+                var newBgmEntries = newMusicMod.LoadBgmEntriesFromMod();
                 foreach(var newBgmEntry in newBgmEntries)
                 {
                     _audioStateService.AddOrUpdateBgmEntry(newBgmEntry);
@@ -71,7 +71,7 @@ namespace Sm5sh.Mods.Music
                     var cachedAudioFile = Path.Combine(_config.Value.Sm5shMusic.CachePath, string.Format(Constants.GameResources.NUS3AUDIO_FILE, bgmEntry.ToneId));
                     if (!File.Exists(cachedAudioFile))
                     {
-                        _nus3AudioService.GenerateNus3Audio(bgmEntry.ToneId, bgmEntry.Mod?.Filename, cachedAudioFile);
+                        _nus3AudioService.GenerateNus3Audio(bgmEntry.ToneId, bgmEntry.Filename, cachedAudioFile);
                     }
                     else
                     {
@@ -82,7 +82,7 @@ namespace Sm5sh.Mods.Music
                 }
                 else
                 {
-                    _nus3AudioService.GenerateNus3Audio(bgmEntry.ToneId, bgmEntry.Mod?.Filename, nusAudioOutputFile);
+                    _nus3AudioService.GenerateNus3Audio(bgmEntry.ToneId, bgmEntry.Filename, nusAudioOutputFile);
                 }
             }
 

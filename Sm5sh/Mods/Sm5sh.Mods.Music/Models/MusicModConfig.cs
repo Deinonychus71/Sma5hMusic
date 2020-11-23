@@ -13,8 +13,6 @@ namespace Sm5sh.Mods.Music.Models
         public string Author { get; set; }
         [JsonProperty("website")]
         public string Website { get; set; }
-        [JsonProperty("prefix")]
-        public string Prefix { get; set; }
         [JsonProperty("games")]
         public List<Game> Games { get; set; }
     }
@@ -31,15 +29,14 @@ namespace Sm5sh.Mods.Music.Models
         public Dictionary<string, string> Copyright { get; set; }
         [JsonProperty("author")]
         public Dictionary<string, string> Author { get; set; }
-
         [JsonProperty("record_type")]
         public string RecordType { get; set; }
-
         [JsonProperty("playlists")]
         public List<PlaylistInfo> Playlists { get; set; }
-
         [JsonProperty("special_category")]
         public SpecialCategory SpecialCategory { get; set; }
+        [JsonProperty("hidden_in_soundtest")]
+        public bool HiddenInSoundTest { get; set; }
     }
 
     public class Game
@@ -63,20 +60,9 @@ namespace Sm5sh.Mods.Music.Models
     public class SpecialCategory
     {
         [JsonProperty("category")]
-        public SpecialCategories Category { get; set; }
+        public string Category { get; set; }
 
         [JsonProperty("parameters")]
         public List<string> Parameters { get; set; }
-    }
-
-    public enum SpecialCategories
-    {
-        Unknown,
-        //mario_hurry_up,
-        //mario_maker,
-        [EnumMember(Value = "persona_stage")]
-        Persona,
-        [EnumMember(Value = "sf_pinch")]
-        SFPinch,
     }
 }

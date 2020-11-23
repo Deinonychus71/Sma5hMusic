@@ -39,6 +39,9 @@ namespace Sm5sh.GUI.ViewModels
         public string PlaylistIds { get; private set; }
         public string SpecialCategoryLabel { get; private set; }
         public string SpecialParam1Label { get; private set; }
+        public string SpecialParam2Label { get; private set; }
+        public string SpecialParam3Label { get; private set; }
+        public string SpecialParam4Label { get; private set; }
 
         public MusicPlayerViewModel MusicPlayer { get; set; }
         public bool IsMod { get { return Source == Mods.Music.Models.BgmEntryModels.EntrySource.Mod; } }
@@ -49,7 +52,7 @@ namespace Sm5sh.GUI.ViewModels
             _refBgmEntry = bgmEntry;
 
             if (bgmEntry.Source == Mods.Music.Models.BgmEntryModels.EntrySource.Mod)
-                MusicPlayer = new MusicPlayerViewModel(musicPlayer, bgmEntry.Mod?.Filename);
+                MusicPlayer = new MusicPlayerViewModel(musicPlayer, bgmEntry.Filename);
 
             //1:1 Mapping with BgmEntry
             Source = bgmEntry.Source;
@@ -59,10 +62,11 @@ namespace Sm5sh.GUI.ViewModels
             HiddenInSoundTest = bgmEntry.HiddenInSoundTest;
             SeriesId = bgmEntry.GameTitle?.SeriesId;
             GameId = bgmEntry.GameTitle?.GameTitleId;
-            Filename = bgmEntry.Mod?.Filename;
+            Filename = bgmEntry.Filename;
             ModName = bgmEntry.Mod?.ModName;
             ModAuthor = bgmEntry.Mod?.ModAuthor;
             ModWebsite = bgmEntry.Mod?.ModWebsite;
+            ModPath = bgmEntry.Mod?.ModPath;
 
             //Calculated Fields
             SeriesTitle = Constants.GetSeriesDisplayName(SeriesId);
@@ -73,9 +77,13 @@ namespace Sm5sh.GUI.ViewModels
                 SpecialCategoryLabel = Constants.GetSpecialCategoryDisplayName(bgmEntry.SpecialCategory.Id);
                 if (bgmEntry.SpecialCategory.Parameters.Count >= 1)
                     SpecialParam1Label = bgmEntry.SpecialCategory.Parameters[0];
+                if (bgmEntry.SpecialCategory.Parameters.Count >= 2)
+                    SpecialParam2Label = bgmEntry.SpecialCategory.Parameters[1];
+                if (bgmEntry.SpecialCategory.Parameters.Count >= 3)
+                    SpecialParam3Label = bgmEntry.SpecialCategory.Parameters[2];
+                if (bgmEntry.SpecialCategory.Parameters.Count >= 4)
+                    SpecialParam4Label = bgmEntry.SpecialCategory.Parameters[3];
             }
-            if (!string.IsNullOrEmpty(Filename))
-                ModPath = Path.GetDirectoryName(Filename);
         }
 
         public BgmEntryListViewModel() { }
@@ -85,12 +93,12 @@ namespace Sm5sh.GUI.ViewModels
             if (_refBgmEntry.GameTitle.Title != null && _refBgmEntry.GameTitle.Title.ContainsKey(locale))
                 GameTitle = _refBgmEntry.GameTitle.Title[locale];
             else
-                GameTitle = string.Empty;
+                GameTitle = GameId;
 
             if (_refBgmEntry.Title != null && _refBgmEntry.Title.ContainsKey(locale))
                 Title = _refBgmEntry.Title[locale];
             else
-                Title = string.Empty;
+                Title = ToneId;
 
             if (_refBgmEntry.Copyright != null && _refBgmEntry.Copyright.ContainsKey(locale))
                 Copyright = _refBgmEntry.Copyright[locale];

@@ -52,6 +52,19 @@ namespace Sm5sh.Mods.Music.Services
 
         public BgmEntry AddOrUpdateBgmEntry(BgmEntry bgmEntry)
         {
+            //TODO TODO TODO
+            //VALIDATE FOR WEIRD CHARACTER, LENGTH
+            //VERIFY THAT IDS ARE UNIQUE IN TEMP
+            //VERIFY THAT NOT IN MODS OR CORE DB
+            //VERIFY HASH
+            //TODO TODO TODO
+
+            if (bgmEntry.Mod?.ModPath == null)
+            {
+                _logger.LogError("Attempting to register a song without a mod assigned.");
+                return null;
+            }
+
             var keyRefs = GetToneIdKeyReferences(bgmEntry.ToneId, bgmEntry);
             var bgmEntries = GetBgmEntriesFromStateManager();
 
@@ -130,7 +143,7 @@ namespace Sm5sh.Mods.Music.Services
                     },
                     SoundTestIndex = dbRootEntry.TestDispOrder,
                     Mod = _toneIdKeyReferences.ContainsKey(toneId) ? _toneIdKeyReferences[toneId].Mod : null,
-                    Source = _toneIdKeyReferences.ContainsKey(toneId) ? _toneIdKeyReferences[toneId].Source : EntrySource.Core,
+                    Filename = _toneIdKeyReferences.ContainsKey(toneId) ? _toneIdKeyReferences[toneId].Filename : null,
                     Playlists = paramBgmPlaylists.Where(p => p.Value.Any(p => p.UiBgmId.HexValue == dbRootEntry.UiBgmId.HexValue)).Select(p => new PlaylistEntry() { Id = p.Key }).ToList(),
                     IsDlcOrPatch = dbRootEntry.IsDlc,
                     HiddenInSoundTest = ToHiddenInSoundTestStatus(dbRootEntry),
@@ -261,6 +274,7 @@ namespace Sm5sh.Mods.Music.Services
             dbRootEntry.RecordType = new PrcHash40(bgmEntry.RecordType);
             dbRootEntry.IsPatch = bgmEntry.IsDlcOrPatch;
             dbRootEntry.IsDlc = bgmEntry.IsDlcOrPatch;
+            dbRootEntry.TestDispOrder = bgmEntry.SoundTestIndex;
             dbRootEntry = FromHiddenInSoundTestStatus(paramBgmDatabase.DbRootEntries, dbRootEntry, bgmEntry.HiddenInSoundTest);
             //Stream Set
             setStreamEntry = FromSpecialCategory(setStreamEntry, bgmEntry?.SpecialCategory);
@@ -402,12 +416,9 @@ namespace Sm5sh.Mods.Music.Services
 
         private SpecialCategoryEntry ToSpecialCategory(PrcBgmStreamSetEntry setStreamEntry)
         {
-            if (setStreamEntry.SpecialCategory?.HexValue == 0)
-                return null;
-
             var output = new SpecialCategoryEntry()
             {
-                Id = setStreamEntry.SpecialCategory.HexValue,
+                Id = setStreamEntry.SpecialCategory != null ? setStreamEntry.SpecialCategory.HexValue : 0,
                 Parameters = new List<string>()
             };
 
@@ -578,6 +589,7 @@ namespace Sm5sh.Mods.Music.Services
         {
             public string ToneId { get; }
             public ModEntry Mod { get; set; }
+            public string Filename { get; set; }
             public EntrySource Source { get; set; }
             public string DbRootKey { get; }
             public string StreamSetKey { get; }
@@ -594,6 +606,7 @@ namespace Sm5sh.Mods.Music.Services
                 if (bgmEntry != null)
                 {
                     Mod = bgmEntry.Mod;
+                    Filename = bgmEntry.Filename;
                     Source = bgmEntry.Source;
                 }
                 else

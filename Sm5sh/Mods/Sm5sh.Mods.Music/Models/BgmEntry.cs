@@ -5,33 +5,24 @@ namespace Sm5sh.Mods.Music.Models
     public class BgmEntry
     {
         public string ToneId { get; set; }
-
         public GameTitleEntry GameTitle { get; set; }
-
         public Dictionary<string, string> Title { get; set; }
-
         public Dictionary<string, string> Copyright { get; set; }
-
         public Dictionary<string, string> Author { get; set; }
-
         public string RecordType { get; set; }
-
         public BgmEntryModels.AudioCuePoints AudioCuePoints { get; set; }
-
         public float AudioVolume { get; set; }
-
         public bool IsDlcOrPatch { get; set; }
-
         public List<BgmEntryModels.PlaylistEntry> Playlists { get; set; }
-
         public BgmEntryModels.SpecialCategoryEntry SpecialCategory { get; set; }
-
         public bool HiddenInSoundTest { get; set; }
         public short SoundTestIndex { get; set; }
 
-        public BgmEntryModels.ModEntry Mod { get; set; }
 
-        public BgmEntryModels.EntrySource Source { get; set; }
+        public BgmEntryModels.ModEntry Mod { get; set; }
+        public string Filename { get; set; }
+
+        public BgmEntryModels.EntrySource Source { get { return Mod == null ? BgmEntryModels.EntrySource.Core : BgmEntryModels.EntrySource.Mod; } }
 
         public override string ToString()
         {
@@ -81,7 +72,7 @@ namespace Sm5sh.Mods.Music.Models
             public string ModName { get; set; }
             public string ModAuthor { get; set; }
             public string ModWebsite { get; set; }
-            public string Filename { get; set; }
+            public string ModPath { get; set; }
         }
 
         public enum EntrySource

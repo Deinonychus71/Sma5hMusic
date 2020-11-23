@@ -12,29 +12,30 @@ using System.Collections.ObjectModel;
 using System.Reactive;
 using System.Linq;
 using Sm5sh.GUI.Models;
-using System.Threading.Tasks;
 using Avalonia;
-using Sm5sh.GUI.Interfaces;
+using System.Reactive.Subjects;
 
 namespace Sm5sh.GUI.ViewModels
 {
-    public class BgmSongsViewModel : ViewModelBase
+    public class BgmSongsViewModel : ViewModelBase, IDisposable
     {
         private readonly ILogger _logger;
-        private readonly IFileDialog _fileDialog;
         private readonly ReadOnlyObservableCollection<ComboItem> _mods;
+        private readonly Subject<string> _whenNewRequestToAddSong;
 
         public BgmListViewModel VMBgmList { get; }
         public BgmFiltersViewModel VMBgmFilters { get; }
         public BgmPropertiesViewModel VMBgmProperties { get; }
         public ReadOnlyObservableCollection<ComboItem> Mods { get { return _mods; } }
+        public IObservable<string> WhenNewRequestToAddSong { get { return _whenNewRequestToAddSong; } }
+
         [Reactive]
         public string SelectedLocale { get; set; }
 
-        public BgmSongsViewModel(IServiceProvider serviceProvider, IFileDialog fileDialog, ILogger<BgmSongsViewModel> logger, IObservable<IChangeSet<BgmEntryListViewModel, string>> observableBgmEntriesList)
+        public BgmSongsViewModel(IServiceProvider serviceProvider, ILogger<BgmSongsViewModel> logger, IObservable<IChangeSet<BgmEntryListViewModel, string>> observableBgmEntriesList)
         {
             _logger = logger;
-            _fileDialog = fileDialog;
+            _whenNewRequestToAddSong = new Subject<string>();
             SelectedLocale = Constants.DEFAULT_LOCALE;
 
             var whenLocaleChanged = this.WhenAnyValue(p => p.SelectedLocale);
@@ -75,25 +76,18 @@ namespace Sm5sh.GUI.ViewModels
             SelectedLocale = locale;
         }
 
-        public async Task AddNewBgmEntry(string modPath)
+        public void AddNewBgmEntry(string modPath)
         {
-            var results = await _fileDialog.OpenFileDialogAudio();
+            _whenNewRequestToAddSong.OnNext(modPath);
+        }
 
-            if (results.Length == 0)
-                return;
-
-            //TODO
-            _logger.LogInformation("Adding {NbrFiles} files to Mod {ModPath}", results.Length, modPath);
-            //VERIFY THAT IDS ARE UNIQUE IN TEMP
-            //VERIFY THAT NOT IN MODS OR CORE DB
-            //VERIFY HASH
-
-            //var result = await filePicker.ShowAsync(dialogHelper.Window);
-
-            /*var win = new BgmPropertiesWindow()
+        public void Dispose()
+        {
+            if(_whenNewRequestToAddSong != null)
             {
-                DataContext = Locator.Current.GetService<BgmPropertiesWindowViewModel>()
-            };*/
+                _whenNewRequestToAddSong?.OnCompleted();
+                _whenNewRequestToAddSong?.Dispose();
+            }
         }
     }
 }
