@@ -47,9 +47,11 @@ namespace Sm5sh.Mods.Music
                 var newBgmEntries = newMusicMod.LoadBgmEntriesFromMod();
                 foreach(var newBgmEntry in newBgmEntries)
                 {
-                    _audioStateService.AddOrUpdateBgmEntry(newBgmEntry);
+                    _audioStateService.AddBgmEntry(newBgmEntry);
                 }
             }
+
+            _audioStateService.SaveBgmEntriesToStateManager();
 
             return true;
         }

@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using Sm5sh.Mods.Music.Interfaces;
-using Sm5sh.Mods.Music.Models.BgmEntryModels;
+using Sm5sh.Mods.Music.Models;
 using System;
 using System.IO;
 using System.Text;

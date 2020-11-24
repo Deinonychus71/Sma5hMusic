@@ -60,18 +60,18 @@ namespace Sm5sh.GUI.ViewModels
             RecordTypeId = bgmEntry.RecordType;
             SoundTestIndex = bgmEntry.SoundTestIndex;
             HiddenInSoundTest = bgmEntry.HiddenInSoundTest;
-            SeriesId = bgmEntry.GameTitle?.SeriesId;
-            GameId = bgmEntry.GameTitle?.GameTitleId;
+            SeriesId = bgmEntry.GameTitle?.UiSeriesId;
+            GameId = bgmEntry.GameTitle?.UiGameTitleId;
             Filename = bgmEntry.Filename;
-            ModName = bgmEntry.Mod?.ModName;
-            ModAuthor = bgmEntry.Mod?.ModAuthor;
-            ModWebsite = bgmEntry.Mod?.ModWebsite;
-            ModPath = bgmEntry.Mod?.ModPath;
+            ModName = bgmEntry.Mod?.Name;
+            ModAuthor = bgmEntry.Mod?.Author;
+            ModWebsite = bgmEntry.Mod?.Website;
+            ModPath = bgmEntry.Mod?.Path;
 
             //Calculated Fields
             SeriesTitle = Constants.GetSeriesDisplayName(SeriesId);
             RecordTypeLabel = Constants.GetRecordTypeDisplayName(bgmEntry.RecordType);
-            PlaylistIds = string.Join(Environment.NewLine, bgmEntry.Playlists.Select(p => p.Id));
+            PlaylistIds = string.Join(Environment.NewLine, bgmEntry.Playlists.Select(p => p.Key));
             if (bgmEntry.SpecialCategory != null)
             {
                 SpecialCategoryLabel = Constants.GetSpecialCategoryDisplayName(bgmEntry.SpecialCategory.Id);
@@ -90,23 +90,23 @@ namespace Sm5sh.GUI.ViewModels
 
         public void LoadLocalized(string locale)
         {
-            if (_refBgmEntry.GameTitle.Title != null && _refBgmEntry.GameTitle.Title.ContainsKey(locale))
-                GameTitle = _refBgmEntry.GameTitle.Title[locale];
+            if (_refBgmEntry.GameTitle.MSBTTitle != null && _refBgmEntry.GameTitle.MSBTTitle.ContainsKey(locale))
+                GameTitle = _refBgmEntry.GameTitle.MSBTTitle[locale];
             else
                 GameTitle = GameId;
 
-            if (_refBgmEntry.Title != null && _refBgmEntry.Title.ContainsKey(locale))
-                Title = _refBgmEntry.Title[locale];
+            if (_refBgmEntry.MSBTLabels.Title != null && _refBgmEntry.MSBTLabels.Title.ContainsKey(locale))
+                Title = _refBgmEntry.MSBTLabels.Title[locale];
             else
                 Title = ToneId;
 
-            if (_refBgmEntry.Copyright != null && _refBgmEntry.Copyright.ContainsKey(locale))
-                Copyright = _refBgmEntry.Copyright[locale];
+            if (_refBgmEntry.MSBTLabels.Copyright != null && _refBgmEntry.MSBTLabels.Copyright.ContainsKey(locale))
+                Copyright = _refBgmEntry.MSBTLabels.Copyright[locale];
             else
                 Copyright = string.Empty;
 
-            if (_refBgmEntry.Author != null && _refBgmEntry.Author.ContainsKey(locale))
-                Author = _refBgmEntry.Author[locale];
+            if (_refBgmEntry.MSBTLabels.Author != null && _refBgmEntry.MSBTLabels.Author.ContainsKey(locale))
+                Author = _refBgmEntry.MSBTLabels.Author[locale];
             else
                 Author = string.Empty;
         }

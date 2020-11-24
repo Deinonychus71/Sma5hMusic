@@ -5,7 +5,6 @@ using Sm5sh.Core.Helpers;
 using Sm5sh.Mods.Music.Helpers;
 using Sm5sh.Mods.Music.Interfaces;
 using Sm5sh.Mods.Music.Models;
-using Sm5sh.ResourceProviders.Prc.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -42,22 +41,20 @@ namespace Sm5sh.Mods.Music
             //Process audio mods
             _logger.LogInformation("Mod {MusicMod} by '{Author}' - {NbrSongs} song(s)", _musicModConfig.Name, _musicModConfig.Author, _musicModConfig.Games.Sum(p => p.Songs.Count));
 
-            var modEntry = new Models.BgmEntryModels.ModEntry()
+            var modEntry = new Models.ModEntry(Guid.NewGuid(), _musicModPath)
             {
-                ModName = _musicModConfig.Name,
-                ModAuthor = _musicModConfig.Author,
-                ModWebsite = _musicModConfig.Website,
-                ModPath = _musicModPath,
+                Name = _musicModConfig.Name,
+                Author = _musicModConfig.Author,
+                Website = _musicModConfig.Website
             };
             var output = new List<BgmEntry>();
             foreach (var game in _musicModConfig.Games)
             {
-                var gameEntry = new GameTitleEntry()
+                var gameEntry = new GameTitleEntry(game.Id)
                 {
-                    GameTitleId = game.Id,
-                    SeriesId = game.SeriesId,
+                    UiSeriesId = game.SeriesId,
                     NameId = game.Id.TrimStart(Constants.InternalIds.GAME_TITLE_ID_PREFIX),
-                    Title = game.Title
+                    MSBTTitle = game.Title
                 };
 
                 foreach (var song in game.Songs)
@@ -67,27 +64,36 @@ namespace Sm5sh.Mods.Music
 
                     var toneId = song.Id;
                     var hasDlcPlaylistId = song.Playlists != null && song.Playlists.Any(p => CoreConstants.DLC_STAGES.Contains(p.Id));
-                    output.Add(new BgmEntry()
+                    var newSong = new BgmEntry(toneId, modEntry);
+                    newSong.GameTitle = gameEntry;
+                    newSong.DbRoot.RecordType = song.RecordType;
+                    newSong.DbRoot.TestDispOrder = -1;
+                    newSong.DbRoot.IsDlc = hasDlcPlaylistId;
+                    newSong.DbRoot.IsPatch = hasDlcPlaylistId;
+                    newSong.StreamSet.SpecialCategory = song.SpecialCategory?.Category;
+                    newSong.StreamSet.Info1 = song.SpecialCategory?.Parameters?[0];
+                    newSong.MSBTLabels.Title = song.Title;
+                    newSong.MSBTLabels.Author = song.Author;
+                    newSong.MSBTLabels.Copyright = song.Copyright;
+                    newSong.Filename = audioFilePath;
+                    newSong.AudioVolume = 0;
+                    newSong.BgmProperties.LoopEndMs = audioCuePoints.LoopEndMs;
+                    newSong.BgmProperties.LoopEndSample = audioCuePoints.LoopEndSample;
+                    newSong.BgmProperties.LoopStartMs = audioCuePoints.LoopStartMs;
+                    newSong.BgmProperties.LoopStartSample = audioCuePoints.LoopStartSample;
+                    newSong.BgmProperties.TotalSamples = audioCuePoints.TotalSamples;
+                    newSong.BgmProperties.TotalTimeMs = audioCuePoints.TotalTimeMs;
+                    if (song.Playlists != null)
                     {
-                        ToneId = toneId,
-                        AudioVolume = 0, //TODO
-                        RecordType = song.RecordType,
-                        Title = song.Title,
-                        Author = song.Author,
-                        Copyright = song.Copyright,
-                        GameTitle = gameEntry,
-                        IsDlcOrPatch = hasDlcPlaylistId,
-                        Playlists = song.Playlists?.Select(p => new Models.BgmEntryModels.PlaylistEntry() {  Id = p.Id}).ToList(),
-                        Mod = modEntry,
-                        Filename = audioFilePath,
-                        AudioCuePoints = audioCuePoints,
-                        SoundTestIndex = -1, //Mods don't manage that
-                        SpecialCategory = song.SpecialCategory != null ? new Models.BgmEntryModels.SpecialCategoryEntry()
+                        foreach (var playlist in song.Playlists)
                         {
-                            Id = song.SpecialCategory.Category,
-                            Parameters = song.SpecialCategory.Parameters
-                        } : null
-                    });
+                            if (!newSong.Playlists.ContainsKey(playlist.Id))
+                                newSong.Playlists.Add(playlist.Id, new List<Models.BgmEntryModels.BgmPlaylistEntry>());
+                            newSong.Playlists[playlist.Id].Add(new Models.BgmEntryModels.BgmPlaylistEntry(newSong));
+                        }
+                    }
+                    output.Add(newSong);
+
                     _logger.LogInformation("Mod {MusicMod}: Adding song {Song} ({ToneName})", _musicModConfig.Name, song.Id, toneId);
                 }
             }
@@ -178,24 +184,24 @@ namespace Sm5sh.Mods.Music
             //Applying updates...
             modSong = new Song()
             {
-                Author = bgmEntry.Author,
-                Copyright = bgmEntry.Copyright,
-                Title = bgmEntry.Title,
+                Author = bgmEntry.MSBTLabels.Author,
+                Copyright = bgmEntry.MSBTLabels.Copyright,
+                Title = bgmEntry.MSBTLabels.Title,
                 RecordType = bgmEntry.RecordType,
-                Playlists = bgmEntry.Playlists.Select(p => new PlaylistInfo() { Id = p.Id }).ToList()
+                Playlists = bgmEntry.Playlists.Select(p => new PlaylistInfo() { Id = p.Key }).ToList()
             };
             if (bgmEntry.SpecialCategory != null)
                 modSong.SpecialCategory = new SpecialCategory() { Category = bgmEntry.SpecialCategory.Id, Parameters = bgmEntry.SpecialCategory.Parameters };
 
-            var game = _musicModConfig.Games.FirstOrDefault(p => p.Id == bgmEntry.GameTitle.GameTitleId);
+            var game = _musicModConfig.Games.FirstOrDefault(p => p.Id == bgmEntry.GameTitle.UiGameTitleId);
             if(game == null)
             {
                 game = new Game()
                 {
-                    Id = bgmEntry.GameTitle.GameTitleId,
-                    SeriesId = bgmEntry.GameTitle.SeriesId,
+                    Id = bgmEntry.GameTitle.UiGameTitleId,
+                    SeriesId = bgmEntry.GameTitle.UiSeriesId,
                     Songs = new List<Song>(),
-                    Title = bgmEntry.GameTitle.Title
+                    Title = bgmEntry.GameTitle.MSBTTitle
                 };
                 _musicModConfig.Games.Add(game);
             }

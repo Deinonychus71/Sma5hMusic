@@ -1,20 +1,29 @@
-﻿using System.Collections.Generic;
+﻿using Sm5sh.Mods.Music.Helpers;
+using System.Collections.Generic;
 
 namespace Sm5sh.Mods.Music.Models
 {
     public class GameTitleEntry
     {
-        public string GameTitleId { get; set; }
+        public string UiGameTitleId { get; }
+        public string NameId { get; set; }
+        public string UiSeriesId { get; set; }
+        public bool Unk1 { get; set; }
+        public int Release { get; set; }
 
-        public string NameId { get; set; } //Need because Game Title Id doesn't always have a direct match with NameId
+        public Dictionary<string, string> MSBTTitle { get; set; }
 
-        public string SeriesId { get; set; }
-
-        public Dictionary<string, string> Title { get; set; }
+        public string MSBTTitleKey { get { return string.Format(Constants.InternalIds.MSBT_GAME_TITLE, NameId); } }
 
         public override string ToString()
         {
-            return GameTitleId;
+            return UiGameTitleId;
+        }
+
+        public GameTitleEntry(string uiGameTitleId)
+        {
+            UiGameTitleId = uiGameTitleId;
+            MSBTTitle = new Dictionary<string, string>();
         }
     }
 }

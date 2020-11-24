@@ -112,7 +112,9 @@ namespace Sm5sh.GUI.Helpers
 
         public static string GetSpecialCategoryDisplayName(string key)
         {
-            return CONVERTER_SPECIAL_CATEGORY.ContainsKey(key) ? CONVERTER_SPECIAL_CATEGORY[key] : $"0x{key:x}";
+            if (string.IsNullOrEmpty(key))
+                return null;
+            return CONVERTER_SPECIAL_CATEGORY.ContainsKey(key) ? CONVERTER_SPECIAL_CATEGORY[key] : key;
         }
     }
 }

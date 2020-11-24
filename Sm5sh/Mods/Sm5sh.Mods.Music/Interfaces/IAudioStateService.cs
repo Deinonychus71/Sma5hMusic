@@ -8,7 +8,8 @@ namespace Sm5sh.Mods.Music.Interfaces
         IEnumerable<BgmEntry> GetBgmEntries();
         IEnumerable<BgmEntry> GetModBgmEntries();
         BgmEntry GetBgmEntry(string toneId);
-        BgmEntry AddOrUpdateBgmEntry(BgmEntry bgmEntry);
+        bool AddBgmEntry(BgmEntry bgmEntry);
         void RemoveBgmEntry(string toneId);
+        bool SaveBgmEntriesToStateManager();
     }
 }

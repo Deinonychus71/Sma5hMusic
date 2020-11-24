@@ -1,4 +1,4 @@
-﻿using Sm5sh.Mods.Music.Models.BgmEntryModels;
+﻿using Sm5sh.Mods.Music.Models;
 
 namespace Sm5sh.Mods.Music.Interfaces
 {
