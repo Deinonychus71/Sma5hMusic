@@ -5,11 +5,11 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Sm5sh.GUI.Views.BgmPropertiesView">
   <UserControl.Styles>
-    <StyleInclude Source="/Assets/PropertiesStyles.xaml" />
+    <StyleInclude Source="/Assets/Styles/PropertiesStyles.xaml" />
   </UserControl.Styles>
-  <DockPanel>
-    <Border Classes="headerBorder" DockPanel.Dock="Top">
-      <Label Classes="headerTitle">Properties</Label>
+  <DockPanel Classes="modal">
+    <Border Classes="headerTitle" DockPanel.Dock="Top">
+      <Label>Properties</Label>
     </Border>
     <TabControl IsVisible="{Binding SelectedBgmEntry, Converter={x:Static ObjectConverters.IsNotNull}}" TabStripPlacement="Bottom" DockPanel.Dock="Bottom">
       <TabItem Header="General" FontSize="14">
@@ -24,19 +24,19 @@
           </StackPanel>
           <StackPanel Classes="propertyBlock">
             <Label Classes="label">Game</Label>
-            <TextBox Classes="value valueLabel" IsReadOnly="{Binding !IsEditMode}" Text="{Binding SelectedBgmEntry.GameTitle, Mode=OneWay}"></TextBox>
+            <TextBox Classes="value jpnSupport" IsReadOnly="{Binding !IsEditMode}" Text="{Binding SelectedBgmEntry.GameTitle, Mode=OneWay}"></TextBox>
           </StackPanel>
           <StackPanel Classes="propertyBlock">
             <Label Classes="label">Title</Label>
-            <TextBox Classes="value valueLabel" IsReadOnly="{Binding !IsEditMode}" Text="{Binding SelectedBgmEntry.Title, Mode=OneWay}"></TextBox>
+            <TextBox Classes="value jpnSupport" IsReadOnly="{Binding !IsEditMode}" Text="{Binding SelectedBgmEntry.Title, Mode=OneWay}"></TextBox>
           </StackPanel>
           <StackPanel Classes="propertyBlock">
             <Label Classes="label">Author</Label>
-            <TextBox Classes="value valueLabel" IsReadOnly="{Binding !IsEditMode}" Text="{Binding SelectedBgmEntry.Author, Mode=OneWay}"></TextBox>
+            <TextBox Classes="value jpnSupport" IsReadOnly="{Binding !IsEditMode}" Text="{Binding SelectedBgmEntry.Author, Mode=OneWay}"></TextBox>
           </StackPanel>
           <StackPanel Classes="propertyBlock">
             <Label Classes="label">Copyright</Label>
-            <TextBox Classes="value valueLabel" IsReadOnly="{Binding !IsEditMode}" Text="{Binding SelectedBgmEntry.Copyright, Mode=OneWay}"></TextBox>
+            <TextBox Classes="value jpnSupport" IsReadOnly="{Binding !IsEditMode}" Text="{Binding SelectedBgmEntry.Copyright, Mode=OneWay}"></TextBox>
           </StackPanel>
           <StackPanel Classes="propertyBlock">
             <Label Classes="label">Record Type</Label>

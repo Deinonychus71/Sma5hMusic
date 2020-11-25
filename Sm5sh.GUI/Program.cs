@@ -5,17 +5,11 @@ using Microsoft.Extensions.DependencyInjection;
 using Splat.Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Sm5sh.Interfaces;
-using Sm5sh.Mods.Music;
-using Sm5sh.Mods.Music.Interfaces;
-using Sm5sh.Mods.Music.ResourceProviders;
-using Sm5sh.Mods.Music.Services;
 using Sm5sh.Mods.StagePlaylist;
-using Sm5sh.ResourceProviders;
 using System;
 using System.IO;
 using Sm5sh.GUI.ViewModels;
 using VGMMusic;
-using Sm5sh.GUI.Helpers;
 using Sm5sh.GUI.Views;
 using Sm5sh.GUI.Interfaces;
 using Sm5sh.GUI.Dialogs;
@@ -71,7 +65,7 @@ namespace Sm5sh.GUI
             //Add UI ViewModels
             services.AddSingleton<IDialogWindow, MainWindow>();
             services.AddSingleton<MainWindowViewModel>();
-            services.AddSingleton<BgmPropertiesWindowViewModel>();
+            services.AddTransient<ModPropertiesModalWindowViewModel>();
 
             //Add UI Services
             services.AddSingleton<IVGMMusicPlayer, VGMMusicPlayer>();

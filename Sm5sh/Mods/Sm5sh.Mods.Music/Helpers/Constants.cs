@@ -13,10 +13,6 @@ namespace Sm5sh.Mods.Music.Helpers
 
         public class Resources
         {
-            public const string BGM_PROPERTY_EXE_FILE = "BgmProperty/bgm-property.exe";
-            public const string BGM_PROPERTY_HASH_FILE = "BgmProperty/bgm_hashes.txt";
-            public const string BGM_PROPERTY_TEMP_FILE = "temp.yml";
-
             public const string NUS3AUDIO_EXE_FILE = "Nus3Audio/nus3audio.exe";
             public const string NUS3BANK_TEMPLATE_FILE = "template.nus3bank";
             public const string NUS3BANK_IDS_FILE = "nusbank_ids.csv";
@@ -27,12 +23,6 @@ namespace Sm5sh.Mods.Music.Helpers
         {
             public const string NUS3AUDIO_FILE = "bgm_{0}.nus3audio";
             public const string NUS3BANK_FILE = "bgm_{0}.nus3bank";
-
-            public const string PRC_UI_BGM_DB_PATH = "ui/param/database/ui_bgm_db.prc";
-            public const string PRC_UI_GAMETITLE_DB_PATH = "ui/param/database/ui_gametitle_db.prc";
-            public const string PRC_BGM_PROPERTY_PATH = "sound/config/bgm_property.bin";
-            public const string MSBT_BGM = "ui/message/msg_bgm+{0}.msbt";
-            public const string MSBT_TITLE = "ui/message/msg_title+{0}.msbt";
         }
 
         internal class InternalIds

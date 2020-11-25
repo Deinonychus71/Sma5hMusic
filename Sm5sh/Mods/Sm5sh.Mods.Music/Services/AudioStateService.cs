@@ -7,7 +7,6 @@ using Sm5sh.Data.Ui.Param.Database.PrcUiBgmDatabaseModels;
 using Sm5sh.Data.Ui.Param.Database.PrcUiGameTitleDatabaseModels;
 using Sm5sh.Helpers;
 using Sm5sh.Interfaces;
-using Sm5sh.Core.Helpers;
 using Sm5sh.Mods.Music.Helpers;
 using Sm5sh.Mods.Music.Interfaces;
 using Sm5sh.Mods.Music.Models;
@@ -15,6 +14,7 @@ using Sm5sh.Mods.Music.Models.BgmEntryModels;
 using Sm5sh.ResourceProviders.Prc.Helpers;
 using System.Collections.Generic;
 using System.Linq;
+using Sm5sh.ResourceProviders.Constants;
 
 namespace Sm5sh.Mods.Music.Services
 {
@@ -77,6 +77,8 @@ namespace Sm5sh.Mods.Music.Services
             //Create
             if (!_bgmEntries.ContainsKey(bgmEntry.ToneId))
                 _bgmEntries.Add(bgmEntry.ToneId, bgmEntry);
+            else
+                _logger.LogError("Bgm with ToneId {ToneId} already exist in the database.");
 
             return true;
         }
@@ -99,9 +101,9 @@ namespace Sm5sh.Mods.Music.Services
             _logger.LogInformation("Saving Bgm Entries to State Service");
 
             //Load Data
-            var paramBgmDatabase = _state.LoadResource<PrcUiBgmDatabase>(Constants.GameResources.PRC_UI_BGM_DB_PATH);
-            var paramGameTitleDatabaseRoot = _state.LoadResource<PrcUiGameTitleDatabase>(Constants.GameResources.PRC_UI_GAMETITLE_DB_PATH).DbRootEntries;
-            var binBgmPropertyEntries = _state.LoadResource<Data.Sound.Config.BinBgmProperty>(Constants.GameResources.PRC_BGM_PROPERTY_PATH).Entries;
+            var paramBgmDatabase = _state.LoadResource<PrcUiBgmDatabase>(PrcExtConstants.PRC_UI_BGM_DB_PATH);
+            var paramGameTitleDatabaseRoot = _state.LoadResource<PrcUiGameTitleDatabase>(PrcExtConstants.PRC_UI_GAMETITLE_DB_PATH).DbRootEntries;
+            var binBgmPropertyEntries = _state.LoadResource<Data.Sound.Config.BinBgmProperty>(BgmPropertyFileConstants.BGM_PROPERTY_PATH).Entries;
             var daoMsbtBgms = GetBgmDatabases();
             var daoMsbtTitle = GetGameTitleDatabases();
 
@@ -220,9 +222,9 @@ namespace Sm5sh.Mods.Music.Services
             _state.UnloadResources();
 
             //Load Data
-            var daoBinBgmProperty = _state.LoadResource<Data.Sound.Config.BinBgmProperty>(Constants.GameResources.PRC_BGM_PROPERTY_PATH);
-            var paramBgmDatabase = _state.LoadResource<PrcUiBgmDatabase>(Constants.GameResources.PRC_UI_BGM_DB_PATH);
-            var paramGameTitleDbRoot = _state.LoadResource<PrcUiGameTitleDatabase>(Constants.GameResources.PRC_UI_GAMETITLE_DB_PATH).DbRootEntries;
+            var daoBinBgmProperty = _state.LoadResource<Data.Sound.Config.BinBgmProperty>(BgmPropertyFileConstants.BGM_PROPERTY_PATH);
+            var paramBgmDatabase = _state.LoadResource<PrcUiBgmDatabase>(PrcExtConstants.PRC_UI_BGM_DB_PATH);
+            var paramGameTitleDbRoot = _state.LoadResource<PrcUiGameTitleDatabase>(PrcExtConstants.PRC_UI_GAMETITLE_DB_PATH).DbRootEntries;
             var daoMsbtBgms = GetBgmDatabases();
             var daoMsbtTitle = GetGameTitleDatabases();
 
@@ -357,7 +359,7 @@ namespace Sm5sh.Mods.Music.Services
             var output = new Dictionary<string, MsbtDatabase>();
             foreach (var locale in LocaleHelper.ValidLocales)
             {
-                var msbt = _state.LoadResource<MsbtDatabase>(string.Format(Constants.GameResources.MSBT_BGM, locale), true);
+                var msbt = _state.LoadResource<MsbtDatabase>(string.Format(MsbtExtConstants.MSBT_BGM, locale), true);
                 if (msbt != null)
                     output.Add(locale, msbt);
             }
@@ -369,7 +371,7 @@ namespace Sm5sh.Mods.Music.Services
             var output = new Dictionary<string, MsbtDatabase>();
             foreach (var locale in LocaleHelper.ValidLocales)
             {
-                var msbt = _state.LoadResource<MsbtDatabase>(string.Format(Constants.GameResources.MSBT_TITLE, locale), true);
+                var msbt = _state.LoadResource<MsbtDatabase>(string.Format(MsbtExtConstants.MSBT_TITLE, locale), true);
                 if (msbt != null)
                     output.Add(locale, msbt);
             }

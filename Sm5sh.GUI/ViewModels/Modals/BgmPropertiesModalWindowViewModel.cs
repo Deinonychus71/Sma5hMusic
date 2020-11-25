@@ -5,13 +5,13 @@ using System;
 
 namespace Sm5sh.GUI.ViewModels
 {
-    public class BgmPropertiesWindowViewModel : ViewModelBase
+    public class BgmPropertiesModalWindowViewModel : ViewModelBase
     {
         private readonly ILogger _logger;
 
         public BgmPropertiesViewModel VMBgmProperties { get; }
 
-        public BgmPropertiesWindowViewModel(IServiceProvider serviceProvider, ILogger<BgmPropertiesWindowViewModel> logger)
+        public BgmPropertiesModalWindowViewModel(IServiceProvider serviceProvider, ILogger<BgmPropertiesModalWindowViewModel> logger)
         {
             _logger = logger;
 

@@ -2,7 +2,7 @@
 using System.IO;
 using YamlDotNet.Serialization;
 
-namespace Sm5sh.Mods.Music.Helpers
+namespace Sm5sh.ResourceProviders.BgmPropertyFile.Helpers
 {
     public class YmlHelper
     {

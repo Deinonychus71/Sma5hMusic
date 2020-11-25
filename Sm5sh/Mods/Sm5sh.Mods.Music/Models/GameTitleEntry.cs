@@ -12,8 +12,7 @@ namespace Sm5sh.Mods.Music.Models
         public int Release { get; set; }
 
         public Dictionary<string, string> MSBTTitle { get; set; }
-
-        public string MSBTTitleKey { get { return string.Format(Constants.InternalIds.MSBT_GAME_TITLE, NameId); } }
+        public string MSBTTitleKey { get { return !string.IsNullOrEmpty(NameId) ? string.Format(Constants.InternalIds.MSBT_GAME_TITLE, NameId) : null; } }
 
         public override string ToString()
         {

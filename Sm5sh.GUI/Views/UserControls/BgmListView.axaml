@@ -8,7 +8,7 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Sm5sh.GUI.Views.BgmListView">
   <UserControl.Styles>
-    <StyleInclude Source="/Assets/ListsStyles.xaml" />
+    <StyleInclude Source="/Assets/Styles/ListsStyles.xaml" />
   </UserControl.Styles>
   <Grid>
     <DataGrid SelectionMode="Single" Classes="BgmList" SelectedItem="{Binding SelectedBgmEntry, Mode=TwoWay}" Items="{Binding Items, Mode=OneWay}">
@@ -20,12 +20,12 @@
             </DataTemplate>
           </DataGridTemplateColumn.CellTemplate>
         </DataGridTemplateColumn>
-        <DataGridTextColumn Header="Series" Binding="{Binding SeriesTitle, Mode=OneWay}" />
-        <DataGridTextColumn MaxWidth="300" Header="Game" Binding="{Binding GameTitle, Mode=OneWay}" />
-        <DataGridTextColumn MaxWidth="400" Header="Title" Binding="{Binding Title, Mode=OneWay}" />
-        <DataGridTextColumn Header="Record" Binding="{Binding RecordTypeLabel, Mode=OneWay}" />
-        <DataGridTextColumn Header="Source" Binding="{Binding Source, Mode=OneWay}" />
-        <DataGridTextColumn Header="Mod Name" Binding="{Binding ModName, Mode=OneWay}" />
+        <DataGridTextColumn Header="Series" Width="*" Binding="{Binding SeriesTitle, Mode=OneWay}" />
+        <DataGridTextColumn MaxWidth="300" Width="3*" Header="Game" Binding="{Binding GameTitle, Mode=OneWay}" />
+        <DataGridTextColumn MaxWidth="400" Width="3*" Header="Title" Binding="{Binding Title, Mode=OneWay}" />
+        <DataGridTextColumn Header="Record" Width="*" Binding="{Binding RecordTypeLabel, Mode=OneWay}" />
+        <DataGridTextColumn Header="Source" Width="*" Binding="{Binding Source, Mode=OneWay}" />
+        <DataGridTextColumn Header="Mod Name" Width="2*" Binding="{Binding ModName, Mode=OneWay}" />
       </DataGrid.Columns>
     </DataGrid>
   </Grid>

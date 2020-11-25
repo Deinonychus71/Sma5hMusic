@@ -33,7 +33,7 @@ namespace Sm5sh.GUI.Dialogs
                 {
                     Extensions = new List<string>()
                     {
-                        "brstm", "lopus", "idsp"
+                        "brstm", "lopus", "idsp", "nus3audio"
                     },
                     Name = "Songs"
                 }
@@ -42,7 +42,7 @@ namespace Sm5sh.GUI.Dialogs
 
             string[] results;
             if(parent == null)
-                results = await _openFileDialog.ShowAsync(_rootDialogWindow as Window);
+                results = await _openFileDialog.ShowAsync(_rootDialogWindow.Window);
             else
                 results = await _openFileDialog.ShowAsync(parent);
 

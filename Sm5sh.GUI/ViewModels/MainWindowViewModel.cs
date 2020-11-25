@@ -14,6 +14,7 @@ using System;
 using Sm5sh.GUI.Interfaces;
 using Microsoft.Extensions.Options;
 using System.IO;
+using Sm5sh.GUI.Views;
 
 namespace Sm5sh.GUI.ViewModels
 {
@@ -21,18 +22,23 @@ namespace Sm5sh.GUI.ViewModels
     {
         private readonly IAudioStateService _audioState;
         private readonly IServiceProvider _serviceProvider;
+        private readonly IMusicModManagerService _musicModManagerService;
         private readonly IFileDialog _fileDialog;
+        private readonly IDialogWindow _rootDialog;
         private readonly ILogger _logger;
         private readonly IOptions<Sm5shOptions> _config;
         private readonly RangeObservableCollection<BgmEntry> _bgmEntries;
+        private readonly RangeObservableCollection<IMusicMod> _musicMods;
 
         public BgmSongsViewModel VMBgmSongs { get; }
 
-        public MainWindowViewModel(IServiceProvider serviceProvider, IOptions<Sm5shOptions> config, IFileDialog fileDialog, 
-            IAudioStateService audioState, IVGMMusicPlayer musicPlayer, ILogger<MainWindowViewModel> logger)
+        public MainWindowViewModel(IServiceProvider serviceProvider, IOptions<Sm5shOptions> config, IAudioStateService audioState, IVGMMusicPlayer musicPlayer,
+            IMusicModManagerService musicModManagerService, IDialogWindow rootDialog, IFileDialog fileDialog, ILogger<MainWindowViewModel> logger)
         {
             _serviceProvider = serviceProvider;
+            _musicModManagerService = musicModManagerService;
             _fileDialog = fileDialog;
+            _rootDialog = rootDialog;
             _logger = logger;
             _config = config;
 
@@ -43,9 +49,11 @@ namespace Sm5sh.GUI.ViewModels
             _bgmEntries = new RangeObservableCollection<BgmEntry>();
             var observableBgmEntriesList = _bgmEntries.ToObservableChangeSet(p => p.ToneId)
                 .Transform(p => new BgmEntryListViewModel(musicPlayer, p));
+            _musicMods = new RangeObservableCollection<IMusicMod>();
+            var observableMusicModsList = _musicMods.ToObservableChangeSet(p => p.Mod.Id);
 
             //Initialize filters
-            VMBgmSongs = ActivatorUtilities.CreateInstance<BgmSongsViewModel>(serviceProvider, observableBgmEntriesList);
+            VMBgmSongs = ActivatorUtilities.CreateInstance<BgmSongsViewModel>(serviceProvider, observableBgmEntriesList, observableMusicModsList);
 
             //Listen to request for adding new songs
             this.VMBgmSongs.WhenNewRequestToAddSong.Subscribe(async (o) => await AddNewBgmEntry(o));
@@ -62,38 +70,61 @@ namespace Sm5sh.GUI.ViewModels
                 {
                     mod.Init();
                 }
-
                 var bgmList = _audioState.GetBgmEntries();
+                
                 _bgmEntries.AddRange(bgmList);
-
                 _logger.LogInformation("BGM List Loaded.");
+                _musicMods.AddRange(_musicModManagerService.MusicMods);
+                _logger.LogInformation("Music Mods List Loaded.");
             });
         }
 
-        public async Task AddNewBgmEntry(string modPath)
+        public async Task AddNewBgmEntry(IMusicMod managerMod)
         {
-            var results = await _fileDialog.OpenFileDialogAudio();
+            if (managerMod == null)
+                managerMod = await CreateNewMod();
 
+            if (managerMod == null)
+                return;
+
+            var results = await _fileDialog.OpenFileDialogAudio();
             if (results.Length == 0)
                 return;
 
-            //TODO
-            var tmpFolder = Path.Combine(_config.Value.TempPath, Path.GetDirectoryName(modPath));
-            _logger.LogInformation("Adding {NbrFiles} files to Mod {ModPath}", results.Length, modPath);
+            _logger.LogInformation("Adding {NbrFiles} files to Mod {ModPath}", results.Length, managerMod.ModPath);
             foreach (var inputFile in results)
             {
-                //Adding entry to DB
-                string inputFilename = Path.GetFileName(inputFile);
-                /*var newBgmEntry = _audioState.AddBgmEntry(modPath, inputFilename);
-
-                // Adding Audio to Temp Folder
-                var tmpOutput = Path.Combine(tmpFolder, inputFilename);
-                _logger.LogInformation("Adding {InputFile} to temporary path {OutputFile}.", inputFile);
-                File.Copy(inputFile, tmpOutput);
-
-                //Add to live DB
-                _bgmEntries.Add(newBgmEntry);*/
+                var newFile = managerMod.AddBgm(inputFile);
+                if (newFile == null)
+                {
+                    //TODO HANDLE ERROR
+                    continue;
+                }
+                _bgmEntries.Add(newFile);
             }
+        }
+
+        public async Task<IMusicMod> CreateNewMod()
+        {
+            var viewModel = _serviceProvider.GetService<ModPropertiesModalWindowViewModel>();
+            
+            var newMod = new ModPropertiesModalWindow() { DataContext = viewModel };
+            var results = await newMod.ShowDialog<ModPropertiesModalWindow>(_rootDialog.Window);
+
+            if (results != null)
+            {
+                var newManagerMod = _musicModManagerService.AddMusicMod(new MusicModInformation()
+                {
+                    Name = viewModel.ModName,
+                    Author = viewModel.ModAuthor,
+                    Website = viewModel.ModWebsite,
+                    Description = viewModel.ModDescription
+                }, viewModel.ModPath);
+
+                _musicMods.Add(newManagerMod);
+                return newManagerMod;
+            }
+            return null;
         }
     }
 }

@@ -8,11 +8,11 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Sm5sh.GUI.Views.BgmFiltersView">
   <UserControl.Styles>
-    <StyleInclude Source="/Assets/FilterStyles.xaml" />
+    <StyleInclude Source="/Assets/Styles/FilterStyles.xaml" />
   </UserControl.Styles>
   <StackPanel>
-    <Border Classes="headerBorder">
-      <Label Classes="headerTitle">Filters</Label>
+    <Border Classes="headerTitle">
+      <Label>Filters</Label>
     </Border>
     <StackPanel Classes="filterBlock">
       <TextBlock Classes="filterHeader">Source</TextBlock>

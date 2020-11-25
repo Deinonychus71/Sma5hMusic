@@ -11,6 +11,8 @@ namespace Sm5sh.GUI.Views
             InitializeComponent();
         }
 
+        public Window Window => this;
+
         private void InitializeComponent()
         {
             AvaloniaXamlLoader.Load(this);

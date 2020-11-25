@@ -52,7 +52,7 @@ namespace Microsoft.Extensions.Logging
                 return;
             }
 
-            Console.WriteLine($"{logLevel.ToString()} - {eventId.Id} - {_name} - {formatter(state, exception)}");
+            Console.WriteLine($"{logLevel} - {_name} - {formatter(state, exception)}");
         }
     }
 }

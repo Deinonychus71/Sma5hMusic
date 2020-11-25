@@ -10,7 +10,7 @@ namespace Sm5sh.GUI.Helpers
 
         public readonly static Dictionary<string, string> CONVERTER_SERIES = new Dictionary<string, string>()
         {
-            { "ui_series_none", "" },
+            { "ui_series_none", "None" },
             { "ui_series_mario", "Mario" },
             { "ui_series_mariokart", "Mario Kart" },
             { "ui_series_wreckingcrew", "Wrecking Crew" },

@@ -13,6 +13,7 @@
     <None Remove="appsettings.json" />
     <None Remove="Assets\FilterStyles.xaml" />
     <None Remove="Assets\ListsStyles.xaml" />
+    <None Remove="Assets\ModalStyles.xaml" />
     <None Remove="Assets\PropertiesStyles.xaml" />
     <None Remove="Assets\Styles.xaml" />
   </ItemGroup>
@@ -41,33 +42,36 @@
     <ProjectReference Include="..\Sm5sh\Mods\Sm5sh.Mods.StagePlaylist\Sm5sh.Mods.StagePlaylist.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <AvaloniaResource Update="Assets\PropertiesStyles.xaml">
+    <AvaloniaResource Update="Assets\Styles\ModalStyles.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </AvaloniaResource>
-    <AvaloniaResource Update="Assets\ListsStyles.xaml">
+    <AvaloniaResource Update="Assets\Styles\ListsStyles.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </AvaloniaResource>
-    <AvaloniaResource Update="Assets\FilterStyles.xaml">
+    <AvaloniaResource Update="Assets\Styles\FilterStyles.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </AvaloniaResource>
-    <AvaloniaResource Update="Assets\Styles.xaml">
+    <AvaloniaResource Update="Assets\Styles\Styles.xaml">
       <Generator>MSBuild:Compile</Generator>
     </AvaloniaResource>
   </ItemGroup>
   <ItemGroup>
-    <Compile Update="Views\BgmFiltersView.axaml.cs">
+    <Compile Update="Views\UserControls\BgmFiltersView.axaml.cs">
       <DependentUpon>BgmFiltersView.axaml</DependentUpon>
     </Compile>
-    <Compile Update="Views\BgmListView.axaml.cs">
+    <Compile Update="Views\UserControls\BgmListView.axaml.cs">
       <DependentUpon>BgmListView.axaml</DependentUpon>
     </Compile>
-    <Compile Update="Views\BgmPropertiesView.axaml.cs">
+    <Compile Update="Views\UserControls\BgmPropertiesView.axaml.cs">
       <DependentUpon>BgmPropertiesView.axaml</DependentUpon>
     </Compile>
-    <Compile Update="Views\MusicPlayerView.axaml.cs">
+    <Compile Update="Views\Modals\ModPropertiesModalWindow.axaml.cs">
+      <DependentUpon>ModPropertiesModalWindow.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\UserControls\MusicPlayerView.axaml.cs">
       <DependentUpon>MusicPlayerView.axaml</DependentUpon>
     </Compile>
   </ItemGroup>

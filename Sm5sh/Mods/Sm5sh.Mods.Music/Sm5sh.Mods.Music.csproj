@@ -9,10 +9,10 @@
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.1.0" />
     <PackageReference Include="Microsoft.Extensions.Options" Version="5.0.0" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
-    <PackageReference Include="YamlDotNet" Version="9.1.0" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\ResourceProviders\Sm5sh.ResourceProviders.BgmPropertyFile\Sm5sh.ResourceProviders.BgmPropertyFile.csproj" />
     <ProjectReference Include="..\..\ResourceProviders\Sm5sh.ResourceProviders.MsbtExt\Sm5sh.ResourceProviders.MsbtExt.csproj" />
     <ProjectReference Include="..\..\ResourceProviders\Sm5sh.ResourceProviders.PrcExt\Sm5sh.ResourceProviders.PrcExt.csproj" />
   </ItemGroup>

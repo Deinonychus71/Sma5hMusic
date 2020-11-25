@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using YamlDotNet.Serialization;
 
-namespace Sm5sh.Mods.Music.Data.Sound.Config
+namespace Sm5sh.Mods.Data.Sound.Config
 {
     public class BinBgmProperty : IStateManagerDb
     {

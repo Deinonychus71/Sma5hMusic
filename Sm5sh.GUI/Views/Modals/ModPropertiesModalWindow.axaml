@@ -1,0 +1,43 @@
+﻿<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        Width="500" Height="800" MinWidth="500"  MinHeight="800"
+        x:Class="Sm5sh.GUI.Views.ModPropertiesModalWindow"
+        Title="ModPropertiesWindow">
+  <Window.Styles>
+    <StyleInclude Source="/Assets/Styles/ModalStyles.xaml" />
+  </Window.Styles>
+  <DockPanel Classes="modal">
+    <Border Classes="modalTitle" DockPanel.Dock="Top">
+      <Label>Mod Properties</Label>
+    </Border>
+    <StackPanel Classes="modalContent" DockPanel.Dock="Top">
+      <StackPanel>
+        <Label Classes="label">Name *</Label>
+        <TextBox Classes="value" Text="{Binding ModName, Mode=TwoWay}"></TextBox>
+      </StackPanel>
+      <StackPanel>
+        <Label Classes="label">Folder Name *</Label>
+        <TextBox Classes="value" Text="{Binding ModPath, Mode=TwoWay}"></TextBox>
+      </StackPanel>
+      <StackPanel>
+        <Label Classes="label">Author</Label>
+        <TextBox Classes="value" Text="{Binding ModAuthor, Mode=TwoWay}"></TextBox>
+      </StackPanel>
+      <StackPanel>
+        <Label Classes="label">Website</Label>
+        <TextBox Classes="value" Text="{Binding ModWebsite, Mode=TwoWay}"></TextBox>
+      </StackPanel>
+      <StackPanel>
+        <Label Classes="label">Description</Label>
+        <TextBox Classes="value" AcceptsReturn="True" Text="{Binding ModDescription, Mode=TwoWay}"></TextBox>
+      </StackPanel>
+    </StackPanel>
+    <StackPanel Classes="modalActions" DockPanel.Dock="Bottom">
+      <Button Content="Cancel" Command="{Binding ActionCancel}" CommandParameter="{Binding $parent[Window]}"></Button>
+      <Button Content="Create" Command="{Binding ActionOK}" CommandParameter="{Binding $parent[Window]}"></Button>
+    </StackPanel>
+  </DockPanel>
+</Window>

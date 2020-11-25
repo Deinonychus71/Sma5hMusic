@@ -2,17 +2,18 @@
 using Microsoft.Extensions.Options;
 using Sm5sh.Attributes;
 using Sm5sh.Interfaces;
-using Sm5sh.Mods.Music.Data.Sound.Config;
-using Sm5sh.Mods.Music.Data.Sound.Config.BgmPropertyStructs;
-using Sm5sh.Mods.Music.Helpers;
 using System;
 using System.Linq;
 using System.Collections.Generic;
 using System.IO;
+using Sm5sh.ResourceProviders.BgmPropertyFile.Helpers;
+using Sm5sh.Mods.Data.Sound.Config;
+using Sm5sh.Mods.Data.Sound.Config.BgmPropertyStructs;
+using Sm5sh.ResourceProviders.Constants;
 
-namespace Sm5sh.Mods.Music.ResourceProviders
+namespace Sm5sh.ResourceProviders
 {
-    [ResourceProviderMatch(Constants.GameResources.PRC_BGM_PROPERTY_PATH)]
+    [ResourceProviderMatch(BgmPropertyFileConstants.BGM_PROPERTY_PATH)]
     public class BgmPropertyProvider : BaseResourceProvider
     {
         private readonly ILogger _logger;
@@ -21,14 +22,14 @@ namespace Sm5sh.Mods.Music.ResourceProviders
         private readonly string _bgmPropertyExeFile;
         private readonly string _bgmPropertyHashFile;
 
-        public BgmPropertyProvider(IOptions<Sm5shMusicOptions> config, IProcessService processService, ILogger<BgmPropertyProvider> logger)
+        public BgmPropertyProvider(IOptions<Sm5shOptions> config, IProcessService processService, ILogger<BgmPropertyProvider> logger)
             : base(config)
         {
             _logger = logger;
             _ymlHelper = new YmlHelper();
             _processService = processService;
-            _bgmPropertyExeFile = Path.Combine(config.Value.ToolsPath, Constants.Resources.BGM_PROPERTY_EXE_FILE);
-            _bgmPropertyHashFile = Path.Combine(config.Value.ToolsPath, Constants.Resources.BGM_PROPERTY_HASH_FILE);
+            _bgmPropertyExeFile = Path.Combine(config.Value.ToolsPath, BgmPropertyFileConstants.BGM_PROPERTY_EXE_FILE);
+            _bgmPropertyHashFile = Path.Combine(config.Value.ToolsPath, BgmPropertyFileConstants.BGM_PROPERTY_HASH_FILE);
 
             if (!File.Exists(_bgmPropertyExeFile))
                 throw new Exception($"bgm-property.exe: {_bgmPropertyExeFile} could not be found.");
@@ -49,7 +50,7 @@ namespace Sm5sh.Mods.Music.ResourceProviders
             }
 
             Directory.CreateDirectory(_config.Value.TempPath);
-            var tempFile = Path.Combine(_config.Value.TempPath, Constants.Resources.BGM_PROPERTY_TEMP_FILE);
+            var tempFile = Path.Combine(_config.Value.TempPath, BgmPropertyFileConstants.BGM_PROPERTY_TEMP_FILE);
 
             //Retrieve YML from Bgm Property
             try
@@ -63,7 +64,7 @@ namespace Sm5sh.Mods.Music.ResourceProviders
 
             var output = _ymlHelper.ReadYmlFile<List<BgmPropertyEntry>>(tempFile);
 
-            if(output.Count == 0)
+            if (output.Count == 0)
             {
                 throw new Exception("Error while generating YML for BGM Property.");
             }
@@ -86,7 +87,7 @@ namespace Sm5sh.Mods.Music.ResourceProviders
                 throw new Exception($"Tried to use BgmPropertyProvider with wrong mapping type '{nameof(BinBgmProperty)}'");
 
             Directory.CreateDirectory(_config.Value.TempPath);
-            var tempFile = Path.Combine(_config.Value.TempPath, Constants.Resources.BGM_PROPERTY_TEMP_FILE);
+            var tempFile = Path.Combine(_config.Value.TempPath, BgmPropertyFileConstants.BGM_PROPERTY_TEMP_FILE);
 
             //Serialize
             _ymlHelper.WriteYmlFile(tempFile, ((BinBgmProperty)(object)inputObj).Entries.Values);

@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Sm5sh.Interfaces;
 using Sm5sh.Mods.Music.Helpers;
@@ -13,20 +12,20 @@ namespace Sm5sh.Mods.Music
     {
         private readonly ILogger _logger;
         private readonly IOptions<Sm5shMusicOptions> _config;
-        private readonly IServiceProvider _serviceProvider;
         private readonly IAudioStateService _audioStateService;
+        private readonly IMusicModManagerService _musicModManagerService;
         private readonly INus3AudioService _nus3AudioService;
 
         public override string ModName => "Sm5shMusic";
 
-        public BgmMod(IOptions<Sm5shMusicOptions> config, IServiceProvider serviceProvider, IAudioStateService audioStateService, 
+        public BgmMod(IOptions<Sm5shMusicOptions> config, IMusicModManagerService musicModManagerService, IAudioStateService audioStateService, 
             INus3AudioService nus3AudioService, IStateManager state, ILogger<BgmMod> logger)
             : base(state)
         {
             _logger = logger;
             _audioStateService = audioStateService;
             _nus3AudioService = nus3AudioService;
-            _serviceProvider = serviceProvider;
+            _musicModManagerService = musicModManagerService;
             _state = state;
             _config = config;
         }
@@ -41,23 +40,26 @@ namespace Sm5sh.Mods.Music
 
             //Load Music Mods
             _logger.LogInformation("Loading Music Mods");
-            foreach (var musicModFolder in Directory.GetDirectories(_config.Value.Sm5shMusic.ModPath))
+            var musicMods = _musicModManagerService.RefreshMusicMods();
+
+            foreach (var musicMod in musicMods)
             {
-                var newMusicMod = ActivatorUtilities.CreateInstance<MusicModManager>(_serviceProvider, musicModFolder);
-                var newBgmEntries = newMusicMod.LoadBgmEntriesFromMod();
+                //Add to Audio State Service
+                var newBgmEntries = musicMod.GetBgms();
                 foreach(var newBgmEntry in newBgmEntries)
                 {
                     _audioStateService.AddBgmEntry(newBgmEntry);
                 }
             }
 
-            _audioStateService.SaveBgmEntriesToStateManager();
-
             return true;
         }
 
         public override bool Build()
         {
+            //Persist DB changes
+            _audioStateService.SaveBgmEntriesToStateManager();
+
             //Save NUS3Audio/Nus3Bank
             foreach (var bgmEntry in _audioStateService.GetModBgmEntries())
             {

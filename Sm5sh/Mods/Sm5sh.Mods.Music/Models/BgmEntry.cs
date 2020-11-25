@@ -1,4 +1,5 @@
 ﻿using Sm5sh.Mods.Music.Helpers;
+using Sm5sh.Mods.Music.Interfaces;
 using System;
 using System.Collections.Generic;
 
@@ -8,12 +9,12 @@ namespace Sm5sh.Mods.Music.Models
     {
         //ID - Some fields within the children objects are derivated from it
         public string ToneId { get; }
-        public Guid ModId { get { return Mod != null ? Mod.Id : Guid.Empty; } }
+        public string ModId { get { return MusicMod?.Mod.Id; } }
         public string GameTitleId { get { return GameTitle != null ? GameTitle.UiGameTitleId : Constants.InternalIds.GAME_TITLE_ID_DEFAULT; } }
         public float AudioVolume { get; set; }
         public string Filename { get; set; }
 
-        public ModEntry Mod { get; set; }
+        public IMusicMod MusicMod { get; set; }
         public GameTitleEntry GameTitle { get; set; }
 
         public BgmEntryModels.MSBTLabelsEntry MSBTLabels { get; }
@@ -29,7 +30,7 @@ namespace Sm5sh.Mods.Music.Models
         public string RecordType { get { return DbRoot.RecordType; } }
         public short SoundTestIndex { get { return DbRoot.TestDispOrder; } }
         public bool IsDlcOrPatch { get { return DbRoot.IsDlc || DbRoot.IsPatch; } }
-        public BgmEntryModels.EntrySource Source { get { return Guid.Empty == ModId ? BgmEntryModels.EntrySource.Core : BgmEntryModels.EntrySource.Mod; } }
+        public BgmEntryModels.EntrySource Source { get { return MusicMod == null ? BgmEntryModels.EntrySource.Core : BgmEntryModels.EntrySource.Mod; } }
 
 
         //KeyHelper
@@ -42,10 +43,10 @@ namespace Sm5sh.Mods.Music.Models
 
         public bool HiddenInSoundTest { get { return DbRoot.SaveNo == -1 || DbRoot.TestDispOrder == -1; } }
 
-        public BgmEntry(string toneId, ModEntry mod = null)
+        public BgmEntry(string toneId, IMusicMod musicMod = null)
         {
             ToneId = toneId;
-            Mod = mod;
+            MusicMod = musicMod;
             MSBTLabels = new BgmEntryModels.MSBTLabelsEntry(this)
             {
                 Title = new Dictionary<string, string>(),
@@ -167,10 +168,9 @@ namespace Sm5sh.Mods.Music.Models
             public Dictionary<string, string> Title { get; set; }
             public Dictionary<string, string> Copyright { get; set; }
             public Dictionary<string, string> Author { get; set; }
-
-            public string TitleKey { get { return string.Format(Constants.InternalIds.MSBT_BGM_TITLE, Parent.DbRoot.NameId); } }
-            public string AuthorKey { get { return string.Format(Constants.InternalIds.MSBT_BGM_AUTHOR, Parent.DbRoot.NameId); } }
-            public string CopyrightKey { get { return string.Format(Constants.InternalIds.MSBT_BGM_COPYRIGHT, Parent.DbRoot.NameId); } }
+            public string TitleKey { get { return !string.IsNullOrEmpty(Parent.DbRoot.NameId) ? string.Format(Constants.InternalIds.MSBT_BGM_TITLE, Parent.DbRoot.NameId) : null; } }
+            public string AuthorKey { get { return !string.IsNullOrEmpty(Parent.DbRoot.NameId) ? string.Format(Constants.InternalIds.MSBT_BGM_AUTHOR, Parent.DbRoot.NameId) : null; } }
+            public string CopyrightKey { get { return !string.IsNullOrEmpty(Parent.DbRoot.NameId) ? string.Format(Constants.InternalIds.MSBT_BGM_COPYRIGHT, Parent.DbRoot.NameId) : null; } }
 
             public MSBTLabelsEntry(BgmEntry parent)
             {

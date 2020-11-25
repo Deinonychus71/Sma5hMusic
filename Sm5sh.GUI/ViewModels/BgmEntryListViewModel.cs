@@ -51,9 +51,6 @@ namespace Sm5sh.GUI.ViewModels
         {
             _refBgmEntry = bgmEntry;
 
-            if (bgmEntry.Source == Mods.Music.Models.BgmEntryModels.EntrySource.Mod)
-                MusicPlayer = new MusicPlayerViewModel(musicPlayer, bgmEntry.Filename);
-
             //1:1 Mapping with BgmEntry
             Source = bgmEntry.Source;
             ToneId = bgmEntry.ToneId;
@@ -63,10 +60,14 @@ namespace Sm5sh.GUI.ViewModels
             SeriesId = bgmEntry.GameTitle?.UiSeriesId;
             GameId = bgmEntry.GameTitle?.UiGameTitleId;
             Filename = bgmEntry.Filename;
-            ModName = bgmEntry.Mod?.Name;
-            ModAuthor = bgmEntry.Mod?.Author;
-            ModWebsite = bgmEntry.Mod?.Website;
-            ModPath = bgmEntry.Mod?.Path;
+            ModName = bgmEntry.MusicMod?.Mod.Name;
+            ModAuthor = bgmEntry.MusicMod?.Mod.Author;
+            ModWebsite = bgmEntry.MusicMod?.Mod.Website;
+            ModPath = bgmEntry.MusicMod?.ModPath;
+
+            //Music Player
+            if (bgmEntry.Source == Mods.Music.Models.BgmEntryModels.EntrySource.Mod)
+                MusicPlayer = new MusicPlayerViewModel(musicPlayer, bgmEntry.Filename);
 
             //Calculated Fields
             SeriesTitle = Constants.GetSeriesDisplayName(SeriesId);

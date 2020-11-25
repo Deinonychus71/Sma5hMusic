@@ -5,7 +5,6 @@ using Microsoft.Extensions.Logging.Console;
 using Sm5sh.Interfaces;
 using Sm5sh.Mods.Music;
 using Sm5sh.Mods.Music.Interfaces;
-using Sm5sh.Mods.Music.ResourceProviders;
 using Sm5sh.Mods.Music.Services;
 using Sm5sh.Mods.StagePlaylist;
 using Sm5sh.ResourceProviders;

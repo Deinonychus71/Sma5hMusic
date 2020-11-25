@@ -10,4 +10,7 @@
     <Setter Property="IsReadOnly" Value="True"/>
     <!--<Setter Property="AutoSizingColumns" Value="True"/>-->
   </Style>
+  <Style Selector="ContentControl.list">
+    <Setter Property="Background" Value="#202020"/>
+  </Style>
 </Styles>
