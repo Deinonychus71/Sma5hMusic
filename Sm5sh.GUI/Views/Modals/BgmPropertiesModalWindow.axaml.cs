@@ -4,9 +4,9 @@ using Avalonia.Markup.Xaml;
 
 namespace Sm5sh.GUI.Views
 {
-    public class BgmPropertiesWindow : Window
+    public class BgmPropertiesModalWindow : Window
     {
-        public BgmPropertiesWindow()
+        public BgmPropertiesModalWindow()
         {
             this.InitializeComponent();
         }

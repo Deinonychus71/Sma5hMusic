@@ -13,7 +13,6 @@ using Microsoft.Extensions.DependencyInjection;
 using System;
 using Sm5sh.GUI.Interfaces;
 using Microsoft.Extensions.Options;
-using System.IO;
 using Sm5sh.GUI.Views;
 
 namespace Sm5sh.GUI.ViewModels
@@ -94,32 +93,51 @@ namespace Sm5sh.GUI.ViewModels
             _logger.LogInformation("Adding {NbrFiles} files to Mod {ModPath}", results.Length, managerMod.ModPath);
             foreach (var inputFile in results)
             {
-                var newFile = managerMod.AddBgm(inputFile);
-                if (newFile == null)
+                var newBgm = managerMod.AddBgm(inputFile);
+                //TODO: Handle error while adding file into mod
+                if (newBgm == null)
                 {
-                    //TODO HANDLE ERROR
                     continue;
                 }
-                _bgmEntries.Add(newFile);
+                //TODO: Handle error while adding file into DB
+                if (!_audioState.AddBgmEntry(newBgm))
+                {
+
+                }
+                //Edit metadata
+                await EditBgmEntry(newBgm);
+                //Add to UI
+                _bgmEntries.Add(newBgm);
+            }
+        }
+
+        public async Task EditBgmEntry(BgmEntry bgmEntry)
+        {
+            var vmEditBgm = _serviceProvider.GetService<BgmPropertiesModalWindowViewModel>();
+            var modalEditBgmProps = new BgmPropertiesModalWindow() { DataContext = vmEditBgm };
+            var results = await modalEditBgmProps.ShowDialog<BgmPropertiesModalWindow>(_rootDialog.Window);
+
+            if (results != null)
+            {
+                //TODO
             }
         }
 
         public async Task<IMusicMod> CreateNewMod()
         {
-            var viewModel = _serviceProvider.GetService<ModPropertiesModalWindowViewModel>();
-            
-            var newMod = new ModPropertiesModalWindow() { DataContext = viewModel };
-            var results = await newMod.ShowDialog<ModPropertiesModalWindow>(_rootDialog.Window);
+            var vmCreateMod = _serviceProvider.GetService<ModPropertiesModalWindowViewModel>();
+            var modalCreateMod = new ModPropertiesModalWindow() { DataContext = vmCreateMod };
+            var results = await modalCreateMod.ShowDialog<ModPropertiesModalWindow>(_rootDialog.Window);
 
             if (results != null)
             {
                 var newManagerMod = _musicModManagerService.AddMusicMod(new MusicModInformation()
                 {
-                    Name = viewModel.ModName,
-                    Author = viewModel.ModAuthor,
-                    Website = viewModel.ModWebsite,
-                    Description = viewModel.ModDescription
-                }, viewModel.ModPath);
+                    Name = vmCreateMod.ModName,
+                    Author = vmCreateMod.ModAuthor,
+                    Website = vmCreateMod.ModWebsite,
+                    Description = vmCreateMod.ModDescription
+                }, vmCreateMod.ModPath);
 
                 _musicMods.Add(newManagerMod);
                 return newManagerMod;

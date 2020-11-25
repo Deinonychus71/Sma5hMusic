@@ -59,6 +59,9 @@
     </AvaloniaResource>
   </ItemGroup>
   <ItemGroup>
+    <Compile Update="Views\Modals\BgmPropertiesModalWindow.axaml.cs">
+      <DependentUpon>BgmPropertiesModalWindow.axaml</DependentUpon>
+    </Compile>
     <Compile Update="Views\UserControls\BgmFiltersView.axaml.cs">
       <DependentUpon>BgmFiltersView.axaml</DependentUpon>
     </Compile>
