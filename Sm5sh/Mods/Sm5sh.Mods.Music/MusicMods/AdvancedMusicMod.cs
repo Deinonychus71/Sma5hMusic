@@ -124,16 +124,10 @@ namespace Sm5sh.Mods.Music.MusicMods
                 return null;
             }
 
-            var newBgmConfig = new BgmConfig()
-            {
-                ToneId = toneId,
-                Filename = filenameWithoutPath,
-                DbRoot = new BgmDbRootConfig()
-                {
-                    RecordType = Constants.InternalIds.RECORD_TYPE_DEFAULT
-                },
-                BgmProperties = audioCuePoints != null ? _mapper.Map<BgmPropertyEntryConfig>(audioCuePoints) : null
-            };
+            var newBgmEntry = new BgmEntry(toneId, this);
+            var newBgmConfig = _mapper.Map<BgmConfig>(newBgmEntry);
+            newBgmConfig.Filename = filenameWithoutPath;
+
             game.Bgms.Add(newBgmConfig);
 
             //Copy song

@@ -110,7 +110,7 @@ namespace Sm5sh.GUI.ViewModels
 
             SelectedShowInSoundTest = true;
             SelectedModSongs = true;
-            SelectedCoreSongs = true;
+            SelectedCoreSongs = false;
             SelectedRecordType = _recordTypes[0];
             this.WhenAnyValue(p => p.SelectedSeries).Subscribe((o) => SelectedGame = _allChangeSet.First().Current);
         }
