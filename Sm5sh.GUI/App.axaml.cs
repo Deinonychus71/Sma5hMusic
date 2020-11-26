@@ -24,10 +24,6 @@ namespace Sm5sh.GUI
                 var mainWindow = Locator.Current.GetService<IDialogWindow>() as Window;
                 mainWindow.DataContext = Locator.Current.GetService<MainWindowViewModel>();
                 desktop.MainWindow = mainWindow;
-                /*desktop.MainWindow = new MainWindow
-                {
-                    DataContext = Locator.Current.GetService<MainWindowViewModel>(),
-                };*/
             }
 
             base.OnFrameworkInitializationCompleted();

@@ -14,7 +14,8 @@ using Sm5sh.GUI.Interfaces;
 using Microsoft.Extensions.Options;
 using Sm5sh.GUI.Views;
 using System.Collections.ObjectModel;
-using ReactiveUI;
+using System.Linq;
+using System.Reactive.Subjects;
 using System.Reactive;
 
 namespace Sm5sh.GUI.ViewModels
@@ -29,10 +30,9 @@ namespace Sm5sh.GUI.ViewModels
         private readonly IDialogWindow _rootDialog;
         private readonly ILogger _logger;
         private readonly IOptions<Sm5shOptions> _config;
-        private readonly ObservableCollection<BgmEntry> _bgmEntries;
+        private readonly ObservableCollection<BgmEntryViewModel> _bgmEntries;
         private readonly ObservableCollection<IMusicMod> _musicMods;
-
-        public ReactiveCommand<BgmEntryViewModel, Unit> ActionEditBgm { get; }
+        private readonly BehaviorSubject<Unit> _whenListNeedRefreshing;
 
         public BgmSongsViewModel VMBgmSongs { get; }
 
@@ -46,25 +46,24 @@ namespace Sm5sh.GUI.ViewModels
             _rootDialog = rootDialog;
             _logger = logger;
             _config = config;
+            _whenListNeedRefreshing = new BehaviorSubject<Unit>(Unit.Default);
 
             //DI
             _audioState = audioState;
 
             //Initialize observables
-            _bgmEntries = new ObservableCollection<BgmEntry>();
-            var observableBgmEntriesList = _bgmEntries.ToObservableChangeSet(p => p.ToneId)
-                .Transform(p => new BgmEntryViewModel(musicPlayer, p));
+            _bgmEntries = new ObservableCollection<BgmEntryViewModel>();
+            var observableBgmEntriesList = _bgmEntries.ToObservableChangeSet(p => p.ToneId);
             _musicMods = new ObservableCollection<IMusicMod>();
             var observableMusicModsList = _musicMods.ToObservableChangeSet(p => p.Mod.Id);
 
             //Initialize filters
             VMBgmSongs = ActivatorUtilities.CreateInstance<BgmSongsViewModel>(serviceProvider, observableBgmEntriesList, observableMusicModsList);
 
-            //Listen to request for adding new songs
-            this.VMBgmSongs.WhenNewRequestToAddSong.Subscribe(async (o) => await AddNewBgmEntry(o));
-
-            //Commands
-            ActionEditBgm = ReactiveCommand.CreateFromTask<BgmEntryViewModel>(EditBgmEntry);
+            //Listen to requests from children
+            this.VMBgmSongs.WhenNewRequestToAddBgmEntry.Subscribe(async (o) => await AddNewBgmEntry(o));
+            this.VMBgmSongs.VMBgmList.WhenNewRequestToEditBgmEntry.Subscribe(async (o) => await EditBgmEntry(o));
+            this.VMBgmSongs.VMBgmList.WhenNewRequestToReorderBgmEntries.Subscribe((o) => ReorderSongs());
         }
 
         public void ResetBgmList()
@@ -78,13 +77,24 @@ namespace Sm5sh.GUI.ViewModels
                 {
                     mod.Init();
                 }
-                var bgmList = _audioState.GetBgmEntries();
+                var bgmList = _audioState.GetBgmEntries().Select(p => new BgmEntryViewModel(_musicPlayer, p));
                 
                 _bgmEntries.AddRange(bgmList);
                 _logger.LogInformation("BGM List Loaded.");
                 _musicMods.AddRange(_musicModManagerService.MusicMods);
                 _logger.LogInformation("Music Mods List Loaded.");
             });
+        }
+
+        public void ReorderSongs()
+        {
+            short i = 0;
+            foreach (var bgmEntry in _bgmEntries.Where(p => !p.HiddenInSoundTest).OrderBy(p => p.SoundTestIndex))
+            {
+                bgmEntry.SoundTestIndex = i;
+                i++;
+                i++;
+            }
         }
 
         public async Task AddNewBgmEntry(IMusicMod managerMod)
@@ -113,10 +123,11 @@ namespace Sm5sh.GUI.ViewModels
                 {
                     continue;
                 }
+                var vmBgmEntry = new BgmEntryViewModel(_musicPlayer, newBgm);
                 //Edit metadata
-                await EditBgmEntry(new BgmEntryViewModel(_musicPlayer, newBgm));
+                await EditBgmEntry(vmBgmEntry);
                 //Add to UI
-                _bgmEntries.Add(newBgm);
+                _bgmEntries.Add(vmBgmEntry);
             }
         }
 

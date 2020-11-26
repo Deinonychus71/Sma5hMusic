@@ -33,14 +33,10 @@
           <MenuItem.Styles>
             <Style Selector="MenuItem > MenuItem">
               <Setter Property="Header" Value="{Binding Label}"/>
-              <Setter Property="Command" Value="{Binding Path=DataContext.AddNewBgmEntry, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=DockPanel}}"/>
+              <Setter Property="Command" Value="{Binding $parent[DockPanel].DataContext.AddNewBgmEntry}"/>
               <Setter Property="CommandParameter" Value="{Binding Id}"/>
             </Style>
           </MenuItem.Styles>
-        </MenuItem>
-        <MenuItem Header="Reorder Songs...">
-          <MenuItem Header="By Index..."/>
-          <MenuItem Header="By Series..."></MenuItem>
         </MenuItem>
       </Menu>
     </DockPanel>

@@ -1,5 +1,9 @@
 ﻿using Avalonia.Controls;
+using Avalonia.Input;
+using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
+using Sm5sh.GUI.ViewModels;
+using System;
 
 namespace Sm5sh.GUI.Views
 {

@@ -5,18 +5,28 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:i="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
              xmlns:ia="clr-namespace:Avalonia.Xaml.Interactions.Core;assembly=Avalonia.Xaml.Interactions"
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450" x:Name="bgmListUserControl"
              x:Class="Sm5sh.GUI.Views.BgmListView">
   <UserControl.Styles>
     <StyleInclude Source="/Assets/Styles/ListsStyles.xaml" />
   </UserControl.Styles>
   <Grid>
-    <DataGrid SelectionMode="Single" Classes="BgmList" SelectedItem="{Binding SelectedBgmEntry, Mode=TwoWay}" Items="{Binding Items, Mode=OneWay}">
+    <i:Interaction.Behaviors>
+      <ia:EventTriggerBehavior EventName="Initialized">
+        <ia:InvokeCommandAction Command="{Binding ActionInitializeDragAndDrop, Mode=OneWay}" CommandParameter="{Binding $parent[UserControl]}"/>
+      </ia:EventTriggerBehavior>
+    </i:Interaction.Behaviors>
+    <DataGrid DragDrop.AllowDrop="True" Classes="BgmList" SelectedItem="{Binding SelectedBgmEntry, Mode=TwoWay}" Items="{Binding Items, Mode=OneWay}">
+      <i:Interaction.Behaviors>
+        <ia:EventTriggerBehavior EventName="CellPointerPressed">
+          <ia:InvokeCommandAction Command="{Binding ActionReorderBgm}"/>
+        </ia:EventTriggerBehavior>
+      </i:Interaction.Behaviors>
       <DataGrid.Columns>
         <DataGridTemplateColumn CanUserResize="false" Width="40">
           <DataGridTemplateColumn.CellTemplate>
             <DataTemplate>
-              <ContentControl IsVisible="{Binding IsMod, Mode=OneWay}" Content="{Binding MusicPlayer, Mode=OneWay}"/>
+              <ContentControl IsVisible="{Binding DoesFileExist, Mode=OneWay}" Content="{Binding MusicPlayer, Mode=OneWay}"/>
             </DataTemplate>
           </DataGridTemplateColumn.CellTemplate>
         </DataGridTemplateColumn>
@@ -30,8 +40,8 @@
           <DataGridTemplateColumn.CellTemplate>
             <DataTemplate>
               <StackPanel Orientation="Horizontal">
-                <Button Width="40" HorizontalContentAlignment="Center" FontFamily="Segoe UI Symbol" Content="&#9998;" Command="{Binding $parent[Window].DataContext.ActionEditBgm}" CommandParameter="{Binding}"/>
-                <Button IsEnabled="{Binding IsMod, Mode=OneWay}" Width="40" FontFamily="Segoe UI Symbol" HorizontalContentAlignment="Center" Content="&#x274C;" Command="{Binding ActionDeleteBgm, Mode=OneWay}"/>
+                <Button Width="40" HorizontalContentAlignment="Center" FontFamily="Segoe UI Symbol" Content="&#9998;" Command="{Binding $parent[DataGrid].DataContext.ActionEditBgm, Mode=OneWay}" CommandParameter="{Binding}"/>
+                <Button IsEnabled="{Binding IsMod, Mode=OneWay}" Width="40" FontFamily="Segoe UI Symbol" HorizontalContentAlignment="Center" Content="&#x274C;" Command="{Binding $parent[DataGrid].DataContext.ActionDeleteBgm, Mode=OneWay}"/>
               </StackPanel>
             </DataTemplate>
           </DataGridTemplateColumn.CellTemplate>

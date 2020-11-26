@@ -34,7 +34,8 @@ namespace Sm5sh.GUI.ViewModels
         public string RecordTypeId { get; private set; }
         public string RecordTypeLabel { get; private set; }
         public bool HiddenInSoundTest { get; private set; }
-        public short SoundTestIndex { get; private set; }
+        [Reactive]
+        public short SoundTestIndex { get; set; }
         public string ModName { get; set; }
         public string ModAuthor { get; set; }
         public string ModWebsite { get; set; }
@@ -49,6 +50,7 @@ namespace Sm5sh.GUI.ViewModels
 
         public MusicPlayerViewModel MusicPlayer { get; set; }
         public bool IsMod { get; private set; }
+        public bool DoesFileExist { get; private set; }
 
         public BgmEntryViewModel(IVGMMusicPlayer musicPlayer, BgmEntry bgmEntry)
         {
@@ -69,7 +71,8 @@ namespace Sm5sh.GUI.ViewModels
             ModPath = bgmEntry.MusicMod?.ModPath;
 
             //Music Player
-            if (bgmEntry.Source == Mods.Music.Models.BgmEntryModels.EntrySource.Mod)
+            DoesFileExist = File.Exists(bgmEntry.Filename);
+            if (DoesFileExist)
                 MusicPlayer = new MusicPlayerViewModel(musicPlayer, bgmEntry.Filename);
 
             //Calculated Fields

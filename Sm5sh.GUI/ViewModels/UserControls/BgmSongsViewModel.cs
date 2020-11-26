@@ -9,7 +9,6 @@ using Microsoft.Extensions.DependencyInjection;
 using DynamicData.Binding;
 using System.Reactive.Linq;
 using System.Collections.ObjectModel;
-using System.Reactive;
 using System.Linq;
 using Sm5sh.GUI.Models;
 using Avalonia;
@@ -24,13 +23,13 @@ namespace Sm5sh.GUI.ViewModels
         private readonly ILogger _logger;
         private IChangeSet<ModItem, string> _newModSet;
         private readonly ReadOnlyObservableCollection<ModItem> _mods;
-        private readonly Subject<IMusicMod> _whenNewRequestToAddSong;
+        private readonly Subject<IMusicMod> _whenNewRequestToAddBgmEntry;
 
         public BgmListViewModel VMBgmList { get; }
         public BgmFiltersViewModel VMBgmFilters { get; }
         public BgmPropertiesViewModel VMBgmProperties { get; }
         public ReadOnlyObservableCollection<ModItem> Mods { get { return _mods; } }
-        public IObservable<IMusicMod> WhenNewRequestToAddSong { get { return _whenNewRequestToAddSong; } }
+        public IObservable<IMusicMod> WhenNewRequestToAddBgmEntry { get { return _whenNewRequestToAddBgmEntry; } }
 
         [Reactive]
         public string SelectedLocale { get; set; }
@@ -40,7 +39,7 @@ namespace Sm5sh.GUI.ViewModels
             IObservable<IChangeSet<IMusicMod, string>> observableMusicModsList)
         {
             _logger = logger;
-            _whenNewRequestToAddSong = new Subject<IMusicMod>();
+            _whenNewRequestToAddBgmEntry = new Subject<IMusicMod>();
             _newModSet = GetCreateNewMod();
             SelectedLocale = Constants.DEFAULT_LOCALE;
 
@@ -77,15 +76,15 @@ namespace Sm5sh.GUI.ViewModels
 
         public void AddNewBgmEntry(IMusicMod musicMod)
         {
-            _whenNewRequestToAddSong.OnNext(musicMod);
+            _whenNewRequestToAddBgmEntry.OnNext(musicMod);
         }
 
         public void Dispose()
         {
-            if(_whenNewRequestToAddSong != null)
+            if(_whenNewRequestToAddBgmEntry != null)
             {
-                _whenNewRequestToAddSong?.OnCompleted();
-                _whenNewRequestToAddSong?.Dispose();
+                _whenNewRequestToAddBgmEntry?.OnCompleted();
+                _whenNewRequestToAddBgmEntry?.Dispose();
             }
         }
 

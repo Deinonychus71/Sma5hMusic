@@ -15,6 +15,7 @@ using Sm5sh.ResourceProviders.Prc.Helpers;
 using System.Collections.Generic;
 using System.Linq;
 using Sm5sh.ResourceProviders.Constants;
+using System.IO;
 
 namespace Sm5sh.Mods.Music.Services
 {
@@ -232,6 +233,7 @@ namespace Sm5sh.Mods.Music.Services
             {
                 var toneId = daoBinPropertyKeyValue.Key;
                 var newBgmEntry = new BgmEntry(toneId);
+                newBgmEntry.Filename = Path.Combine(_config.Value.GameResourcesPath, "stream;", "sound", "bgm", string.Format(Constants.GameResources.NUS3AUDIO_FILE, newBgmEntry.ToneId));
 
                 //Very few songs are currently not in the db - therefore not supported for now.
                 if (!paramBgmDatabase.DbRootEntries.ContainsKey(newBgmEntry.DbRootKey))

@@ -16,8 +16,11 @@ namespace Sm5sh.GUI.ViewModels
 
         public BgmPropertiesViewModel(IObservable<BgmEntryViewModel> observableBgmEntry)
         {
-            
-            observableBgmEntry.Subscribe(o => SelectedBgmEntry = o);
+
+            observableBgmEntry.Subscribe(o => {
+                if(o != null)
+                    SelectedBgmEntry = o;
+            });
         }
     }
 }
