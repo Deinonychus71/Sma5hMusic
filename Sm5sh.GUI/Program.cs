@@ -57,6 +57,7 @@ namespace Sm5sh.GUI
             //Sm5sh Core
             services.AddSm5shCore(configuration);
             services.AddSm5shMusic(configuration);
+            services.AddSm5shMusicOverride(configuration);
 
             //Mod Stage Playlist
             services.Configure<Sm5shStagePlaylistOptions>(configuration);

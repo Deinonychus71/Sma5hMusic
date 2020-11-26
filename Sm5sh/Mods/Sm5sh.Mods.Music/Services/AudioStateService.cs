@@ -61,7 +61,6 @@ namespace Sm5sh.Mods.Music.Services
             //TODO TODO TODO
             //VALIDATE FOR WEIRD CHARACTER, LENGTH
             //VERIFY THAT IDS ARE UNIQUE IN TEMP
-            //VERIFY THAT NOT IN MODS OR CORE DB
             //VERIFY HASH
             //TODO TODO TODO
 
@@ -79,7 +78,7 @@ namespace Sm5sh.Mods.Music.Services
             if (!_bgmEntries.ContainsKey(bgmEntry.ToneId))
                 _bgmEntries.Add(bgmEntry.ToneId, bgmEntry);
             else
-                _logger.LogError("Bgm with ToneId {ToneId} already exist in the database.");
+                _logger.LogError("Bgm with ToneId {ToneId} already exist in the database.", bgmEntry.ToneId);
 
             return true;
         }

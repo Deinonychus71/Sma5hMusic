@@ -19,7 +19,7 @@ namespace Sm5sh.GUI.ViewModels
         private readonly ReadOnlyObservableCollection<BgmEntryViewModel> _games;
         private readonly ReadOnlyObservableCollection<BgmEntryViewModel> _mods;
         private readonly List<ComboItem> _recordTypes;
-        private IChangeSet<BgmEntryViewModel, string> _allChangeSet;
+        private readonly IChangeSet<BgmEntryViewModel, string> _allChangeSet;
 
         public ReadOnlyObservableCollection<BgmEntryViewModel> Series { get { return _series; } }
         public ReadOnlyObservableCollection<BgmEntryViewModel> Games { get { return _games; } }

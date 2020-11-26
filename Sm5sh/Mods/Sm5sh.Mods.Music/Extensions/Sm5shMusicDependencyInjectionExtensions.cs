@@ -14,7 +14,7 @@ namespace Microsoft.Extensions.DependencyInjection
         public static IServiceCollection AddSm5shMusic(this IServiceCollection services, IConfiguration configuration)
         {
             services.Configure<Sm5shMusicOptions>(configuration);
-            services.AddSingleton<ISm5shMod, BgmMod>();
+            services.AddSingleton<ISm5shMod, Sm5shMusic>();
             services.AddSingleton<IResourceProvider, BgmPropertyProvider>();
             services.AddSingleton<IResourceProvider, MsbtResourceProvider>();
             services.AddSingleton<IResourceProvider, PrcResourceProvider>();
@@ -23,6 +23,16 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddSingleton<IAudioMetadataService, VGAudioMetadataService>();
             services.AddSingleton<INus3AudioService, Nus3AudioService>();
             services.AddAutoMapper(typeof(MappingDb), typeof(MappingAdvancedConfig));
+            return services;
+        }
+
+        public static IServiceCollection AddSm5shMusicOverride(this IServiceCollection services, IConfiguration configuration)
+        {
+            services.Configure<Sm5shMusicOverrideOptions>(configuration);
+            services.AddSingleton<ISm5shMod, Sm5shMusicOverride>();
+            services.AddSingleton<IResourceProvider, PrcResourceProvider>();
+            services.AddSingleton<IAudioStateService, AudioStateService>();
+            services.AddAutoMapper(typeof(MappingDb), typeof(MappingOverrideConfig));
             return services;
         }
     }

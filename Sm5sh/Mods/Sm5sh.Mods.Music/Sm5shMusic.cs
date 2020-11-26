@@ -3,12 +3,11 @@ using Microsoft.Extensions.Options;
 using Sm5sh.Interfaces;
 using Sm5sh.Mods.Music.Helpers;
 using Sm5sh.Mods.Music.Interfaces;
-using System;
 using System.IO;
 
 namespace Sm5sh.Mods.Music
 {
-    public class BgmMod : BaseSm5shMod
+    public class Sm5shMusic : BaseSm5shMod
     {
         private readonly ILogger _logger;
         private readonly IOptions<Sm5shMusicOptions> _config;
@@ -18,8 +17,8 @@ namespace Sm5sh.Mods.Music
 
         public override string ModName => "Sm5shMusic";
 
-        public BgmMod(IOptions<Sm5shMusicOptions> config, IMusicModManagerService musicModManagerService, IAudioStateService audioStateService, 
-            INus3AudioService nus3AudioService, IStateManager state, ILogger<BgmMod> logger)
+        public Sm5shMusic(IOptions<Sm5shMusicOptions> config, IMusicModManagerService musicModManagerService, IAudioStateService audioStateService, 
+            INus3AudioService nus3AudioService, IStateManager state, ILogger<Sm5shMusic> logger)
             : base(state)
         {
             _logger = logger;
@@ -32,14 +31,14 @@ namespace Sm5sh.Mods.Music
 
         public override bool Init()
         {
-            _logger.LogInformation("Music Mod Path: {MusicModPath}", _config.Value.Sm5shMusic.ModPath);
+            _logger.LogInformation("Sm5shMusic Path: {MusicModPath}", _config.Value.Sm5shMusic.ModPath);
             _logger.LogInformation("Audio Conversion Format: {AudioConversionFormat}", _config.Value.Sm5shMusic.AudioConversionFormat);
             _logger.LogInformation("Resources Path: {ResourcesPath}", _config.Value.Sm5shMusic.EnableAudioCaching ? "Enabled - If songs are mismatched try to clear the cache!" : "Disabled");
             _logger.LogInformation("Cache Path: {CachePath}", _config.Value.Sm5shMusic.CachePath);
             _logger.LogInformation("Default Locale: {DefaultLocale}", _config.Value.Sm5shMusic.DefaultLocale);
 
             //Load Music Mods
-            _logger.LogInformation("Loading Music Mods");
+            _logger.LogInformation("Loading Sm5shMusic Mods");
             var musicMods = _musicModManagerService.RefreshMusicMods();
 
             foreach (var musicMod in musicMods)

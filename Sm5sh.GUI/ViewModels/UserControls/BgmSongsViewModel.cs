@@ -21,7 +21,7 @@ namespace Sm5sh.GUI.ViewModels
     public class BgmSongsViewModel : ViewModelBase, IDisposable
     {
         private readonly ILogger _logger;
-        private IChangeSet<ModItem, string> _newModSet;
+        private readonly IChangeSet<ModItem, string> _newModSet;
         private readonly ReadOnlyObservableCollection<ModItem> _mods;
         private readonly Subject<IMusicMod> _whenNewRequestToAddBgmEntry;
 

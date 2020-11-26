@@ -9,6 +9,7 @@ namespace Sm5sh.Mods.Music.Helpers
         {
             public const string MUSIC_MOD_METADATA_JSON_FILE = "metadata_mod.json";
             public const string MUSIC_MOD_METADATA_CSV_FILE = "metadata_mod.csv";
+            public const string MUSIC_OVERRIDE_JSON_FILE = "override.json";
         }
 
         public class Resources

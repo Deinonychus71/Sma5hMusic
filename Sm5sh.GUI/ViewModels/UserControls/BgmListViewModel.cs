@@ -81,9 +81,8 @@ namespace Sm5sh.GUI.ViewModels
         public async Task ReorderBgm(DataGridCellPointerPressedEventArgs e)
         {
             var dragData = new DataObject();
-            var vmBgmEntry = e.Cell.DataContext as BgmEntryViewModel;
 
-            if (vmBgmEntry != null)
+            if (e.Cell.DataContext is BgmEntryViewModel vmBgmEntry)
             {
                 dragData.Set(DATAOBJECT_FORMAT, vmBgmEntry);
 
@@ -112,14 +111,14 @@ namespace Sm5sh.GUI.ViewModels
             }
             var dataGrid = (DataGrid)source;
 
-            var sourceObj = e.Data.Get(DATAOBJECT_FORMAT) as BgmEntryViewModel;
-            var destinationObj = ((Control)e.Source).DataContext as BgmEntryViewModel;
-
-            if(destinationObj != null && sourceObj != null && !destinationObj.HiddenInSoundTest && sourceObj != destinationObj)
+            if (((Control)e.Source).DataContext is BgmEntryViewModel destinationObj 
+                && e.Data.Get(DATAOBJECT_FORMAT) is BgmEntryViewModel sourceObj 
+                && !destinationObj.HiddenInSoundTest 
+                && sourceObj != destinationObj)
             {
                 var isHigherThanDest = sourceObj.SoundTestIndex > destinationObj.SoundTestIndex;
                 sourceObj.SoundTestIndex = destinationObj.SoundTestIndex;
-                if(isHigherThanDest)
+                if (isHigherThanDest)
                     destinationObj.SoundTestIndex += 1;
                 else
                     destinationObj.SoundTestIndex -= 1;

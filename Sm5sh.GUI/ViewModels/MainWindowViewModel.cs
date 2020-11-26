@@ -32,7 +32,6 @@ namespace Sm5sh.GUI.ViewModels
         private readonly IOptions<Sm5shOptions> _config;
         private readonly ObservableCollection<BgmEntryViewModel> _bgmEntries;
         private readonly ObservableCollection<IMusicMod> _musicMods;
-        private readonly BehaviorSubject<Unit> _whenListNeedRefreshing;
 
         public BgmSongsViewModel VMBgmSongs { get; }
 
@@ -46,7 +45,6 @@ namespace Sm5sh.GUI.ViewModels
             _rootDialog = rootDialog;
             _logger = logger;
             _config = config;
-            _whenListNeedRefreshing = new BehaviorSubject<Unit>(Unit.Default);
 
             //DI
             _audioState = audioState;
