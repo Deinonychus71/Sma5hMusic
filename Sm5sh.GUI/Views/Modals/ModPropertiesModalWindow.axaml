@@ -7,32 +7,33 @@
         x:Class="Sm5sh.GUI.Views.ModPropertiesModalWindow"
         Title="ModPropertiesWindow">
   <Window.Styles>
+    <StyleInclude Source="/Assets/Styles/ContentStyles.xaml" />
     <StyleInclude Source="/Assets/Styles/ModalStyles.xaml" />
   </Window.Styles>
   <DockPanel Classes="modal">
-    <Border Classes="modalTitle" DockPanel.Dock="Top">
+    <Border Classes="contentTitle" DockPanel.Dock="Top">
       <Label>Mod Properties</Label>
     </Border>
-    <StackPanel Classes="modalContent" DockPanel.Dock="Top">
+    <StackPanel Classes="content" DockPanel.Dock="Top">
       <StackPanel>
-        <Label Classes="label">Name *</Label>
-        <TextBox Classes="value" Text="{Binding ModName, Mode=TwoWay}"></TextBox>
+        <Label Classes="required">Name *</Label>
+        <TextBox Text="{Binding ModName, Mode=TwoWay}"></TextBox>
       </StackPanel>
       <StackPanel>
-        <Label Classes="label">Folder Name *</Label>
-        <TextBox Classes="value" Text="{Binding ModPath, Mode=TwoWay}"></TextBox>
+        <Label Classes="required">Folder Name *</Label>
+        <TextBox Text="{Binding ModPath, Mode=TwoWay}"></TextBox>
       </StackPanel>
       <StackPanel>
-        <Label Classes="label">Author</Label>
-        <TextBox Classes="value" Text="{Binding ModAuthor, Mode=TwoWay}"></TextBox>
+        <Label >Author</Label>
+        <TextBox Text="{Binding ModAuthor, Mode=TwoWay}"></TextBox>
       </StackPanel>
       <StackPanel>
-        <Label Classes="label">Website</Label>
-        <TextBox Classes="value" Text="{Binding ModWebsite, Mode=TwoWay}"></TextBox>
+        <Label>Website</Label>
+        <TextBox Text="{Binding ModWebsite, Mode=TwoWay}"></TextBox>
       </StackPanel>
       <StackPanel>
-        <Label Classes="label">Description</Label>
-        <TextBox Classes="value" AcceptsReturn="True" Text="{Binding ModDescription, Mode=TwoWay}"></TextBox>
+        <Label>Description</Label>
+        <TextBox AcceptsReturn="True" Text="{Binding ModDescription, Mode=TwoWay}"></TextBox>
       </StackPanel>
     </StackPanel>
     <StackPanel Classes="modalActions" DockPanel.Dock="Bottom">

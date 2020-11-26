@@ -19,20 +19,6 @@
     <Setter Property="FontFamily" Value="Microsoft YaHei,Simsun,苹方-简,宋体-简"/>
   </Style>
 
-  <Style Selector="Border.headerTitle">
-    <Setter Property="BorderBrush" Value="{StaticResource BrushGrayDark}"/>
-    <Setter Property="BorderThickness" Value="0,0,0,2"/>
-    <Setter Property="Margin" Value="0,20,0,20"/>
-  </Style>
-  <Style Selector="Border.headerTitle > Label">
-    <Setter Property="FontSize" Value="24"/>
-    <Setter Property="FontWeight" Value="Bold"/>
-    <Setter Property="Margin" Value="13"/>
-    <Setter Property="HorizontalAlignment" Value="Center"/>
-  </Style>
-
-
-
   <Style Selector="ContentControl.list">
     <Setter Property="Background" Value="#202020"/>
   </Style>

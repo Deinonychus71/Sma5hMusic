@@ -13,10 +13,10 @@
   <Grid>
     <DataGrid SelectionMode="Single" Classes="BgmList" SelectedItem="{Binding SelectedBgmEntry, Mode=TwoWay}" Items="{Binding Items, Mode=OneWay}">
       <DataGrid.Columns>
-        <DataGridTemplateColumn CanUserResize="false" Width="50">
+        <DataGridTemplateColumn CanUserResize="false" Width="40">
           <DataGridTemplateColumn.CellTemplate>
             <DataTemplate>
-              <ContentControl IsVisible="{Binding IsMod}" Content="{Binding MusicPlayer}"/>
+              <ContentControl IsVisible="{Binding IsMod, Mode=OneWay}" Content="{Binding MusicPlayer, Mode=OneWay}"/>
             </DataTemplate>
           </DataGridTemplateColumn.CellTemplate>
         </DataGridTemplateColumn>
@@ -26,6 +26,16 @@
         <DataGridTextColumn Header="Record" Width="*" Binding="{Binding RecordTypeLabel, Mode=OneWay}" />
         <DataGridTextColumn Header="Source" Width="*" Binding="{Binding Source, Mode=OneWay}" />
         <DataGridTextColumn Header="Mod Name" Width="2*" Binding="{Binding ModName, Mode=OneWay}" />
+        <DataGridTemplateColumn Header="Actions" CanUserResize="false" Width="80">
+          <DataGridTemplateColumn.CellTemplate>
+            <DataTemplate>
+              <StackPanel Orientation="Horizontal">
+                <Button Width="40" HorizontalContentAlignment="Center" FontFamily="Segoe UI Symbol" Content="&#9998;" Command="{Binding $parent[Window].DataContext.ActionEditBgm}" CommandParameter="{Binding}"/>
+                <Button IsEnabled="{Binding IsMod, Mode=OneWay}" Width="40" FontFamily="Segoe UI Symbol" HorizontalContentAlignment="Center" Content="&#x274C;" Command="{Binding ActionDeleteBgm, Mode=OneWay}"/>
+              </StackPanel>
+            </DataTemplate>
+          </DataGridTemplateColumn.CellTemplate>
+        </DataGridTemplateColumn>
       </DataGrid.Columns>
     </DataGrid>
   </Grid>

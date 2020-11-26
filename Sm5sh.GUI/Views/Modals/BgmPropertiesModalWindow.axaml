@@ -3,12 +3,20 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        Width="900" Height="700" MinWidth="800"  MinHeight="700"
         x:Class="Sm5sh.GUI.Views.BgmPropertiesModalWindow"
         Title="BgmPropertiesWindow">
   <Window.Styles>
     <StyleInclude Source="/Assets/Styles/ModalStyles.xaml" />
   </Window.Styles>
-  <StackPanel>
-    <ContentControl Content="{Binding VMBgmProperties}"/>
-  </StackPanel>
+  <DockPanel Classes="modal" HorizontalAlignment="Stretch">
+    <ContentControl Content="{Binding VMBgmProperties}" DockPanel.Dock="Top"/>
+    <Grid Classes="content">
+      
+    </Grid>
+    <StackPanel Classes="modalActions" DockPanel.Dock="Bottom">
+      <Button Content="Cancel" Command="{Binding ActionCancel}" CommandParameter="{Binding $parent[Window]}"></Button>
+      <Button Content="Save Changes" Command="{Binding ActionOK}" CommandParameter="{Binding $parent[Window]}"></Button>
+    </StackPanel>
+  </DockPanel>
 </Window>

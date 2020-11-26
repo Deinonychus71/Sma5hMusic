@@ -1,7 +1,6 @@
 ﻿using DynamicData;
 using DynamicData.Binding;
 using Microsoft.Extensions.Logging;
-using Sm5sh.GUI.Helpers;
 using Sm5sh.Mods.Music.Interfaces;
 using Sm5sh.Mods.Music.Models;
 using VGMMusic;
@@ -14,6 +13,9 @@ using System;
 using Sm5sh.GUI.Interfaces;
 using Microsoft.Extensions.Options;
 using Sm5sh.GUI.Views;
+using System.Collections.ObjectModel;
+using ReactiveUI;
+using System.Reactive;
 
 namespace Sm5sh.GUI.ViewModels
 {
@@ -22,12 +24,15 @@ namespace Sm5sh.GUI.ViewModels
         private readonly IAudioStateService _audioState;
         private readonly IServiceProvider _serviceProvider;
         private readonly IMusicModManagerService _musicModManagerService;
+        private readonly IVGMMusicPlayer _musicPlayer;
         private readonly IFileDialog _fileDialog;
         private readonly IDialogWindow _rootDialog;
         private readonly ILogger _logger;
         private readonly IOptions<Sm5shOptions> _config;
-        private readonly RangeObservableCollection<BgmEntry> _bgmEntries;
-        private readonly RangeObservableCollection<IMusicMod> _musicMods;
+        private readonly ObservableCollection<BgmEntry> _bgmEntries;
+        private readonly ObservableCollection<IMusicMod> _musicMods;
+
+        public ReactiveCommand<BgmEntryViewModel, Unit> ActionEditBgm { get; }
 
         public BgmSongsViewModel VMBgmSongs { get; }
 
@@ -36,6 +41,7 @@ namespace Sm5sh.GUI.ViewModels
         {
             _serviceProvider = serviceProvider;
             _musicModManagerService = musicModManagerService;
+            _musicPlayer = musicPlayer;
             _fileDialog = fileDialog;
             _rootDialog = rootDialog;
             _logger = logger;
@@ -45,10 +51,10 @@ namespace Sm5sh.GUI.ViewModels
             _audioState = audioState;
 
             //Initialize observables
-            _bgmEntries = new RangeObservableCollection<BgmEntry>();
+            _bgmEntries = new ObservableCollection<BgmEntry>();
             var observableBgmEntriesList = _bgmEntries.ToObservableChangeSet(p => p.ToneId)
-                .Transform(p => new BgmEntryListViewModel(musicPlayer, p));
-            _musicMods = new RangeObservableCollection<IMusicMod>();
+                .Transform(p => new BgmEntryViewModel(musicPlayer, p));
+            _musicMods = new ObservableCollection<IMusicMod>();
             var observableMusicModsList = _musicMods.ToObservableChangeSet(p => p.Mod.Id);
 
             //Initialize filters
@@ -56,6 +62,9 @@ namespace Sm5sh.GUI.ViewModels
 
             //Listen to request for adding new songs
             this.VMBgmSongs.WhenNewRequestToAddSong.Subscribe(async (o) => await AddNewBgmEntry(o));
+
+            //Commands
+            ActionEditBgm = ReactiveCommand.CreateFromTask<BgmEntryViewModel>(EditBgmEntry);
         }
 
         public void ResetBgmList()
@@ -102,18 +111,19 @@ namespace Sm5sh.GUI.ViewModels
                 //TODO: Handle error while adding file into DB
                 if (!_audioState.AddBgmEntry(newBgm))
                 {
-
+                    continue;
                 }
                 //Edit metadata
-                await EditBgmEntry(newBgm);
+                await EditBgmEntry(new BgmEntryViewModel(_musicPlayer, newBgm));
                 //Add to UI
                 _bgmEntries.Add(newBgm);
             }
         }
 
-        public async Task EditBgmEntry(BgmEntry bgmEntry)
+        public async Task EditBgmEntry(BgmEntryViewModel bgmEntry)
         {
             var vmEditBgm = _serviceProvider.GetService<BgmPropertiesModalWindowViewModel>();
+            vmEditBgm.LoadVMBgmEntry(bgmEntry);
             var modalEditBgmProps = new BgmPropertiesModalWindow() { DataContext = vmEditBgm };
             var results = await modalEditBgmProps.ShowDialog<BgmPropertiesModalWindow>(_rootDialog.Window);
 

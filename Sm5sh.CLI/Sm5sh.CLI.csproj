@@ -21,7 +21,7 @@
 
 
   <ItemGroup>
-    <PackageReference Include="CsvHelper" Version="16.1.0" />
+    <PackageReference Include="CsvHelper" Version="16.2.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="5.0.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.CommandLine" Version="5.0.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="5.0.0" />

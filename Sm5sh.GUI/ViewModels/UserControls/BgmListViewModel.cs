@@ -12,22 +12,22 @@ namespace Sm5sh.GUI.ViewModels
 {
     public class BgmListViewModel : ViewModelBase
     {
-        private readonly ReadOnlyObservableCollection<BgmEntryListViewModel> _items;
+        private readonly ReadOnlyObservableCollection<BgmEntryViewModel> _items;
 
-        public ReadOnlyObservableCollection<BgmEntryListViewModel> Items { get { return _items; } }
+        public ReadOnlyObservableCollection<BgmEntryViewModel> Items { get { return _items; } }
 
         [Reactive]
-        public BgmEntryListViewModel SelectedBgmEntry { get; private set; }
+        public BgmEntryViewModel SelectedBgmEntry { get; private set; }
 
         [Reactive]
         public int BgmEntriesCount { get; private set; }
 
         public ReactiveCommand<string, Unit> ActionPlaySong { get; }
 
-        public BgmListViewModel(IVGMMusicPlayer musicPlayer, IObservable<IChangeSet<BgmEntryListViewModel, string>> observableBgmEntries)
+        public BgmListViewModel(IObservable<IChangeSet<BgmEntryViewModel, string>> observableBgmEntries)
         {
             observableBgmEntries
-                .Sort(SortExpressionComparer<BgmEntryListViewModel>.Ascending(p => p.HiddenInSoundTest).ThenByAscending(p => p.SoundTestIndex), SortOptimisations.IgnoreEvaluates)
+                .Sort(SortExpressionComparer<BgmEntryViewModel>.Ascending(p => p.HiddenInSoundTest).ThenByAscending(p => p.SoundTestIndex), SortOptimisations.IgnoreEvaluates)
                 .ObserveOn(RxApp.MainThreadScheduler)
                 .Bind(out _items)
                 .DisposeMany()

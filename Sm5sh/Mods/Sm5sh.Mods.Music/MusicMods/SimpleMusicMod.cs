@@ -72,7 +72,7 @@ namespace Sm5sh.Mods.Music.MusicMods
                     newSong.MSBTLabels.Author = song.Author;
                     newSong.MSBTLabels.Copyright = song.Copyright;
                     newSong.Filename = audioFilePath;
-                    newSong.AudioVolume = 0;
+                    newSong.NUS3BankConfig.AudioVolume = 0;
                     newSong.BgmProperties.LoopEndMs = audioCuePoints.LoopEndMs;
                     newSong.BgmProperties.LoopEndSample = audioCuePoints.LoopEndSample;
                     newSong.BgmProperties.LoopStartMs = audioCuePoints.LoopStartMs;

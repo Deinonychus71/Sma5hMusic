@@ -49,7 +49,7 @@ namespace Sm5sh.Mods.Music.Models.AutoMapper
                 .ForMember(i => i.AssignedInfo, me => me.MapFrom(p => p.AssignedInfo))
                 .ForMember(i => i.BgmProperties, me => me.MapFrom(p => p.BgmProperties))
                 .ForMember(i => i.MSBTLabels, me => me.MapFrom(p => p.MSBTLabels))
-                .ForMember(i => i.NUS3BankConfig, me => me.MapFrom(p => new MusicMods.AdvancedMusicModModels.NUS3BankConfig() { AudioVolume = p.AudioVolume }))
+                .ForMember(i => i.NUS3BankConfig, me => me.MapFrom(p => p.NUS3BankConfig))
                 .ForMember(i => i.Playlists, me => me.MapFrom(p => p.Playlists));
             CreateMap<MusicMods.AdvancedMusicModModels.BgmConfig, BgmEntry>()
                 .ForMember(i => i.ToneId, me => me.MapFrom(p => p.ToneId))
@@ -60,8 +60,14 @@ namespace Sm5sh.Mods.Music.Models.AutoMapper
                 .ForMember(i => i.AssignedInfo, me => me.MapFrom(p => p.AssignedInfo))
                 .ForMember(i => i.BgmProperties, me => me.MapFrom(p => p.BgmProperties))
                 .ForMember(i => i.MSBTLabels, me => me.MapFrom(p => p.MSBTLabels))
-                .ForMember(i => i.AudioVolume, me => me.MapFrom(p => p.NUS3BankConfig.AudioVolume))
+                .ForMember(i => i.NUS3BankConfig, me => me.MapFrom(p => p.NUS3BankConfig))
                 .ForMember(i => i.Playlists, me => me.MapFrom(p => p.Playlists));
+
+            CreateMap<BgmEntryModels.NUS3BankConfigEntry, MusicMods.AdvancedMusicModModels.NUS3BankConfig>()
+                .ForMember(i => i.AudioVolume, me => me.MapFrom(p => p.AudioVolume));
+            CreateMap<MusicMods.AdvancedMusicModModels.NUS3BankConfig, BgmEntryModels.NUS3BankConfigEntry>()
+                .ForMember(i => i.Parent, me => me.Ignore())
+                .ForMember(i => i.AudioVolume, me => me.MapFrom(p => p.AudioVolume));
 
             CreateMap<BgmEntryModels.BgmPropertyEntry, MusicMods.AdvancedMusicModModels.BgmPropertyEntryConfig>()
                 .ForMember(i => i.LoopEndMs, me => me.MapFrom(p => p.LoopEndMs))

@@ -65,8 +65,8 @@ namespace Sm5sh.GUI
             //Add UI ViewModels
             services.AddSingleton<IDialogWindow, MainWindow>();
             services.AddSingleton<MainWindowViewModel>();
-            services.AddTransient<ModPropertiesModalWindowViewModel>();
-            services.AddTransient<BgmPropertiesModalWindowViewModel>();
+            services.AddSingleton<ModPropertiesModalWindowViewModel>();
+            services.AddSingleton<BgmPropertiesModalWindowViewModel>();
 
             //Add UI Services
             services.AddSingleton<IVGMMusicPlayer, VGMMusicPlayer>();

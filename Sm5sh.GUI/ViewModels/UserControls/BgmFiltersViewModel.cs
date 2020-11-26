@@ -15,23 +15,23 @@ namespace Sm5sh.GUI.ViewModels
 {
     public class BgmFiltersViewModel : ViewModelBase
     {
-        private readonly ReadOnlyObservableCollection<BgmEntryListViewModel> _series;
-        private readonly ReadOnlyObservableCollection<BgmEntryListViewModel> _games;
-        private readonly ReadOnlyObservableCollection<BgmEntryListViewModel> _mods;
+        private readonly ReadOnlyObservableCollection<BgmEntryViewModel> _series;
+        private readonly ReadOnlyObservableCollection<BgmEntryViewModel> _games;
+        private readonly ReadOnlyObservableCollection<BgmEntryViewModel> _mods;
         private readonly List<ComboItem> _recordTypes;
-        private IChangeSet<BgmEntryListViewModel, string> _allChangeSet;
+        private IChangeSet<BgmEntryViewModel, string> _allChangeSet;
 
-        public ReadOnlyObservableCollection<BgmEntryListViewModel> Series { get { return _series; } }
-        public ReadOnlyObservableCollection<BgmEntryListViewModel> Games { get { return _games; } }
-        public ReadOnlyObservableCollection<BgmEntryListViewModel> Mods { get { return _mods; } }
+        public ReadOnlyObservableCollection<BgmEntryViewModel> Series { get { return _series; } }
+        public ReadOnlyObservableCollection<BgmEntryViewModel> Games { get { return _games; } }
+        public ReadOnlyObservableCollection<BgmEntryViewModel> Mods { get { return _mods; } }
         public IEnumerable<ComboItem> RecordTypes { get { return _recordTypes; } }
 
         [Reactive]
-        public BgmEntryListViewModel SelectedMod { get; set; }
+        public BgmEntryViewModel SelectedMod { get; set; }
         [Reactive]
-        public BgmEntryListViewModel SelectedSeries { get; set; }
+        public BgmEntryViewModel SelectedSeries { get; set; }
         [Reactive]
-        public BgmEntryListViewModel SelectedGame { get; set; }
+        public BgmEntryViewModel SelectedGame { get; set; }
         [Reactive]
         public ComboItem SelectedRecordType { get; set; }
         [Reactive]
@@ -47,10 +47,10 @@ namespace Sm5sh.GUI.ViewModels
         [Reactive]
         public bool SelectedModSongs { get; set; }
 
-        public IObservable<IChangeSet<BgmEntryListViewModel, string>> WhenFiltersAreApplied { get; }
+        public IObservable<IChangeSet<BgmEntryViewModel, string>> WhenFiltersAreApplied { get; }
 
 
-        public BgmFiltersViewModel(IObservable<IChangeSet<BgmEntryListViewModel, string>> observableBgmEntries)
+        public BgmFiltersViewModel(IObservable<IChangeSet<BgmEntryViewModel, string>> observableBgmEntries)
         {
             _allChangeSet = GetAllChangeSet();
             _recordTypes = GetRecordTypes();
@@ -77,7 +77,7 @@ namespace Sm5sh.GUI.ViewModels
                 .Group(p => p.ModName, modsChanged.Select(_ => Unit.Default))
                 .Transform(p => p.Cache.Items.First())
                 .Prepend(_allChangeSet)
-                .Sort(SortExpressionComparer<BgmEntryListViewModel>.Descending(p => p.AllFlag).ThenByAscending(p => p.ModName), SortOptimisations.IgnoreEvaluates)
+                .Sort(SortExpressionComparer<BgmEntryViewModel>.Descending(p => p.AllFlag).ThenByAscending(p => p.ModName), SortOptimisations.IgnoreEvaluates)
                 .ObserveOn(RxApp.MainThreadScheduler)
                 .Bind(out _mods)
                 .DisposeMany()
@@ -89,7 +89,7 @@ namespace Sm5sh.GUI.ViewModels
                 .Group(p => p.SeriesId, seriesChanged.Select(_ => Unit.Default))
                 .Transform(p => p.Cache.Items.First())
                 .Prepend(_allChangeSet)
-                .Sort(SortExpressionComparer<BgmEntryListViewModel>.Descending(p => p.AllFlag).ThenByAscending(p => p.SeriesId), SortOptimisations.IgnoreEvaluates)
+                .Sort(SortExpressionComparer<BgmEntryViewModel>.Descending(p => p.AllFlag).ThenByAscending(p => p.SeriesId), SortOptimisations.IgnoreEvaluates)
                 .ObserveOn(RxApp.MainThreadScheduler)
                 .Bind(out _series)
                 .DisposeMany()
@@ -102,7 +102,7 @@ namespace Sm5sh.GUI.ViewModels
                 .Group(p => p.GameId, gameChanged.Select(_ => Unit.Default))
                 .Transform(p => p.Cache.Items.First())
                 .Prepend(_allChangeSet)
-                .Sort(SortExpressionComparer<BgmEntryListViewModel>.Descending(p => p.AllFlag).ThenByAscending(p => p.GameTitle), SortOptimisations.IgnoreEvaluates)
+                .Sort(SortExpressionComparer<BgmEntryViewModel>.Descending(p => p.AllFlag).ThenByAscending(p => p.GameTitle), SortOptimisations.IgnoreEvaluates)
                 .ObserveOn(RxApp.MainThreadScheduler)
                 .Bind(out _games)
                 .DisposeMany()
@@ -115,11 +115,11 @@ namespace Sm5sh.GUI.ViewModels
             this.WhenAnyValue(p => p.SelectedSeries).Subscribe((o) => SelectedGame = _allChangeSet.First().Current);
         }
 
-        private IChangeSet<BgmEntryListViewModel, string> GetAllChangeSet()
+        private IChangeSet<BgmEntryViewModel, string> GetAllChangeSet()
         {
-            return new ChangeSet<BgmEntryListViewModel, string>(new List<Change<BgmEntryListViewModel, string>>()
+            return new ChangeSet<BgmEntryViewModel, string>(new List<Change<BgmEntryViewModel, string>>()
             {
-                new Change<BgmEntryListViewModel, string>(ChangeReason.Add, "-1", new BgmEntryListViewModel()
+                new Change<BgmEntryViewModel, string>(ChangeReason.Add, "-1", new BgmEntryViewModel()
                 {
                     AllFlag = true, 
                     SeriesId = "All",

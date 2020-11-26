@@ -1,6 +1,7 @@
 ﻿using ReactiveUI.Fody.Helpers;
 using System;
 using System.Reactive.Linq;
+using System.Reactive.Subjects;
 using VGMMusic;
 
 namespace Sm5sh.GUI.ViewModels
@@ -11,10 +12,11 @@ namespace Sm5sh.GUI.ViewModels
         public bool IsEditMode { get; set; }
 
         [Reactive]
-        public BgmEntryListViewModel SelectedBgmEntry { get; set; }
+        public BgmEntryViewModel SelectedBgmEntry { get; set; }
 
-        public BgmPropertiesViewModel(IObservable<BgmEntryListViewModel> observableBgmEntry)
+        public BgmPropertiesViewModel(IObservable<BgmEntryViewModel> observableBgmEntry)
         {
+            
             observableBgmEntry.Subscribe(o => SelectedBgmEntry = o);
         }
     }

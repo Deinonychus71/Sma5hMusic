@@ -1,6 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
 using ILogger = Microsoft.Extensions.Logging.ILogger;
-using Microsoft.Extensions.DependencyInjection;
 using System;
 using Sm5sh.Mods.Music.Interfaces;
 using ReactiveUI.Fody.Helpers;
@@ -29,6 +28,9 @@ namespace Sm5sh.GUI.ViewModels
         [Reactive]
         public string ModDescription { get; set; }
 
+        [Reactive]
+        public bool IsEdit { get; set; }
+
         public ReactiveCommand<Window, Unit> ActionOK { get; }
         public ReactiveCommand<Window, Unit> ActionCancel { get; }
 
@@ -44,12 +46,37 @@ namespace Sm5sh.GUI.ViewModels
             ActionCancel = ReactiveCommand.Create<Window>(SubmitDialogCancel);
         }
 
+        public void LoadMusicMod(IMusicMod musicMod)
+        {
+            if(musicMod == null)
+            {
+                ModName = string.Empty;
+                ModPath = string.Empty;
+                ModWebsite = string.Empty;
+                ModAuthor = string.Empty;
+                ModDescription = string.Empty;
+                IsEdit = false;
+            }
+            else
+            {
+                ModName = musicMod.Mod.Name;
+                ModPath = musicMod.ModPath;
+                ModWebsite = musicMod.Mod.Website;
+                ModAuthor = musicMod.Mod.Author;
+                ModDescription = musicMod.Mod.Description;
+                IsEdit = true;
+            }
+        }
+
         private void FormatModPath(string modName)
         {
-            if (string.IsNullOrEmpty(modName))
-                ModPath = string.Empty;
-            else
-                ModPath = Regex.Replace(modName, REGEX_REPLACE, string.Empty);
+            if (!IsEdit)
+            {
+                if (string.IsNullOrEmpty(modName))
+                    ModPath = string.Empty;
+                else
+                    ModPath = Regex.Replace(modName, REGEX_REPLACE, string.Empty);
+            }
         }
 
         public void SubmitDialogOK(Window window)

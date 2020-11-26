@@ -5,10 +5,14 @@ using VGMMusic;
 using System.Linq;
 using System;
 using System.IO;
+using ReactiveUI;
+using System.Reactive;
+using System.Collections.Generic;
+using Sm5sh.Mods.Music.Interfaces;
 
 namespace Sm5sh.GUI.ViewModels
 {
-    public class BgmEntryListViewModel : ViewModelBase
+    public class BgmEntryViewModel : ViewModelBase
     {
         private readonly BgmEntry _refBgmEntry;
 
@@ -44,10 +48,9 @@ namespace Sm5sh.GUI.ViewModels
         public string SpecialParam4Label { get; private set; }
 
         public MusicPlayerViewModel MusicPlayer { get; set; }
-        public bool IsMod { get { return Source == Mods.Music.Models.BgmEntryModels.EntrySource.Mod; } }
+        public bool IsMod { get; private set; }
 
-
-        public BgmEntryListViewModel(IVGMMusicPlayer musicPlayer, BgmEntry bgmEntry)
+        public BgmEntryViewModel(IVGMMusicPlayer musicPlayer, BgmEntry bgmEntry)
         {
             _refBgmEntry = bgmEntry;
 
@@ -70,6 +73,7 @@ namespace Sm5sh.GUI.ViewModels
                 MusicPlayer = new MusicPlayerViewModel(musicPlayer, bgmEntry.Filename);
 
             //Calculated Fields
+            IsMod = Source == Mods.Music.Models.BgmEntryModels.EntrySource.Mod;
             SeriesTitle = Constants.GetSeriesDisplayName(SeriesId);
             RecordTypeLabel = Constants.GetRecordTypeDisplayName(bgmEntry.RecordType);
             PlaylistIds = string.Join(Environment.NewLine, bgmEntry.Playlists.Select(p => p.Key));
@@ -87,7 +91,7 @@ namespace Sm5sh.GUI.ViewModels
             }
         }
 
-        public BgmEntryListViewModel() { }
+        public BgmEntryViewModel() { }
 
         public void LoadLocalized(string locale)
         {

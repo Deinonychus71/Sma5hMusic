@@ -16,6 +16,7 @@
     <None Remove="Assets\ModalStyles.xaml" />
     <None Remove="Assets\PropertiesStyles.xaml" />
     <None Remove="Assets\Styles.xaml" />
+    <None Remove="Assets\Styles\ContentStyles.xaml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="appsettings.json">
@@ -42,15 +43,15 @@
     <ProjectReference Include="..\Sm5sh\Mods\Sm5sh.Mods.StagePlaylist\Sm5sh.Mods.StagePlaylist.csproj" />
   </ItemGroup>
   <ItemGroup>
+    <AvaloniaResource Update="Assets\Styles\ContentStyles.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </AvaloniaResource>
     <AvaloniaResource Update="Assets\Styles\ModalStyles.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </AvaloniaResource>
     <AvaloniaResource Update="Assets\Styles\ListsStyles.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </AvaloniaResource>
-    <AvaloniaResource Update="Assets\Styles\FilterStyles.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </AvaloniaResource>

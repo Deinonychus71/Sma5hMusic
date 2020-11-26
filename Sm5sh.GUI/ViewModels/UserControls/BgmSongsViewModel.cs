@@ -36,7 +36,7 @@ namespace Sm5sh.GUI.ViewModels
         public string SelectedLocale { get; set; }
 
         public BgmSongsViewModel(IServiceProvider serviceProvider, ILogger<BgmSongsViewModel> logger, 
-            IObservable<IChangeSet<BgmEntryListViewModel, string>> observableBgmEntriesList,
+            IObservable<IChangeSet<BgmEntryViewModel, string>> observableBgmEntriesList,
             IObservable<IChangeSet<IMusicMod, string>> observableMusicModsList)
         {
             _logger = logger;

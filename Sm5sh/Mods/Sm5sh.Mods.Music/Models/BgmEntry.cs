@@ -11,12 +11,12 @@ namespace Sm5sh.Mods.Music.Models
         public string ToneId { get; }
         public string ModId { get { return MusicMod?.Mod.Id; } }
         public string GameTitleId { get { return GameTitle != null ? GameTitle.UiGameTitleId : Constants.InternalIds.GAME_TITLE_ID_DEFAULT; } }
-        public float AudioVolume { get; set; }
         public string Filename { get; set; }
 
         public IMusicMod MusicMod { get; set; }
         public GameTitleEntry GameTitle { get; set; }
 
+        public BgmEntryModels.NUS3BankConfigEntry NUS3BankConfig { get; }
         public BgmEntryModels.MSBTLabelsEntry MSBTLabels { get; }
         public BgmEntryModels.BgmPropertyEntry BgmProperties { get; }
         public BgmEntryModels.BgmDbRootEntry DbRoot { get; }
@@ -54,6 +54,7 @@ namespace Sm5sh.Mods.Music.Models
                 Copyright = new Dictionary<string, string>()
             };
             BgmProperties = new BgmEntryModels.BgmPropertyEntry(this);
+            NUS3BankConfig = new BgmEntryModels.NUS3BankConfigEntry(this);
             DbRoot = new BgmEntryModels.BgmDbRootEntry(this)
             {
                 Rarity = Constants.InternalIds.RARITY_DEFAULT,
@@ -156,6 +157,17 @@ namespace Sm5sh.Mods.Music.Models
             public ulong Frequency { get { return TotalTimeMs / 1000 * TotalSamples; } }
 
             public BgmPropertyEntry(BgmEntry parent)
+            {
+                Parent = parent;
+            }
+        }
+
+        public class NUS3BankConfigEntry
+        {
+            public BgmEntry Parent { get; }
+            public float AudioVolume { get; set; }
+
+            public NUS3BankConfigEntry(BgmEntry parent)
             {
                 Parent = parent;
             }
