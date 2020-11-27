@@ -124,10 +124,10 @@ namespace Sm5sh.GUI.ViewModels
         public void ReorderSongs()
         {
             short i = 0;
-            var listBgms = _bgmEntries.Where(p => !p.HiddenInSoundTest).OrderBy(p => p.SoundTestIndex);
+            var listBgms = _bgmEntries.Where(p => !p.HiddenInSoundTest).OrderBy(p => p.DbRoot.TestDispOrder);
             foreach (var bgmEntry in listBgms)
             {
-                bgmEntry.SoundTestIndex = i;
+                bgmEntry.DbRoot.TestDispOrder = i;
                 i++;
                 i++;
             }
@@ -175,8 +175,7 @@ namespace Sm5sh.GUI.ViewModels
 
             if (results != null)
             {
-                _bgmEntries.Remove(bgmEntry);
-                _bgmEntries.Add(VMBgmEditor.SelectedBgmEntry);
+                bgmEntry.LoadLocalized(VMBgmSongs.SelectedLocale);
             }
         }
 

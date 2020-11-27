@@ -46,8 +46,8 @@ namespace Sm5sh.GUI.ViewModels
             _whenNewRequestToReorderBgmEntries = new Subject<Unit>();
 
             observableBgmEntries
-                .AutoRefresh(p => p.SoundTestIndex, TimeSpan.FromMilliseconds(1))
-                .Sort(SortExpressionComparer<BgmEntryViewModel>.Ascending(p => p.HiddenInSoundTest).ThenByAscending(p => p.SoundTestIndex), SortOptimisations.ComparesImmutableValuesOnly, 8000)
+                .AutoRefresh(p => p.DbRoot.TestDispOrder, TimeSpan.FromMilliseconds(1))
+                .Sort(SortExpressionComparer<BgmEntryViewModel>.Ascending(p => p.HiddenInSoundTest).ThenByAscending(p => p.DbRoot.TestDispOrder), SortOptimisations.ComparesImmutableValuesOnly, 8000)
                 .TreatMovesAsRemoveAdd()
                 .ObserveOn(RxApp.MainThreadScheduler)
                 .Bind(out _items)
@@ -116,12 +116,12 @@ namespace Sm5sh.GUI.ViewModels
                 && !destinationObj.HiddenInSoundTest 
                 && sourceObj != destinationObj)
             {
-                var isHigherThanDest = sourceObj.SoundTestIndex > destinationObj.SoundTestIndex;
-                sourceObj.SoundTestIndex = destinationObj.SoundTestIndex;
+                var isHigherThanDest = sourceObj.DbRoot.TestDispOrder > destinationObj.DbRoot.TestDispOrder;
+                sourceObj.DbRoot.TestDispOrder = destinationObj.DbRoot.TestDispOrder;
                 if (isHigherThanDest)
-                    destinationObj.SoundTestIndex += 1;
+                    destinationObj.DbRoot.TestDispOrder += 1;
                 else
-                    destinationObj.SoundTestIndex -= 1;
+                    destinationObj.DbRoot.TestDispOrder -= 1;
                 _postReorderSelection = () => dataGrid.SelectedItem = sourceObj;
 
                 _whenNewRequestToReorderBgmEntries.OnNext(Unit.Default);

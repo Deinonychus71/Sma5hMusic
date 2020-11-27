@@ -33,6 +33,7 @@ namespace Sm5sh.GUI.ViewModels
         public string SpecialParam2Label { get { return StreamSet.Info2; } }
         public string SpecialParam3Label { get { return StreamSet.Info3; } }
         public string SpecialParam4Label { get { return StreamSet.Info4; } }
+        public short SoundTestIndex { get { return DbRoot.TestDispOrder; } }
 
 
 
@@ -46,9 +47,6 @@ namespace Sm5sh.GUI.ViewModels
         public string Copyright { get; set; }
         [Reactive]
         public string Author { get; set; }
-        //Necessary so the drag & drop / refresh can work better
-        [Reactive]
-        public short SoundTestIndex { get; set; }
 
         public BgmEntryViewModel(IVGMMusicPlayer musicPlayer, BgmEntry bgmEntry)
             : base(bgmEntry)
@@ -57,8 +55,6 @@ namespace Sm5sh.GUI.ViewModels
             DoesFileExist = File.Exists(bgmEntry.Filename);
             if (DoesFileExist)
                 MusicPlayer = new MusicPlayerViewModel(musicPlayer, bgmEntry.Filename);
-
-            SoundTestIndex = bgmEntry.DbRoot.TestDispOrder;
         }
 
         public void LoadLocalized(string locale)

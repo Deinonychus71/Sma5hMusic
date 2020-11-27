@@ -14,6 +14,7 @@ using AutoMapper;
 using VGMMusic;
 using System.Reactive;
 using Avalonia.Controls;
+using Sm5sh.Mods.Music.Models;
 
 namespace Sm5sh.GUI.ViewModels
 {
@@ -133,8 +134,12 @@ namespace Sm5sh.GUI.ViewModels
         private void SaveChanges(Window window)
         {
             var previousTestOrder = _refSavedBgmEntryView.DbRoot.TestDispOrder;
-            SelectedBgmEntry.DbRoot.TestDispOrder = (short)(IsInSoundTest ? previousTestOrder > -1 ? previousTestOrder : 0 : -1);
-            SelectedBgmEntry.DbRoot.RecordType = SelectedRecordType.Id;
+            _refSavedBgmEntryView = _mapper.Map(SelectedBgmEntry, _refSavedBgmEntryView);
+            _refSavedBgmEntryView.DbRoot.TestDispOrder = (short)(IsInSoundTest ? previousTestOrder > -1 ? previousTestOrder : 0 : -1);
+            _refSavedBgmEntryView.DbRoot.RecordType = SelectedRecordType.Id;
+            _refSavedBgmEntryView.MSBTLabels.Title = MSBTTitleEditor.MSBTValues;
+            _refSavedBgmEntryView.MSBTLabels.Author = MSBTAuthorEditor.MSBTValues;
+            _refSavedBgmEntryView.MSBTLabels.Copyright = MSBTCopyrightEditor.MSBTValues;
 
             window.Close(window);
         }
@@ -164,10 +169,8 @@ namespace Sm5sh.GUI.ViewModels
         {
             _refSavedBgmEntryView = vmBgmEntry;
 
-            var refBgmEntry = vmBgmEntry.GetBgmEntryReference();
-
             //Manually setting fields to breaks references
-            SelectedBgmEntry = _mapper.Map(refBgmEntry, new BgmEntryViewModel(_musicPlayer, refBgmEntry) { GameTitleViewModel = vmBgmEntry.GameTitleViewModel });
+            SelectedBgmEntry = _mapper.Map(vmBgmEntry, new BgmEntryViewModel(_musicPlayer, new BgmEntry(vmBgmEntry.ToneId)) { GameTitleViewModel = vmBgmEntry.GameTitleViewModel });
             MSBTTitleEditor.MSBTValues = SelectedBgmEntry.MSBTLabels.Title;
             MSBTAuthorEditor.MSBTValues = SelectedBgmEntry.MSBTLabels.Author;
             MSBTCopyrightEditor.MSBTValues = SelectedBgmEntry.MSBTLabels.Copyright;

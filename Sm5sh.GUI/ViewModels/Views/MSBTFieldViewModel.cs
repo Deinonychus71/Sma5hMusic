@@ -1,9 +1,10 @@
 ﻿using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
-using Sm5sh.GUI.Models;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Reactive;
+using System;
+using System.Reactive.Linq;
 
 namespace Sm5sh.GUI.ViewModels
 {
@@ -40,6 +41,8 @@ namespace Sm5sh.GUI.ViewModels
             ActionChangeLocale = ReactiveCommand.Create<LocaleViewModel>(ChangeLocale);
             ActionCopyToAll = ReactiveCommand.Create(CopyToAllLanguages);
             ActionCopyToEmptyLanguages = ReactiveCommand.Create(CopyToEmptyLanguages);
+
+            this.WhenAnyValue(p => p.CurrentLocalizedValue).Subscribe((p) => { SaveValueToCurrentLocale(); });
         }
 
         private void ChangeLocale(LocaleViewModel locale)
@@ -81,6 +84,16 @@ namespace Sm5sh.GUI.ViewModels
                 if (!_msbtValues.ContainsKey(SelectedLocale.Id))
                     _msbtValues.Add(SelectedLocale.Id, string.Empty);
                 CurrentLocalizedValue = _msbtValues[SelectedLocale.Id];
+            }
+        }
+
+        private void SaveValueToCurrentLocale()
+        {
+            if (_msbtValues != null)
+            {
+                if (!_msbtValues.ContainsKey(SelectedLocale.Id))
+                    _msbtValues.Add(SelectedLocale.Id, string.Empty);
+                MSBTValues[SelectedLocale.Id] = CurrentLocalizedValue;
             }
         }
     }

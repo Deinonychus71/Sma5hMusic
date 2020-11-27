@@ -24,6 +24,6 @@
         </MenuItem>
       </Menu>
     </StackPanel>
-    <TextBox Text="{Binding CurrentLocalizedValue}" AcceptsReturn="{Binding AcceptsReturn}"/>
+    <TextBox Classes="jpnSupport" Text="{Binding CurrentLocalizedValue}" AcceptsReturn="{Binding AcceptsReturn}"/>
   </StackPanel>
 </UserControl>
