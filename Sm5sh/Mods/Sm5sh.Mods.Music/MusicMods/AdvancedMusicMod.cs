@@ -145,60 +145,32 @@ namespace Sm5sh.Mods.Music.MusicMods
 
         public bool UpdateBgm(BgmEntry bgmEntry)
         {
-            /*if (_musicModConfig == null)
+            if (_musicModConfig == null)
             {
                 return false;
             }
 
-            Song modSong = null;
-            //Cleaning up in case game is no longer used
-            foreach (var gameToClean in _musicModConfig.Games)
-            {
-                modSong = gameToClean.Songs.FirstOrDefault(p => p.Id == bgmEntry.ToneId);
-                if (modSong != null)
-                {
-                    gameToClean.Songs.Remove(modSong);
-                    if (gameToClean.Songs.Count == 0)
-                        _musicModConfig.Games.Remove(gameToClean);
-                    break;
-                }
-            }
+            _musicModConfig.Games.ForEach(g => g.Bgms.RemoveAll(p => p.ToneId == bgmEntry.ToneId));
 
-            //If null, there's something wrong...
-            if (modSong == null)
+            //Get game
+            var game = _musicModConfig.Games.FirstOrDefault(p => p.UiGameTitleId == bgmEntry.GameTitleId);
+            if (game == null)
             {
-                _logger.LogError("The BGM Entry with ToneId {ToneId} was not found in the mod", bgmEntry.ToneId);
-                return false;
-            }
-
-            //Applying updates...
-            modSong = new Song()
-            {
-                Author = bgmEntry.MSBTLabels.Author,
-                Copyright = bgmEntry.MSBTLabels.Copyright,
-                Title = bgmEntry.MSBTLabels.Title,
-                RecordType = bgmEntry.RecordType,
-                Playlists = bgmEntry.Playlists.Select(p => new PlaylistInfo() { Id = p.Key }).ToList()
-            };
-            if (bgmEntry.SpecialCategory != null)
-                modSong.SpecialCategory = new SpecialCategory() { Category = bgmEntry.SpecialCategory.Id, Parameters = bgmEntry.SpecialCategory.Parameters };
-
-            var game = _musicModConfig.Games.FirstOrDefault(p => p.Id == bgmEntry.GameTitle.UiGameTitleId);
-            if(game == null)
-            {
-                game = new Game()
-                {
-                    Id = bgmEntry.GameTitle.UiGameTitleId,
-                    SeriesId = bgmEntry.GameTitle.UiSeriesId,
-                    Songs = new List<Song>(),
-                    Title = bgmEntry.GameTitle.MSBTTitle
-                };
+                game = _mapper.Map<GameConfig>(bgmEntry.GameTitle);
                 _musicModConfig.Games.Add(game);
+                if (game.Bgms == null)
+                    game.Bgms = new List<BgmConfig>();
             }
-            game.Songs.Add(modSong);
+
+            //Get & add song
+            var mappedSong = _mapper.Map<BgmConfig>(bgmEntry);
+            game.Bgms.Add(mappedSong);
+
+            //Remove potential empty groups
+            _musicModConfig.Games.RemoveAll(p => p.Bgms.Count == 0);
 
             //Save changes
-            SaveMusicModConfig();*/
+            SaveMusicModConfig();
 
             return true;
         }

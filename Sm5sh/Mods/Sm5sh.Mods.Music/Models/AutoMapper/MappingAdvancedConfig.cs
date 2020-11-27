@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using System.IO;
 
 namespace Sm5sh.Mods.Music.Models.AutoMapper
 {
@@ -42,7 +43,7 @@ namespace Sm5sh.Mods.Music.Models.AutoMapper
 
             CreateMap<BgmEntry, MusicMods.AdvancedMusicModModels.BgmConfig>()
                 .ForMember(i => i.ToneId, me => me.MapFrom(p => p.ToneId))
-                .ForMember(i => i.Filename, me => me.MapFrom(p => p.Filename))
+                .ForMember(i => i.Filename, me => me.MapFrom(p => Path.GetFileName(p.Filename)))
                 .ForMember(i => i.DbRoot, me => me.MapFrom(p => p.DbRoot))
                 .ForMember(i => i.StreamSet, me => me.MapFrom(p => p.StreamSet))
                 .ForMember(i => i.StreamingProperty, me => me.MapFrom(p => p.StreamingProperty))

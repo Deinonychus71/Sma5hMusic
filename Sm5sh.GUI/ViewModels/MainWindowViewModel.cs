@@ -167,15 +167,18 @@ namespace Sm5sh.GUI.ViewModels
             }
         }
 
-        public async Task EditBgmEntry(BgmEntryViewModel bgmEntry)
+        public async Task EditBgmEntry(BgmEntryViewModel vmBgmEntry)
         {
-            VMBgmEditor.LoadBgmEntry(bgmEntry);
+            VMBgmEditor.LoadBgmEntry(vmBgmEntry);
             var modalEditBgmProps = new BgmPropertiesModalWindow() { DataContext = VMBgmEditor };
             var results = await modalEditBgmProps.ShowDialog<BgmPropertiesModalWindow>(_rootDialog.Window);
 
             if (results != null)
             {
-                bgmEntry.LoadLocalized(VMBgmSongs.SelectedLocale);
+                vmBgmEntry.LoadLocalized(VMBgmSongs.SelectedLocale);
+                var bgmNew = _mapper.Map(vmBgmEntry, vmBgmEntry.GetBgmEntryReference());
+                bgmNew.GameTitle = _mapper.Map(vmBgmEntry.GameTitleViewModel, new GameTitleEntry(vmBgmEntry.UiGameTitleId));
+                vmBgmEntry.MusicMod.UpdateBgm(bgmNew);
             }
         }
 
