@@ -5,7 +5,6 @@ using System.IO;
 using Sm5sh.Mods.Music.Interfaces;
 using Sm5sh.Mods.Music.Models.BgmEntryModels;
 using System.Collections.Generic;
-using Sm5sh.GUI.Models;
 
 namespace Sm5sh.GUI.ViewModels
 {
@@ -15,7 +14,7 @@ namespace Sm5sh.GUI.ViewModels
         public IMusicMod MusicMod { get { return _refBgmEntry.MusicMod; } }
         public EntrySource Source { get { return _refBgmEntry != null ? _refBgmEntry.Source : EntrySource.Unknown; } }
         public SeriesEntryViewModel SeriesViewModel { get { return GameTitleViewModel?.SeriesViewModel; } }
-        public string GameId { get { return GameTitleViewModel.GameId; } }
+        public string UiGameTitleId { get { return GameTitleViewModel.UiGameTitleId; } }
         public string SeriesId { get { return GameTitleViewModel.SeriesId; } }
         public string ModName { get { return MusicMod?.Name; } }
         public string ModAuthor { get { return MusicMod?.Mod.Author; } }
@@ -26,7 +25,7 @@ namespace Sm5sh.GUI.ViewModels
         public Dictionary<string, string> MSBTTitle { get { return MSBTLabels.Title; } }
         public Dictionary<string, string> MSBTAuthor { get { return MSBTLabels.Author; } }
         public Dictionary<string, string> MSBTCopyright { get { return MSBTLabels.Copyright; } }
-        //public bool HiddenInSoundTest { get { return DbRoot.TestDispOrder == -1; } }
+        public bool HiddenInSoundTest { get { return DbRoot.TestDispOrder == -1; } }
         //public short SoundTestIndex { get { return DbRoot.TestDispOrder; } }
         public string RecordType { get { return DbRoot.RecordType; } }
         public string SpecialCategoryLabel { get { return StreamSet.SpecialCategory; } }
@@ -50,8 +49,6 @@ namespace Sm5sh.GUI.ViewModels
         //Necessary so the drag & drop / refresh can work better
         [Reactive]
         public short SoundTestIndex { get; set; }
-        [Reactive]
-        public bool HiddenInSoundTest { get; set; }
 
         public BgmEntryViewModel(IVGMMusicPlayer musicPlayer, BgmEntry bgmEntry)
             : base(bgmEntry)
@@ -61,8 +58,7 @@ namespace Sm5sh.GUI.ViewModels
             if (DoesFileExist)
                 MusicPlayer = new MusicPlayerViewModel(musicPlayer, bgmEntry.Filename);
 
-            SoundTestIndex = DbRoot.TestDispOrder;
-            HiddenInSoundTest = DbRoot.TestDispOrder == -1;
+            SoundTestIndex = bgmEntry.DbRoot.TestDispOrder;
         }
 
         public void LoadLocalized(string locale)

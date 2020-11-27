@@ -4,7 +4,7 @@ using Sm5sh.GUI.ViewModels;
 using Sm5sh.Mods.Music.Models;
 using System.Collections.Generic;
 
-namespace Sm5sh.GUI.Models
+namespace Sm5sh.GUI.ViewModels
 {
     public class BgmEntryEditableViewModel : ReactiveObject
     {
@@ -44,6 +44,11 @@ namespace Sm5sh.GUI.Models
             StreamingProperty = new BgmEntryEditableViewModels.BgmStreamPropertyEntryEditableViewModel(this);
         }
 
+        public BgmEntry GetBgmEntryReference()
+        {
+            return _refBgmEntry;
+        }
+
         public override string ToString()
         {
             return ToneId;
@@ -52,7 +57,7 @@ namespace Sm5sh.GUI.Models
 
     namespace BgmEntryEditableViewModels
     {
-        public class BgmPropertyEntryEditableViewModel
+        public class BgmPropertyEntryEditableViewModel : ReactiveObject
         {
             public BgmEntryEditableViewModel Parent { get; }
             public string NameId { get { return Parent.ToneId; } }
@@ -70,9 +75,10 @@ namespace Sm5sh.GUI.Models
             }
         }
 
-        public class NUS3BankConfigEntryEditableViewModel
+        public class NUS3BankConfigEntryEditableViewModel : ReactiveObject
         {
             public BgmEntryEditableViewModel Parent { get; }
+            [Reactive]
             public float AudioVolume { get; set; }
 
             public NUS3BankConfigEntryEditableViewModel(BgmEntryEditableViewModel parent)
@@ -81,10 +87,9 @@ namespace Sm5sh.GUI.Models
             }
         }
 
-        public class MSBTLabelsEntryEditableViewModel
+        public class MSBTLabelsEntryEditableViewModel : ReactiveObject
         {
             public BgmEntryEditableViewModel Parent { get; }
-
             public Dictionary<string, string> Title { get; set; }
             public Dictionary<string, string> Copyright { get; set; }
             public Dictionary<string, string> Author { get; set; }
@@ -95,13 +100,14 @@ namespace Sm5sh.GUI.Models
             }
         }
 
-        public class BgmDbRootEntryEditableViewModel
+        public class BgmDbRootEntryEditableViewModel : ReactiveObject
         {
             public BgmEntryEditableViewModel Parent { get; }
 
             public string UiBgmId { get; set; }
             public string StreamSetId { get; set; }
             public string Rarity { get; set; }
+            [Reactive]
             public string RecordType { get; set; }
             public string UiGameTitleId { get; set; }
             public string UiGameTitleId1 { get; set; }
@@ -110,6 +116,7 @@ namespace Sm5sh.GUI.Models
             public string UiGameTitleId4 { get; set; }
             public string NameId { get; set; }
             public short SaveNo { get; set; }
+            [Reactive]
             public short TestDispOrder { get; set; }
             public int MenuValue { get; set; }
             public bool JpRegion { get; set; }
@@ -134,13 +141,15 @@ namespace Sm5sh.GUI.Models
             }
         }
 
-        public class BgmStreamSetEntryEditableViewModel
+        public class BgmStreamSetEntryEditableViewModel : ReactiveObject
         {
             public BgmEntryEditableViewModel Parent { get; }
 
             public string StreamSetId { get; set; }
+            [Reactive]
             public string SpecialCategory { get; set; }
             public string Info0 { get; set; }
+            [Reactive]
             public string Info1 { get; set; }
             public string Info2 { get; set; }
             public string Info3 { get; set; }
@@ -163,7 +172,7 @@ namespace Sm5sh.GUI.Models
             }
         }
 
-        public class BgmAssignedInfoEntryEditableViewModel
+        public class BgmAssignedInfoEntryEditableViewModel : ReactiveObject
         {
             public BgmEntryEditableViewModel Parent { get; }
             public string InfoId { get; set; }
@@ -186,7 +195,7 @@ namespace Sm5sh.GUI.Models
             }
         }
 
-        public class BgmStreamPropertyEntryEditableViewModel
+        public class BgmStreamPropertyEntryEditableViewModel : ReactiveObject
         {
             public BgmEntryEditableViewModel Parent { get; }
 

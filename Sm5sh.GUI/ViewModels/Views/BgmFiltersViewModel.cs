@@ -72,7 +72,7 @@ namespace Sm5sh.GUI.ViewModels
                     (SelectedMod == null || SelectedMod.AllFlag || p.ModId == SelectedMod.ModId) &&
                     (SelectedRecordType == null || SelectedRecordType.AllFlag || p.RecordType == SelectedRecordType.Id) &&
                     (SelectedSeries == null || SelectedSeries.AllFlag || p.SeriesId == SelectedSeries.SeriesId) &&
-                    (SelectedGame == null || SelectedGame.AllFlag || p.GameId == SelectedGame.GameId)
+                    (SelectedGame == null || SelectedGame.AllFlag || p.UiGameTitleId == SelectedGame.UiGameTitleId)
                 );
 
             var modsChanged = observableBgmEntries.WhenValueChanged(mod => mod.ModName);
@@ -102,11 +102,11 @@ namespace Sm5sh.GUI.ViewModels
                 .DisposeMany()
                 .Subscribe((o) => SelectedSeries = _allSeriesChangeSet.First().Current);
 
-            var gameChanged = observableBgmEntries.WhenValueChanged(game => game.GameId);
+            var gameChanged = observableBgmEntries.WhenValueChanged(game => game.UiGameTitleId);
             observableBgmEntries
                 .AutoRefreshOnObservable(p => this.WhenAnyValue(p => p.SelectedSeries))
-                .Filter(p => p.SeriesId != null && p.GameId != null && (SelectedSeries == null || SelectedSeries.AllFlag || p.SeriesId == SelectedSeries.SeriesId))
-                .Group(p => p.GameId, gameChanged.Select(_ => Unit.Default))
+                .Filter(p => p.SeriesId != null && p.UiGameTitleId != null && (SelectedSeries == null || SelectedSeries.AllFlag || p.SeriesId == SelectedSeries.SeriesId))
+                .Group(p => p.UiGameTitleId, gameChanged.Select(_ => Unit.Default))
                 .Transform(p => p.Cache.Items.First().GameTitleViewModel)
                 .Prepend(_allGameTitleChangeSet)
                 .Sort(SortExpressionComparer<GameTitleEntryViewModel>.Descending(p => p.AllFlag).ThenByAscending(p => p.Title), SortOptimisations.IgnoreEvaluates)

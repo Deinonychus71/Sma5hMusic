@@ -1,36 +1,33 @@
 ﻿using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using Sm5sh.Mods.Music.Models;
+using System.Collections.Generic;
 
 namespace Sm5sh.GUI.ViewModels
 {
-    public class GameTitleEntryViewModel : ReactiveObject
+    public class GameTitleEntryViewModel : GameTitleEditableEntryViewModel
     {
-        private readonly GameTitleEntry _refGameTitleEntry;
-
+        //Getters/Private Setters - For This View Only
         public bool AllFlag { get; set; }
-
-        public SeriesEntryViewModel SeriesViewModel { get; set; }
         public string SeriesId { get { return SeriesViewModel.SeriesId; } }
 
-        public string GameId { get; }
+        //To obtain reactive change for locale
         [Reactive]
         public string Title { get; set; }
 
         public GameTitleEntryViewModel() { }
 
         public GameTitleEntryViewModel(GameTitleEntry gameTitleEntry)
+            : base(gameTitleEntry)
         {
-            _refGameTitleEntry = gameTitleEntry;
-            GameId = gameTitleEntry.UiGameTitleId;
         }
 
         public void LoadLocalized(string locale)
         {
-            if (_refGameTitleEntry.MSBTTitle != null && _refGameTitleEntry.MSBTTitle.ContainsKey(locale))
-                Title = _refGameTitleEntry.MSBTTitle[locale];
+            if (MSBTTitle != null && MSBTTitle.ContainsKey(locale))
+                Title = MSBTTitle[locale];
             else
-                Title = GameId;
+                Title = UiGameTitleId;
         }
 
         public override bool Equals(object obj)
@@ -42,7 +39,7 @@ namespace Sm5sh.GUI.ViewModels
             if (p == null)
                 return false;
 
-            return p.GameId == this.GameId;
+            return p.UiGameTitleId == this.UiGameTitleId;
         }
 
         public override int GetHashCode()

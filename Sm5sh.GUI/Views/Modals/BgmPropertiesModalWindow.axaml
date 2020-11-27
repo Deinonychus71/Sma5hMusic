@@ -18,36 +18,34 @@
     </Border>
     <StackPanel Classes="modalActions" DockPanel.Dock="Bottom">
       <Button Content="Cancel" Command="{Binding ActionCancel}" CommandParameter="{Binding $parent[Window]}"></Button>
-      <Button Content="Save Changes" Command="{Binding ActionOK}" CommandParameter="{Binding $parent[Window]}"></Button>
+      <Button Content="Save Changes" Command="{Binding ActionSave}" CommandParameter="{Binding $parent[Window]}"></Button>
     </StackPanel>
 
     <!-- Properties -->
     <Grid IsVisible="{Binding SelectedBgmEntry, Mode=OneWay, Converter={x:Static ObjectConverters.IsNotNull}}">
       <TabControl Classes="content" TabStripPlacement="Bottom">
         <TabItem Header="General" FontSize="14">
-          <Grid ColumnDefinitions="*,*,*" RowDefinitions="*,3*">
+          <Grid ColumnDefinitions="*,*,*" RowDefinitions="100,*">
             <!-- File Properties-->
             <StackPanel Grid.Row="0" Grid.ColumnSpan="3" Grid.Column="0" HorizontalAlignment="Stretch">
               <Border Classes="contentTitle" DockPanel.Dock="Top">
                 <Label>File Properties</Label>
               </Border>
-              <StackPanel Classes="content" Orientation="Horizontal">
-                <fields:PropertyTextField Label="Tone ID" Text="{Binding SelectedBgmEntry.ToneId, Mode=OneWay}" ToolTip="Unique ID of the song" IsReadOnly="True" />
-                <fields:PropertyMusicField Label="File" Text="{Binding SelectedBgmEntry.Filename, Mode=OneWay}" MusicPlayer="{Binding SelectedBgmEntry.MusicPlayer, Mode=OneWay}" ToolTip="Path to the song in the File System" IsReadOnly="True" />
-              </StackPanel>
+              <fields:PropertyMusicField Label="File" Text="{Binding SelectedBgmEntry.Filename, Mode=OneWay}" MusicPlayer="{Binding SelectedBgmEntry.MusicPlayer, Mode=OneWay}" ToolTip="Path to the song in the File System" IsReadOnly="True" />
             </StackPanel>
             <!-- Song Information -->
             <StackPanel Classes="content" Grid.Column="0" Grid.Row="1" HorizontalAlignment="Stretch">
               <Border Classes="contentTitle" DockPanel.Dock="Top">
                 <Label>Song Information</Label>
               </Border>
+              <fields:PropertyTextField Label="Tone ID" Text="{Binding SelectedBgmEntry.ToneId, Mode=OneWay}" ToolTip="Unique ID of the song" IsReadOnly="True" />
               <fields:PropertyField Label="Game" ToolTip="Game representing the song. If the game you want isn't in the database, click 'Add New Game Entry'">
                 <fields:PropertyField.FieldContent>
                   <AutoCompleteBox Items="{Binding Games}" ValueMemberBinding="{Binding Title}" IsTextCompletionEnabled="True" MinimumPrefixLength="2"
-                                   MinimumPopulateDelay="0.5" SelectedItem="{Binding SelectedBgmEntry.GameTitleViewModel, Mode=OneWay}" FilterMode="Contains"/>
+                                   MinimumPopulateDelay="0.5" SelectedItem="{Binding SelectedBgmEntry.GameTitleViewModel, Mode=TwoWay}" FilterMode="Contains"/>
                 </fields:PropertyField.FieldContent>
               </fields:PropertyField>
-              <fields:PropertyTextField IsVisible="{Binding SelectedBgmEntry.GameTitleViewModel, Converter={x:Static ObjectConverters.IsNotNull}}" 
+              <fields:PropertyTextField IsVisible="{Binding SelectedBgmEntry.GameTitleViewModel, Converter={x:Static ObjectConverters.IsNotNull}}"
                                         Label="Series" Text="{Binding SelectedBgmEntry.GameTitleViewModel.SeriesViewModel.Title, Mode=OneWay}"
                                         ToolTip="Series associated with the game selected. This cannot be changed here." IsReadOnly="True" />
               <fields:PropertyField Classes="error" Label="Game missing" ToolTip="Click 'Add New Game Entry' to solve this issue." IsVisible="{Binding SelectedBgmEntry.GameTitleViewModel, Converter={x:Static ObjectConverters.IsNull}}">
@@ -57,7 +55,7 @@
               </fields:PropertyField>
               <fields:PropertyField Label="Record Type" ToolTip="Select a Record Type. Valid values are 'Original', 'Remix' and 'New Remix'">
                 <fields:PropertyField.FieldContent>
-                  <ComboBox SelectedItem="{Binding SelectedBgmEntry.RecordTypeId, Mode=TwoWay}" Items="{Binding RecordTypes}">
+                  <ComboBox SelectedItem="{Binding SelectedRecordType, Mode=TwoWay}" Items="{Binding RecordTypes}">
                     <ComboBox.ItemTemplate>
                       <DataTemplate>
                         <TextBlock Text="{Binding Label}" FontFamily="{Binding}" />
@@ -96,30 +94,42 @@
               <fields:PropertyField Label="Volume [WIP]" ToolTip="Change the volume of the song in game.">
                 <fields:PropertyField.FieldContent>
                   <Grid ColumnDefinitions="*,60">
-                    <Slider TickFrequency="0.1" TickPlacement="Outside" IsSnapToTickEnabled="True" Minimum="-20" Maximum="20" Orientation="Horizontal" Value="{Binding SelectedBgmEntry.AudioVolume}"/>
-                    <Label Grid.Column="1" VerticalContentAlignment="Center" VerticalAlignment="Center" Content="{Binding SelectedBgmEntry.AudioVolume}"/>
+                    <Slider TickFrequency="0.1" TickPlacement="Outside" IsSnapToTickEnabled="True" Minimum="-20" Maximum="20" Orientation="Horizontal" Value="{Binding Path=SelectedBgmEntry.NUS3BankConfig.AudioVolume, Mode=TwoWay}"/>
+                    <Label Grid.Column="1" VerticalContentAlignment="Center" VerticalAlignment="Center" Content="{Binding Path=SelectedBgmEntry.NUS3BankConfig.AudioVolume, Mode=TwoWay}"/>
                   </Grid>
                 </fields:PropertyField.FieldContent>
               </fields:PropertyField>
               <fields:PropertyField Label="Sound Test" ToolTip="The song will be given an index and be sortable in the list of songs.">
                 <fields:PropertyField.FieldContent>
-                  <CheckBox IsChecked="{Binding SelectedBgmEntry.HiddenInSoundTest}"/>
+                  <CheckBox IsChecked="{Binding IsInSoundTest}"/>
                 </fields:PropertyField.FieldContent>
               </fields:PropertyField>
               <fields:PropertyField Label="Special Category" ToolTip="This option can be used in game to trigger different effects.">
                 <fields:PropertyField.FieldContent>
-                  <StackPanel>
-                    <Label Classes="subLabel">Type</Label>
-                    <TextBox IsReadOnly="True" Text="{Binding SelectedBgmEntry.SpecialCategoryLabel, Mode=OneWay}"></TextBox>
-                    <Label Classes="subLabel">Info 1</Label>
-                    <TextBox IsReadOnly="True" Text="{Binding SelectedBgmEntry.SpecialParam1Label, Mode=OneWay}"></TextBox>
-                    <Label Classes="subLabel">Info 2</Label>
-                    <TextBox IsReadOnly="True" Text="{Binding SelectedBgmEntry.SpecialParam2Label, Mode=OneWay}"></TextBox>
-                    <Label Classes="subLabel">Info 3</Label>
-                    <TextBox IsReadOnly="True" Text="{Binding SelectedBgmEntry.SpecialParam3Label, Mode=OneWay}"></TextBox>
-                    <Label Classes="subLabel">Info 4</Label>
-                    <TextBox IsReadOnly="True" Text="{Binding SelectedBgmEntry.SpecialParam4Label, Mode=OneWay}"></TextBox>
-                  </StackPanel>
+                  <ComboBox SelectedItem="{Binding SelectedSpecialCategory, Mode=TwoWay}" Items="{Binding SpecialCategories}">
+                    <ComboBox.ItemTemplate>
+                      <DataTemplate>
+                        <TextBlock Text="{Binding Label}" FontFamily="{Binding}" />
+                      </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                  </ComboBox>
+                </fields:PropertyField.FieldContent>
+              </fields:PropertyField>
+              <fields:PropertyField IsVisible="{Binding IsSpecialCategoryPinch}" Label="Pinch Song" ToolTip="The song will play during last stock or last minute. Make sure you pick an existing song!">
+                <fields:PropertyField.FieldContent>
+                  <AutoCompleteBox Items="{Binding Bgms}" ValueMemberBinding="{Binding}" IsTextCompletionEnabled="True" MinimumPrefixLength="2"
+                                   MinimumPopulateDelay="0.5" SelectedItem="{Binding SelectedBgmEntry.StreamSet.Info1, Mode=TwoWay}" FilterMode="Contains"/>
+                </fields:PropertyField.FieldContent>
+              </fields:PropertyField>
+              <fields:PropertyField IsVisible="{Binding IsSpecialCategoryPersona}" Label="Pinch Song" ToolTip="The song in a specific version of the Persona stage.">
+                <fields:PropertyField.FieldContent>
+                  <ComboBox SelectedItem="{Binding SelectedBgmEntry.StreamSet.SpecialCategory, Mode=TwoWay}" Items="{Binding SpecialCategoriesPersonaStages}">
+                    <ComboBox.ItemTemplate>
+                      <DataTemplate>
+                        <TextBlock Text="{Binding Label}" FontFamily="{Binding}" />
+                      </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                  </ComboBox>
                 </fields:PropertyField.FieldContent>
               </fields:PropertyField>
             </StackPanel>

@@ -6,6 +6,25 @@ namespace Sm5sh.GUI.Helpers
 {
     public static class Constants
     {
+        public class SpecialCategories
+        {
+            public const string SPECIAL_CATEGORY_PERSONA = "persona";
+            public const string SPECIAL_CATEGORY_PINCH = "pinch";
+            public const string SPECIAL_CATEGORY_PINCH_VALUE = "0x105274ba4f";
+            public readonly static Dictionary<string, string> CONVERTER_SPECIAL_CATEGORY_PERSONA = new Dictionary<string, string>()
+        {
+            { "jack_mementoes_p3", "Persona 3 Stage" },
+            { "jack_mementoes_p4", "Persona 4 Stage" },
+            { "jack_mementoes_p5", "Persona 5 Stage" },
+        };
+
+            public readonly static Dictionary<string, string> UI_SPECIAL_CATEGORY = new Dictionary<string, string>()
+        {
+            { SPECIAL_CATEGORY_PINCH, "Pinch Songs" },
+            { SPECIAL_CATEGORY_PERSONA, "Persona Stage" },
+        };
+        }
+
         public const string DEFAULT_LOCALE = "us_en";
 
         public readonly static Dictionary<string, string> CONVERTER_SERIES = new Dictionary<string, string>()
@@ -78,17 +97,6 @@ namespace Sm5sh.GUI.Helpers
             { "zh_tw", "Chinese (Traditional)" }
         };
 
-        public readonly static Dictionary<string, string> CONVERTER_SPECIAL_CATEGORY = new Dictionary<string, string>()
-        {
-            { "0x105274ba4f", "Pinch Songs" },
-            { "0x11ff737d4d", "Persona 3 Stage" },
-            { "0x116117e8ee", "Persona 4 Stage" },
-            { "0x111610d878", "Persona 5 Stage" },
-            { "jack_mementoes_p3", "Persona 3 Stage" },
-            { "jack_mementoes_p4", "Persona 4 Stage" },
-            { "jack_mementoes_p5", "Persona 5 Stage" },
-        };
-
         public static string GetSeriesDisplayName(string key)
         {
             if (string.IsNullOrEmpty(key))
@@ -108,13 +116,6 @@ namespace Sm5sh.GUI.Helpers
             if (string.IsNullOrEmpty(key))
                 return key;
             return CONVERTER_LOCALE.ContainsKey(key) ? CONVERTER_LOCALE[key] : key;
-        }
-
-        public static string GetSpecialCategoryDisplayName(string key)
-        {
-            if (string.IsNullOrEmpty(key))
-                return null;
-            return CONVERTER_SPECIAL_CATEGORY.ContainsKey(key) ? CONVERTER_SPECIAL_CATEGORY[key] : key;
         }
     }
 }

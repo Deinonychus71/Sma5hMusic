@@ -61,7 +61,7 @@ namespace Sm5sh.GUI.ViewModels
             _seriesEntries = new ObservableCollection<SeriesEntryViewModel>();
             var observableSeriesEntriesList = _seriesEntries.ToObservableChangeSet(p => p.SeriesId);
             _gameTitleEntries = new ObservableCollection<GameTitleEntryViewModel>();
-            var observableGameEntriesList = _gameTitleEntries.ToObservableChangeSet(p => p.GameId);
+            var observableGameEntriesList = _gameTitleEntries.ToObservableChangeSet(p => p.UiGameTitleId);
             _bgmEntries = new ObservableCollection<BgmEntryViewModel>();
             var observableBgmEntriesList = _bgmEntries.ToObservableChangeSet(p => p.ToneId);
             _musicMods = new ObservableCollection<IMusicMod>();
@@ -73,7 +73,7 @@ namespace Sm5sh.GUI.ViewModels
 
             //Initialize BGM Editor
             VMBgmEditor = ActivatorUtilities.CreateInstance<BgmPropertiesModalWindowViewModel>(serviceProvider, 
-                observableLocaleList,  observableSeriesEntriesList, observableGameEntriesList);
+                observableLocaleList,  observableSeriesEntriesList, observableGameEntriesList, observableBgmEntriesList);
 
             //Listen to requests from children
             this.VMBgmSongs.WhenNewRequestToAddBgmEntry.Subscribe(async (o) => await AddNewBgmEntry(o));
@@ -103,7 +103,7 @@ namespace Sm5sh.GUI.ViewModels
 
                 //Init view models
                 var seriesList = _audioState.GetSeriesEntries().Select(p => new SeriesEntryViewModel(p)).ToDictionary(p => p.SeriesId, p => p);
-                var gameList = _audioState.GetGameTitleEntries().Select(p => new GameTitleEntryViewModel(p) { SeriesViewModel = seriesList[p.UiSeriesId] }).ToDictionary(p => p.GameId, p => p);
+                var gameList = _audioState.GetGameTitleEntries().Select(p => _mapper.Map(p, new GameTitleEntryViewModel(p) { SeriesViewModel = seriesList[p.UiSeriesId] })).ToDictionary(p => p.UiGameTitleId, p => p);
                 var bgmList = _audioState.GetBgmEntries().Select(p => _mapper.Map(p, new BgmEntryViewModel(_musicPlayer, p) { GameTitleViewModel = gameList[p.GameTitleId] }));
                 var locales = _audioState.GetLocales().Select(p => new LocaleViewModel(p, Constants.GetLocaleDisplayName(p)));
 
@@ -124,7 +124,8 @@ namespace Sm5sh.GUI.ViewModels
         public void ReorderSongs()
         {
             short i = 0;
-            foreach (var bgmEntry in _bgmEntries.Where(p => !p.HiddenInSoundTest).OrderBy(p => p.SoundTestIndex))
+            var listBgms = _bgmEntries.Where(p => !p.HiddenInSoundTest).OrderBy(p => p.SoundTestIndex);
+            foreach (var bgmEntry in listBgms)
             {
                 bgmEntry.SoundTestIndex = i;
                 i++;
@@ -168,13 +169,14 @@ namespace Sm5sh.GUI.ViewModels
 
         public async Task EditBgmEntry(BgmEntryViewModel bgmEntry)
         {
-            VMBgmEditor.SelectedBgmEntry = bgmEntry;
+            VMBgmEditor.LoadBgmEntry(bgmEntry);
             var modalEditBgmProps = new BgmPropertiesModalWindow() { DataContext = VMBgmEditor };
             var results = await modalEditBgmProps.ShowDialog<BgmPropertiesModalWindow>(_rootDialog.Window);
 
             if (results != null)
             {
-                //TODO
+                _bgmEntries.Remove(bgmEntry);
+                _bgmEntries.Add(VMBgmEditor.SelectedBgmEntry);
             }
         }
 
