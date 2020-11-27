@@ -22,6 +22,8 @@ namespace Sm5sh.Mods.Music.MusicMods
 
         protected readonly MusicModConfig _musicModConfig;
 
+        public string Id { get { return Mod.Id; } }
+        public string Name { get { return Mod.Name; } }
         public string ModPath { get; }
         public MusicModInformation Mod => _musicModConfig;
 

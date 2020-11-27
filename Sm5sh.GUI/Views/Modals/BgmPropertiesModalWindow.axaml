@@ -5,18 +5,86 @@
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         Width="900" Height="700" MinWidth="800"  MinHeight="700"
         x:Class="Sm5sh.GUI.Views.BgmPropertiesModalWindow"
+        xmlns:fields="clr-namespace:Sm5sh.GUI.Views.Fields"
         Title="BgmPropertiesWindow">
   <Window.Styles>
-    <StyleInclude Source="/Assets/Styles/ModalStyles.xaml" />
+    <StyleInclude Source="/Assets/Styles/ContentStyles.xaml"/>
+    <StyleInclude Source="/Assets/Styles/ModalStyles.xaml"/>
   </Window.Styles>
-  <DockPanel Classes="modal" HorizontalAlignment="Stretch">
-    <ContentControl Content="{Binding VMBgmProperties}" DockPanel.Dock="Top"/>
-    <Grid Classes="content">
-      
-    </Grid>
+  
+  <DockPanel Classes="modal" LastChildFill="True" HorizontalAlignment="Stretch">
+    <Border Classes="headerTitle" DockPanel.Dock="Top">
+      <Label>Edit BGM Properties</Label>
+    </Border>
     <StackPanel Classes="modalActions" DockPanel.Dock="Bottom">
       <Button Content="Cancel" Command="{Binding ActionCancel}" CommandParameter="{Binding $parent[Window]}"></Button>
       <Button Content="Save Changes" Command="{Binding ActionOK}" CommandParameter="{Binding $parent[Window]}"></Button>
     </StackPanel>
+    <Grid IsVisible="{Binding SelectedBgmEntry, Mode=OneWay, Converter={x:Static ObjectConverters.IsNotNull}}">
+      <TabControl Classes="content" TabStripPlacement="Bottom">
+        <TabItem Header="General" FontSize="14">
+          <Grid ColumnDefinitions="*,*" RowDefinitions="*,3*">
+            <StackPanel Grid.Row="0" Grid.ColumnSpan="2" Grid.Column="0" HorizontalAlignment="Stretch">
+              <Border Classes="contentTitle" DockPanel.Dock="Top">
+                <Label>File properties</Label>
+              </Border>
+              <StackPanel Classes="content" Orientation="Horizontal">
+                <fields:PropertyTextField Label="Tone ID" Text="{Binding SelectedBgmEntry.ToneId, Mode=OneWay}" ToolTip="Unique ID of the song" IsReadOnly="True" />
+                <fields:PropertyMusicField Label="File" Text="{Binding SelectedBgmEntry.Filename, Mode=OneWay}" MusicPlayer="{Binding SelectedBgmEntry.MusicPlayer, Mode=OneWay}" ToolTip="Path to the song in the File System" IsReadOnly="True" />
+              </StackPanel>
+            </StackPanel>
+            <StackPanel Classes="content" Grid.Column="0" Grid.Row="1" HorizontalAlignment="Stretch">
+              <Border Classes="contentTitle" DockPanel.Dock="Top">
+                <Label>Game Information</Label>
+              </Border>
+              <fields:PropertyField Label="Series" ToolTip="Series representing the song. Series cannot be added at this time. If unsure, pick 'etc'">
+                <fields:PropertyField.FieldContent>
+                  <ComboBox SelectedItem="{Binding SelectedBgmEntry.SeriesId, Mode=TwoWay}" Items="{Binding Series}">
+                    <ComboBox.ItemTemplate>
+                      <DataTemplate>
+                        <TextBlock Text="{Binding Title}" FontFamily="{Binding}" />
+                      </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                  </ComboBox>
+                </fields:PropertyField.FieldContent>
+              </fields:PropertyField>
+              <fields:PropertyField Label="Game" ToolTip="Game representing the song. To add a game TODO">
+                <fields:PropertyField.FieldContent>
+                  <ComboBox SelectedItem="{Binding SelectedBgmEntry.GameTitleViewModel, Mode=TwoWay}" Items="{Binding Games}">
+                    <ComboBox.ItemTemplate>
+                      <DataTemplate>
+                        <TextBlock Text="{Binding Title}" FontFamily="{Binding}" />
+                      </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                  </ComboBox>
+                </fields:PropertyField.FieldContent>
+              </fields:PropertyField>
+              <StackPanel>
+                <Label>Series</Label>
+                <TextBox Text="{Binding SelectedBgmEntry.SeriesTitle, Mode=OneWay}"></TextBox>
+              </StackPanel>
+              <StackPanel>
+                <Label>Game</Label>
+                <TextBox Classes="jpnSupport" Text="{Binding SelectedBgmEntry.GameTitle, Mode=OneWay}"></TextBox>
+                <Label Classes="subLabel">Type</Label>
+              </StackPanel>
+              <StackPanel>
+                <Label>Game Title</Label>
+                <TextBox Text="{Binding SelectedBgmEntry.RecordTypeLabel, Mode=OneWay}"></TextBox>
+              </StackPanel>
+            </StackPanel>
+            <StackPanel Classes="content" Grid.Column="1" Grid.Row="1" HorizontalAlignment="Stretch">
+              <Border Classes="contentTitle" DockPanel.Dock="Top">
+                <Label>Song Information</Label>
+              </Border>
+              <StackPanel>
+                <Label>Record Type</Label>
+                <TextBox Text="{Binding SelectedBgmEntry.RecordTypeLabel, Mode=OneWay}"></TextBox>
+              </StackPanel>
+            </StackPanel>
+          </Grid>
+        </TabItem>
+      </TabControl>
+    </Grid>
   </DockPanel>
 </Window>

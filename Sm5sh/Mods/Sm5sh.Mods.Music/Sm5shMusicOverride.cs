@@ -77,7 +77,9 @@ namespace Sm5sh.Mods.Music
             else
             {
                 //Cannot load music mod
-                _logger.LogWarning("File {MusicOverrideFile} does not exist! Attempt to retrieve CSV.", _config.Value.Sm5shMusicOverride.ModPath);
+                _logger.LogWarning("File {MusicOverrideFile} does not exist!.", _config.Value.Sm5shMusicOverride.ModPath);
+
+                Directory.CreateDirectory(Path.GetDirectoryName(overrideJsonFile));
 
                 _musicOverrideConfig = new MusicOverrideConfig()
                 {

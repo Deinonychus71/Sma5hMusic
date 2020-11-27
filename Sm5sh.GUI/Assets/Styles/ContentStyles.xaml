@@ -1,51 +1,75 @@
 ﻿<Styles xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-   <Style Selector="Border.contentTitle">
+  <!-- Large title -->
+  <Style Selector="Border.headerTitle">
     <Setter Property="BorderBrush" Value="{StaticResource BrushGrayDark}"/>
     <Setter Property="BorderThickness" Value="0,0,0,2"/>
     <Setter Property="Margin" Value="0,10,0,10"/>
   </Style>
-  <Style Selector=".contentTitle > Label">
+  <Style Selector=".headerTitle > Label">
     <Setter Property="FontSize" Value="24"/>
     <Setter Property="FontWeight" Value="Bold"/>
     <Setter Property="Margin" Value="13"/>
     <Setter Property="HorizontalAlignment" Value="Center"/>
   </Style>
+  <!-- Content title -->
+  <Style Selector="Border.contentTitle">
+    <Setter Property="BorderBrush" Value="{StaticResource BrushGrayDark}"/>
+    <Setter Property="BorderThickness" Value="0,0,0,1"/>
+    <Setter Property="Margin" Value="0,1,0,0"/>
+  </Style>
+  <Style Selector=".contentTitle > Label">
+    <Setter Property="FontSize" Value="14"/>
+    <Setter Property="Foreground" Value="{StaticResource BrushGrayLight}"/>
+    <Setter Property="FontWeight" Value="Bold"/>
+    <Setter Property="Margin" Value="1"/>
+    <Setter Property="HorizontalAlignment" Value="Center"/>
+  </Style>
 
+  <!-- Content container -->
   <Style Selector="StackPanel.content">
     <Setter Property="Margin" Value="5"/>
-    <Setter Property="Spacing" Value="5"/>
+    <Setter Property="Spacing" Value="2"/>
   </Style>
   <Style Selector="Grid.content">
     <Setter Property="Margin" Value="5"/>
   </Style>
-  <Style Selector="WrapPanel.content">
-    <Setter Property="Margin" Value="10"/>
+  <Style Selector="TabControl.content">
+    <Setter Property="Margin" Value="5"/>
   </Style>
-  <Style Selector=".content > StackPanel">
-    <Setter Property="Margin" Value="13,13,13,2"/>
+
+  <!-- Content fields -->
+  <Style Selector="StackPanel.propertyField">
+    <Setter Property="Margin" Value="10,10,10,2"/>
     <Setter Property="HorizontalAlignment" Value="Stretch"/>
   </Style>
-  <Style Selector=".content > StackPanel > Label">
+  <Style Selector=".propertyField > StackPanel > Label">
     <Setter Property="FontSize" Value="14"/>
     <Setter Property="HorizontalAlignment" Value="Stretch"/>
     <Setter Property="Margin" Value="0,1,0,0"/>
   </Style>
-  <Style Selector=".content > StackPanel > Label.subLabel">
+  <Style Selector=".propertyField > StackPanel > Label.tooltip">
+    <Setter Property="VerticalContentAlignment" Value="Top"/>
+    <Setter Property="VerticalAlignment" Value="Top"/>
+  </Style>
+  <Style Selector=".propertyField > StackPanel > Label.subLabel">
     <Setter Property="FontSize" Value="13"/>
     <Setter Property="FontStyle" Value="Oblique"/>
     <Setter Property="HorizontalAlignment" Value="Stretch"/>
     <Setter Property="Margin" Value="0,0,0,0"/>
   </Style>
-  <Style Selector=".content > StackPanel > TextBox">
+  <Style Selector=".propertyField > TextBox">
     <Setter Property="HorizontalAlignment" Value="Stretch"/>
     <Setter Property="MinWidth" Value="200"/>
     <Setter Property="Margin" Value="0,1,0,0"/>
   </Style>
-  <Style Selector=".content > StackPanel > TextBox.valueSoundPreview">
+  <Style Selector=".propertyField TextBox.readonly">
+    <Setter Property="Foreground" Value="Gray"/>
+  </Style>
+  <Style Selector=".propertyField > TextBox.valueSoundPreview">
     <Setter Property="Width" Value="150"/>
   </Style>
-  <Style Selector=".content > StackPanel > NumericUpDown">
+  <Style Selector=".propertyField > NumericUpDown">
     <Setter Property="HorizontalAlignment" Value="Stretch"/>
     <Setter Property="MinWidth" Value="200"/>
     <Setter Property="Margin" Value="0,1,0,0"/>

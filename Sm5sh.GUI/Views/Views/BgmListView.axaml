@@ -30,8 +30,8 @@
             </DataTemplate>
           </DataGridTemplateColumn.CellTemplate>
         </DataGridTemplateColumn>
-        <DataGridTextColumn Header="Series" Width="*" Binding="{Binding SeriesTitle, Mode=OneWay}" />
-        <DataGridTextColumn MaxWidth="300" Width="3*" Header="Game" Binding="{Binding GameTitle, Mode=OneWay}" />
+        <DataGridTextColumn Header="Series" Width="*" Binding="{Binding SeriesTitleViewModel.Title, Mode=OneWay}" />
+        <DataGridTextColumn MaxWidth="300" Width="3*" Header="Game" Binding="{Binding GameTitleViewModel.Title, Mode=OneWay}" />
         <DataGridTextColumn MaxWidth="400" Width="3*" Header="Title" Binding="{Binding Title, Mode=OneWay}" />
         <DataGridTextColumn Header="Record" Width="*" Binding="{Binding RecordTypeLabel, Mode=OneWay}" />
         <DataGridTextColumn Header="Source" Width="*" Binding="{Binding Source, Mode=OneWay}" />
@@ -46,6 +46,7 @@
             </DataTemplate>
           </DataGridTemplateColumn.CellTemplate>
         </DataGridTemplateColumn>
+      <DataGridTextColumn Width="16" />
       </DataGrid.Columns>
     </DataGrid>
   </Grid>

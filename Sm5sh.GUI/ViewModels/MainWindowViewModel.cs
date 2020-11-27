@@ -17,6 +17,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reactive.Subjects;
 using System.Reactive;
+using System.Collections.Generic;
 
 namespace Sm5sh.GUI.ViewModels
 {
@@ -30,6 +31,9 @@ namespace Sm5sh.GUI.ViewModels
         private readonly IDialogWindow _rootDialog;
         private readonly ILogger _logger;
         private readonly IOptions<Sm5shOptions> _config;
+        private readonly ObservableCollection<string> _locales;
+        private readonly ObservableCollection<SeriesEntryViewModel> _seriesEntries;
+        private readonly ObservableCollection<GameTitleEntryViewModel> _gameTitleEntries;
         private readonly ObservableCollection<BgmEntryViewModel> _bgmEntries;
         private readonly ObservableCollection<IMusicMod> _musicMods;
 
@@ -50,6 +54,9 @@ namespace Sm5sh.GUI.ViewModels
             _audioState = audioState;
 
             //Initialize observables
+            _locales = new ObservableCollection<string>();
+            _seriesEntries = new ObservableCollection<SeriesEntryViewModel>();
+            _gameTitleEntries = new ObservableCollection<GameTitleEntryViewModel>();
             _bgmEntries = new ObservableCollection<BgmEntryViewModel>();
             var observableBgmEntriesList = _bgmEntries.ToObservableChangeSet(p => p.ToneId);
             _musicMods = new ObservableCollection<IMusicMod>();
@@ -62,12 +69,25 @@ namespace Sm5sh.GUI.ViewModels
             this.VMBgmSongs.WhenNewRequestToAddBgmEntry.Subscribe(async (o) => await AddNewBgmEntry(o));
             this.VMBgmSongs.VMBgmList.WhenNewRequestToEditBgmEntry.Subscribe(async (o) => await EditBgmEntry(o));
             this.VMBgmSongs.VMBgmList.WhenNewRequestToReorderBgmEntries.Subscribe((o) => ReorderSongs());
+
+            //Link
+            var vmEditBgm = _serviceProvider.GetService<BgmPropertiesModalWindowViewModel>();
+            vmEditBgm.Games = this.VMBgmSongs.VMBgmFilters.Games;
+            vmEditBgm.Series = this.VMBgmSongs.VMBgmFilters.Series;
         }
 
         public void ResetBgmList()
         {
             Task.Run(() =>
             {
+                //Reset everything
+                _seriesEntries.Clear();
+                _bgmEntries.Clear();
+                _gameTitleEntries.Clear();
+                _locales.Clear();
+                _musicMods.Clear();
+
+                //Load
                 var stateManager = _serviceProvider.GetService<IStateManager>();
                 var mods = _serviceProvider.GetServices<ISm5shMod>();
                 stateManager.Init();
@@ -75,8 +95,19 @@ namespace Sm5sh.GUI.ViewModels
                 {
                     mod.Init();
                 }
-                var bgmList = _audioState.GetBgmEntries().Select(p => new BgmEntryViewModel(_musicPlayer, p));
-                
+
+                //Init view models
+                var seriesList = _audioState.GetSeriesEntries().Select(p => new SeriesEntryViewModel(p)).ToDictionary(p => p.SeriesId, p => p);
+                var gameList = _audioState.GetGameTitleEntries().Select(p => new GameTitleEntryViewModel(p) { SeriesViewModel = seriesList[p.UiSeriesId] }).ToDictionary(p => p.GameId, p => p);
+                var bgmList = _audioState.GetBgmEntries().Select(p => new BgmEntryViewModel(_musicPlayer, p) { GameTitleViewModel = gameList[p.GameTitleId] });
+
+                //Bind
+                _locales.AddRange(_audioState.GetLocales());
+                _logger.LogInformation("Locales Loaded.");
+                _seriesEntries.AddRange(seriesList.Values);
+                _logger.LogInformation("Series Loaded.");
+                _gameTitleEntries.AddRange(gameList.Values);
+                _logger.LogInformation("Game Titles Loaded.");
                 _bgmEntries.AddRange(bgmList);
                 _logger.LogInformation("BGM List Loaded.");
                 _musicMods.AddRange(_musicModManagerService.MusicMods);
@@ -132,7 +163,7 @@ namespace Sm5sh.GUI.ViewModels
         public async Task EditBgmEntry(BgmEntryViewModel bgmEntry)
         {
             var vmEditBgm = _serviceProvider.GetService<BgmPropertiesModalWindowViewModel>();
-            vmEditBgm.LoadVMBgmEntry(bgmEntry);
+            vmEditBgm.SelectedBgmEntry = bgmEntry;
             var modalEditBgmProps = new BgmPropertiesModalWindow() { DataContext = vmEditBgm };
             var results = await modalEditBgmProps.ShowDialog<BgmPropertiesModalWindow>(_rootDialog.Window);
 

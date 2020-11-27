@@ -8,10 +8,10 @@
     <StyleInclude Source="/Assets/Styles/ContentStyles.xaml" />
   </UserControl.Styles>
   <DockPanel>
-    <Border Classes="contentTitle" DockPanel.Dock="Top">
+    <Border Classes="headerTitle" DockPanel.Dock="Top">
       <Label>Properties</Label>
     </Border>
-    <TabControl IsVisible="{Binding SelectedBgmEntry, Converter={x:Static ObjectConverters.IsNotNull}}" TabStripPlacement="Bottom" DockPanel.Dock="Top">
+    <TabControl IsVisible="{Binding SelectedBgmEntry, Mode=OneWay}" TabStripPlacement="Bottom" DockPanel.Dock="Top">
       <TabItem Header="General" FontSize="14">
         <StackPanel Classes="content" HorizontalAlignment="Stretch">
           <StackPanel>
@@ -20,11 +20,11 @@
           </StackPanel>
           <StackPanel>
             <Label>Series</Label>
-            <TextBox IsReadOnly="True" Text="{Binding SelectedBgmEntry.SeriesTitle, Mode=OneWay}"></TextBox>
+            <TextBox IsReadOnly="True" Text="{Binding SelectedBgmEntry.SeriesTitleViewModel.Title, Mode=OneWay}"></TextBox>
           </StackPanel>
           <StackPanel>
             <Label>Game</Label>
-            <TextBox Classes="jpnSupport" IsReadOnly="True" Text="{Binding SelectedBgmEntry.GameTitle, Mode=OneWay}"></TextBox>
+            <TextBox Classes="jpnSupport" IsReadOnly="True" Text="{Binding SelectedBgmEntry.GameTitleViewModel.Title, Mode=OneWay}"></TextBox>
           </StackPanel>
           <StackPanel>
             <Label>Title</Label>
@@ -53,7 +53,7 @@
           <StackPanel>
             <Label>Filename</Label>
             <StackPanel Orientation="Horizontal">
-              <ContentControl Content="{Binding SelectedBgmEntry.MusicPlayer}"/>
+              <ContentControl Content="{Binding SelectedBgmEntry.MusicPlayer, Mode=OneWay}"/>
               <TextBox Classes="valueSoundPreview" IsReadOnly="True" Text="{Binding SelectedBgmEntry.Filename, Mode=OneWay, Converter={StaticResource FilePathConverter}}}"></TextBox>
             </StackPanel>
           </StackPanel>
@@ -80,15 +80,15 @@
           <StackPanel>
             <Label>Special</Label>
             <Label Classes="subLabel">Type</Label>
-            <TextBox IsReadOnly="True" Text="{Binding SelectedBgmEntry.SpecialCategoryLabel}"></TextBox>
+            <TextBox IsReadOnly="True" Text="{Binding SelectedBgmEntry.SpecialCategoryLabel, Mode=OneWay}"></TextBox>
             <Label Classes="subLabel">Info 1</Label>
-            <TextBox IsReadOnly="True" Text="{Binding SelectedBgmEntry.SpecialParam1Label}"></TextBox>
+            <TextBox IsReadOnly="True" Text="{Binding SelectedBgmEntry.SpecialParam1Label, Mode=OneWay}"></TextBox>
             <Label Classes="subLabel">Info 2</Label>
-            <TextBox IsReadOnly="True" Text="{Binding SelectedBgmEntry.SpecialParam2Label}"></TextBox>
+            <TextBox IsReadOnly="True" Text="{Binding SelectedBgmEntry.SpecialParam2Label, Mode=OneWay}"></TextBox>
             <Label Classes="subLabel">Info 3</Label>
-            <TextBox IsReadOnly="True" Text="{Binding SelectedBgmEntry.SpecialParam3Label}"></TextBox>
+            <TextBox IsReadOnly="True" Text="{Binding SelectedBgmEntry.SpecialParam3Label, Mode=OneWay}"></TextBox>
             <Label Classes="subLabel">Info 4</Label>
-            <TextBox IsReadOnly="True" Text="{Binding SelectedBgmEntry.SpecialParam4Label}"></TextBox>
+            <TextBox IsReadOnly="True" Text="{Binding SelectedBgmEntry.SpecialParam4Label, Mode=OneWay}"></TextBox>
           </StackPanel>
         </StackPanel>
       </TabItem>

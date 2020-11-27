@@ -11,7 +11,7 @@
     <StyleInclude Source="/Assets/Styles/ContentStyles.xaml" />
   </UserControl.Styles>
   <StackPanel>
-    <Border Classes="contentTitle">
+    <Border Classes="headerTitle">
       <Label>Filters</Label>
     </Border>
     <StackPanel Classes="content">
@@ -35,7 +35,7 @@
         <ComboBox SelectedItem="{Binding SelectedSeries, Mode=TwoWay}" Items="{Binding Series}">
           <ComboBox.ItemTemplate>
             <DataTemplate>
-              <TextBlock Text="{Binding SeriesTitle}" FontFamily="{Binding}" />
+              <TextBlock Text="{Binding Title}" FontFamily="{Binding}" />
             </DataTemplate>
           </ComboBox.ItemTemplate>
         </ComboBox>
@@ -45,7 +45,7 @@
         <ComboBox SelectedItem="{Binding SelectedGame, Mode=TwoWay}" Items="{Binding Games}">
           <ComboBox.ItemTemplate>
             <DataTemplate>
-              <TextBlock Text="{Binding GameTitle}" FontFamily="{Binding}" />
+              <TextBlock Text="{Binding Title}" FontFamily="{Binding}" />
             </DataTemplate>
           </ComboBox.ItemTemplate>
         </ComboBox>

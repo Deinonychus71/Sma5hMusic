@@ -6,7 +6,10 @@ namespace Sm5sh.Mods.Music.Interfaces
 {
     public interface IMusicMod
     {
+        string Id { get; }
+        string Name { get; }
         string ModPath { get; }
+
         MusicModInformation Mod { get; }
 
         void UpdateModInformation(MusicModInformation configBase);

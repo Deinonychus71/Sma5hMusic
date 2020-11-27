@@ -41,7 +41,7 @@ namespace Sm5sh.Mods.Music.Models
 
         public BgmEntryModels.SpecialCategoryEntry SpecialCategory { get { return GetSpecialCategory(); } }
 
-        public bool HiddenInSoundTest { get { return DbRoot.SaveNo == -1 || DbRoot.TestDispOrder == -1; } }
+        public bool HiddenInSoundTest { get { return DbRoot.TestDispOrder == -1; } }
 
         public BgmEntry(string toneId, IMusicMod musicMod = null)
         {

@@ -4,9 +4,11 @@ namespace Sm5sh.GUI.Models
 {
     public class ModItem
     {
-        public bool CreateFlag { get; }
+        public bool CreateFlag { get; set; }
         public IMusicMod Id { get;  }
-        public string Label { get;  }
+        public string Label { get; set; }
+
+        public ModItem() { }
 
         public ModItem(IMusicMod id, string label, bool allFlag = false)
         {

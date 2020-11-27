@@ -25,6 +25,8 @@ namespace Sm5sh.Mods.Music.Services
         private readonly IMapper _mapper;
         private readonly IStateManager _state;
         private readonly IOptions<Sm5shMusicOptions> _config;
+        private readonly HashSet<string> _seriesEntries;
+        private readonly HashSet<string> _localesEntries;
         private readonly Dictionary<string, GameTitleEntry> _gameEntries;
         private readonly Dictionary<string, BgmEntry> _bgmEntries;
         private readonly Dictionary<string, BgmEntry> _deletedBgmEntries; //TODO
@@ -37,6 +39,8 @@ namespace Sm5sh.Mods.Music.Services
             _state = state;
             _deletedBgmEntries = new Dictionary<string, BgmEntry>();
             _gameEntries = new Dictionary<string, GameTitleEntry>();
+            _seriesEntries = new HashSet<string>();
+            _localesEntries = new HashSet<string>();
             _bgmEntries = new Dictionary<string, BgmEntry>();
             InitBgmEntriesFromStateManager();
         }
@@ -56,6 +60,21 @@ namespace Sm5sh.Mods.Music.Services
             return _bgmEntries.ContainsKey(toneId) ? _bgmEntries[toneId] : null;
         }
 
+        public IEnumerable<GameTitleEntry> GetGameTitleEntries()
+        {
+            return _gameEntries.Values;
+        }
+
+        public IEnumerable<string> GetSeriesEntries()
+        {
+            return _seriesEntries;
+        }
+
+        public IEnumerable<string> GetLocales()
+        {
+            return _seriesEntries;
+        }
+
         public bool AddBgmEntry(BgmEntry bgmEntry)
         {
             //TODO TODO TODO
@@ -70,9 +89,11 @@ namespace Sm5sh.Mods.Music.Services
             bgmEntry.DbRoot.NameId = GetNewBgmId();
             bgmEntry.DbRoot.SaveNo = 0;
 
-            //Save GameTitle
+            //Save GameTitle & Series
             if (!_gameEntries.ContainsKey(bgmEntry.GameTitleId))
                 _gameEntries.Add(bgmEntry.GameTitleId, bgmEntry.GameTitle);
+            if (!_seriesEntries.Contains(bgmEntry.GameTitle.UiSeriesId))
+                _seriesEntries.Add(bgmEntry.GameTitle.UiSeriesId);
 
             //Create
             if (!_bgmEntries.ContainsKey(bgmEntry.ToneId))
@@ -220,6 +241,11 @@ namespace Sm5sh.Mods.Music.Services
         {
             //Make sure resources are unloaded
             _state.UnloadResources();
+            _bgmEntries.Clear();
+            _deletedBgmEntries.Clear();
+            _gameEntries.Clear();
+            _seriesEntries.Clear();
+            _localesEntries.Clear();
 
             //Load Data
             var daoBinBgmProperty = _state.LoadResource<Data.Sound.Config.BinBgmProperty>(BgmPropertyFileConstants.BGM_PROPERTY_PATH);
@@ -227,6 +253,7 @@ namespace Sm5sh.Mods.Music.Services
             var paramGameTitleDbRoot = _state.LoadResource<PrcUiGameTitleDatabase>(PrcExtConstants.PRC_UI_GAMETITLE_DB_PATH).DbRootEntries;
             var daoMsbtBgms = GetBgmDatabases();
             var daoMsbtTitle = GetGameTitleDatabases();
+            daoMsbtBgms.Keys.ToList().ForEach(p => _localesEntries.Add(p));
 
             foreach (var daoBinPropertyKeyValue in daoBinBgmProperty.Entries)
             {
@@ -250,7 +277,9 @@ namespace Sm5sh.Mods.Music.Services
                 var gameTitleId = dbRootEntry.UiGameTitleId;
                 if (!_gameEntries.ContainsKey(gameTitleId))
                     _gameEntries.Add(gameTitleId, _mapper.Map(paramGameTitleDbRoot[gameTitleId], new GameTitleEntry(gameTitleId)));
-                newBgmEntry.GameTitle = _gameEntries[gameTitleId]; //TODO FIGURE OUT A WAY TO UPDATE ALL
+                newBgmEntry.GameTitle = _gameEntries[gameTitleId];
+                if (!_seriesEntries.Contains(newBgmEntry.GameTitle.UiSeriesId))
+                    _seriesEntries.Add(newBgmEntry.GameTitle.UiSeriesId);
 
                 //Mapping playlists
                 foreach (var paramPlaylist in paramBgmDatabase.PlaylistEntries)
