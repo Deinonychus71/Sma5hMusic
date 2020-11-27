@@ -30,10 +30,10 @@
             </DataTemplate>
           </DataGridTemplateColumn.CellTemplate>
         </DataGridTemplateColumn>
-        <DataGridTextColumn Header="Series" Width="*" Binding="{Binding SeriesTitleViewModel.Title, Mode=OneWay}" />
+        <DataGridTextColumn Header="Series" Width="*" Binding="{Binding GameTitleViewModel.SeriesViewModel.Title, Mode=OneWay}" />
         <DataGridTextColumn MaxWidth="300" Width="3*" Header="Game" Binding="{Binding GameTitleViewModel.Title, Mode=OneWay}" />
         <DataGridTextColumn MaxWidth="400" Width="3*" Header="Title" Binding="{Binding Title, Mode=OneWay}" />
-        <DataGridTextColumn Header="Record" Width="*" Binding="{Binding RecordTypeLabel, Mode=OneWay}" />
+        <DataGridTextColumn Header="Record" Width="*" Binding="{Binding RecordType, Mode=OneWay, Converter={StaticResource RecordTypeConverter}}" />
         <DataGridTextColumn Header="Source" Width="*" Binding="{Binding Source, Mode=OneWay}" />
         <DataGridTextColumn Header="Mod Name" Width="2*" Binding="{Binding ModName, Mode=OneWay}" />
         <DataGridTemplateColumn Header="Actions" CanUserResize="false" Width="80">

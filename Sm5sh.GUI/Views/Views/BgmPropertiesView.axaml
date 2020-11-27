@@ -2,6 +2,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:fields="clr-namespace:Sm5sh.GUI.Views.Fields"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Sm5sh.GUI.Views.BgmPropertiesView">
   <UserControl.Styles>
@@ -11,37 +12,16 @@
     <Border Classes="headerTitle" DockPanel.Dock="Top">
       <Label>Properties</Label>
     </Border>
-    <TabControl IsVisible="{Binding SelectedBgmEntry, Mode=OneWay}" TabStripPlacement="Bottom" DockPanel.Dock="Top">
+    <TabControl IsVisible="{Binding SelectedBgmEntry, Mode=OneWay, Converter={x:Static ObjectConverters.IsNotNull}}" TabStripPlacement="Bottom" DockPanel.Dock="Top">
       <TabItem Header="General" FontSize="14">
         <StackPanel Classes="content" HorizontalAlignment="Stretch">
-          <StackPanel>
-            <Label>Tone ID</Label>
-            <TextBox IsReadOnly="True" Text="{Binding SelectedBgmEntry.ToneId, Mode=OneWay}"></TextBox>
-          </StackPanel>
-          <StackPanel>
-            <Label>Series</Label>
-            <TextBox IsReadOnly="True" Text="{Binding SelectedBgmEntry.SeriesTitleViewModel.Title, Mode=OneWay}"></TextBox>
-          </StackPanel>
-          <StackPanel>
-            <Label>Game</Label>
-            <TextBox Classes="jpnSupport" IsReadOnly="True" Text="{Binding SelectedBgmEntry.GameTitleViewModel.Title, Mode=OneWay}"></TextBox>
-          </StackPanel>
-          <StackPanel>
-            <Label>Title</Label>
-            <TextBox Classes="jpnSupport" IsReadOnly="True" Text="{Binding SelectedBgmEntry.Title, Mode=OneWay}"></TextBox>
-          </StackPanel>
-          <StackPanel>
-            <Label>Author</Label>
-            <TextBox Classes="jpnSupport" IsReadOnly="True" Text="{Binding SelectedBgmEntry.Author, Mode=OneWay}"></TextBox>
-          </StackPanel>
-          <StackPanel>
-            <Label>Copyright</Label>
-            <TextBox Classes="jpnSupport" IsReadOnly="True" Text="{Binding SelectedBgmEntry.Copyright, Mode=OneWay}"></TextBox>
-          </StackPanel>
-          <StackPanel>
-            <Label>Record Type</Label>
-            <TextBox IsReadOnly="True" Text="{Binding SelectedBgmEntry.RecordTypeLabel, Mode=OneWay}"></TextBox>
-          </StackPanel>
+          <fields:PropertyTextField Label="Tone ID" Text="{Binding SelectedBgmEntry.ToneId, Mode=OneWay}" ToolTip="Unique ID of the song" IsReadOnly="True" />
+          <fields:PropertyTextField Classes="jpnSupport" Label="Series" Text="{Binding SelectedBgmEntry.SeriesViewModel.Title, Mode=OneWay}" ToolTip="Series of the song in the current locale" IsReadOnly="True" />
+          <fields:PropertyTextField Classes="jpnSupport" Label="Game" Text="{Binding SelectedBgmEntry.GameTitleViewModel.Title, Mode=OneWay}" ToolTip="Game of the song in the current locale" IsReadOnly="True" />
+          <fields:PropertyTextField Classes="jpnSupport" Label="Title" Text="{Binding SelectedBgmEntry.Title, Mode=OneWay}" ToolTip="Title of the song in the current locale" IsReadOnly="True" />
+          <fields:PropertyTextField Classes="jpnSupport" Label="Author" Text="{Binding SelectedBgmEntry.Author, Mode=OneWay}" ToolTip="Author of the song in the current locale" IsReadOnly="True" />
+          <fields:PropertyTextField Classes="jpnSupport" Label="Copyright" Text="{Binding SelectedBgmEntry.Copyright, Mode=OneWay}" ToolTip="Copyright of the song in the current locale" IsReadOnly="True" />
+          <fields:PropertyTextField Label="Record Type" Text="{Binding SelectedBgmEntry.RecordType, Mode=OneWay, Converter={StaticResource RecordTypeConverter}}" ToolTip="Record Type of the song. It can be either Original, Remix or New Remix." IsReadOnly="True" />
         </StackPanel>
       </TabItem>
       <TabItem IsVisible="{Binding SelectedBgmEntry.IsMod}" Header="Mod" FontSize="14">
@@ -72,10 +52,6 @@
           <StackPanel>
             <Label>Sound Test Index</Label>
             <NumericUpDown IsReadOnly="True" Value="{Binding SelectedBgmEntry.SoundTestIndex}" Minimum="-1" />
-          </StackPanel>
-          <StackPanel>
-            <Label>Playlists</Label>
-            <TextBox IsReadOnly="True" Text="{Binding SelectedBgmEntry.PlaylistIds, Mode=OneWay}"></TextBox>
           </StackPanel>
           <StackPanel>
             <Label>Special</Label>

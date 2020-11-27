@@ -13,6 +13,8 @@ using VGMMusic;
 using Sm5sh.GUI.Views;
 using Sm5sh.GUI.Interfaces;
 using Sm5sh.GUI.Dialogs;
+using AutoMapper;
+using Sm5sh.Mods.Music.Models.AutoMapper;
 
 namespace Sm5sh.GUI
 {
@@ -72,6 +74,7 @@ namespace Sm5sh.GUI
             //Add UI Services
             services.AddSingleton<IVGMMusicPlayer, VGMMusicPlayer>();
             services.AddSingleton<IFileDialog, FileDialog>();
+            services.AddAutoMapper(typeof(MappingViewModels));
 
             //Add to Splat
             services.UseMicrosoftDependencyResolver();

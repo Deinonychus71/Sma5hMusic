@@ -19,6 +19,9 @@
   <Style Selector="TextBox.jpnSupport">
     <Setter Property="FontFamily" Value="Microsoft YaHei,Simsun,苹方-简,宋体-简"/>
   </Style>
+  <Style Selector=".jpnSupport TextBox">
+    <Setter Property="FontFamily" Value="Microsoft YaHei,Simsun,苹方-简,宋体-简"/>
+  </Style>
 
   <Style Selector="ContentControl.list">
     <Setter Property="Background" Value="#202020"/>

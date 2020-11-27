@@ -27,11 +27,7 @@ namespace Sm5sh.Mods.Music.Models
 
 
         //Helper objects for common properties
-        public string RecordType { get { return DbRoot.RecordType; } }
-        public short SoundTestIndex { get { return DbRoot.TestDispOrder; } }
-        public bool IsDlcOrPatch { get { return DbRoot.IsDlc || DbRoot.IsPatch; } }
         public BgmEntryModels.EntrySource Source { get { return MusicMod == null ? BgmEntryModels.EntrySource.Core : BgmEntryModels.EntrySource.Mod; } }
-
 
         //KeyHelper
         public string DbRootKey { get { return DbRoot.UiBgmId; } }
@@ -39,9 +35,6 @@ namespace Sm5sh.Mods.Music.Models
         public string AssignedInfoKey { get { return AssignedInfo.InfoId; } }
         public string StreamPropertyKey { get { return StreamingProperty.StreamId; } }
 
-        public BgmEntryModels.SpecialCategoryEntry SpecialCategory { get { return GetSpecialCategory(); } }
-
-        public bool HiddenInSoundTest { get { return DbRoot.TestDispOrder == -1; } }
 
         public BgmEntry(string toneId, IMusicMod musicMod = null)
         {
@@ -96,49 +89,10 @@ namespace Sm5sh.Mods.Music.Models
             Playlists = new Dictionary<string, List<BgmEntryModels.BgmPlaylistEntry>>();
         }
 
+
         public override string ToString()
         {
             return ToneId;
-        }
-
-        private BgmEntryModels.SpecialCategoryEntry GetSpecialCategory()
-        {
-            var specialCategory = new BgmEntryModels.SpecialCategoryEntry()
-            {
-                Id = StreamSet.SpecialCategory,
-                Parameters = new List<string>()
-            };
-            if (!string.IsNullOrEmpty(StreamSet.Info1))
-                specialCategory.Parameters.Add(StreamSet.Info1);
-            if (!string.IsNullOrEmpty(StreamSet.Info2))
-                specialCategory.Parameters.Add(StreamSet.Info2);
-            if (!string.IsNullOrEmpty(StreamSet.Info3))
-                specialCategory.Parameters.Add(StreamSet.Info3);
-            if (!string.IsNullOrEmpty(StreamSet.Info4))
-                specialCategory.Parameters.Add(StreamSet.Info4);
-            if (!string.IsNullOrEmpty(StreamSet.Info5))
-                specialCategory.Parameters.Add(StreamSet.Info5);
-            if (!string.IsNullOrEmpty(StreamSet.Info6))
-                specialCategory.Parameters.Add(StreamSet.Info6);
-            if (!string.IsNullOrEmpty(StreamSet.Info7))
-                specialCategory.Parameters.Add(StreamSet.Info7);
-            if (!string.IsNullOrEmpty(StreamSet.Info8))
-                specialCategory.Parameters.Add(StreamSet.Info8);
-            if (!string.IsNullOrEmpty(StreamSet.Info9))
-                specialCategory.Parameters.Add(StreamSet.Info9);
-            if (!string.IsNullOrEmpty(StreamSet.Info10))
-                specialCategory.Parameters.Add(StreamSet.Info10);
-            if (!string.IsNullOrEmpty(StreamSet.Info11))
-                specialCategory.Parameters.Add(StreamSet.Info11);
-            if (!string.IsNullOrEmpty(StreamSet.Info12))
-                specialCategory.Parameters.Add(StreamSet.Info12);
-            if (!string.IsNullOrEmpty(StreamSet.Info13))
-                specialCategory.Parameters.Add(StreamSet.Info13);
-            if (!string.IsNullOrEmpty(StreamSet.Info14))
-                specialCategory.Parameters.Add(StreamSet.Info14);
-            if (!string.IsNullOrEmpty(StreamSet.Info15))
-                specialCategory.Parameters.Add(StreamSet.Info15);
-            return specialCategory;
         }
     }
 
@@ -359,13 +313,6 @@ namespace Sm5sh.Mods.Music.Models
             Unknown = 0,
             Core = 1,
             Mod = 2
-        }
-
-        public class SpecialCategoryEntry
-        {
-            public string Id { get; set; }
-
-            public List<string> Parameters { get; set; }
         }
     }
 }

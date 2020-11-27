@@ -1,8 +1,9 @@
-﻿using Sm5sh.Mods.Music.Interfaces;
+﻿using ReactiveUI;
+using Sm5sh.Mods.Music.Interfaces;
 
 namespace Sm5sh.GUI.ViewModels
 {
-    public class ModEntryViewModel : ViewModelBase
+    public class ModEntryViewModel : ReactiveObject
     {
         public bool AllFlag { get; set; }
         public IMusicMod MusicMod { get; }

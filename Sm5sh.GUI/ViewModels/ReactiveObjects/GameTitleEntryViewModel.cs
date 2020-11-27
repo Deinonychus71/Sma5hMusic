@@ -1,9 +1,10 @@
-﻿using ReactiveUI.Fody.Helpers;
+﻿using ReactiveUI;
+using ReactiveUI.Fody.Helpers;
 using Sm5sh.Mods.Music.Models;
 
 namespace Sm5sh.GUI.ViewModels
 {
-    public class GameTitleEntryViewModel : ViewModelBase
+    public class GameTitleEntryViewModel : ReactiveObject
     {
         private readonly GameTitleEntry _refGameTitleEntry;
 

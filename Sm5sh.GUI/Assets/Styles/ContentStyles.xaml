@@ -1,5 +1,6 @@
 ﻿<Styles xmlns="https://github.com/avaloniaui"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:fields="clr-namespace:Sm5sh.GUI.Views.Fields">
   <!-- Large title -->
   <Style Selector="Border.headerTitle">
     <Setter Property="BorderBrush" Value="{StaticResource BrushGrayDark}"/>
@@ -63,8 +64,26 @@
     <Setter Property="MinWidth" Value="200"/>
     <Setter Property="Margin" Value="0,1,0,0"/>
   </Style>
-  <Style Selector=".propertyField TextBox.readonly">
+  <Style Selector="fields|PropertyTextField.readonly TextBlock">
     <Setter Property="Foreground" Value="Gray"/>
+  </Style>
+  <Style Selector="fields|PropertyField.readonly TextBlock">
+    <Setter Property="Foreground" Value="Gray"/>
+  </Style>
+  <Style Selector="TextBox.readonly">
+    <Setter Property="Foreground" Value="Gray"/>
+  </Style>
+  <Style Selector="fields|PropertyTextField.error Label">
+    <Setter Property="Foreground" Value="Red"/>
+  </Style>
+  <Style Selector="fields|PropertyField.error Label">
+    <Setter Property="Foreground" Value="Red"/>
+  </Style>
+  <Style Selector="Label.error">
+    <Setter Property="Foreground" Value="Red"/>
+  </Style>
+  <Style Selector="TextBlock.error">
+    <Setter Property="Foreground" Value="Red"/>
   </Style>
   <Style Selector=".propertyField > TextBox.valueSoundPreview">
     <Setter Property="Width" Value="150"/>

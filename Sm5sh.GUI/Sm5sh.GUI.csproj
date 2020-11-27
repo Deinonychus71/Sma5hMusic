@@ -66,6 +66,9 @@
     <Compile Update="Views\Fields\PropertyField.axaml.cs">
       <DependentUpon>PropertyField.axaml</DependentUpon>
     </Compile>
+    <Compile Update="Views\Views\MSBTFieldView.axaml.cs">
+      <DependentUpon>MSBTFieldView.axaml</DependentUpon>
+    </Compile>
     <Compile Update="Views\Modals\BgmPropertiesModalWindow.axaml.cs">
       <DependentUpon>BgmPropertiesModalWindow.axaml</DependentUpon>
     </Compile>

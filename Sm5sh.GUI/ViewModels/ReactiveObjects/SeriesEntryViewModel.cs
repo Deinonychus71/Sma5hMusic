@@ -1,8 +1,9 @@
-﻿using Sm5sh.GUI.Helpers;
+﻿using ReactiveUI;
+using Sm5sh.GUI.Helpers;
 
 namespace Sm5sh.GUI.ViewModels
 {
-    public class SeriesEntryViewModel : ViewModelBase
+    public class SeriesEntryViewModel : ReactiveObject
     {
         public bool AllFlag { get; set; }
 

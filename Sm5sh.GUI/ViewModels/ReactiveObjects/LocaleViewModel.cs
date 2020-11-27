@@ -1,12 +1,14 @@
-﻿namespace Sm5sh.GUI.Models
+﻿using ReactiveUI;
+
+namespace Sm5sh.GUI.ViewModels
 {
-    public class ComboItem
+    public class LocaleViewModel : ReactiveObject
     {
         public bool AllFlag { get; }
         public string Id { get;  }
         public string Label { get;  }
 
-        public ComboItem(string id, string label, bool allFlag = false)
+        public LocaleViewModel(string id, string label, bool allFlag = false)
         {
             Id = id;
             Label = label;
@@ -18,7 +20,7 @@
             if (obj == null)
                 return false;
 
-            ComboItem p = obj as ComboItem;
+            LocaleViewModel p = obj as LocaleViewModel;
             if (p == null)
                 return false;
 

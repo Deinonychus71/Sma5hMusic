@@ -10,6 +10,8 @@ namespace Sm5sh.GUI.Converters
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             var valueStr = value as string;
+            if (string.IsNullOrEmpty(valueStr))
+                return value;
             return Constants.CONVERTER_RECORD_TYPE.ContainsKey(valueStr) ? Constants.CONVERTER_RECORD_TYPE[valueStr] : valueStr.Replace("record_", string.Empty);
         }
 

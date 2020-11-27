@@ -72,7 +72,7 @@ namespace Sm5sh.Mods.Music.Services
 
         public IEnumerable<string> GetLocales()
         {
-            return _seriesEntries;
+            return _localesEntries;
         }
 
         public bool AddBgmEntry(BgmEntry bgmEntry)
@@ -85,7 +85,7 @@ namespace Sm5sh.Mods.Music.Services
 
             //Temporary - Only do that if not hidden!
             bgmEntry.DbRoot.MenuValue = _bgmEntries.Values.OrderByDescending(p => p.DbRoot.MenuValue).First().DbRoot.MenuValue + 1;
-            bgmEntry.DbRoot.TestDispOrder = (short)(_bgmEntries.Values.OrderByDescending(p => p.SoundTestIndex).First().SoundTestIndex + 1);
+            bgmEntry.DbRoot.TestDispOrder = (short)(_bgmEntries.Values.OrderByDescending(p => p.DbRoot.TestDispOrder).First().DbRoot.TestDispOrder + 1);
             bgmEntry.DbRoot.NameId = GetNewBgmId();
             bgmEntry.DbRoot.SaveNo = 0;
 

@@ -70,12 +70,12 @@ namespace Sm5sh.GUI.ViewModels
                     (SelectedModSongs || (!SelectedModSongs && p.Source == Sm5sh.Mods.Music.Models.BgmEntryModels.EntrySource.Core)) &&
                     (SelectedCoreSongs || (!SelectedCoreSongs && p.Source == Sm5sh.Mods.Music.Models.BgmEntryModels.EntrySource.Mod)) &&
                     (SelectedMod == null || SelectedMod.AllFlag || p.ModId == SelectedMod.ModId) &&
-                    (SelectedRecordType == null || SelectedRecordType.AllFlag || p.RecordTypeId == SelectedRecordType.Id) &&
+                    (SelectedRecordType == null || SelectedRecordType.AllFlag || p.RecordType == SelectedRecordType.Id) &&
                     (SelectedSeries == null || SelectedSeries.AllFlag || p.SeriesId == SelectedSeries.SeriesId) &&
                     (SelectedGame == null || SelectedGame.AllFlag || p.GameId == SelectedGame.GameId)
                 );
 
-            var modsChanged = observableBgmEntries.WhenValueChanged(species => species.ModName);
+            var modsChanged = observableBgmEntries.WhenValueChanged(mod => mod.ModName);
             observableBgmEntries
                 .Filter(p => p.MusicMod != null)
                 .Group(p => p.ModId, modsChanged.Select(_ => Unit.Default))
@@ -90,11 +90,11 @@ namespace Sm5sh.GUI.ViewModels
                 .DisposeMany()
                 .Subscribe((o) => SelectedMod = _allModsChangeSet.First().Current);
 
-            var seriesChanged = observableBgmEntries.WhenValueChanged(species => species.SeriesId);
+            var seriesChanged = observableBgmEntries.WhenValueChanged(series => series.SeriesId);
             observableBgmEntries
                 .Filter(p => p.SeriesId != null)
                 .Group(p => p.SeriesId, seriesChanged.Select(_ => Unit.Default))
-                .Transform(p => p.Cache.Items.First().SeriesTitleViewModel)
+                .Transform(p => p.Cache.Items.First().SeriesViewModel)
                 .Prepend(_allSeriesChangeSet)
                 .Sort(SortExpressionComparer<SeriesEntryViewModel>.Descending(p => p.AllFlag).ThenByAscending(p => p.SeriesId), SortOptimisations.IgnoreEvaluates)
                 .ObserveOn(RxApp.MainThreadScheduler)
@@ -102,7 +102,7 @@ namespace Sm5sh.GUI.ViewModels
                 .DisposeMany()
                 .Subscribe((o) => SelectedSeries = _allSeriesChangeSet.First().Current);
 
-            var gameChanged = observableBgmEntries.WhenValueChanged(species => species.SeriesId);
+            var gameChanged = observableBgmEntries.WhenValueChanged(game => game.GameId);
             observableBgmEntries
                 .AutoRefreshOnObservable(p => this.WhenAnyValue(p => p.SelectedSeries))
                 .Filter(p => p.SeriesId != null && p.GameId != null && (SelectedSeries == null || SelectedSeries.AllFlag || p.SeriesId == SelectedSeries.SeriesId))

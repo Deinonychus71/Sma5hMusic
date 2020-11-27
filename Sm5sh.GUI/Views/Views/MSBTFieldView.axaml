@@ -1,0 +1,29 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="Sm5sh.GUI.Views.MSBTFieldView">
+  <StackPanel Classes="propertyField">
+    <StackPanel Orientation="Horizontal">
+      <Menu>
+        <MenuItem Header="{Binding SelectedLocale.Label}" Items="{Binding Locales}" IsEnabled="True">
+          <MenuItem.Styles>
+            <Style Selector="MenuItem > MenuItem">
+              <Setter Property="Header" Value="{Binding Label}"/>
+              <Setter Property="Command" Value="{Binding $parent[StackPanel].DataContext.ActionChangeLocale}"/>
+              <Setter Property="CommandParameter" Value="{Binding .}"/>
+            </Style>
+          </MenuItem.Styles>
+        </MenuItem>
+      </Menu>
+      <Menu>
+        <MenuItem Header="Copy to...">
+          <MenuItem Header="All other languages" Command="{Binding ActionCopyToAll}"/>
+          <MenuItem Header="All languages with empty values" Command="{Binding ActionCopyToEmptyLanguages}"/>
+        </MenuItem>
+      </Menu>
+    </StackPanel>
+    <TextBox Text="{Binding CurrentLocalizedValue}" AcceptsReturn="{Binding AcceptsReturn}"/>
+  </StackPanel>
+</UserControl>
