@@ -15,6 +15,8 @@ using VGMMusic;
 using System.Reactive;
 using Avalonia.Controls;
 using Sm5sh.Mods.Music.Models;
+using System.Threading.Tasks;
+using Sm5sh.GUI.Views.Modals;
 
 namespace Sm5sh.GUI.ViewModels
 {
@@ -33,8 +35,10 @@ namespace Sm5sh.GUI.ViewModels
         private BgmEntryViewModel _fakeBgm = new BgmEntryViewModel(null, new Mods.Music.Models.BgmEntry("fake"));
         private BgmEntryViewModel _refSavedBgmEntryView;
 
+        public GamePropertiesModalWindowViewModel VMGamePropertiesModal { get; set; }
+
         [Reactive]
-        public BgmEntryViewModel SelectedBgmEntry { get; set; }
+        public BgmEntryViewModel SelectedBgmEntry { get; private set; }
 
         public MSBTFieldViewModel MSBTTitleEditor { get; set; }
         public MSBTFieldViewModel MSBTAuthorEditor { get; set; }
@@ -62,6 +66,8 @@ namespace Sm5sh.GUI.ViewModels
 
         public ReactiveCommand<Window, Unit> ActionCancel { get; }
         public ReactiveCommand<Window, Unit> ActionSave { get; }
+        public ReactiveCommand<Window, Unit> ActionNewGame { get; }
+        public ReactiveCommand<Window, Unit> ActionEditGame { get; }
 
         public BgmPropertiesModalWindowViewModel(ILogger<BgmPropertiesModalWindowViewModel> logger, IVGMMusicPlayer musicPlayer, IMapper mapper, IObservable<IChangeSet<LocaleViewModel, string>> observableLocales,
             IObservable<IChangeSet<SeriesEntryViewModel, string>> observableSeries, IObservable<IChangeSet<GameTitleEntryViewModel, string>> observableGames,
@@ -76,6 +82,8 @@ namespace Sm5sh.GUI.ViewModels
 
             ActionCancel = ReactiveCommand.Create<Window>(CancelChanges);
             ActionSave = ReactiveCommand.Create<Window>(SaveChanges);
+            ActionNewGame = ReactiveCommand.CreateFromTask<Window>(AddNewGame);
+            ActionEditGame = ReactiveCommand.Create<Window>(SaveChanges);
 
             //Bind observables
             observableLocales
@@ -143,6 +151,18 @@ namespace Sm5sh.GUI.ViewModels
 
             window.Close(window);
         }
+        
+        private async Task AddNewGame(Window window)
+        {
+            VMGamePropertiesModal.LoadGame(null);
+            var modalCreateMod = new GamePropertiesModalWindow() { DataContext = VMGamePropertiesModal };
+            var results = await modalCreateMod.ShowDialog<GamePropertiesModalWindow>(window);
+
+            if(results != null)
+            {
+
+            }
+        }
 
         private List<ComboItem> GetRecordTypes()
         {
@@ -169,8 +189,9 @@ namespace Sm5sh.GUI.ViewModels
         {
             _refSavedBgmEntryView = vmBgmEntry;
 
+            //TODO: Cleanup
             //Manually setting fields to breaks references
-            SelectedBgmEntry = _mapper.Map(vmBgmEntry, new BgmEntryViewModel(_musicPlayer, new BgmEntry(vmBgmEntry.ToneId)) { GameTitleViewModel = vmBgmEntry.GameTitleViewModel });
+            SelectedBgmEntry = _mapper.Map(vmBgmEntry, new BgmEntryViewModel(_musicPlayer, new BgmEntry(vmBgmEntry.ToneId, vmBgmEntry.MusicMod, vmBgmEntry.Filename)) { GameTitleViewModel = vmBgmEntry.GameTitleViewModel});
             MSBTTitleEditor.MSBTValues = SelectedBgmEntry.MSBTLabels.Title;
             MSBTAuthorEditor.MSBTValues = SelectedBgmEntry.MSBTLabels.Author;
             MSBTCopyrightEditor.MSBTValues = SelectedBgmEntry.MSBTLabels.Copyright;

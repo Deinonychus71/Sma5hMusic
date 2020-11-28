@@ -36,10 +36,11 @@ namespace Sm5sh.Mods.Music.Models
         public string StreamPropertyKey { get { return StreamingProperty.StreamId; } }
 
 
-        public BgmEntry(string toneId, IMusicMod musicMod = null)
+        public BgmEntry(string toneId, IMusicMod musicMod = null, string filename = null) //Filename should be temporary, gonna convert to nus3audio while importing.
         {
             ToneId = toneId;
             MusicMod = musicMod;
+            Filename = filename;
             MSBTLabels = new BgmEntryModels.MSBTLabelsEntry(this)
             {
                 Title = new Dictionary<string, string>(),

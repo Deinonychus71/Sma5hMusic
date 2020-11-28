@@ -1,4 +1,5 @@
 ﻿using ReactiveUI;
+using ReactiveUI.Fody.Helpers;
 using Sm5sh.GUI.Helpers;
 
 namespace Sm5sh.GUI.ViewModels
@@ -6,7 +7,6 @@ namespace Sm5sh.GUI.ViewModels
     public class SeriesEntryViewModel : ReactiveObject
     {
         public bool AllFlag { get; set; }
-
         public string SeriesId { get; }
         public string Title { get; set; }
 

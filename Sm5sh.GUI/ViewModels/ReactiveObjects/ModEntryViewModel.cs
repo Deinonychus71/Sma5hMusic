@@ -6,9 +6,11 @@ namespace Sm5sh.GUI.ViewModels
     public class ModEntryViewModel : ReactiveObject
     {
         public bool AllFlag { get; set; }
+        public bool CreateFlag { get; set; }
         public IMusicMod MusicMod { get; }
         public string ModId { get;  }
         public string ModName { get; set; }
+        public string ModPath { get { return MusicMod.ModPath; } }
 
         public ModEntryViewModel() { }
 
@@ -16,7 +18,7 @@ namespace Sm5sh.GUI.ViewModels
         {
             ModId = modId;
             MusicMod = musicMod;
-            ModName = musicMod.Name;
+            ModName = musicMod?.Name;
         }
 
         public override bool Equals(object obj)

@@ -7,11 +7,15 @@ using ReactiveUI;
 using System.Text.RegularExpressions;
 using Avalonia.Controls;
 using System.Reactive;
+using DynamicData;
+using System.Collections.ObjectModel;
+using System.Reactive.Linq;
 
 namespace Sm5sh.GUI.ViewModels
 {
     public class ModPropertiesModalWindowViewModel : ViewModelBase
     {
+        private readonly ReadOnlyObservableCollection<ModEntryViewModel> _mods;
         private const string REGEX_REPLACE = @"[^a-zA-Z0-9\-_ ]";
         private readonly ILogger _logger;
 
@@ -31,14 +35,23 @@ namespace Sm5sh.GUI.ViewModels
         [Reactive]
         public bool IsEdit { get; set; }
 
+        public ReadOnlyObservableCollection<ModEntryViewModel> Series { get { return _mods; } }
+
         public ReactiveCommand<Window, Unit> ActionOK { get; }
         public ReactiveCommand<Window, Unit> ActionCancel { get; }
 
-        public ModPropertiesModalWindowViewModel(ILogger<ModPropertiesModalWindowViewModel> logger)
+        public ModPropertiesModalWindowViewModel(ILogger<ModPropertiesModalWindowViewModel> logger, IObservable<IChangeSet<ModEntryViewModel, string>> observableMods)
         {
             _logger = logger;
 
             this.WhenAnyValue(p => p.ModName).Subscribe((o) => { FormatModPath(o); });
+
+            //Bind observables
+            observableMods
+                .ObserveOn(RxApp.MainThreadScheduler)
+                .Bind(out _mods)
+                .DisposeMany()
+                .Subscribe();
 
             var canExecute = this.WhenAnyValue(x => x.ModName, x => x.ModPath, (n, p) =>
             !string.IsNullOrEmpty(n) && !string.IsNullOrEmpty(p));
@@ -75,7 +88,7 @@ namespace Sm5sh.GUI.ViewModels
                 if (string.IsNullOrEmpty(modName))
                     ModPath = string.Empty;
                 else
-                    ModPath = Regex.Replace(modName, REGEX_REPLACE, string.Empty);
+                    ModPath = Regex.Replace(modName, REGEX_REPLACE, string.Empty).ToLower();
             }
         }
 

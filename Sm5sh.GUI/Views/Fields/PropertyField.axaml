@@ -7,6 +7,7 @@
   <StackPanel Classes="propertyField">
     <StackPanel Orientation="Horizontal">
       <Label Content="{Binding $parent[UserControl].Label}"/>
+      <Label Classes="required" IsVisible="{Binding $parent[UserControl].IsRequired}" Content="*"/>
       <Label Content="&#128712;" Classes="tooltip" ToolTip.Tip="{Binding $parent[UserControl].ToolTip}"/>
     </StackPanel>
     <ContentControl Content="{Binding $parent[UserControl].FieldContent}"/>

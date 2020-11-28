@@ -15,7 +15,7 @@
     <Border Classes="headerTitle">
       <Label>Filters</Label>
     </Border>
-    <StackPanel Classes="content">
+    <StackPanel Classes="content" Margin="10">
       <fields:PropertyField Label="Source" ToolTip="Select a source. 'Core' Songs are all the songs from the vanilla game. 'Mod' will also retrieve the songs from your mods.">
         <fields:PropertyField.FieldContent>
           <StackPanel>
@@ -73,8 +73,9 @@
           <StackPanel>
             <CheckBox IsChecked="{Binding SelectedShowInSoundTest, Mode=TwoWay}" ToolTip.Tip="Will display songs that can be seen in Sound Test">Show in Sound Test</CheckBox>
             <CheckBox IsChecked="{Binding SelectedShowHiddenSongs, Mode=TwoWay}" ToolTip.Tip="Will display songs that cannot be seen in Sound Test">Show Hidden Songs</CheckBox>
+            <!--
             <CheckBox IsChecked="{Binding SelectedCharacterVictorySongs, Mode=TwoWay}" ToolTip.Tip="Will display pinch songs. Pinch songs play during last stock or with 1 minute left">Show Pinch Songs</CheckBox>
-            <CheckBox IsChecked="{Binding SelectedPinchSongs, Mode=TwoWay}" ToolTip.Tip="Will display Character Victory songs">Show Victory Songs</CheckBox>
+            <CheckBox IsChecked="{Binding SelectedPinchSongs, Mode=TwoWay}" ToolTip.Tip="Will display Character Victory songs">Show Victory Songs</CheckBox>-->
           </StackPanel>
         </fields:PropertyField.FieldContent>
       </fields:PropertyField>

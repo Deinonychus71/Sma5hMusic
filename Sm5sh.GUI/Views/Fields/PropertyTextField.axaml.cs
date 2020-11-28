@@ -10,7 +10,9 @@ namespace Sm5sh.GUI.Views.Fields
         public static readonly StyledProperty<string> ToolTipProperty = AvaloniaProperty.Register<PropertyTextField, string>(nameof(ToolTip), inherits: true, defaultBindingMode: Avalonia.Data.BindingMode.OneWay);
         public static readonly StyledProperty<string> TextProperty = AvaloniaProperty.Register<PropertyTextField, string>(nameof(Text), inherits: true, defaultBindingMode: Avalonia.Data.BindingMode.TwoWay);
         public static readonly StyledProperty<bool> IsReadOnlyProperty = AvaloniaProperty.Register<PropertyTextField, bool>(nameof(IsReadOnly), inherits: true, defaultBindingMode: Avalonia.Data.BindingMode.OneWay);
-
+        public static readonly StyledProperty<bool> IsRequiredProperty = AvaloniaProperty.Register<PropertyField, bool>(nameof(IsRequired), inherits: true, defaultBindingMode: Avalonia.Data.BindingMode.OneWay);
+        public static readonly StyledProperty<bool> AcceptsReturnProperty = AvaloniaProperty.Register<PropertyTextField, bool>(nameof(AcceptsReturn), inherits: true, defaultBindingMode: Avalonia.Data.BindingMode.OneWay);
+        
         public string ToolTip
         {
             get { return GetValue(ToolTipProperty); }
@@ -33,6 +35,18 @@ namespace Sm5sh.GUI.Views.Fields
         {
             get { return GetValue(IsReadOnlyProperty); }
             set { SetValue(IsReadOnlyProperty, value); }
+        }
+
+        public bool IsRequired
+        {
+            get { return GetValue(IsRequiredProperty); }
+            set { SetValue(IsRequiredProperty, value); }
+        }
+
+        public bool AcceptsReturn
+        {
+            get { return GetValue(AcceptsReturnProperty); }
+            set { SetValue(AcceptsReturnProperty, value); }
         }
 
         public PropertyTextField()

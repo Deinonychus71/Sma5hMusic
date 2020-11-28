@@ -4,7 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Sm5sh.GUI.Views.MSBTFieldView">
-  <StackPanel Classes="propertyField">
+  <StackPanel>
     <StackPanel Orientation="Horizontal">
       <Menu>
         <MenuItem Header="{Binding SelectedLocale.Label}" Items="{Binding Locales}" IsEnabled="True">

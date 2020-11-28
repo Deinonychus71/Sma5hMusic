@@ -19,10 +19,9 @@
     <Menu Grid.Row="0">
       <MenuItem Header="File">
         <MenuItem Header="Choose Mod Workspace..."></MenuItem>
-        <MenuItem Header="Import Song..."></MenuItem>
         <Separator></Separator>
-        <MenuItem Header="Save Changes..."></MenuItem>
-        <MenuItem Header="Export Mod..."></MenuItem>
+        <MenuItem Header="Build"></MenuItem>
+        <MenuItem Header="Build [no cache]"></MenuItem>
         <Separator></Separator>
         <MenuItem Header="Exit"></MenuItem>
       </MenuItem>

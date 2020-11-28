@@ -32,11 +32,15 @@
         <MenuItem Header="Import Songs..." Items="{Binding Mods}" IsEnabled="True">
           <MenuItem.Styles>
             <Style Selector="MenuItem > MenuItem">
-              <Setter Property="Header" Value="{Binding Label}"/>
+              <Setter Property="Header" Value="{Binding ModName}"/>
               <Setter Property="Command" Value="{Binding $parent[DockPanel].DataContext.AddNewBgmEntry}"/>
-              <Setter Property="CommandParameter" Value="{Binding Id}"/>
+              <Setter Property="CommandParameter" Value="{Binding .}"/>
             </Style>
           </MenuItem.Styles>
+        </MenuItem>
+        <MenuItem Header="Manage..." IsEnabled="True">
+          <MenuItem Header="Games"/>
+          <MenuItem Header="Mods"/>
         </MenuItem>
       </Menu>
     </DockPanel>

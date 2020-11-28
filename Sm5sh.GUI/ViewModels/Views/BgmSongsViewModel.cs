@@ -21,38 +21,39 @@ namespace Sm5sh.GUI.ViewModels
     public class BgmSongsViewModel : ViewModelBase, IDisposable
     {
         private readonly ILogger _logger;
-        private readonly IChangeSet<ModItem, string> _newModSet;
-        private readonly ReadOnlyObservableCollection<ModItem> _mods;
-        private readonly Subject<IMusicMod> _whenNewRequestToAddBgmEntry;
+        private readonly IChangeSet<ModEntryViewModel, string> _newModSet;
+        private readonly ReadOnlyObservableCollection<ModEntryViewModel> _mods;
+        private readonly Subject<ModEntryViewModel> _whenNewRequestToAddBgmEntry;
+        private readonly IObservable<string> _whenLocaleChanged;
 
         public BgmListViewModel VMBgmList { get; }
         public BgmFiltersViewModel VMBgmFilters { get; }
         public BgmPropertiesViewModel VMBgmProperties { get; }
-        public ReadOnlyObservableCollection<ModItem> Mods { get { return _mods; } }
-        public IObservable<IMusicMod> WhenNewRequestToAddBgmEntry { get { return _whenNewRequestToAddBgmEntry; } }
+        public ReadOnlyObservableCollection<ModEntryViewModel> Mods { get { return _mods; } }
+        public IObservable<ModEntryViewModel> WhenNewRequestToAddBgmEntry { get { return _whenNewRequestToAddBgmEntry; } }
+        public IObservable<string> WhenLocaleChanged { get { return _whenLocaleChanged; } }
 
         [Reactive]
         public string SelectedLocale { get; set; }
 
         public BgmSongsViewModel(IServiceProvider serviceProvider, ILogger<BgmSongsViewModel> logger, 
             IObservable<IChangeSet<BgmEntryViewModel, string>> observableBgmEntriesList,
-            IObservable<IChangeSet<IMusicMod, string>> observableMusicModsList)
+            IObservable<IChangeSet<ModEntryViewModel, string>> observableMusicModsList)
         {
             _logger = logger;
-            _whenNewRequestToAddBgmEntry = new Subject<IMusicMod>();
+            _whenNewRequestToAddBgmEntry = new Subject<ModEntryViewModel>();
             _newModSet = GetCreateNewMod();
             SelectedLocale = Constants.DEFAULT_LOCALE;
 
-            var whenLocaleChanged = this.WhenAnyValue(p => p.SelectedLocale);
+            _whenLocaleChanged = this.WhenAnyValue(p => p.SelectedLocale);
             var observableLocalizedBgmEntriesList = observableBgmEntriesList
-                .AutoRefreshOnObservable(p => whenLocaleChanged)
+                .AutoRefreshOnObservable(p => _whenLocaleChanged)
                 .ForEachChange(o => o.Current.LoadLocalized(SelectedLocale));
 
             //List of mods
             observableMusicModsList
-                .Transform(p => new ModItem(p, $"To {p.Mod.Name}..."))
                 .Prepend(_newModSet)
-                .Sort(SortExpressionComparer<ModItem>.Descending(p => p.CreateFlag).ThenByAscending(p => p.Label), SortOptimisations.IgnoreEvaluates)
+                .Sort(SortExpressionComparer<ModEntryViewModel>.Descending(p => p.CreateFlag).ThenByAscending(p => p.ModName), SortOptimisations.IgnoreEvaluates)
                 .ObserveOn(RxApp.MainThreadScheduler)
                 .Bind(out _mods)
                 .DisposeMany()
@@ -74,9 +75,9 @@ namespace Sm5sh.GUI.ViewModels
             SelectedLocale = locale;
         }
 
-        public void AddNewBgmEntry(IMusicMod musicMod)
+        public void AddNewBgmEntry(ModEntryViewModel vmMusicMod)
         {
-            _whenNewRequestToAddBgmEntry.OnNext(musicMod);
+            _whenNewRequestToAddBgmEntry.OnNext(vmMusicMod);
         }
 
         public void Dispose()
@@ -88,11 +89,11 @@ namespace Sm5sh.GUI.ViewModels
             }
         }
 
-        private IChangeSet<ModItem, string> GetCreateNewMod()
+        private IChangeSet<ModEntryViewModel, string> GetCreateNewMod()
         {
-            return new ChangeSet<ModItem, string>(new List<Change<ModItem, string>>()
+            return new ChangeSet<ModEntryViewModel, string>(new List<Change<ModEntryViewModel, string>>()
             {
-                new Change<ModItem, string>(ChangeReason.Add, "-1", new ModItem(null,"Create New...", true ))
+                new Change<ModEntryViewModel, string>(ChangeReason.Add, "-1", new ModEntryViewModel(null, null){ ModName = "Create New Mod", CreateFlag = true })
             });
         }
     }

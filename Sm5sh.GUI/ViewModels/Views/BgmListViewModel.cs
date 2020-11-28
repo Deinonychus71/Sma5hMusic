@@ -98,7 +98,7 @@ namespace Sm5sh.GUI.ViewModels
                 e.DragEffects = DragDropEffects.None;
 
             var destinationObj = ((Control)e.Source).DataContext as BgmEntryViewModel;
-            if(destinationObj.HiddenInSoundTest)
+            if(destinationObj != null && destinationObj.HiddenInSoundTest)
                 e.DragEffects = DragDropEffects.None;
         }
 

@@ -39,21 +39,24 @@
                 <Label>Song Information</Label>
               </Border>
               <fields:PropertyTextField Label="Tone ID" Text="{Binding SelectedBgmEntry.ToneId, Mode=OneWay}" ToolTip="Unique ID of the song" IsReadOnly="True" />
-              <fields:PropertyField Label="Game" ToolTip="Game representing the song. If the game you want isn't in the database, click 'Add New Game Entry'">
+              <fields:PropertyField IsRequired="True" Label="Game" ToolTip="Game representing the song. If the game you want isn't in the database, click 'Add New Game Entry'">
                 <fields:PropertyField.FieldContent>
-                  <AutoCompleteBox Items="{Binding Games}" ValueMemberBinding="{Binding Title}" IsTextCompletionEnabled="True" MinimumPrefixLength="2"
+                  <StackPanel>
+                    <Menu>
+                      <MenuItem Header="Create New Game" Command="{Binding ActionNewGame}" CommandParameter="{Binding $parent[Window]}"/>
+                    </Menu>
+                    <AutoCompleteBox Items="{Binding Games}" ValueMemberBinding="{Binding Title}" IsTextCompletionEnabled="True" MinimumPrefixLength="2"
                                    MinimumPopulateDelay="0.5" SelectedItem="{Binding SelectedBgmEntry.GameTitleViewModel, Mode=TwoWay}" FilterMode="Contains"/>
+                  </StackPanel>
                 </fields:PropertyField.FieldContent>
               </fields:PropertyField>
-              <fields:PropertyTextField IsVisible="{Binding SelectedBgmEntry.GameTitleViewModel, Converter={x:Static ObjectConverters.IsNotNull}}"
+              <fields:PropertyTextField IsRequired="True" IsVisible="{Binding SelectedBgmEntry.GameTitleViewModel, Converter={x:Static ObjectConverters.IsNotNull}}"
                                         Label="Series" Text="{Binding SelectedBgmEntry.GameTitleViewModel.SeriesViewModel.Title, Mode=OneWay}"
                                         ToolTip="Series associated with the game selected. This cannot be changed here." IsReadOnly="True" />
-              <fields:PropertyField Classes="error" Label="Game missing" ToolTip="Click 'Add New Game Entry' to solve this issue." IsVisible="{Binding SelectedBgmEntry.GameTitleViewModel, Converter={x:Static ObjectConverters.IsNull}}">
-                <fields:PropertyField.FieldContent>
-                  <Button Content="Add New Game Entry"/>
-                </fields:PropertyField.FieldContent>
-              </fields:PropertyField>
-              <fields:PropertyField Label="Record Type" ToolTip="Select a Record Type. Valid values are 'Original', 'Remix' and 'New Remix'">
+              <fields:PropertyTextField IsRequired="True" IsVisible="{Binding SelectedBgmEntry.GameTitleViewModel, Converter={x:Static ObjectConverters.IsNull}}"
+                                        Label="Series" Text="Select a game"
+                                        ToolTip="Series associated with the game selected. This cannot be changed here." IsReadOnly="True" />
+              <fields:PropertyField IsRequired="True" Label="Record Type" ToolTip="Select a Record Type. Valid values are 'Original', 'Remix' and 'New Remix'">
                 <fields:PropertyField.FieldContent>
                   <ComboBox SelectedItem="{Binding SelectedRecordType, Mode=TwoWay}" Items="{Binding RecordTypes}">
                     <ComboBox.ItemTemplate>

@@ -7,13 +7,14 @@ namespace Sm5sh.Mods.Music.Models.AutoMapper
         public MappingViewModels()
         {
             CreateMap<GUI.ViewModels.GameTitleEditableEntryViewModel, GameTitleEntry>()
-                .ForMember(i => i.MSBTTitle, me => me.Ignore())
+                .ForMember(i => i.MSBTTitle, me => me.MapFrom(p => p.MSBTTitle))
                 .ForMember(i => i.NameId, me => me.MapFrom(p => p.NameId))
                 .ForMember(i => i.Release, me => me.MapFrom(p => p.Release))
                 .ForMember(i => i.UiGameTitleId, me => me.Ignore())
                 .ForMember(i => i.UiSeriesId, me => me.MapFrom(p => p.UiSeriesId))
                 .ForMember(i => i.Unk1, me => me.MapFrom(p => p.Unk1));
             CreateMap<GameTitleEntry, GUI.ViewModels.GameTitleEditableEntryViewModel>()
+                .ForMember(i => i.MSBTTitle, me => me.MapFrom(p => p.MSBTTitle))
                 .ForMember(i => i.NameId, me => me.MapFrom(p => p.NameId))
                 .ForMember(i => i.Release, me => me.MapFrom(p => p.Release))
                 .ForMember(i => i.UiGameTitleId, me => me.Ignore())

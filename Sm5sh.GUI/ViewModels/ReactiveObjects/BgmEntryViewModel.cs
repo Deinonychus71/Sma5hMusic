@@ -73,8 +73,6 @@ namespace Sm5sh.GUI.ViewModels
                 Author = MSBTAuthor[locale];
             else
                 Author = string.Empty;
-
-            GameTitleViewModel?.LoadLocalized(locale);
         }
     }
 }

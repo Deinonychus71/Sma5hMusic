@@ -7,9 +7,10 @@
   <StackPanel Classes="propertyField">
     <StackPanel Orientation="Horizontal">
       <Label Content="{Binding $parent[UserControl].Label}"/>
+      <Label Classes="required" IsVisible="{Binding $parent[UserControl].IsRequired}" Content="*"/>
       <Label Content="&#128712;" ToolTip.Tip="{Binding $parent[UserControl].ToolTip}"/>
     </StackPanel>
-    <TextBox IsVisible="{Binding $parent[UserControl].IsReadOnly}" Classes="readonly" IsReadOnly="True" Text="{Binding $parent[UserControl].Text}"></TextBox>
-    <TextBox IsVisible="{Binding !$parent[UserControl].IsReadOnly}" Text="{Binding $parent[UserControl].Text}"></TextBox>
+    <TextBox AcceptsReturn="{Binding !$parent[UserControl].AcceptsReturn}" IsVisible="{Binding $parent[UserControl].IsReadOnly}" Classes="readonly" IsReadOnly="True" Text="{Binding $parent[UserControl].Text}"></TextBox>
+    <TextBox AcceptsReturn="{Binding !$parent[UserControl].AcceptsReturn}" IsVisible="{Binding !$parent[UserControl].IsReadOnly}" Text="{Binding $parent[UserControl].Text}"></TextBox>
   </StackPanel>
 </UserControl>

@@ -25,6 +25,11 @@ namespace Sm5sh.GUI.ViewModels
         {
             _refGameTitleEntry = gameTitleEntry;
         }
+
+        public GameTitleEntry GetGameEntryReference()
+        {
+            return _refGameTitleEntry;
+        }
     }
 
     namespace GameTitleEditableEntryViewModels

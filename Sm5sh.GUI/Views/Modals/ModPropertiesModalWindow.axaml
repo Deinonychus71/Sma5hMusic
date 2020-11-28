@@ -4,6 +4,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         Width="500" Height="800" MinWidth="500"  MinHeight="800"
+        xmlns:fields="clr-namespace:Sm5sh.GUI.Views.Fields"
         x:Class="Sm5sh.GUI.Views.ModPropertiesModalWindow"
         Title="ModPropertiesWindow">
   <Window.Styles>
@@ -11,30 +12,15 @@
     <StyleInclude Source="/Assets/Styles/ModalStyles.xaml" />
   </Window.Styles>
   <DockPanel Classes="modal">
-    <Border Classes="contentTitle" DockPanel.Dock="Top">
+    <Border Classes="headerTitle" DockPanel.Dock="Top">
       <Label>Mod Properties</Label>
     </Border>
     <StackPanel Classes="content" DockPanel.Dock="Top">
-      <StackPanel>
-        <Label Classes="required">Name *</Label>
-        <TextBox Text="{Binding ModName, Mode=TwoWay}"></TextBox>
-      </StackPanel>
-      <StackPanel>
-        <Label Classes="required">Folder Name *</Label>
-        <TextBox Text="{Binding ModPath, Mode=TwoWay}"></TextBox>
-      </StackPanel>
-      <StackPanel>
-        <Label >Author</Label>
-        <TextBox Text="{Binding ModAuthor, Mode=TwoWay}"></TextBox>
-      </StackPanel>
-      <StackPanel>
-        <Label>Website</Label>
-        <TextBox Text="{Binding ModWebsite, Mode=TwoWay}"></TextBox>
-      </StackPanel>
-      <StackPanel>
-        <Label>Description</Label>
-        <TextBox AcceptsReturn="True" Text="{Binding ModDescription, Mode=TwoWay}"></TextBox>
-      </StackPanel>
+      <fields:PropertyTextField IsRequired="True" Label="Name" Text="{Binding ModName, Mode=TwoWay}" ToolTip="The name of your mod. It can be arbitrary and won't impact the game." />
+      <fields:PropertyTextField IsRequired="True" Label="Folder Name" Text="{Binding ModPath, Mode=TwoWay}" ToolTip="Where your mod will be stored in the mod folder on your file system." />
+      <fields:PropertyTextField Label="Author" Text="{Binding ModAuthor, Mode=TwoWay}" ToolTip="The creator of the mod. This information is optional." />
+      <fields:PropertyTextField Label="Website" Text="{Binding ModWebsite, Mode=TwoWay}" ToolTip="A link associated to your mod. This information is optional." />
+      <fields:PropertyTextField Label="Description" AcceptsReturn="True" Text="{Binding ModDescription, Mode=TwoWay}" ToolTip="A description for your mod. This information is optional." />
     </StackPanel>
     <StackPanel Classes="modalActions" DockPanel.Dock="Bottom">
       <Button Content="Cancel" Command="{Binding ActionCancel}" CommandParameter="{Binding $parent[Window]}"></Button>

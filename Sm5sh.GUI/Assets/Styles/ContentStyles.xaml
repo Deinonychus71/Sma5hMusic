@@ -82,6 +82,9 @@
   <Style Selector="Label.error">
     <Setter Property="Foreground" Value="Red"/>
   </Style>
+  <Style Selector="Label.required">
+    <Setter Property="Foreground" Value="Red"/>
+  </Style>
   <Style Selector="TextBlock.error">
     <Setter Property="Foreground" Value="Red"/>
   </Style>
