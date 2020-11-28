@@ -1,0 +1,31 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="Sm5sh.GUI.Views.ContextMenuView">
+  <Menu>
+    <MenuItem Header="Import Songs..." Items="{Binding Mods}" IsEnabled="True">
+      <MenuItem.Styles>
+        <Style Selector="MenuItem > MenuItem">
+          <Setter Property="Header" Value="{Binding ModName}"/>
+          <Setter Property="Command" Value="{Binding $parent[Menu].DataContext.AddNewBgmEntry}"/>
+          <Setter Property="CommandParameter" Value="{Binding .}"/>
+        </Style>
+      </MenuItem.Styles>
+    </MenuItem>
+    <MenuItem Header="Manage..." IsEnabled="True">
+      <MenuItem Header="Games"/>
+      <MenuItem Header="Mods"/>
+    </MenuItem>
+    <MenuItem Header="{Binding WhenLocaleChanged^, Converter={StaticResource LocaleNameConverter}}" Items="{Binding Locales}">
+      <MenuItem.Styles>
+        <Style Selector="MenuItem > MenuItem">
+          <Setter Property="Header" Value="{Binding Label}"/>
+          <Setter Property="Command" Value="{Binding $parent[Menu].DataContext.ChangeLocale}"/>
+          <Setter Property="CommandParameter" Value="{Binding .}"/>
+        </Style>
+      </MenuItem.Styles>
+    </MenuItem>
+  </Menu>
+</UserControl>

@@ -59,6 +59,9 @@ namespace Sm5sh.GUI.ViewModels
 
         public void LoadLocalized(string locale)
         {
+            if (string.IsNullOrEmpty(locale))
+                return;
+
             if (MSBTTitle != null && MSBTTitle.ContainsKey(locale))
                 Title = MSBTTitle[locale];
             else

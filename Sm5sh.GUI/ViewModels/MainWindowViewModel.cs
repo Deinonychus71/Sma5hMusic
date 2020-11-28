@@ -17,6 +17,8 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using Sm5sh.GUI.Helpers;
 using AutoMapper;
+using System.Reactive.Linq;
+using ReactiveUI;
 
 namespace Sm5sh.GUI.ViewModels
 {
@@ -36,6 +38,7 @@ namespace Sm5sh.GUI.ViewModels
         private readonly ObservableCollection<GameTitleEntryViewModel> _gameTitleEntries;
         private readonly ObservableCollection<BgmEntryViewModel> _bgmEntries;
         private readonly ObservableCollection<ModEntryViewModel> _musicMods;
+        private string _currentLocale;
 
         public BgmPropertiesModalWindowViewModel VMBgmEditor { get; }
         public GamePropertiesModalWindowViewModel VMGameEditor { get; }
@@ -43,6 +46,8 @@ namespace Sm5sh.GUI.ViewModels
         public BgmSongsViewModel VMBgmSongs { get; }
         public PlaylistViewModel VMPlaylists { get; }
         public StageViewModel VMStages { get; }
+        public BgmFiltersViewModel VMBgmFilters { get; }
+        public ContextMenuViewModel VMContextMenu { get; }
 
         public MainWindowViewModel(IServiceProvider serviceProvider, IOptions<Sm5shOptions> config, IMapper mapper, IAudioStateService audioState, IVGMMusicPlayer musicPlayer,
             IMusicModManagerService musicModManagerService, IDialogWindow rootDialog, IFileDialog fileDialog, ILogger<MainWindowViewModel> logger)
@@ -59,27 +64,39 @@ namespace Sm5sh.GUI.ViewModels
             //DI
             _audioState = audioState;
 
-            //Initialize observables
+            //Initialize observables mods & locale
             _locales = new ObservableCollection<LocaleViewModel>();
             var observableLocaleList = _locales.ToObservableChangeSet(p => p.Id);
-            _seriesEntries = new ObservableCollection<SeriesEntryViewModel>();
-            var observableSeriesEntriesList = _seriesEntries.ToObservableChangeSet(p => p.SeriesId);
-            _bgmEntries = new ObservableCollection<BgmEntryViewModel>();
-            var observableBgmEntriesList = _bgmEntries.ToObservableChangeSet(p => p.ToneId);
             _musicMods = new ObservableCollection<ModEntryViewModel>();
             var observableMusicModsList = _musicMods.ToObservableChangeSet(p => p.ModId);
 
+            //Initialize Contextual Menu view
+            VMContextMenu = ActivatorUtilities.CreateInstance<ContextMenuViewModel>(serviceProvider, observableMusicModsList, observableLocaleList);
+
+            //Initialize Content Observables - Games & BGM are automatically localized
+            VMContextMenu.WhenLocaleChanged.Subscribe((locale) => _currentLocale = locale);
+            _seriesEntries = new ObservableCollection<SeriesEntryViewModel>();
+            var observableSeriesEntriesList = _seriesEntries.ToObservableChangeSet(p => p.SeriesId);
+            _bgmEntries = new ObservableCollection<BgmEntryViewModel>();
+            var observableBgmEntriesList = _bgmEntries.ToObservableChangeSet(p => p.ToneId)
+                .AutoRefreshOnObservable(p => VMContextMenu.WhenLocaleChanged)
+                .ForEachChange(o => o.Current.LoadLocalized(_currentLocale));
+            _gameTitleEntries = new ObservableCollection<GameTitleEntryViewModel>();
+            var observableGameEntriesList = _gameTitleEntries.ToObservableChangeSet(p => p.UiGameTitleId)
+                .AutoRefreshOnObservable(p => VMContextMenu.WhenLocaleChanged)
+                .ForEachChange(o => o.Current.LoadLocalized(_currentLocale));
+
+            //Initialize filters
+            VMBgmFilters = ActivatorUtilities.CreateInstance<BgmFiltersViewModel>(serviceProvider, observableBgmEntriesList);
+
             //Initialize main views
-            VMBgmSongs = ActivatorUtilities.CreateInstance<BgmSongsViewModel>(serviceProvider, observableBgmEntriesList, 
-                observableMusicModsList, observableLocaleList);
+            VMBgmFilters.WhenFiltersAreApplied.Subscribe((o) => { 
+                Console.WriteLine("DEBUG"); });
+            VMBgmSongs = ActivatorUtilities.CreateInstance<BgmSongsViewModel>(serviceProvider, VMBgmFilters.WhenFiltersAreApplied);
             VMPlaylists = ActivatorUtilities.CreateInstance<PlaylistViewModel>(serviceProvider);
             VMStages = ActivatorUtilities.CreateInstance<StageViewModel>(serviceProvider);
 
             //Initialize Editors
-            _gameTitleEntries = new ObservableCollection<GameTitleEntryViewModel>();
-            var observableGameEntriesList = _gameTitleEntries.ToObservableChangeSet(p => p.UiGameTitleId)
-                .AutoRefreshOnObservable(p => VMBgmSongs.WhenLocaleChanged)
-                .ForEachChange(o => o.Current.LoadLocalized(VMBgmSongs.SelectedLocale));
             VMGameEditor = ActivatorUtilities.CreateInstance<GamePropertiesModalWindowViewModel>(serviceProvider,
                 observableLocaleList, observableSeriesEntriesList, observableGameEntriesList);
             VMModEditor = ActivatorUtilities.CreateInstance<ModPropertiesModalWindowViewModel>(serviceProvider,
@@ -89,7 +106,7 @@ namespace Sm5sh.GUI.ViewModels
             VMBgmEditor.VMGamePropertiesModal = VMGameEditor;
 
             //Listen to requests from children
-            this.VMBgmSongs.WhenNewRequestToAddBgmEntry.Subscribe(async (o) => await AddNewBgmEntry(o));
+            this.VMContextMenu.WhenNewRequestToAddBgmEntry.Subscribe(async (o) => await AddNewBgmEntry(o));
             this.VMBgmSongs.VMBgmList.WhenNewRequestToEditBgmEntry.Subscribe(async (o) => await EditBgmEntry(o));
             this.VMBgmSongs.VMBgmList.WhenNewRequestToReorderBgmEntries.Subscribe((o) => ReorderSongs());
             this.VMGameEditor.WhenNewRequestToAddGameEntry.Subscribe((o) => AddNewGame(o));
@@ -190,7 +207,7 @@ namespace Sm5sh.GUI.ViewModels
 
             if (results != null)
             {
-                vmBgmEntry.LoadLocalized(VMBgmSongs.SelectedLocale);
+                vmBgmEntry.LoadLocalized(_currentLocale);
                 var bgmNew = _mapper.Map(vmBgmEntry, vmBgmEntry.GetBgmEntryReference());
                 bgmNew.GameTitle = _mapper.Map(vmBgmEntry.GameTitleViewModel, new GameTitleEntry(vmBgmEntry.UiGameTitleId));
                 vmBgmEntry.MusicMod.UpdateBgm(bgmNew);
