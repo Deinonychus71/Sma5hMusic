@@ -17,8 +17,8 @@
       <Label>Edit BGM Properties</Label>
     </Border>
     <StackPanel Classes="modalActions" DockPanel.Dock="Bottom">
-      <Button Content="Cancel" Command="{Binding ActionCancel}" CommandParameter="{Binding $parent[Window]}"></Button>
       <Button Content="Save Changes" Command="{Binding ActionSave}" CommandParameter="{Binding $parent[Window]}"></Button>
+      <Button Content="Cancel" Command="{Binding ActionCancel}" CommandParameter="{Binding $parent[Window]}"></Button>
     </StackPanel>
 
     <!-- Properties -->

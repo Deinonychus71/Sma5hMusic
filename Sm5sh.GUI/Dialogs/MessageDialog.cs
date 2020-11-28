@@ -33,5 +33,19 @@ namespace Sm5sh.GUI.Dialogs
             var result = await msBoxStandardWindow.ShowDialog(_rootDialogWindow.Window);
             return result == ButtonResult.Ok;
         }
+
+        public async Task ShowError(string title, string message)
+        {
+            var msBoxStandardWindow = MessageBoxManager.GetMessageBoxStandardWindow(new MessageBoxStandardParams
+            {
+                ButtonDefinitions = ButtonEnum.Ok,
+                WindowStartupLocation = Avalonia.Controls.WindowStartupLocation.CenterOwner,
+                ContentTitle = title,
+                ContentMessage = message,
+                Icon = Icon.Error,
+                Style = STYLE
+            });
+            await msBoxStandardWindow.ShowDialog(_rootDialogWindow.Window);
+        }
     }
 }

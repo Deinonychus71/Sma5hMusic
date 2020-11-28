@@ -196,6 +196,7 @@ namespace Sm5sh.GUI.ViewModels
                 //TODO: Handle error while adding file into mod
                 if (newBgm == null)
                 {
+
                     continue;
                 }
                 //TODO: Handle error while adding file into DB
