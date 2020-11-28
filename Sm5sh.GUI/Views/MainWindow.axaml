@@ -45,8 +45,8 @@
     </DockPanel>
     <Carousel Grid.Row="2" SelectedIndex="{Binding #TabsMenu.SelectedIndex}">
       <ContentControl Content="{Binding VMBgmSongs}"></ContentControl>
-      <TextBox></TextBox>
-      <TextBox></TextBox>
+      <ContentControl Content="{Binding VMPlaylists}"></ContentControl>
+      <ContentControl Content="{Binding VMStages}"></ContentControl>
     </Carousel >
     <GridSplitter Background="Gray" ResizeDirection="Rows" Grid.Row="3"/>
     <vw:DebugConsole Grid.Row="4"/>

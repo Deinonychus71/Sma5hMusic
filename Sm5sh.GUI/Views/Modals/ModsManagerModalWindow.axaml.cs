@@ -1,11 +1,12 @@
-﻿using Avalonia.Controls;
+﻿using Avalonia;
+using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 
 namespace Sm5sh.GUI.Views
 {
-    public class GamePropertiesModalWindow : Window
+    public class ModsManagerModalWindow : Window
     {
-        public GamePropertiesModalWindow()
+        public ModsManagerModalWindow()
         {
             this.InitializeComponent();
         }

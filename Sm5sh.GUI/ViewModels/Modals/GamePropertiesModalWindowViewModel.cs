@@ -18,7 +18,7 @@ using AutoMapper;
 
 namespace Sm5sh.GUI.ViewModels
 {
-    public class GamePropertiesModalWindowViewModel : ViewModelBase
+    public class GamePropertiesModalWindowViewModel : ViewModelBase, IDisposable
     {
         private readonly ReadOnlyObservableCollection<LocaleViewModel> _locales;
         private readonly ReadOnlyObservableCollection<SeriesEntryViewModel> _series;
@@ -171,6 +171,15 @@ namespace Sm5sh.GUI.ViewModels
         public void SubmitDialogCancel(Window window)
         {
             window.Close();
+        }
+
+        public void Dispose()
+        {
+            if (_whenNewRequestToAddGameEntry != null)
+            {
+                _whenNewRequestToAddGameEntry?.OnCompleted();
+                _whenNewRequestToAddGameEntry?.Dispose();
+            }
         }
     }
 }

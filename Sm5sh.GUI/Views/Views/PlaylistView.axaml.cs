@@ -1,11 +1,12 @@
-﻿using Avalonia.Controls;
+﻿using Avalonia;
+using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 
 namespace Sm5sh.GUI.Views
 {
-    public class GamePropertiesModalWindow : Window
+    public class PlaylistView : UserControl
     {
-        public GamePropertiesModalWindow()
+        public PlaylistView()
         {
             this.InitializeComponent();
         }

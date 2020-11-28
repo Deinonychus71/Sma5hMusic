@@ -16,7 +16,7 @@ using System.Reactive;
 using Avalonia.Controls;
 using Sm5sh.Mods.Music.Models;
 using System.Threading.Tasks;
-using Sm5sh.GUI.Views.Modals;
+using Sm5sh.GUI.Views;
 
 namespace Sm5sh.GUI.ViewModels
 {

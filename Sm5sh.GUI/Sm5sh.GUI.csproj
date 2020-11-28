@@ -66,6 +66,15 @@
     <Compile Update="Views\Fields\PropertyField.axaml.cs">
       <DependentUpon>PropertyField.axaml</DependentUpon>
     </Compile>
+    <Compile Update="Views\Modals\ModsManagerModalWindow.axaml.cs">
+      <DependentUpon>ModsManagerModalWindow.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\Views\PlaylistView.axaml.cs">
+      <DependentUpon>PlaylistView.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\Views\StageView.axaml.cs">
+      <DependentUpon>StageView.axaml</DependentUpon>
+    </Compile>
     <Compile Update="Views\Views\MSBTFieldView.axaml.cs">
       <DependentUpon>MSBTFieldView.axaml</DependentUpon>
     </Compile>

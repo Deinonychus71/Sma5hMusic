@@ -41,6 +41,8 @@ namespace Sm5sh.GUI.ViewModels
         public GamePropertiesModalWindowViewModel VMGameEditor { get; }
         public ModPropertiesModalWindowViewModel VMModEditor { get; }
         public BgmSongsViewModel VMBgmSongs { get; }
+        public PlaylistViewModel VMPlaylists { get; }
+        public StageViewModel VMStages { get; }
 
         public MainWindowViewModel(IServiceProvider serviceProvider, IOptions<Sm5shOptions> config, IMapper mapper, IAudioStateService audioState, IVGMMusicPlayer musicPlayer,
             IMusicModManagerService musicModManagerService, IDialogWindow rootDialog, IFileDialog fileDialog, ILogger<MainWindowViewModel> logger)
@@ -62,15 +64,16 @@ namespace Sm5sh.GUI.ViewModels
             var observableLocaleList = _locales.ToObservableChangeSet(p => p.Id);
             _seriesEntries = new ObservableCollection<SeriesEntryViewModel>();
             var observableSeriesEntriesList = _seriesEntries.ToObservableChangeSet(p => p.SeriesId);
-            
             _bgmEntries = new ObservableCollection<BgmEntryViewModel>();
             var observableBgmEntriesList = _bgmEntries.ToObservableChangeSet(p => p.ToneId);
             _musicMods = new ObservableCollection<ModEntryViewModel>();
             var observableMusicModsList = _musicMods.ToObservableChangeSet(p => p.ModId);
 
-            //Initialize filters
+            //Initialize main views
             VMBgmSongs = ActivatorUtilities.CreateInstance<BgmSongsViewModel>(serviceProvider, observableBgmEntriesList, 
                 observableMusicModsList);
+            VMPlaylists = ActivatorUtilities.CreateInstance<PlaylistViewModel>(serviceProvider);
+            VMStages = ActivatorUtilities.CreateInstance<StageViewModel>(serviceProvider);
 
             //Initialize Editors
             _gameTitleEntries = new ObservableCollection<GameTitleEntryViewModel>();

@@ -4,7 +4,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         Width="500" Height="500" MinWidth="500"  MinHeight="500"
-        x:Class="Sm5sh.GUI.Views.Modals.GamePropertiesModalWindow"
+        x:Class="Sm5sh.GUI.Views.GamePropertiesModalWindow"
         xmlns:fields="clr-namespace:Sm5sh.GUI.Views.Fields"
         Title="GamePropertiesModalWindow">
   <Window.Styles>
