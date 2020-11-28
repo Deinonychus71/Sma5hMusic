@@ -82,6 +82,7 @@ namespace Sm5sh.GUI.ViewModels
             var observableSeriesEntriesList = _seriesEntries.ToObservableChangeSet(p => p.SeriesId);
             _bgmEntries = new ObservableCollection<BgmEntryViewModel>();
             var observableBgmEntriesList = _bgmEntries.ToObservableChangeSet(p => p.ToneId)
+                .DeferUntilLoaded()
                 .AutoRefreshOnObservable(p => VMContextMenu.WhenLocaleChanged)
                 .ForEachChange(o => o.Current.LoadLocalized(_currentLocale));
             _gameTitleEntries = new ObservableCollection<GameTitleEntryViewModel>();

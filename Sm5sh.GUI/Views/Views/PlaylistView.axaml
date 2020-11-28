@@ -13,7 +13,7 @@
   <Grid ColumnDefinitions="3*,5,4*" RowDefinitions="30,*">
     <ContentControl Grid.Row="0" Grid.Column="0" Content="{Binding VMContextMenu}"></ContentControl>
     <Grid Grid.Row="1" Grid.Column="0" Classes="list">
-      <DataGrid Classes="bgmList" SelectedItem="{Binding SelectedBgmEntry, Mode=TwoWay}" Items="{Binding Bgms, Mode=OneWay}">
+      <DataGrid Classes="bgmList" Items="{Binding Bgms, Mode=OneWay}">
         <i:Interaction.Behaviors>
           <ia:EventTriggerBehavior EventName="CellPointerPressed">
             <ia:InvokeCommandAction Command="{Binding ActionSendToPlaylist}"/>
@@ -61,7 +61,7 @@
           <ia:InvokeCommandAction Command="{Binding ActionInitializeDragAndDrop, Mode=OneWay}" CommandParameter="{Binding $parent[Grid]}"/>
         </ia:EventTriggerBehavior>
       </i:Interaction.Behaviors>
-      <DataGrid DragDrop.AllowDrop="True" Classes="bgmList" SelectedItem="{Binding SelectedPlaylistValueEntry, Mode=TwoWay}" Items="{Binding SelectedPlaylistOrderedEntry, Mode=OneWay}">
+      <DataGrid DragDrop.AllowDrop="True" Classes="bgmList" SelectedItem="{Binding SelectedPlaylistValueEntry, Mode=TwoWay}" Items="{Binding SelectedPlaylistOrderedEntry}">
         <i:Interaction.Behaviors>
           <ia:EventTriggerBehavior EventName="CellPointerPressed">
             <ia:InvokeCommandAction Command="{Binding ActionReorderPlaylist}"/>
@@ -83,6 +83,16 @@
               </DataTemplate>
             </DataGridTemplateColumn.CellTemplate>
           </DataGridTemplateColumn>
+          <DataGridTemplateColumn Header="Actions" CanUserResize="false" Width="80">
+            <DataGridTemplateColumn.CellTemplate>
+              <DataTemplate>
+                <StackPanel Orientation="Horizontal">
+                  <Button Width="40" FontFamily="Segoe UI Symbol" HorizontalContentAlignment="Center" Content="&#x274C;" Command="{Binding $parent[DataGrid].DataContext.ActionDeletePlaylistItem, Mode=OneWay}" CommandParameter="{Binding}"/>
+                </StackPanel>
+              </DataTemplate>
+            </DataGridTemplateColumn.CellTemplate>
+          </DataGridTemplateColumn>
+          <DataGridTextColumn Width="16" />
         </DataGrid.Columns>
       </DataGrid>
     </Grid>

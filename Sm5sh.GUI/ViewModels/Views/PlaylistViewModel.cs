@@ -1,5 +1,4 @@
-﻿using DynamicData;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using ReactiveUI.Fody.Helpers;
 using ILogger = Microsoft.Extensions.Logging.ILogger;
 using System;
@@ -10,11 +9,13 @@ using ReactiveUI;
 using Avalonia.Controls;
 using System.Reactive;
 using System.Reactive.Subjects;
-using DynamicData.Binding;
 using System.Reactive.Linq;
 using Avalonia.Input;
 using System.Threading.Tasks;
 using Sm5sh.GUI.Models;
+using DynamicData.Binding;
+using DynamicData;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Sm5sh.GUI.ViewModels
 {
@@ -23,44 +24,40 @@ namespace Sm5sh.GUI.ViewModels
         private readonly ILogger _logging;
         private readonly ReadOnlyObservableCollection<BgmEntryViewModel> _bgms;
         private readonly ReadOnlyObservableCollection<PlaylistEntryViewModel> _playlists;
+        private readonly ReadOnlyObservableCollection<PlaylistEntryValueViewModel> _selectedPlaylistOrderedEntry;
         private readonly BehaviorSubject<PlaylistEntryViewModel> _whenPlaylistSelected;
         private readonly BehaviorSubject<ComboItem> _whenPlaylistOrderSelected;
-        private readonly Subject<Unit> _whenNewRequestToReorderBgmEntries;
+        private readonly Subject<Unit> _whenNewRequestToUpdatePlaylists;
         private const string DATAOBJECT_FORMAT_BGM = "BGM";
         private const string DATAOBJECT_FORMAT_PLAYLIST = "PLAYLIST";
         private readonly List<ComboItem> _orderMenu;
         private Action _postReorderSelection;
         private Grid _refGrid;
 
+        public IEnumerable<ComboItem> OrderMenu { get { return _orderMenu; } }
         public ContextMenuViewModel VMContextMenu { get; }
 
-        public IObservable<Unit> WhenNewRequestToReorderBgmEntries { get { return _whenNewRequestToReorderBgmEntries; } }
-
+        public IObservable<PlaylistEntryViewModel> WhenPlaylistSelected { get { return _whenPlaylistSelected; } }
+        public IObservable<ComboItem> WhenPlaylistOrderSelected { get { return _whenPlaylistOrderSelected; } }
+        public IObservable<Unit> WhenNewRequestToUpdatePlaylists { get { return _whenNewRequestToUpdatePlaylists; } }
         public ReadOnlyObservableCollection<BgmEntryViewModel> Bgms { get { return _bgms; } }
         public ReadOnlyObservableCollection<PlaylistEntryViewModel> Playlists { get { return _playlists; } }
-
-        [Reactive]
-        public BgmEntryViewModel SelectedBgmEntry { get; private set; }
+        public ReadOnlyObservableCollection<PlaylistEntryValueViewModel> SelectedPlaylistOrderedEntry { get { return _selectedPlaylistOrderedEntry; } }
 
         [Reactive]
         public PlaylistEntryViewModel SelectedPlaylistEntry { get; private set; }
         [Reactive]
-        public PlaylistEntryValueViewModel SelectedPlaylistValueEntry { get; private set; }
+        public PlaylistEntryValueViewModel SelectedPlaylistValueEntry { get; set; }
         [Reactive]
         public short SelectedPlaylistOrder { get; private set; }
-        [Reactive]
-        public ObservableCollection<PlaylistEntryValueViewModel> SelectedPlaylistOrderedEntry { get; private set; }
 
 
         public ReactiveCommand<DataGridCellPointerPressedEventArgs, Unit> ActionReorderPlaylist { get; }
         public ReactiveCommand<DataGridCellPointerPressedEventArgs, Unit> ActionSendToPlaylist { get; }
         public ReactiveCommand<Grid, Unit> ActionInitializeDragAndDrop { get; }
         public ReactiveCommand<PlaylistEntryViewModel, Unit> ActionSelectPlaylist { get; }
+        public ReactiveCommand<PlaylistEntryValueViewModel, Unit> ActionDeletePlaylistItem { get; }
         public ReactiveCommand<ComboItem, Unit> ActionSelectPlaylistOrder { get; }
-
-        public IEnumerable<ComboItem> OrderMenu { get { return _orderMenu; } }
-        public IObservable<PlaylistEntryViewModel> WhenPlaylistSelected { get { return _whenPlaylistSelected; } }
-        public IObservable<ComboItem> WhenPlaylistOrderSelected { get { return _whenPlaylistOrderSelected; } }
 
 
         public PlaylistViewModel(ILogger<PlaylistViewModel> logging, IObservable<IChangeSet<BgmEntryViewModel, string>> observableBgmEntries,
@@ -69,7 +66,7 @@ namespace Sm5sh.GUI.ViewModels
             _logging = logging;
             VMContextMenu = vmContextMenu;
             _orderMenu = GetOrderList();
-            _whenNewRequestToReorderBgmEntries = new Subject<Unit>();
+            _whenNewRequestToUpdatePlaylists = new Subject<Unit>();
 
             //Bgms
             observableBgmEntries
@@ -94,11 +91,25 @@ namespace Sm5sh.GUI.ViewModels
             _whenPlaylistSelected = new BehaviorSubject<PlaylistEntryViewModel>(_playlists.FirstOrDefault());
             _whenPlaylistOrderSelected = new BehaviorSubject<ComboItem>(_orderMenu.FirstOrDefault());
 
+            //How
+            observablePlaylistEntries
+                    .AutoRefreshOnObservable(p => this.WhenPlaylistSelected)
+                    .Filter(p => this.SelectedPlaylistEntry != null && this.SelectedPlaylistEntry.Id == p.Id)
+                    .TransformMany(p => p.Tracks[SelectedPlaylistOrder], p => p.UiBgmId)
+                    .Sort(SortExpressionComparer<PlaylistEntryValueViewModel>.Ascending(p => p.Order), SortOptimisations.ComparesImmutableValuesOnly, 1)
+                    .TreatMovesAsRemoveAdd()
+                    .ObserveOn(RxApp.MainThreadScheduler)
+                    .Bind(out _selectedPlaylistOrderedEntry)
+                    .DisposeMany()
+                    .Subscribe();
+
+
             ActionReorderPlaylist = ReactiveCommand.CreateFromTask<DataGridCellPointerPressedEventArgs>(ReorderPlaylist);
             ActionSendToPlaylist = ReactiveCommand.CreateFromTask<DataGridCellPointerPressedEventArgs>(SendToPlaylist);
             ActionInitializeDragAndDrop = ReactiveCommand.Create<Grid>(InitializeDragAndDropHandlers);
             ActionSelectPlaylist = ReactiveCommand.Create<PlaylistEntryViewModel>(SelectPlaylistId);
             ActionSelectPlaylistOrder = ReactiveCommand.Create<ComboItem>(SelectPlaylistOrder);
+            //ActionDeletePlaylistItem = ReactiveCommand.Create<PlaylistEntryValueViewModel>(SelectPlaylistOrder);
         }
 
         #region Drag & Drop
@@ -142,7 +153,7 @@ namespace Sm5sh.GUI.ViewModels
         {
             if (((Control)e.Source).DataContext is PlaylistEntryValueViewModel destinationObj)
             {
-                if(e.Data.Get(DATAOBJECT_FORMAT_BGM) is BgmEntryViewModel sourceBgmObj)
+                if (e.Data.Get(DATAOBJECT_FORMAT_BGM) is BgmEntryViewModel sourceBgmObj)
                 {
                     DropSendToPlaylist(sourceBgmObj, destinationObj);
                 }
@@ -193,27 +204,14 @@ namespace Sm5sh.GUI.ViewModels
         #region Playlists
         private void SelectPlaylistId(PlaylistEntryViewModel vmPlaylist)
         {
-            _whenPlaylistSelected.OnNext(vmPlaylist);
             SelectedPlaylistEntry = vmPlaylist;
-            SelectPlaylist();
+            _whenPlaylistSelected.OnNext(vmPlaylist);
         }
 
         private void SelectPlaylistOrder(ComboItem orderItem)
         {
-            _whenPlaylistOrderSelected.OnNext(orderItem);
             SelectedPlaylistOrder = short.Parse(orderItem.Id);
-            SelectPlaylist();
-        }
-
-        private void SelectPlaylist()
-        {
-            if (SelectedPlaylistEntry == null)
-                return;
-
-            if (SelectedPlaylistEntry.Tracks.ContainsKey(SelectedPlaylistOrder))
-                SelectedPlaylistOrderedEntry = SelectedPlaylistEntry.Tracks[SelectedPlaylistOrder];
-            else
-                SelectedPlaylistOrderedEntry = null;
+            _whenPlaylistOrderSelected.OnNext(orderItem);
         }
 
         private List<ComboItem> GetOrderList()
@@ -227,10 +225,10 @@ namespace Sm5sh.GUI.ViewModels
 
         public void Dispose()
         {
-            if (_whenNewRequestToReorderBgmEntries != null)
+            if (_whenNewRequestToUpdatePlaylists != null)
             {
-                _whenNewRequestToReorderBgmEntries?.OnCompleted();
-                _whenNewRequestToReorderBgmEntries?.Dispose();
+                _whenNewRequestToUpdatePlaylists?.OnCompleted();
+                _whenNewRequestToUpdatePlaylists?.Dispose();
             }
         }
     }

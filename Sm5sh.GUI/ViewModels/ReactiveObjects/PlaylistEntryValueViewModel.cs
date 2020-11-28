@@ -11,6 +11,7 @@ namespace Sm5sh.GUI.ViewModels
         public BgmEntryViewModel BgmReference { get; set; }
 
         public ushort Incidence { get; set; }
+
         public short Order { get; set; }
 
         public PlaylistEntryValueViewModel(string bgmId, short order, ushort incidence, BgmEntryViewModel vmBgmEntry = null)

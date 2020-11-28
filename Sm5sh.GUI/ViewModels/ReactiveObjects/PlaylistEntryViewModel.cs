@@ -101,7 +101,7 @@ namespace Sm5sh.GUI.ViewModels
                     }
                 }
             }
-            return output.ToDictionary(p => p.Key, p => new ObservableCollection<PlaylistEntryValueViewModel>(p.Value.OrderBy(p => p.Order)));
+            return output.ToDictionary(p => p.Key, p => new ObservableCollection<PlaylistEntryValueViewModel>(p.Value));
         }
 
         public override bool Equals(object obj)
