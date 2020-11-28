@@ -71,7 +71,7 @@ namespace Sm5sh.GUI.ViewModels
 
             //Initialize main views
             VMBgmSongs = ActivatorUtilities.CreateInstance<BgmSongsViewModel>(serviceProvider, observableBgmEntriesList, 
-                observableMusicModsList);
+                observableMusicModsList, observableLocaleList);
             VMPlaylists = ActivatorUtilities.CreateInstance<PlaylistViewModel>(serviceProvider);
             VMStages = ActivatorUtilities.CreateInstance<StageViewModel>(serviceProvider);
 

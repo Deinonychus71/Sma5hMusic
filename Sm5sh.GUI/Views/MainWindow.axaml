@@ -23,6 +23,8 @@
         <MenuItem Header="Build"></MenuItem>
         <MenuItem Header="Build [no cache]"></MenuItem>
         <Separator></Separator>
+        <MenuItem Header="Refresh Data"></MenuItem>
+        <Separator></Separator>
         <MenuItem Header="Exit"></MenuItem>
       </MenuItem>
       <MenuItem Header="Tools">

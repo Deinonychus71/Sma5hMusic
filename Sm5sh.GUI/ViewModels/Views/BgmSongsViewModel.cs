@@ -10,11 +10,9 @@ using DynamicData.Binding;
 using System.Reactive.Linq;
 using System.Collections.ObjectModel;
 using System.Linq;
-using Sm5sh.GUI.Models;
 using Avalonia;
 using System.Reactive.Subjects;
 using System.Collections.Generic;
-using Sm5sh.Mods.Music.Interfaces;
 
 namespace Sm5sh.GUI.ViewModels
 {
@@ -23,6 +21,7 @@ namespace Sm5sh.GUI.ViewModels
         private readonly ILogger _logger;
         private readonly IChangeSet<ModEntryViewModel, string> _newModSet;
         private readonly ReadOnlyObservableCollection<ModEntryViewModel> _mods;
+        private readonly ReadOnlyObservableCollection<LocaleViewModel> _locales;
         private readonly Subject<ModEntryViewModel> _whenNewRequestToAddBgmEntry;
         private readonly IObservable<string> _whenLocaleChanged;
 
@@ -30,6 +29,7 @@ namespace Sm5sh.GUI.ViewModels
         public BgmFiltersViewModel VMBgmFilters { get; }
         public BgmPropertiesViewModel VMBgmProperties { get; }
         public ReadOnlyObservableCollection<ModEntryViewModel> Mods { get { return _mods; } }
+        public ReadOnlyObservableCollection<LocaleViewModel> Locales { get { return _locales; } }
         public IObservable<ModEntryViewModel> WhenNewRequestToAddBgmEntry { get { return _whenNewRequestToAddBgmEntry; } }
         public IObservable<string> WhenLocaleChanged { get { return _whenLocaleChanged; } }
 
@@ -38,7 +38,8 @@ namespace Sm5sh.GUI.ViewModels
 
         public BgmSongsViewModel(IServiceProvider serviceProvider, ILogger<BgmSongsViewModel> logger, 
             IObservable<IChangeSet<BgmEntryViewModel, string>> observableBgmEntriesList,
-            IObservable<IChangeSet<ModEntryViewModel, string>> observableMusicModsList)
+            IObservable<IChangeSet<ModEntryViewModel, string>> observableMusicModsList,
+            IObservable<IChangeSet<LocaleViewModel, string>> observableLocalesList)
         {
             _logger = logger;
             _whenNewRequestToAddBgmEntry = new Subject<ModEntryViewModel>();
@@ -58,6 +59,12 @@ namespace Sm5sh.GUI.ViewModels
                 .Bind(out _mods)
                 .DisposeMany()
                 .Subscribe();
+            //locales
+            observableLocalesList
+                .ObserveOn(RxApp.MainThreadScheduler)
+                .Bind(out _locales)
+                .DisposeMany()
+                .Subscribe();
 
             //Initialize filters
             VMBgmFilters = ActivatorUtilities.CreateInstance<BgmFiltersViewModel>(serviceProvider, observableLocalizedBgmEntriesList);
@@ -70,9 +77,9 @@ namespace Sm5sh.GUI.ViewModels
             VMBgmProperties = ActivatorUtilities.CreateInstance<BgmPropertiesViewModel>(serviceProvider, whenSelectedBgmEntryChanged);
         }
 
-        public void ChangeLocale(string locale)
+        public void ChangeLocale(LocaleViewModel vmLocale)
         {
-            SelectedLocale = locale;
+            SelectedLocale = vmLocale.Id;
         }
 
         public void AddNewBgmEntry(ModEntryViewModel vmMusicMod)

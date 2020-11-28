@@ -11,21 +11,14 @@
     <ContentControl Grid.Column="0" Grid.Row="2" Content="{Binding VMBgmFilters}"></ContentControl>
     <DockPanel Grid.Column="1" Grid.Row="0">
       <Menu DockPanel.Dock="Right">
-        <MenuItem Header="{Binding SelectedLocale, Converter={StaticResource LocaleNameConverter}}">
-          <MenuItem Header="English (US)" Command="{Binding ChangeLocale}" CommandParameter="us_en"></MenuItem>
-          <MenuItem Header="Spain (US)" Command="{Binding ChangeLocale}" CommandParameter="us_es"></MenuItem>
-          <MenuItem Header="French (Canada)" Command="{Binding ChangeLocale}" CommandParameter="us_fr"></MenuItem>
-          <MenuItem Header="English (UK)" Command="{Binding ChangeLocale}" CommandParameter="eu_en"></MenuItem>
-          <MenuItem Header="German" Command="{Binding ChangeLocale}" CommandParameter="eu_de"></MenuItem>
-          <MenuItem Header="Spanish (Spain)" Command="{Binding ChangeLocale}" CommandParameter="eu_sp"></MenuItem>
-          <MenuItem Header="French (France)" Command="{Binding ChangeLocale}" CommandParameter="eu_fr"></MenuItem>
-          <MenuItem Header="Italian" Command="{Binding ChangeLocale}" CommandParameter="eu_it"></MenuItem>
-          <MenuItem Header="Dutch" Command="{Binding ChangeLocale}" CommandParameter="eu_nl"></MenuItem>
-          <MenuItem Header="Russian" Command="{Binding ChangeLocale}" CommandParameter="eu_ru"></MenuItem>
-          <MenuItem Header="Japanese" Command="{Binding ChangeLocale}" CommandParameter="jp_ja"></MenuItem>
-          <MenuItem Header="Chinese (Simplified)" Command="{Binding ChangeLocale}" CommandParameter="zh_cn"></MenuItem>
-          <MenuItem Header="Chinese (Traditional)" Command="{Binding ChangeLocale}" CommandParameter="zh_tw"></MenuItem>
-          <MenuItem Header="Korean" Command="{Binding ChangeLocale}" CommandParameter="kr_ko"></MenuItem>
+        <MenuItem Header="{Binding SelectedLocale, Converter={StaticResource LocaleNameConverter}}" Items="{Binding Locales}">
+          <MenuItem.Styles>
+            <Style Selector="MenuItem > MenuItem">
+              <Setter Property="Header" Value="{Binding Label}"/>
+              <Setter Property="Command" Value="{Binding $parent[DockPanel].DataContext.ChangeLocale}"/>
+              <Setter Property="CommandParameter" Value="{Binding .}"/>
+            </Style>
+          </MenuItem.Styles>
         </MenuItem>
       </Menu>
       <Menu DockPanel.Dock="Left">

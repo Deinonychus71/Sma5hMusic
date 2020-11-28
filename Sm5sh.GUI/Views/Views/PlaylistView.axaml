@@ -4,5 +4,21 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Sm5sh.GUI.Views.PlaylistView">
-    Welcome to Avalonia!
+  <Grid ColumnDefinitions="*,5*,*" RowDefinitions="30,20,*">
+    <ContentControl Grid.Column="0" Grid.Row="2" Content="{Binding VMBgmFilters}"></ContentControl>
+    <DockPanel Grid.Column="1" Grid.Row="0">
+      <Menu DockPanel.Dock="Right">
+        <MenuItem Header="{Binding SelectedLocale, Converter={StaticResource LocaleNameConverter}}" Items="{Binding Locales}">
+          <MenuItem.Styles>
+            <Style Selector="MenuItem > MenuItem">
+              <Setter Property="Header" Value="{Binding Label}"/>
+              <Setter Property="Command" Value="{Binding $parent[DockPanel].DataContext.ChangeLocale}"/>
+              <Setter Property="CommandParameter" Value="{Binding .}"/>
+            </Style>
+          </MenuItem.Styles>
+        </MenuItem>
+      </Menu>
+    </DockPanel>
+    <ContentControl Grid.Column="1" Grid.Row="1" Grid.RowSpan="2" Classes="list" Content="{Binding VMBgmList}"/>
+  </Grid>
 </UserControl>
