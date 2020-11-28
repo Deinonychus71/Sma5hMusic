@@ -13,20 +13,20 @@ namespace Sm5sh.GUI.Dialogs
         private ILogger _logger;
         private IDialogWindow _rootDialogWindow;
         private OpenFileDialog _openFileDialog;
-        private string _savedDirectiory;
+        private string _savedDirectory;
 
         public FileDialog(IDialogWindow rootDialogWindow, ILogger<FileDialog> logger)
         {
             _logger = logger;
             _rootDialogWindow = rootDialogWindow;
-            _savedDirectiory = Environment.CurrentDirectory;
+            _savedDirectory = Environment.CurrentDirectory;
             _openFileDialog = new OpenFileDialog();
         }
 
         public async Task<string[]> OpenFileDialogAudio(Window parent = null)
         {
             _openFileDialog.AllowMultiple = true;
-            _openFileDialog.Directory = _savedDirectiory;
+            _openFileDialog.Directory = _savedDirectory;
             _openFileDialog.Filters = new List<FileDialogFilter>()
             {
                 new FileDialogFilter()
@@ -47,7 +47,7 @@ namespace Sm5sh.GUI.Dialogs
                 results = await _openFileDialog.ShowAsync(parent);
 
             if(results.Length > 0)
-                _savedDirectiory = Path.GetDirectoryName(results[0]);
+                _savedDirectory = Path.GetDirectoryName(results[0]);
 
             return results;
         }

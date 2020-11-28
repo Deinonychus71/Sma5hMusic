@@ -26,15 +26,12 @@ namespace Sm5sh.GUI.ViewModels
         public Dictionary<string, string> MSBTAuthor { get { return MSBTLabels.Author; } }
         public Dictionary<string, string> MSBTCopyright { get { return MSBTLabels.Copyright; } }
         public bool HiddenInSoundTest { get { return DbRoot.TestDispOrder == -1; } }
-        //public short SoundTestIndex { get { return DbRoot.TestDispOrder; } }
         public string RecordType { get { return DbRoot.RecordType; } }
         public string SpecialCategoryLabel { get { return StreamSet.SpecialCategory; } }
         public string SpecialParam1Label { get { return StreamSet.Info1; } }
         public string SpecialParam2Label { get { return StreamSet.Info2; } }
         public string SpecialParam3Label { get { return StreamSet.Info3; } }
         public string SpecialParam4Label { get { return StreamSet.Info4; } }
-        public short SoundTestIndex { get { return DbRoot.TestDispOrder; } }
-
 
 
         //Getters/Private Setters - For This View Only
@@ -51,10 +48,16 @@ namespace Sm5sh.GUI.ViewModels
         public BgmEntryViewModel(IVGMMusicPlayer musicPlayer, BgmEntry bgmEntry)
             : base(bgmEntry)
         {
-            //Music Player
-            DoesFileExist = File.Exists(bgmEntry.Filename);
-            if (DoesFileExist)
-                MusicPlayer = new MusicPlayerViewModel(musicPlayer, bgmEntry.Filename);
+            if (bgmEntry != null)
+            {
+                if (musicPlayer != null)
+                {
+                    //Music Player
+                    DoesFileExist = File.Exists(bgmEntry.Filename);
+                    if (DoesFileExist)
+                        MusicPlayer = new MusicPlayerViewModel(musicPlayer, bgmEntry.Filename);
+                }
+            }
         }
 
         public void LoadLocalized(string locale)

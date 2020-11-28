@@ -29,6 +29,7 @@
     <PackageReference Include="Avalonia.Desktop" Version="0.10.0-preview6" />
     <PackageReference Include="Avalonia.ReactiveUI" Version="0.10.0-preview6" />
     <PackageReference Include="Avalonia.Xaml.Behaviors" Version="0.10.0-preview6" />
+    <PackageReference Include="MessageBox.Avalonia" Version="0.10.0-prev2" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="5.0.0" />
     <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="5.0.0" />
     <PackageReference Include="ReactiveUI.Fody" Version="12.1.5" />
@@ -72,9 +73,6 @@
     <Compile Update="Views\Views\PlaylistView.axaml.cs">
       <DependentUpon>PlaylistView.axaml</DependentUpon>
     </Compile>
-    <Compile Update="Views\Views\StageView.axaml.cs">
-      <DependentUpon>StageView.axaml</DependentUpon>
-    </Compile>
     <Compile Update="Views\Views\MSBTFieldView.axaml.cs">
       <DependentUpon>MSBTFieldView.axaml</DependentUpon>
     </Compile>
@@ -83,9 +81,6 @@
     </Compile>
     <Compile Update="Views\Views\BgmFiltersView.axaml.cs">
       <DependentUpon>BgmFiltersView.axaml</DependentUpon>
-    </Compile>
-    <Compile Update="Views\Views\BgmListView.axaml.cs">
-      <DependentUpon>BgmListView.axaml</DependentUpon>
     </Compile>
     <Compile Update="Views\Views\BgmPropertiesView.axaml.cs">
       <DependentUpon>BgmPropertiesView.axaml</DependentUpon>

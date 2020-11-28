@@ -74,6 +74,7 @@ namespace Sm5sh.GUI
             //Add UI Services
             services.AddSingleton<IVGMMusicPlayer, VGMMusicPlayer>();
             services.AddSingleton<IFileDialog, FileDialog>();
+            services.AddSingleton<IMessageDialog, MessageDialog>();
             services.AddAutoMapper(typeof(MappingViewModels));
 
             //Add to Splat

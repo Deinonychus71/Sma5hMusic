@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using Sm5sh.Mods.Music.MusicMods.AdvancedMusicModModels;
 using Sm5sh.Mods.Music.MusicOverride.MusicOverrideConfigModels;
 using System.Collections.Generic;
 
@@ -8,6 +9,9 @@ namespace Sm5sh.Mods.Music.MusicOverride
     {
         public Dictionary<string, short> SoundTestOrder { get; set; }
         public Dictionary<string, List<BgmPlaylistConfig>> Playlists { get; set; }
+        public Dictionary<string, BgmConfig> CoreOverrides { get; set; }
+        public Dictionary<string, StageConfig> StageOverrides { get; set; }
+        public Dictionary<string, GameConfig> GameOverrides { get; set; }
     }
 
     namespace MusicOverrideConfigModels
@@ -112,6 +116,14 @@ namespace Sm5sh.Mods.Music.MusicOverride
 
             [JsonProperty("incidence15")]
             public ushort Incidence15 { get; set; }
+        }
+
+        public class StageConfig
+        {
+            [JsonProperty("playlist_id")]
+            public string PlaylistId { get; set; }
+            [JsonProperty("order_id")]
+            public ushort OrderId { get; set; }
         }
     }
 }

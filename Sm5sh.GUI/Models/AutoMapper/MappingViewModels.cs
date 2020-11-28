@@ -31,8 +31,7 @@ namespace Sm5sh.Mods.Music.Models.AutoMapper
                 .ForMember(i => i.BgmProperties, me => me.MapFrom(p => p.BgmProperties))
                 .ForMember(i => i.MSBTLabels, me => me.MapFrom(p => p.MSBTLabels))
                 .ForMember(i => i.NUS3BankConfig, me => me.MapFrom(p => p.NUS3BankConfig))
-                .ForMember(i => i.GameTitle, me => me.Ignore())
-                .ForMember(i => i.Playlists, me => me.Ignore());
+                .ForMember(i => i.GameTitle, me => me.Ignore());
             CreateMap<BgmEntry, GUI.ViewModels.BgmEntryEditableViewModel>()
                 .ForMember(i => i.ToneId, me => me.Ignore())
                 .ForMember(i => i.Filename, me => me.MapFrom(p => p.Filename))

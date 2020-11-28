@@ -81,7 +81,9 @@ namespace Sm5sh.Mods.Music.MusicMods
                     newSong.BgmProperties.LoopStartSample = audioCuePoints.LoopStartSample;
                     newSong.BgmProperties.TotalSamples = audioCuePoints.TotalSamples;
                     newSong.BgmProperties.TotalTimeMs = audioCuePoints.TotalTimeMs;
-                    if (song.Playlists != null)
+
+                    //No longer in mod
+                    /*if (song.Playlists != null)
                     {
                         foreach (var playlist in song.Playlists)
                         {
@@ -89,7 +91,7 @@ namespace Sm5sh.Mods.Music.MusicMods
                                 newSong.Playlists.Add(playlist.Id, new List<Models.BgmEntryModels.BgmPlaylistEntry>());
                             newSong.Playlists[playlist.Id].Add(new Models.BgmEntryModels.BgmPlaylistEntry(newSong));
                         }
-                    }
+                    }*/
                     output.Add(newSong);
 
                     _logger.LogInformation("Mod {MusicMod}: Adding song {Song} ({ToneName})", _musicModConfig.Name, song.Id, toneId);

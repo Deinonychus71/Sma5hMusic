@@ -8,10 +8,10 @@ namespace Sm5sh.Data.Ui.Param.Database
     {
         [PrcDictionary("ui_stage_id")]
         [PrcHexMapping("db_root")]
-        public Dictionary<string, PrcUiStageDatabasModels.StageDbRootEntry> DbRootEntries { get; set; }
+        public Dictionary<string, PrcUiStageDatabaseModels.StageDbRootEntry> DbRootEntries { get; set; }
     }
 
-    namespace PrcUiStageDatabasModels
+    namespace PrcUiStageDatabaseModels
     {
         public class StageDbRootEntry
         {
@@ -22,7 +22,7 @@ namespace Sm5sh.Data.Ui.Param.Database
             public string NameId { get; set; }
 
             [PrcHexMapping("save_no")]
-            public short Save_no { get; set; }
+            public short SaveNo { get; set; }
 
             [PrcHexMapping("ui_series_id", true)]
             public string UiSeriesId { get; set; }

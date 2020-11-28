@@ -30,6 +30,8 @@ namespace Sm5sh.Mods.Music.Services
         private readonly Dictionary<string, GameTitleEntry> _gameEntries;
         private readonly Dictionary<string, BgmEntry> _bgmEntries;
         private readonly Dictionary<string, BgmEntry> _deletedBgmEntries; //TODO
+        private readonly Dictionary<string, PlaylistEntry> _playlistsEntries;
+        private readonly Dictionary<string, StageEntry> _stageEntries;
 
         public AudioStateService(IOptions<Sm5shMusicOptions> config, IMapper mapper, IStateManager state, ILogger<IAudioStateService> logger)
         {
@@ -42,6 +44,8 @@ namespace Sm5sh.Mods.Music.Services
             _seriesEntries = new HashSet<string>();
             _localesEntries = new HashSet<string>();
             _bgmEntries = new Dictionary<string, BgmEntry>();
+            _playlistsEntries = new Dictionary<string, PlaylistEntry>();
+            _stageEntries = new Dictionary<string, StageEntry>();
             InitBgmEntriesFromStateManager();
         }
 
@@ -65,6 +69,11 @@ namespace Sm5sh.Mods.Music.Services
             return _gameEntries.Values;
         }
 
+        public IEnumerable<StageEntry> GetStagesEntries()
+        {
+            return _stageEntries.Values;
+        }
+
         public IEnumerable<string> GetSeriesEntries()
         {
             return _seriesEntries;
@@ -73,6 +82,11 @@ namespace Sm5sh.Mods.Music.Services
         public IEnumerable<string> GetLocales()
         {
             return _localesEntries;
+        }
+
+        public IEnumerable<PlaylistEntry> GetPlaylists()
+        {
+            return _playlistsEntries.Values;
         }
 
         public bool AddBgmEntry(BgmEntry bgmEntry)
@@ -104,7 +118,7 @@ namespace Sm5sh.Mods.Music.Services
             return true;
         }
 
-        public void RemoveBgmEntry(string toneId)
+        public bool RemoveBgmEntry(string toneId)
         {
             if (_bgmEntries.ContainsKey(toneId))
             {
@@ -115,6 +129,36 @@ namespace Sm5sh.Mods.Music.Services
             {
                 _logger.LogWarning("ToneId {ToneId} was not found. Cannot remove from list...", toneId);
             }
+
+            return true;
+        }
+
+        public bool AddPlaylistEntry(PlaylistEntry playlistEntry)
+        {
+            if (!_playlistsEntries.ContainsKey(playlistEntry.Id))
+            {
+                _playlistsEntries.Add(playlistEntry.Id, playlistEntry);
+            }
+            else
+            {
+                _logger.LogWarning("PlaylistId {PlaylistId} already exist... ", playlistEntry.Id);
+            }
+
+            return true;
+        }
+
+        public bool RemovePlaylistEntry(string playlistId)
+        {
+            if (_playlistsEntries.ContainsKey(playlistId))
+            {
+                _playlistsEntries.Remove(playlistId);
+            }
+            else
+            {
+                _logger.LogWarning("PlaylistId {PlaylistId} was not found. Cannot remove from list...", playlistId);
+            }
+
+            return true;
         }
 
         public bool SaveBgmEntriesToStateManager()
@@ -131,10 +175,6 @@ namespace Sm5sh.Mods.Music.Services
             var defaultLocale = _config.Value.Sm5shMusic.DefaultLocale;
             var gameTitles = _bgmEntries.Values.GroupBy(p => p.GameTitleId).Select(p => p.First().GameTitle).Where(p => p != null && p.UiGameTitleId != Constants.InternalIds.GAME_TITLE_ID_DEFAULT);
             var coreSeriesGames = paramGameTitleDatabaseRoot.Values.Select(p => p.UiSeriesId).Distinct(); //Not handling series addition right now.
-
-            //Wiping all playlists - Because _partlink_ are not handled yet, we need to filter out these tracks.
-            var allBgms = _bgmEntries.Values.Select(p => p.DbRoot.UiBgmId);
-            paramBgmDatabase.PlaylistEntries.ForEach((p) => p.Values.RemoveAll(p => allBgms.Contains(p.UiBgmId)));
 
             //GameTitle PRC - We don't delete existing games... yet.
             foreach (var gameTitle in gameTitles)
@@ -207,29 +247,23 @@ namespace Sm5sh.Mods.Music.Services
                             entries[gameTitleLabel] = titleDict[defaultLocale];
                     }
                 }
-                #endregion
+                #endregion 
+            }
 
-                //Playlists
-                if (bgmEntry.Playlists != null)
+            //Playlists
+            paramBgmDatabase.PlaylistEntries.Clear(); //Wiping everything :)
+            foreach (var playlist in _playlistsEntries)
+            {
+                var tracks = new List<PrcBgmPlaylistEntry>();
+                paramBgmDatabase.PlaylistEntries.Add(new PcrFilterStruct<PrcBgmPlaylistEntry>()
                 {
-                    foreach (var playlistTracks in bgmEntry.Playlists)
-                    {
-                        var paramBgmPlaylist = paramBgmDatabase.PlaylistEntries.FirstOrDefault(p => p.Id == playlistTracks.Key)?.Values;
-                        if (paramBgmPlaylist == null)
-                        {
-                            paramBgmPlaylist = new List<PrcBgmPlaylistEntry>();
-                            paramBgmDatabase.PlaylistEntries.Add(new PcrFilterStruct<PrcBgmPlaylistEntry>()
-                            {
-                                Id = playlistTracks.Key,
-                                Values = paramBgmPlaylist
-                            });
-                        }
+                    Id = playlist.Key,
+                    Values = tracks
+                });
 
-                        foreach (var track in playlistTracks.Value)
-                        {
-                            paramBgmPlaylist.Add(_mapper.Map<PrcBgmPlaylistEntry>(track));
-                        }
-                    }
+                foreach (var track in playlist.Value.Tracks)
+                {
+                    tracks.Add(_mapper.Map<PrcBgmPlaylistEntry>(track));
                 }
             }
 
@@ -246,11 +280,14 @@ namespace Sm5sh.Mods.Music.Services
             _gameEntries.Clear();
             _seriesEntries.Clear();
             _localesEntries.Clear();
+            _playlistsEntries.Clear();
+            _stageEntries.Clear();
 
             //Load Data
             var daoBinBgmProperty = _state.LoadResource<Data.Sound.Config.BinBgmProperty>(BgmPropertyFileConstants.BGM_PROPERTY_PATH);
             var paramBgmDatabase = _state.LoadResource<PrcUiBgmDatabase>(PrcExtConstants.PRC_UI_BGM_DB_PATH);
             var paramGameTitleDbRoot = _state.LoadResource<PrcUiGameTitleDatabase>(PrcExtConstants.PRC_UI_GAMETITLE_DB_PATH).DbRootEntries;
+            var paramStageDbRoot = _state.LoadResource<PrcUiStageDatabase>(PrcExtConstants.PRC_UI_STAGE_DB_PATH).DbRootEntries;
             var daoMsbtBgms = GetBgmDatabases();
             var daoMsbtTitle = GetGameTitleDatabases();
             daoMsbtBgms.Keys.ToList().ForEach(p => _localesEntries.Add(p));
@@ -281,20 +318,6 @@ namespace Sm5sh.Mods.Music.Services
                 if (!_seriesEntries.Contains(newBgmEntry.GameTitle.UiSeriesId))
                     _seriesEntries.Add(newBgmEntry.GameTitle.UiSeriesId);
 
-                //Mapping playlists
-                foreach (var paramPlaylist in paramBgmDatabase.PlaylistEntries)
-                {
-                    foreach (var track in paramPlaylist.Values)
-                    {
-                        if (track.UiBgmId == newBgmEntry.DbRoot.UiBgmId)
-                        {
-                            if (!newBgmEntry.Playlists.ContainsKey(paramPlaylist.Id))
-                                newBgmEntry.Playlists.Add(paramPlaylist.Id, new List<BgmPlaylistEntry>());
-                            newBgmEntry.Playlists[paramPlaylist.Id].Add(_mapper.Map(track, new BgmPlaylistEntry(newBgmEntry)));
-                        }
-                    }
-                }
-
                 //Mapping MSBT
                 if (!string.IsNullOrEmpty(newBgmEntry.DbRoot.NameId))
                 {
@@ -324,6 +347,24 @@ namespace Sm5sh.Mods.Music.Services
                 }
 
                 _bgmEntries.Add(toneId, newBgmEntry);
+            }
+
+            //Mapping playlists
+            foreach (var paramPlaylist in paramBgmDatabase.PlaylistEntries)
+            {
+                var newPlaylist = new PlaylistEntry(paramPlaylist.Id);
+                _playlistsEntries.Add(paramPlaylist.Id, newPlaylist);
+
+                foreach (var track in paramPlaylist.Values)
+                {
+                    newPlaylist.Tracks.Add(_mapper.Map<Models.PlaylistEntryModels.PlaylistValueEntry>(track));
+                }
+            }
+
+            //Mapping stage
+            foreach(var stage in paramStageDbRoot)
+            {
+                _stageEntries.Add(stage.Key, _mapper.Map<StageEntry>(stage.Value));
             }
         }
 

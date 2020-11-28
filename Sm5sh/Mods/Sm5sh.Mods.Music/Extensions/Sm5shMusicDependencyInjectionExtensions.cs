@@ -29,7 +29,8 @@ namespace Microsoft.Extensions.DependencyInjection
         public static IServiceCollection AddSm5shMusicOverride(this IServiceCollection services, IConfiguration configuration)
         {
             services.Configure<Sm5shMusicOverrideOptions>(configuration);
-            services.AddSingleton<ISm5shMod, Sm5shMusicOverride>();
+            services.AddSingleton<ISm5shMusicOverride, Sm5shMusicOverride>();
+            services.AddSingleton<ISm5shMod, Sm5shMusicOverride>((o) => o.GetRequiredService<ISm5shMusicOverride>() as Sm5shMusicOverride);
             services.AddSingleton<IResourceProvider, PrcResourceProvider>();
             services.AddSingleton<IAudioStateService, AudioStateService>();
             services.AddAutoMapper(typeof(MappingDb), typeof(MappingOverrideConfig));

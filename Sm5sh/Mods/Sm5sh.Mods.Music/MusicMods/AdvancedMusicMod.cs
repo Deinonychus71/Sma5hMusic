@@ -304,6 +304,8 @@ namespace Sm5sh.Mods.Music.MusicMods
 
         public class BgmConfig
         {
+            [JsonProperty("is_deleted")]
+            public bool IsDeleted { get; set; }
             [JsonProperty("tone_id")]
             public string ToneId { get; set; }
             [JsonProperty("filename")]

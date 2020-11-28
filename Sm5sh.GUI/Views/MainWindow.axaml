@@ -42,16 +42,14 @@
       <TabStrip DockPanel.Dock="Right" Name="TabsMenu" HorizontalAlignment="Right" Margin="10">
         <TabStripItem Content="Songs"/>
         <TabStripItem Content="Playlists"/>
-        <TabStripItem Content="Stages" />
       </TabStrip>
     </DockPanel>
-    <Grid Grid.Row="2" ColumnDefinitions="*,6*" RowDefinitions="30,30,*">
+    <Grid Grid.Row="2" ColumnDefinitions="*,5,6*" RowDefinitions="30,30,*">
       <ContentControl Grid.Column="0" Grid.Row="2" Content="{Binding VMBgmFilters}"></ContentControl>
-      <ContentControl Grid.Column="1" Grid.Row="1" Content="{Binding VMContextMenu}"></ContentControl>
-      <Carousel Grid.Column="2" Grid.Row="2" Grid.RowSpan="2" SelectedIndex="{Binding #TabsMenu.SelectedIndex}">
+      <GridSplitter Grid.Column="1" Grid.Row="2" ResizeDirection="Columns"/>
+      <Carousel Grid.Column="2" Grid.Row="1" Grid.RowSpan="2" SelectedIndex="{Binding #TabsMenu.SelectedIndex}">
         <ContentControl Content="{Binding VMBgmSongs}"></ContentControl>
         <ContentControl Content="{Binding VMPlaylists}"></ContentControl>
-        <ContentControl Content="{Binding VMStages}"></ContentControl>
       </Carousel >
     </Grid>
     <GridSplitter Background="Gray" ResizeDirection="Rows" Grid.Row="3"/>

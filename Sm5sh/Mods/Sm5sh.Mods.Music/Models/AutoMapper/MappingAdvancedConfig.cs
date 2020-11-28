@@ -60,8 +60,7 @@ namespace Sm5sh.Mods.Music.Models.AutoMapper
                 .ForMember(i => i.AssignedInfo, me => me.MapFrom(p => p.AssignedInfo))
                 .ForMember(i => i.BgmProperties, me => me.MapFrom(p => p.BgmProperties))
                 .ForMember(i => i.MSBTLabels, me => me.MapFrom(p => p.MSBTLabels))
-                .ForMember(i => i.NUS3BankConfig, me => me.MapFrom(p => p.NUS3BankConfig))
-                .ForMember(i => i.Playlists, me => me.Ignore());
+                .ForMember(i => i.NUS3BankConfig, me => me.MapFrom(p => p.NUS3BankConfig));
 
             CreateMap<BgmEntryModels.NUS3BankConfigEntry, MusicMods.AdvancedMusicModModels.NUS3BankConfig>()
                 .ForMember(i => i.AudioVolume, me => me.MapFrom(p => p.AudioVolume));

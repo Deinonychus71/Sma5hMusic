@@ -2,23 +2,89 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+              xmlns:i="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
+             xmlns:ia="clr-namespace:Avalonia.Xaml.Interactions.Core;assembly=Avalonia.Xaml.Interactions"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             xmlns:fields="clr-namespace:Sm5sh.GUI.Views.Fields"
              x:Class="Sm5sh.GUI.Views.PlaylistView">
-  <Grid ColumnDefinitions="*,5*,*" RowDefinitions="30,20,*">
-    <ContentControl Grid.Column="0" Grid.Row="2" Content="{Binding VMBgmFilters}"></ContentControl>
-    <DockPanel Grid.Column="1" Grid.Row="0">
-      <Menu DockPanel.Dock="Right">
-        <MenuItem Header="{Binding SelectedLocale, Converter={StaticResource LocaleNameConverter}}" Items="{Binding Locales}">
-          <MenuItem.Styles>
-            <Style Selector="MenuItem > MenuItem">
-              <Setter Property="Header" Value="{Binding Label}"/>
-              <Setter Property="Command" Value="{Binding $parent[DockPanel].DataContext.ChangeLocale}"/>
-              <Setter Property="CommandParameter" Value="{Binding .}"/>
-            </Style>
-          </MenuItem.Styles>
-        </MenuItem>
-      </Menu>
-    </DockPanel>
-    <ContentControl Grid.Column="1" Grid.Row="1" Grid.RowSpan="2" Classes="list" Content="{Binding VMBgmList}"/>
+  <UserControl.Styles>
+    <StyleInclude Source="/Assets/Styles/ListsStyles.xaml" />
+  </UserControl.Styles>
+  <Grid ColumnDefinitions="3*,5,4*" RowDefinitions="30,*">
+    <ContentControl Grid.Row="0" Grid.Column="0" Content="{Binding VMContextMenu}"></ContentControl>
+    <Grid Grid.Row="1" Grid.Column="0" Classes="list">
+      <DataGrid Classes="bgmList" SelectedItem="{Binding SelectedBgmEntry, Mode=TwoWay}" Items="{Binding Bgms, Mode=OneWay}">
+        <i:Interaction.Behaviors>
+          <ia:EventTriggerBehavior EventName="CellPointerPressed">
+            <ia:InvokeCommandAction Command="{Binding ActionSendToPlaylist}"/>
+          </ia:EventTriggerBehavior>
+        </i:Interaction.Behaviors>
+        <DataGrid.Columns>
+          <DataGridTemplateColumn CanUserResize="false" Width="40">
+            <DataGridTemplateColumn.CellTemplate>
+              <DataTemplate>
+                <ContentControl IsVisible="{Binding DoesFileExist, Mode=OneWay}" Content="{Binding MusicPlayer, Mode=OneWay}"/>
+              </DataTemplate>
+            </DataGridTemplateColumn.CellTemplate>
+          </DataGridTemplateColumn>
+          <DataGridTextColumn Width="3*" Header="Game" Binding="{Binding GameTitleViewModel.Title, Mode=OneWay}" />
+          <DataGridTextColumn Width="3*" Header="Title" Binding="{Binding Title, Mode=OneWay}" />
+        </DataGrid.Columns>
+      </DataGrid>
+    </Grid>
+    <GridSplitter Grid.Row="1" Grid.Column="1" ResizeDirection="Columns"/>
+    <Menu Grid.Row="0" Grid.Column="2">
+      <MenuItem Header="{Binding WhenPlaylistSelected^.Title}" Items="{Binding Playlists}">
+        <MenuItem.Styles>
+          <Style Selector="MenuItem > MenuItem">
+            <Setter Property="Header" Value="{Binding Title}"/>
+            <Setter Property="Command" Value="{Binding $parent[Grid].DataContext.ActionSelectPlaylist}"/>
+            <Setter Property="CommandParameter" Value="{Binding .}"/>
+          </Style>
+        </MenuItem.Styles>
+      </MenuItem>
+
+      <MenuItem Header="{Binding WhenPlaylistOrderSelected^.Label}" Items="{Binding OrderMenu}">
+        <MenuItem.Styles>
+          <Style Selector="MenuItem > MenuItem">
+            <Setter Property="Header" Value="{Binding Label}"/>
+            <Setter Property="Command" Value="{Binding $parent[Grid].DataContext.ActionSelectPlaylistOrder}"/>
+            <Setter Property="CommandParameter" Value="{Binding .}"/>
+          </Style>
+        </MenuItem.Styles>
+      </MenuItem>
+      <MenuItem Header="Assign to Stage..."/>
+    </Menu>
+    <Grid Grid.Row="1" Grid.Column="2" Classes="list" Margin="0,0,20,0">
+      <i:Interaction.Behaviors>
+        <ia:EventTriggerBehavior EventName="Initialized">
+          <ia:InvokeCommandAction Command="{Binding ActionInitializeDragAndDrop, Mode=OneWay}" CommandParameter="{Binding $parent[Grid]}"/>
+        </ia:EventTriggerBehavior>
+      </i:Interaction.Behaviors>
+      <DataGrid DragDrop.AllowDrop="True" Classes="bgmList" SelectedItem="{Binding SelectedPlaylistValueEntry, Mode=TwoWay}" Items="{Binding SelectedPlaylistOrderedEntry, Mode=OneWay}">
+        <i:Interaction.Behaviors>
+          <ia:EventTriggerBehavior EventName="CellPointerPressed">
+            <ia:InvokeCommandAction Command="{Binding ActionReorderPlaylist}"/>
+          </ia:EventTriggerBehavior>
+        </i:Interaction.Behaviors>
+        <DataGrid.Columns>
+          <DataGridTemplateColumn CanUserResize="false" Width="40">
+            <DataGridTemplateColumn.CellTemplate>
+              <DataTemplate>
+                <ContentControl IsVisible="{Binding BgmReference.DoesFileExist, Mode=OneWay}" Content="{Binding BgmReference.MusicPlayer, Mode=OneWay}"/>
+              </DataTemplate>
+            </DataGridTemplateColumn.CellTemplate>
+          </DataGridTemplateColumn>
+          <DataGridTextColumn Width="*" Header="Title" Binding="{Binding BgmReference.Title, Mode=OneWay}" />
+          <DataGridTemplateColumn MinWidth="200" MaxWidth="400" Header="Incidence">
+            <DataGridTemplateColumn.CellTemplate>
+              <DataTemplate>
+                <Slider Padding="0,-15,0,-15" Height="30" TickFrequency="100" Minimum="0" Maximum="10000" Value="{Binding Incidence, Mode=TwoWay}"/>
+              </DataTemplate>
+            </DataGridTemplateColumn.CellTemplate>
+          </DataGridTemplateColumn>
+        </DataGrid.Columns>
+      </DataGrid>
+    </Grid>
   </Grid>
 </UserControl>
