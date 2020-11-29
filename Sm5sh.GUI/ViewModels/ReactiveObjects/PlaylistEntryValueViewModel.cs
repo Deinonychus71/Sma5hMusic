@@ -19,6 +19,8 @@ namespace Sm5sh.GUI.ViewModels
         [Reactive]
         public ushort Incidence { get; set; }
 
+        public string IncidencePercentage { get { return $"{Math.Round((double)(Incidence / 100), 2)} %"; } }
+
         [Reactive]
         public short Order { get; set; }
 

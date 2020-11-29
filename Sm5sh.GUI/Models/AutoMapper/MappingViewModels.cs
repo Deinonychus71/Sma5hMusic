@@ -6,6 +6,31 @@ namespace Sm5sh.Mods.Music.Models.AutoMapper
     {
         public MappingViewModels()
         {
+            CreateMap<GUI.ViewModels.StageEntryViewModel, StageEntry>()
+                .ForMember(i => i.UiStageId, me => me.Ignore())
+                .ForMember(i => i.NameId, me => me.Ignore())
+                .ForMember(i => i.SaveNo, me => me.Ignore())
+                .ForMember(i => i.UiSeriesId, me => me.Ignore())
+                .ForMember(i => i.CanSelect, me => me.Ignore())
+                .ForMember(i => i.DispOrder, me => me.Ignore())
+                .ForMember(i => i.StagePlaceId, me => me.Ignore())
+                .ForMember(i => i.SecretStagePlaceId, me => me.Ignore())
+                .ForMember(i => i.CanDemo, me => me.Ignore())
+                .ForMember(i => i.Unk1, me => me.Ignore())
+                .ForMember(i => i.Unk2, me => me.Ignore())
+                .ForMember(i => i.Unk3, me => me.Ignore())
+                .ForMember(i => i.SecretCommandId, me => me.Ignore())
+                .ForMember(i => i.SecretCommandIdJoycon, me => me.Ignore())
+                .ForMember(i => i.BgmSetId, me => me.MapFrom(p => p.PlaylistId))
+                .ForMember(i => i.BgmSettingNo, me => me.MapFrom(p => p.OrderId))
+                .ForMember(i => i.Unk4, me => me.Ignore())
+                .ForMember(i => i.IsDlc, me => me.Ignore())
+                .ForMember(i => i.IsPatch, me => me.Ignore())
+                .ForMember(i => i.DlcCharaId, me => me.Ignore());
+            CreateMap<StageEntry, GUI.ViewModels.StageEntryViewModel>()
+                .ForMember(i => i.OrderId, me => me.MapFrom(p => p.BgmSettingNo))
+                .ForMember(i => i.PlaylistId, me => me.MapFrom(p => p.BgmSetId));
+
             CreateMap<GUI.ViewModels.GameTitleEntryViewModel, GameTitleEntry>()
                 .ForMember(i => i.Source, me => me.Ignore())
                 .ForMember(i => i.MSBTTitle, me => me.MapFrom(p => p.MSBTTitle))

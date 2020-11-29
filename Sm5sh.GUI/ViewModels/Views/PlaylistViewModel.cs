@@ -36,6 +36,7 @@ namespace Sm5sh.GUI.ViewModels
         private readonly Subject<Unit> _whenNewRequestToCreatePlaylist;
         private readonly Subject<Unit> _whenNewRequestToEditPlaylist;
         private readonly Subject<Unit> _whenNewRequestToDeletePlaylist;
+        private readonly Subject<Unit> _whenNewRequestToAssignPlaylistToStage;
         private const string DATAOBJECT_FORMAT_BGM = "BGM";
         private const string DATAOBJECT_FORMAT_PLAYLIST = "PLAYLIST";
         private readonly List<ComboItem> _orderMenu;
@@ -52,6 +53,7 @@ namespace Sm5sh.GUI.ViewModels
         public IObservable<Unit> WhenNewRequestToCreatePlaylist { get { return _whenNewRequestToCreatePlaylist; } }
         public IObservable<Unit> WhenNewRequestToEditPlaylist { get { return _whenNewRequestToEditPlaylist; } }
         public IObservable<Unit> WhenNewRequestToDeletePlaylist { get { return _whenNewRequestToDeletePlaylist; } }
+        public IObservable<Unit> WhenNewRequestToAssignPlaylistToStage { get { return _whenNewRequestToAssignPlaylistToStage; } }
         public ReadOnlyObservableCollection<BgmEntryViewModel> Bgms { get { return _bgms; } }
         public ReadOnlyObservableCollection<PlaylistEntryViewModel> Playlists { get { return _playlists; } }
         public ReadOnlyObservableCollection<PlaylistEntryValueViewModel> SelectedPlaylistOrderedEntry { get { return _selectedPlaylistOrderedEntry; } }
@@ -73,6 +75,7 @@ namespace Sm5sh.GUI.ViewModels
         public ReactiveCommand<Unit, Unit> ActionCreatePlaylist { get; }
         public ReactiveCommand<Unit, Unit> ActionEditPlaylist { get; }
         public ReactiveCommand<Unit, Unit> ActionDeletePlaylist { get; }
+        public ReactiveCommand<Unit, Unit> ActionAssignPlaylistToStage { get; }
 
         public PlaylistViewModel(ILogger<PlaylistViewModel> logging, IDialogWindow rootDialog, IMessageDialog messageDialog, IObservable<IChangeSet<BgmEntryViewModel, string>> observableBgmEntries,
             IObservable<IChangeSet<PlaylistEntryViewModel, string>> observablePlaylistEntries, ContextMenuViewModel vmContextMenu)
@@ -87,6 +90,7 @@ namespace Sm5sh.GUI.ViewModels
             _whenNewRequestToCreatePlaylist = new Subject<Unit>();
             _whenNewRequestToEditPlaylist = new Subject<Unit>();
             _whenNewRequestToDeletePlaylist = new Subject<Unit>();
+            _whenNewRequestToAssignPlaylistToStage = new Subject<Unit>();
 
             //Bgms
             observableBgmEntries
@@ -142,6 +146,7 @@ namespace Sm5sh.GUI.ViewModels
             ActionCreatePlaylist = ReactiveCommand.Create(() => AddNewPlaylist());
             ActionEditPlaylist = ReactiveCommand.Create(() => EditPlaylist());
             ActionDeletePlaylist = ReactiveCommand.Create(() => DeletePlaylist());
+            ActionAssignPlaylistToStage = ReactiveCommand.Create(() => AssignPlaylistToStage());
 
             //Trigger behavior subjets
             _whenPlaylistSelected = new BehaviorSubject<PlaylistEntryViewModel>(_playlists.FirstOrDefault());
@@ -193,7 +198,7 @@ namespace Sm5sh.GUI.ViewModels
                 if (e.Data.Get(DATAOBJECT_FORMAT_PLAYLIST) is PlaylistEntryValueViewModel sourcePlaylistObj)
                 {
                     ReorderPlaylist(sourcePlaylistObj, destinationObj);
-                } 
+                }
             }
             if (e.Data.Get(DATAOBJECT_FORMAT_BGM) is BgmEntryViewModel sourceBgmObj)
             {
@@ -203,6 +208,11 @@ namespace Sm5sh.GUI.ViewModels
         #endregion
 
         #region Playlist manipulation
+        public void AssignPlaylistToStage()
+        {
+            _whenNewRequestToAssignPlaylistToStage.OnNext(Unit.Default);
+        }
+
         public void AddNewPlaylist()
         {
             _whenNewRequestToCreatePlaylist.OnNext(Unit.Default);
@@ -220,7 +230,7 @@ namespace Sm5sh.GUI.ViewModels
 
         public void AddToPlaylist(BgmEntryViewModel sourceObj, PlaylistEntryValueViewModel destinationObj)
         {
-            var order = destinationObj != null ? (short)(destinationObj.Order + 1): (short)999;
+            var order = destinationObj != null ? (short)(destinationObj.Order + 1) : (short)999;
             var newEntry = SelectedPlaylistEntry.AddSong(sourceObj, SelectedPlaylistOrder, order);
             _postReorderSelection = () => _refGrid.SelectedItem = newEntry;
             SelectedPlaylistEntry.ReorderSongs(SelectedPlaylistOrder);
@@ -287,6 +297,47 @@ namespace Sm5sh.GUI.ViewModels
                 _whenNewRequestToUpdatePlaylists?.OnCompleted();
                 _whenNewRequestToUpdatePlaylists?.Dispose();
             }
+            if (_whenNewRequestToUpdatePlaylistsInternal != null)
+            {
+                _whenNewRequestToUpdatePlaylistsInternal?.OnCompleted();
+                _whenNewRequestToUpdatePlaylistsInternal?.Dispose();
+            }
+            if (_whenNewRequestToUpdatePlaylistsInternal != null)
+            {
+                _whenNewRequestToUpdatePlaylistsInternal?.OnCompleted();
+                _whenNewRequestToUpdatePlaylistsInternal?.Dispose();
+            }
+            if (_whenPlaylistSelected != null)
+            {
+                _whenPlaylistSelected?.OnCompleted();
+                _whenPlaylistSelected?.Dispose();
+            }
+            if (_whenPlaylistOrderSelected != null)
+            {
+                _whenPlaylistOrderSelected?.OnCompleted();
+                _whenPlaylistOrderSelected?.Dispose();
+            }
+            if (_whenNewRequestToCreatePlaylist != null)
+            {
+                _whenNewRequestToCreatePlaylist?.OnCompleted();
+                _whenNewRequestToCreatePlaylist?.Dispose();
+            }
+            if (_whenNewRequestToEditPlaylist != null)
+            {
+                _whenNewRequestToEditPlaylist?.OnCompleted();
+                _whenNewRequestToEditPlaylist?.Dispose();
+            }
+            if (_whenNewRequestToDeletePlaylist != null)
+            {
+                _whenNewRequestToDeletePlaylist?.OnCompleted();
+                _whenNewRequestToDeletePlaylist?.Dispose();
+            }
+            if (_whenNewRequestToAssignPlaylistToStage != null)
+            {
+                _whenNewRequestToAssignPlaylistToStage?.OnCompleted();
+                _whenNewRequestToAssignPlaylistToStage?.Dispose();
+            }
         }
     }
+
 }

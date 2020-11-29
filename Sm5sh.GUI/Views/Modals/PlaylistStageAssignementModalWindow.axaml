@@ -1,0 +1,77 @@
+﻿<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        Width="1000" Height="800" MinWidth="1000"  MinHeight="800"
+        x:Class="Sm5sh.GUI.Views.PlaylistStageAssignementModalWindow"
+        xmlns:fields="clr-namespace:Sm5sh.GUI.Views.Fields"
+        Title="Playlist Stage Assignment">
+  <Window.Styles>
+    <StyleInclude Source="/Assets/Styles/ContentStyles.xaml" />
+    <StyleInclude Source="/Assets/Styles/ModalStyles.xaml" />
+    <StyleInclude Source="/Assets/Styles/ListsStyles.xaml" />
+  </Window.Styles>
+  <DockPanel Classes="modal" LastChildFill="True">
+    <Border Classes="headerTitle" DockPanel.Dock="Top">
+      <Label>Playlist Assignment</Label>
+    </Border>
+    <StackPanel Classes="modalActions" DockPanel.Dock="Bottom">
+      <Button Content="Save Changes" Command="{Binding ActionOK}" CommandParameter="{Binding $parent[Window]}"></Button>
+      <Button Content="Cancel" Command="{Binding ActionCancel}" CommandParameter="{Binding $parent[Window]}"></Button>
+    </StackPanel>
+    <Grid ColumnDefinitions="*,2*" RowDefinitions="*" >
+      <StackPanel Classes="content">
+        <fields:PropertyField IsRequired="True" Label="Stage" ToolTip="Select a Stage">
+          <fields:PropertyField.FieldContent>
+            <ComboBox SelectedItem="{Binding SelectedStageEntry, Mode=TwoWay}" Items="{Binding Stages, Mode=OneWay}">
+              <ComboBox.ItemTemplate>
+                <DataTemplate>
+                  <TextBlock Text="{Binding Title}" />
+                </DataTemplate>
+              </ComboBox.ItemTemplate>
+            </ComboBox>
+          </fields:PropertyField.FieldContent>
+        </fields:PropertyField>
+        <fields:PropertyField IsRequired="True" Label="Associated Playlist" ToolTip="Select the playlist associated to the stage">
+          <fields:PropertyField.FieldContent>
+            <ComboBox SelectedItem="{Binding SelectedPlaylistEntry, Mode=TwoWay}" Items="{Binding Playlists, Mode=OneWay}">
+              <ComboBox.ItemTemplate>
+                <DataTemplate>
+                  <TextBlock Text="{Binding Title}" />
+                </DataTemplate>
+              </ComboBox.ItemTemplate>
+            </ComboBox>
+          </fields:PropertyField.FieldContent>
+        </fields:PropertyField>
+        <fields:PropertyField IsRequired="True" Label="Playlist Order Id" ToolTip="Each playlist can be sorted up 16 different ways. In doubt select Order Id 0.">
+          <fields:PropertyField.FieldContent>
+            <ComboBox SelectedItem="{Binding SelectedOrderId, Mode=TwoWay}" Items="{Binding Orders, Mode=OneWay}">
+              <ComboBox.ItemTemplate>
+                <DataTemplate>
+                  <TextBlock Text="{Binding Label}" />
+                </DataTemplate>
+              </ComboBox.ItemTemplate>
+            </ComboBox>
+          </fields:PropertyField.FieldContent>
+        </fields:PropertyField>
+      </StackPanel>
+      <Grid Margin="10" Grid.Column="1" Classes="list" RowDefinitions="*" DockPanel.Dock="Top">
+        <DataGrid Classes="bgmList" Items="{Binding Tracks, Mode=OneWay}" ScrollViewer.VerticalScrollBarVisibility="Visible">
+          <DataGrid.Columns>
+            <DataGridTemplateColumn CanUserResize="false" Width="40">
+              <DataGridTemplateColumn.CellTemplate>
+                <DataTemplate>
+                  <ContentControl IsVisible="{Binding BgmReference.DoesFileExist, Mode=OneWay}" Content="{Binding BgmReference.MusicPlayer, Mode=OneWay}"/>
+                </DataTemplate>
+              </DataGridTemplateColumn.CellTemplate>
+            </DataGridTemplateColumn>
+            <DataGridTextColumn Width="2*" Header="Game" Binding="{Binding BgmReference.GameTitleViewModel.Title, Mode=OneWay}" />
+            <DataGridTextColumn Width="3*" Header="Title" Binding="{Binding BgmReference.Title, Mode=OneWay}" />
+            <DataGridTextColumn Width="100" Header="Incidence" Binding="{Binding IncidencePercentage, Mode=OneWay}" />
+          </DataGrid.Columns>
+        </DataGrid>
+      </Grid>
+    </Grid>
+  </DockPanel>
+</Window>

@@ -12,5 +12,6 @@ namespace Sm5sh.Mods.Music.Interfaces
         bool RemoveCoreBgmEntry(string toneId);
         bool UpdateCoreGameTitleEntry(Models.GameTitleEntry gameTitleEntry);
         bool UpdatePlaylistConfig(Dictionary<string, PlaylistEntry> playlistEntries);
+        bool UpdateMusicStageOverride(List<StageEntry> stageEntries);
     }
 }

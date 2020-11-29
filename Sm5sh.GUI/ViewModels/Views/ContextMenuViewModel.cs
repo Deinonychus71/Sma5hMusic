@@ -51,7 +51,7 @@ namespace Sm5sh.GUI.ViewModels
 
             //List of mods
             observableMusicModsList
-                .Sort(SortExpressionComparer<ModEntryViewModel>.Descending(p => p.CreateFlag).ThenByAscending(p => p.ModName), SortOptimisations.IgnoreEvaluates)
+                .Sort(SortExpressionComparer<ModEntryViewModel>.Ascending(p => p.ModName), SortOptimisations.IgnoreEvaluates)
                 .ObserveOn(RxApp.MainThreadScheduler)
                 .Bind(out _mods)
                 .DisposeMany()

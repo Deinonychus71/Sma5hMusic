@@ -61,7 +61,7 @@
                   <ComboBox SelectedItem="{Binding SelectedRecordType, Mode=TwoWay}" Items="{Binding RecordTypes}">
                     <ComboBox.ItemTemplate>
                       <DataTemplate>
-                        <TextBlock Text="{Binding Label}" FontFamily="{Binding}" />
+                        <TextBlock Text="{Binding Label}" />
                       </DataTemplate>
                     </ComboBox.ItemTemplate>
                   </ComboBox>
@@ -112,7 +112,7 @@
                   <ComboBox SelectedItem="{Binding SelectedSpecialCategory, Mode=TwoWay}" Items="{Binding SpecialCategories}">
                     <ComboBox.ItemTemplate>
                       <DataTemplate>
-                        <TextBlock Text="{Binding Label}" FontFamily="{Binding}" />
+                        <TextBlock Text="{Binding Label}" />
                       </DataTemplate>
                     </ComboBox.ItemTemplate>
                   </ComboBox>
@@ -129,7 +129,7 @@
                   <ComboBox SelectedItem="{Binding SelectedBgmEntry.StreamSet.SpecialCategory, Mode=TwoWay}" Items="{Binding SpecialCategoriesPersonaStages}">
                     <ComboBox.ItemTemplate>
                       <DataTemplate>
-                        <TextBlock Text="{Binding Label}" FontFamily="{Binding}" />
+                        <TextBlock Text="{Binding Label}" />
                       </DataTemplate>
                     </ComboBox.ItemTemplate>
                   </ComboBox>

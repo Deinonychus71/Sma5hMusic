@@ -132,10 +132,65 @@ namespace Sm5sh.Mods.Music.MusicOverride
 
         public class StageConfig
         {
-            [JsonProperty("playlist_id")]
-            public string PlaylistId { get; set; }
-            [JsonProperty("order_id")]
-            public ushort OrderId { get; set; }
+            [JsonProperty("ui_stage_id")]
+            public string UiStageId { get; set; }
+
+            [JsonProperty("name_id")]
+            public string NameId { get; set; }
+
+            [JsonProperty("save_no")]
+            public short SaveNo { get; set; }
+
+            [JsonProperty("ui_series_id")]
+            public string UiSeriesId { get; set; }
+
+            [JsonProperty("can_select")]
+            public bool CanSelect { get; set; }
+
+            [JsonProperty("disp_order")]
+            public sbyte DispOrder { get; set; }
+
+            [JsonProperty("stage_place_id")]
+            public string StagePlaceId { get; set; }
+
+            [JsonProperty("secret_stage_place_id")]
+            public string SecretStagePlaceId { get; set; }
+
+            [JsonProperty("can_demo")]
+            public bool CanDemo { get; set; }
+
+            [JsonProperty("0x10359e17b0")]
+            public bool Unk1 { get; set; }
+
+            [JsonProperty("0x0eafe0fa76")]
+            public bool Unk2 { get; set; }
+
+            [JsonProperty("0x10005d116c")]
+            public bool Unk3 { get; set; }
+
+            [JsonProperty("secret_command_id")]
+            public string SecretCommandId { get; set; }
+
+            [JsonProperty("secret_command_id_joycon")]
+            public string SecretCommandIdJoycon { get; set; }
+
+            [JsonProperty("bgm_set_id")]
+            public string BgmSetId { get; set; }
+
+            [JsonProperty("bgm_setting_no")]
+            public byte BgmSettingNo { get; set; }
+
+            [JsonProperty("0x0cbc118b10")]
+            public bool Unk4 { get; set; }
+
+            [JsonProperty("is_dlc")]
+            public bool IsDlc { get; set; }
+
+            [JsonProperty("is_patch")]
+            public bool IsPatch { get; set; }
+
+            [JsonProperty("dlc_chara_id")]
+            public string DlcCharaId { get; set; }
         }
     }
 }

@@ -58,7 +58,7 @@
         <MenuItem Header="Edit playlist" Command="{Binding ActionEditPlaylist}"/>
         <MenuItem Header="Delete playlist" Command="{Binding ActionDeletePlaylist}"/>
       <Separator/>
-        <MenuItem Header="Assign a Stage to playlist"/>
+        <MenuItem Header="Assign a Stage to playlist" Command="{Binding ActionAssignPlaylistToStage}"/>
       </MenuItem>
     </Menu>
     <Grid Grid.Row="1" Grid.Column="2" Classes="list" Margin="0,0,20,0">

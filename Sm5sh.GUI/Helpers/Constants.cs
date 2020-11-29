@@ -102,7 +102,7 @@ namespace Sm5sh.GUI.Helpers
 
         public readonly static Dictionary<string, string> CONVERTER_CORE_PLAYLISTS = new Dictionary<string, string>()
         {
-            {"bgmsmashbtl", "bgmsmashbtl" },
+            {"bgmsmashbtl", "Battlefield" },
             {"bgmsmashmenu", "Smash Menu" },
             {"bgmsmashmode", "Smash Mode" },
             {"bgmstageedit", "Stage Edit" },
@@ -148,6 +148,11 @@ namespace Sm5sh.GUI.Helpers
             {"bgmplaylist", "Playlist" },
         };
 
+        public readonly static Dictionary<string, string> CONVERTER_CORE_STAGES = new Dictionary<string, string>()
+        {
+
+        };
+
         public static string GetSeriesDisplayName(string key)
         {
             if (string.IsNullOrEmpty(key))
@@ -160,6 +165,13 @@ namespace Sm5sh.GUI.Helpers
             if (string.IsNullOrEmpty(key))
                 return key;
             return CONVERTER_RECORD_TYPE.ContainsKey(key) ? CONVERTER_RECORD_TYPE[key] : key;
+        }
+
+        public static string GetStageDisplayName(string key)
+        {
+            if (string.IsNullOrEmpty(key))
+                return key;
+            return CONVERTER_CORE_STAGES.ContainsKey(key) ? CONVERTER_CORE_STAGES[key] : key;
         }
 
         public static string GetBgmPlaylistName(string key)

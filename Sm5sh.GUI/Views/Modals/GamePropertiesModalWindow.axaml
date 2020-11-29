@@ -27,7 +27,7 @@
             <ComboBox SelectedItem="{Binding SelectedSeries, Mode=TwoWay}" Items="{Binding Series}">
               <ComboBox.ItemTemplate>
                 <DataTemplate>
-                  <TextBlock Text="{Binding Title}" FontFamily="{Binding}" />
+                  <TextBlock Text="{Binding Title}" />
                 </DataTemplate>
               </ComboBox.ItemTemplate>
             </ComboBox>

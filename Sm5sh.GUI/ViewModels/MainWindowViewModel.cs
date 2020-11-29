@@ -21,6 +21,7 @@ using System.Reactive.Linq;
 using ReactiveUI;
 using System.Reactive;
 using Avalonia.Controls;
+using System.Collections.Generic;
 
 namespace Sm5sh.GUI.ViewModels
 {
@@ -44,6 +45,7 @@ namespace Sm5sh.GUI.ViewModels
         private readonly ObservableCollection<BgmEntryViewModel> _bgmEntries;
         private readonly ObservableCollection<PlaylistEntryViewModel> _playlistsEntries;
         private readonly ObservableCollection<ModEntryViewModel> _musicMods;
+        private readonly List<StageEntryViewModel> _stagesEntries; //Don't need obs yet
         private string _currentLocale;
 
         public BgmPropertiesModalWindowViewModel VMBgmEditor { get; }
@@ -53,6 +55,7 @@ namespace Sm5sh.GUI.ViewModels
         public ModPickerModalWindowViewModel VMModPicker { get; }
         public PlaylistPropertiesModalWindowViewModel VMPlaylistEditor { get; }
         public PlaylistPickerModalWindowViewModel VMPlaylistPicker { get; }
+        public PlaylistStageAssignementModalWindowViewModel VMStageAssignemnt { get; }
         public BgmSongsViewModel VMBgmSongs { get; }
         public PlaylistViewModel VMPlaylists { get; }
         public BgmFiltersViewModel VMBgmFilters { get; }
@@ -105,6 +108,7 @@ namespace Sm5sh.GUI.ViewModels
                 .ForEachChange(o => o.Current.LoadLocalized(_currentLocale));
             _playlistsEntries = new ObservableCollection<PlaylistEntryViewModel>();
             var observablePlaylistEntriesList = _playlistsEntries.ToObservableChangeSet(p => p.Id);
+            _stagesEntries = new List<StageEntryViewModel>();
 
             //Initialize filters
             VMBgmFilters = ActivatorUtilities.CreateInstance<BgmFiltersViewModel>(serviceProvider, observableBgmEntriesList);
@@ -128,6 +132,8 @@ namespace Sm5sh.GUI.ViewModels
                observablePlaylistEntriesList);
             VMPlaylistPicker = ActivatorUtilities.CreateInstance<PlaylistPickerModalWindowViewModel>(serviceProvider,
                 observablePlaylistEntriesList);
+            VMStageAssignemnt = ActivatorUtilities.CreateInstance<PlaylistStageAssignementModalWindowViewModel>(serviceProvider,
+                observablePlaylistEntriesList, _stagesEntries);
 
             //Listen to requests from children
             this.VMContextMenu.WhenNewRequestToAddBgmEntry.Subscribe(async (o) => await AddNewBgmEntry(o));
@@ -143,6 +149,7 @@ namespace Sm5sh.GUI.ViewModels
             this.VMPlaylists.WhenNewRequestToCreatePlaylist.Subscribe(async (o) => await AddNewOrEditPlaylist());
             this.VMPlaylists.WhenNewRequestToEditPlaylist.Subscribe(async (o) => await EditPlaylist());
             this.VMPlaylists.WhenNewRequestToDeletePlaylist.Subscribe(async (o) => await DeletePlaylist());
+            this.VMPlaylists.WhenNewRequestToAssignPlaylistToStage.Subscribe(async (o) => await AssignPlaylistToStage());
 
             ActionExit = ReactiveCommand.Create(OnExit);
             ActionBuild = ReactiveCommand.CreateFromTask(OnBuild);
@@ -223,6 +230,10 @@ namespace Sm5sh.GUI.ViewModels
             var playlists = _audioState.GetPlaylists().Select(p => new PlaylistEntryViewModel(p, _bgmEntries.ToDictionary(p => p.DbRoot.UiBgmId, p => p)));
             _playlistsEntries.AddRange(playlists);
             _logger.LogInformation("Playlists Loaded.");
+
+            var stages = _audioState.GetStagesEntries().Select(p => new StageEntryViewModel(p));
+            _stagesEntries.AddRange(stages);
+            _logger.LogInformation("Stages Loaded.");
 
             return Task.CompletedTask;
         }
@@ -417,6 +428,7 @@ namespace Sm5sh.GUI.ViewModels
             {
                 if (!VMPlaylistEditor.IsEdit)
                 {
+                    //TODO - Handle anything saving in a specific service
                     _playlistsEntries.Add(VMPlaylistEditor.SelectedPlaylistEntry);
                 }
             }
@@ -424,8 +436,8 @@ namespace Sm5sh.GUI.ViewModels
 
         public async Task EditPlaylist(Window parent = null)
         {
-            var modalPickerGame = new PlaylistPickerModalWindow() { DataContext = VMPlaylistPicker };
-            var results = await modalPickerGame.ShowDialog<PlaylistPickerModalWindow>(parent != null ? parent : _rootDialog.Window);
+            var modalPickerPlaylist = new PlaylistPickerModalWindow() { DataContext = VMPlaylistPicker };
+            var results = await modalPickerPlaylist.ShowDialog<PlaylistPickerModalWindow>(parent != null ? parent : _rootDialog.Window);
             if (results != null)
             {
                 await AddNewOrEditPlaylist(parent, VMPlaylistPicker.SelectedPlaylistEntry);
@@ -450,6 +462,21 @@ namespace Sm5sh.GUI.ViewModels
             {
                 _playlistsEntries.Remove(vmPlaylistEntry);
                 UpdatePlaylists();
+            }
+        }
+
+        public async Task AssignPlaylistToStage()
+        {
+            VMStageAssignemnt.LoadControl();
+            var modalPickerAssignStagePlaylist = new PlaylistStageAssignementModalWindow() { DataContext = VMStageAssignemnt };
+            var results = await modalPickerAssignStagePlaylist.ShowDialog<PlaylistStageAssignementModalWindow>(_rootDialog.Window);
+            if (results != null)
+            {
+                foreach(var vmStage in VMStageAssignemnt.Stages)
+                    _mapper.Map(vmStage, vmStage.GetStageEntryReference());
+
+                //TODO - Handle anything saving in a specific service
+                _sm5shMusicOverride.UpdateMusicStageOverride(_stagesEntries.Select(p => p.GetStageEntryReference()).ToList());
             }
         }
         #endregion

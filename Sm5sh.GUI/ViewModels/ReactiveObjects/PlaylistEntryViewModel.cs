@@ -13,6 +13,8 @@ namespace Sm5sh.GUI.ViewModels
     public class PlaylistEntryViewModel : ReactiveObject
     {
         protected readonly PlaylistEntry _refPlaylistEntry;
+        private List<string> _allTracks;
+        private bool _cachedTracks = false;
 
         //To obtain reactive change for locale
         [Reactive]
@@ -22,6 +24,8 @@ namespace Sm5sh.GUI.ViewModels
 
         public string Id { get { return _refPlaylistEntry.Id; } }
 
+        public List<string> AllTracks { get { return GetAllTracks(); } }
+
         public PlaylistEntryViewModel(PlaylistEntry playlistEntry, Dictionary<string, BgmEntryViewModel> refBgms = null)
         {
             _refPlaylistEntry = playlistEntry;
@@ -30,6 +34,7 @@ namespace Sm5sh.GUI.ViewModels
             else
                 Title = playlistEntry.Title;
             Tracks = ToPlaylistValueViewModelsByOrder(refBgms);
+            _cachedTracks = false;
             for (short i = 0; i < 16; i++)
                 ReorderSongs(i);
         }
@@ -37,6 +42,16 @@ namespace Sm5sh.GUI.ViewModels
         public PlaylistEntry GetPlaylistEntryReference()
         {
             return _refPlaylistEntry;
+        }
+
+        public List<string> GetAllTracks()
+        {
+            if (!_cachedTracks || _allTracks == null)
+            {
+                _allTracks = Tracks.SelectMany(p => p.Value).Select(p => p.UiBgmId).Distinct().ToList();
+                _cachedTracks = true;
+            }
+            return _allTracks;
         }
 
         public void ReorderSongs(short orderId)
@@ -61,6 +76,9 @@ namespace Sm5sh.GUI.ViewModels
                 if (i == orderId)
                     output = newValue;
             }
+
+            _cachedTracks = false;
+
             return output;
         }
 
@@ -72,6 +90,7 @@ namespace Sm5sh.GUI.ViewModels
                 if(refValue != null)
                     Tracks[i].Remove(refValue);
             }
+            _cachedTracks = false;
         }
 
         public PlaylistEntry ToPlaylistEntry()

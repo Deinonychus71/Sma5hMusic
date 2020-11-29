@@ -11,6 +11,7 @@ using Sm5sh.Mods.Music.MusicOverride;
 using Sm5sh.Mods.Music.MusicOverride.MusicOverrideConfigModels;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace Sm5sh.Mods.Music
 {
@@ -232,8 +233,9 @@ namespace Sm5sh.Mods.Music
             return true;
         }
 
-        private bool SaveMusicOverrideStageConfig()
+        public bool UpdateMusicStageOverride(List<StageEntry> stageEntries)
         {
+            _musicOverrideConfig.StageOverrides = _mapper.Map<Dictionary<string, StageConfig>>(stageEntries.ToDictionary(p => p.UiStageId, p => p));
             var overrideJsonFile = Path.Combine(_config.Value.Sm5shMusicOverride.ModPath, Constants.MusicModFiles.MUSIC_OVERRIDE_STAGE_JSON_FILE);
             File.WriteAllText(overrideJsonFile, JsonConvert.SerializeObject(_musicOverrideConfig.StageOverrides, _defaultFormatting));
             return true;
