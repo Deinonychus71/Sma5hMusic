@@ -114,6 +114,7 @@ namespace Sm5sh.GUI.ViewModels
             this.VMBgmSongs.WhenNewRequestToDeleteBgmEntry.Subscribe(async (o) => await DeleteBgmEntry(o));
             this.VMBgmSongs.WhenNewRequestToReorderBgmEntries.Subscribe((o) => ReorderSongs());
             this.VMGameEditor.WhenNewRequestToAddGameEntry.Subscribe((o) => AddNewGame(o));
+            this.VMPlaylists.WhenNewRequestToUpdatePlaylists.Subscribe((o) => UpdatePlaylists());
         }
 
         public void ResetBgmList()
@@ -175,7 +176,15 @@ namespace Sm5sh.GUI.ViewModels
                 bgmEntry.DbRoot.TestDispOrder = i;
                 i += 2;
             }
+            //TODO - The data should be first persisted in the BgmEntries
             _sm5shMusicOverride.UpdateSoundTestOrderConfig(_bgmEntries.ToDictionary(p => p.ToneId, p => p.DbRoot.TestDispOrder));
+        }
+
+        public void UpdatePlaylists()
+        {
+            //TODO - The data should be first persisted in the Playlists - currently not mapped back to the original PlaylistEntry
+            var playlists = _playlistsEntries.ToDictionary(p => p.Id, p => p.ToPlaylistEntry().Tracks);
+            _sm5shMusicOverride.UpdatePlaylistConfig(playlists);
         }
 
         public async Task AddNewBgmEntry(ModEntryViewModel managerMod)
@@ -224,6 +233,7 @@ namespace Sm5sh.GUI.ViewModels
                 vmBgmEntry.LoadLocalized(_currentLocale);
                 var bgmNew = _mapper.Map(vmBgmEntry, vmBgmEntry.GetBgmEntryReference());
                 bgmNew.GameTitle = _mapper.Map(vmBgmEntry.GameTitleViewModel, new GameTitleEntry(vmBgmEntry.UiGameTitleId));
+                //TODO - The data should be first persisted in the BgmEntries
                 if (bgmNew.Source == Mods.Music.Models.BgmEntryModels.EntrySource.Mod)
                     vmBgmEntry.MusicMod.UpdateBgm(bgmNew);
                 else

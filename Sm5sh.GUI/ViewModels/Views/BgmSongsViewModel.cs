@@ -130,11 +130,10 @@ namespace Sm5sh.GUI.ViewModels
                 && sourceObj != destinationObj)
             {
                 var isHigherThanDest = sourceObj.DbRoot.TestDispOrder > destinationObj.DbRoot.TestDispOrder;
-                sourceObj.DbRoot.TestDispOrder = destinationObj.DbRoot.TestDispOrder;
                 if (isHigherThanDest)
-                    destinationObj.DbRoot.TestDispOrder += 1;
+                    sourceObj.DbRoot.TestDispOrder = (short)(destinationObj.DbRoot.TestDispOrder - 1);
                 else
-                    destinationObj.DbRoot.TestDispOrder -= 1;
+                    sourceObj.DbRoot.TestDispOrder = (short)(destinationObj.DbRoot.TestDispOrder + 1);
                 _postReorderSelection = () => dataGrid.SelectedItem = sourceObj;
 
                 _whenNewRequestToReorderBgmEntries.OnNext(Unit.Default);

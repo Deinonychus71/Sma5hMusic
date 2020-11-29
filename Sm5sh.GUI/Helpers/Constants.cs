@@ -51,7 +51,7 @@ namespace Sm5sh.GUI.Helpers
             { "ui_series_famicomrobot", "Famicon Robot" },
             { "ui_series_doubutsu", "Animal Crossing" },
             { "ui_series_wiifit", "Wii Fit" },
-            { "ui_series_punchout", "Punch Out!" },
+            { "ui_series_punchout", "Punch-Out!!" },
             { "ui_series_xenoblade", "Xenoblade" },
             { "ui_series_metalgear", "Metal Gear" },
             { "ui_series_sonic", "Sonic" },
@@ -97,6 +97,53 @@ namespace Sm5sh.GUI.Helpers
             { "zh_tw", "Chinese (Traditional)" }
         };
 
+        public readonly static Dictionary<string, string> CONVERTER_CORE_PLAYLISTS = new Dictionary<string, string>()
+        {
+            {"bgmsmashbtl", "bgmsmashbtl" },
+            {"bgmsmashmenu", "Smash Menu" },
+            {"bgmsmashmode", "Smash Mode" },
+            {"bgmstageedit", "Stage Edit" },
+            {"bgmboss", "Boss" },
+            {"bgmadventure", "Adventure" },
+            {"bgmmario", "Mario" },
+            {"bgmmkart", "Mario Kart" },
+            {"bgmdk", "Donkey Kong" },
+            {"bgmzelda", "The Legend of Zelda" },
+            {"bgmmetroid", "Metroid" },
+            {"bgmfzero", "F-Zero" },
+            {"bgmyoshi", "Yoshi" },
+            {"bgmfox", "Starfox" },
+            {"bgmpokemon", "Pokémon" },
+            {"bgmmother", "Mother" },
+            {"bgmfe", "Fire Emblem" },
+            {"bgmgamewatch", "Game & Watch" },
+            {"bgmicaros", "Kid Icarus" },
+            {"bgmwario", "Wario" },
+            {"bgmpikmin", "Pikmin" },
+            {"bgmanimal", "Animal Crossing" },
+            {"bgmwiifit", "Wii-Fit" },
+            {"bgmpunchout", "Punch-Out!!" },
+            {"bgmxenoblade", "Xenoblade" },
+            {"bgmspla", "Splatoon" },
+            {"bgmmetalgear", "Metal Gear" },
+            {"bgmsonic", "Sonic" },
+            {"bgmrockman", "Megaman" },
+            {"bgmpacman", "Pacman" },
+            {"bgmsf", "Street Fighter" },
+            {"bgmff", "Final Fantasy" },
+            {"bgmbeyo", "Bayonetta" },
+            {"bgmdracula", "Castlevania" },
+            {"bgmother", "Other" },
+            {"bgmjack", "Persona" },
+            {"bgmbrave", "Dragon Quest" },
+            {"bgmbuddy", "Banjo-Kazooie" },
+            {"bgmdolly", "Fatal Fury" },
+            {"bgmmaster", "Fire Emblem Three Houses" },
+            {"bgmtantan", "Arms" },
+            {"bgmpickel", "Minecraft" },
+            {"bgmplaylist", "Playlist" },
+        };
+
         public static string GetSeriesDisplayName(string key)
         {
             if (string.IsNullOrEmpty(key))
@@ -109,6 +156,13 @@ namespace Sm5sh.GUI.Helpers
             if (string.IsNullOrEmpty(key))
                 return key;
             return CONVERTER_RECORD_TYPE.ContainsKey(key) ? CONVERTER_RECORD_TYPE[key] : key;
+        }
+
+        public static string GetBgmPlaylistName(string key)
+        {
+            if (string.IsNullOrEmpty(key))
+                return key;
+            return CONVERTER_CORE_PLAYLISTS.ContainsKey(key) ? CONVERTER_CORE_PLAYLISTS[key] : key;
         }
 
         public static string GetLocaleDisplayName(string key)

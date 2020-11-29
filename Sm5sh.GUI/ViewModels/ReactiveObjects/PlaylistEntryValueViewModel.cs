@@ -1,5 +1,6 @@
 ﻿using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
+using System;
 
 namespace Sm5sh.GUI.ViewModels
 {
@@ -7,15 +8,24 @@ namespace Sm5sh.GUI.ViewModels
     {
         public string UiBgmId { get; private set; }
 
+        //Necessary for Grid as some values aren't unique
+        public string UniqueId { get; set; }
+
+        public PlaylistEntryViewModel Parent { get; }
+
         [Reactive]
         public BgmEntryViewModel BgmReference { get; set; }
 
+        [Reactive]
         public ushort Incidence { get; set; }
 
+        [Reactive]
         public short Order { get; set; }
 
-        public PlaylistEntryValueViewModel(string bgmId, short order, ushort incidence, BgmEntryViewModel vmBgmEntry = null)
+        public PlaylistEntryValueViewModel(PlaylistEntryViewModel parent, short orderId, string bgmId, short order, ushort incidence, BgmEntryViewModel vmBgmEntry = null)
         {
+            Parent = parent;
+            UniqueId = $"{bgmId}{orderId}";
             UiBgmId = bgmId;
             Order = order;
             Incidence = incidence;
@@ -35,7 +45,7 @@ namespace Sm5sh.GUI.ViewModels
             if (p == null)
                 return false;
 
-            return p.UiBgmId == this.UiBgmId;
+            return p.UniqueId == this.UniqueId;
         }
 
         public override int GetHashCode()

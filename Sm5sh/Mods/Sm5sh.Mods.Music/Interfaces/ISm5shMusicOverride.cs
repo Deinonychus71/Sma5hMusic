@@ -1,5 +1,6 @@
 ﻿using Sm5sh.Interfaces;
 using Sm5sh.Mods.Music.Models;
+using Sm5sh.Mods.Music.Models.PlaylistEntryModels;
 using System.Collections.Generic;
 
 namespace Sm5sh.Mods.Music.Interfaces
@@ -10,5 +11,6 @@ namespace Sm5sh.Mods.Music.Interfaces
 
         bool UpdateCoreBgmEntry(BgmEntry bgmEntry);
         bool RemoveCoreBgmEntry(string toneId);
+        bool UpdatePlaylistConfig(Dictionary<string, List<PlaylistValueEntry>> playlistEntries);
     }
 }
