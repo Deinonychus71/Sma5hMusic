@@ -61,10 +61,6 @@ namespace Sm5sh.GUI
             services.AddSm5shMusic(configuration);
             services.AddSm5shMusicOverride(configuration);
 
-            //Mod Stage Playlist
-            services.Configure<Sm5shStagePlaylistOptions>(configuration);
-            services.AddSingleton<ISm5shMod, StagePlaylistMod>();
-
             //Add UI ViewModels
             services.AddSingleton<IDialogWindow, MainWindow>();
             services.AddSingleton<MainWindowViewModel>();
@@ -75,6 +71,7 @@ namespace Sm5sh.GUI
             services.AddSingleton<IVGMMusicPlayer, VGMMusicPlayer>();
             services.AddSingleton<IFileDialog, FileDialog>();
             services.AddSingleton<IMessageDialog, MessageDialog>();
+            services.AddSingleton<IBuildDialog, BuildDialog>();
             services.AddAutoMapper(typeof(MappingViewModels));
 
             //Add to Splat

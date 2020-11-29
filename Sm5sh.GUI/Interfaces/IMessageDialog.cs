@@ -7,5 +7,6 @@ namespace Sm5sh.GUI.Interfaces
     {
         Task<bool> ShowWarningConfirm(string title, string message);
         Task ShowError(string title, string message);
+        Task ShowInformation(string title, string message);
     }
 }

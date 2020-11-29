@@ -93,7 +93,7 @@ namespace Sm5sh.Mods.Music
             return true;
         }
 
-        public override bool Build()
+        public override bool Build(bool useCache)
         {
             //Persist DB changes
             _audioStateService.SaveBgmEntriesToStateManager();

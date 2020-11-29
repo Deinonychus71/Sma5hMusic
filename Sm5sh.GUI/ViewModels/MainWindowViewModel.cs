@@ -18,6 +18,9 @@ using System.Linq;
 using Sm5sh.GUI.Helpers;
 using AutoMapper;
 using System.Reactive.Linq;
+using ReactiveUI;
+using System.Reactive;
+using Avalonia.Threading;
 
 namespace Sm5sh.GUI.ViewModels
 {
@@ -31,6 +34,7 @@ namespace Sm5sh.GUI.ViewModels
         private readonly IMessageDialog _messageDialog;
         private readonly IFileDialog _fileDialog;
         private readonly IDialogWindow _rootDialog;
+        private readonly IBuildDialog _buildDialog;
         private readonly ILogger _logger;
         private readonly IMapper _mapper;
         private readonly IOptions<Sm5shOptions> _config;
@@ -50,14 +54,20 @@ namespace Sm5sh.GUI.ViewModels
         public BgmFiltersViewModel VMBgmFilters { get; }
         public ContextMenuViewModel VMContextMenu { get; }
 
+        public ReactiveCommand<Unit, Unit> ActionExit { get; }
+        public ReactiveCommand<Unit, Unit> ActionBuild { get; }
+        public ReactiveCommand<Unit, Unit> ActionBuildNoCache { get; }
+        public ReactiveCommand<Unit, Unit> ActionRefreshData { get; }
+
         public MainWindowViewModel(IServiceProvider serviceProvider, IOptions<Sm5shOptions> config, IMapper mapper, IAudioStateService audioState, IVGMMusicPlayer musicPlayer,
-            IMusicModManagerService musicModManagerService, ISm5shMusicOverride sm5shMusicOverride, IDialogWindow rootDialog, IMessageDialog messageDialog, IFileDialog fileDialog, ILogger<MainWindowViewModel> logger)
+            IMusicModManagerService musicModManagerService, ISm5shMusicOverride sm5shMusicOverride, IDialogWindow rootDialog, IMessageDialog messageDialog, IFileDialog fileDialog, IBuildDialog buildDialog, ILogger<MainWindowViewModel> logger)
         {
             _serviceProvider = serviceProvider;
             _musicModManagerService = musicModManagerService;
             _musicPlayer = musicPlayer;
             _sm5shMusicOverride = sm5shMusicOverride;
             _fileDialog = fileDialog;
+            _buildDialog = buildDialog;
             _messageDialog = messageDialog;
             _rootDialog = rootDialog;
             _logger = logger;
@@ -115,56 +125,88 @@ namespace Sm5sh.GUI.ViewModels
             this.VMBgmSongs.WhenNewRequestToReorderBgmEntries.Subscribe((o) => ReorderSongs());
             this.VMGameEditor.WhenNewRequestToAddGameEntry.Subscribe((o) => AddNewGame(o));
             this.VMPlaylists.WhenNewRequestToUpdatePlaylists.Subscribe((o) => UpdatePlaylists());
+
+            ActionExit = ReactiveCommand.Create(OnExit);
+            ActionBuild = ReactiveCommand.CreateFromTask(OnBuild);
+            ActionBuildNoCache = ReactiveCommand.CreateFromTask(OnBuildNoCache);
+            ActionRefreshData = ReactiveCommand.Create(OnInitData);
         }
 
-        public void ResetBgmList()
+ 
+        #region Actions
+        public void OnExit()
         {
-            Task.Run(() =>
+            _rootDialog.Window.Close();
+        }
+
+        public async Task OnBuild()
+        {
+            _logger.LogInformation("Building with cache option ON. Don't touch anything :)");
+            await _buildDialog.Build(true);
+        }
+
+        public async Task OnBuildNoCache()
+        {
+            _logger.LogInformation("Building with cache option OFF. Don't touch anything :)");
+            await _buildDialog.Build(false);
+        }
+
+        public void OnInitData()
+        {
+            _buildDialog.Init((o) => InitAllDataAsync());
+        }
+        #endregion
+
+        #region Data Operations
+        public Task InitAllDataAsync()
+        {
+            _logger.LogInformation("Initialize data");
+
+            //Reset everything
+            _seriesEntries.Clear();
+            _bgmEntries.Clear();
+            _gameTitleEntries.Clear();
+            _locales.Clear();
+            _musicMods.Clear();
+            _playlistsEntries.Clear();
+
+            //Load
+            var stateManager = _serviceProvider.GetService<IStateManager>();
+            var mods = _serviceProvider.GetServices<ISm5shMod>();
+            stateManager.Init();
+            foreach (var mod in mods)
             {
-                //Reset everything
-                _seriesEntries.Clear();
-                _bgmEntries.Clear();
-                _gameTitleEntries.Clear();
-                _locales.Clear();
-                _musicMods.Clear();
-                _playlistsEntries.Clear();
+                mod.Init();
+            }
 
-                //Load
-                var stateManager = _serviceProvider.GetService<IStateManager>();
-                var mods = _serviceProvider.GetServices<ISm5shMod>();
-                stateManager.Init();
-                foreach (var mod in mods)
-                {
-                    mod.Init();
-                }
+            //Init view models
+            //Bind
+            var localeList = _audioState.GetLocales().Select(p => new LocaleViewModel(p, Constants.GetLocaleDisplayName(p)));
+            _locales.AddRange(localeList);
+            _logger.LogInformation("Locales Loaded.");
 
-                //Init view models
-                //Bind
-                var localeList = _audioState.GetLocales().Select(p => new LocaleViewModel(p, Constants.GetLocaleDisplayName(p)));
-                _locales.AddRange(localeList);
-                _logger.LogInformation("Locales Loaded.");
+            var modsList = _musicModManagerService.MusicMods.Select(p => new ModEntryViewModel(p.Id, p));
+            _musicMods.AddRange(modsList);
+            _logger.LogInformation("Music Mods List Loaded.");
 
-                var modsList = _musicModManagerService.MusicMods.Select(p => new ModEntryViewModel(p.Id, p));
-                _musicMods.AddRange(modsList);
-                _logger.LogInformation("Music Mods List Loaded.");
+            var seriesList = _audioState.GetSeriesEntries().Select(p => new SeriesEntryViewModel(p)).ToDictionary(p => p.SeriesId, p => p);
+            _seriesEntries.AddRange(seriesList.Values);
+            _logger.LogInformation("Series Loaded.");
 
-                var seriesList = _audioState.GetSeriesEntries().Select(p => new SeriesEntryViewModel(p)).ToDictionary(p => p.SeriesId, p => p);
-                _seriesEntries.AddRange(seriesList.Values);
-                _logger.LogInformation("Series Loaded.");
+            var gameList = _audioState.GetGameTitleEntries().Select(p => _mapper.Map(p, new GameTitleEntryViewModel(p) { SeriesViewModel = seriesList[p.UiSeriesId] })).ToDictionary(p => p.UiGameTitleId, p => p);
+            _gameTitleEntries.AddRange(gameList.Values);
+            _logger.LogInformation("Game Titles Loaded.");
 
-                var gameList = _audioState.GetGameTitleEntries().Select(p => _mapper.Map(p, new GameTitleEntryViewModel(p) { SeriesViewModel = seriesList[p.UiSeriesId] })).ToDictionary(p => p.UiGameTitleId, p => p);
-                _gameTitleEntries.AddRange(gameList.Values);
-                _logger.LogInformation("Game Titles Loaded.");
+            var bgmList = _audioState.GetBgmEntries().Select(p => _mapper.Map(p, new BgmEntryViewModel(_musicPlayer, p) { GameTitleViewModel = gameList[p.GameTitleId] }));
+            _bgmEntries.AddRange(bgmList);
+            ReorderSongs();
+            _logger.LogInformation("BGM List Loaded.");
 
-                var bgmList = _audioState.GetBgmEntries().Select(p => _mapper.Map(p, new BgmEntryViewModel(_musicPlayer, p) { GameTitleViewModel = gameList[p.GameTitleId] }));
-                _bgmEntries.AddRange(bgmList);
-                ReorderSongs();
-                _logger.LogInformation("BGM List Loaded.");
+            var playlists = _audioState.GetPlaylists().Select(p => new PlaylistEntryViewModel(p, _bgmEntries.ToDictionary(p => p.DbRoot.UiBgmId, p => p)));
+            _playlistsEntries.AddRange(playlists);
+            _logger.LogInformation("Playlists Loaded.");
 
-                var playlists = _audioState.GetPlaylists().Select(p => new PlaylistEntryViewModel(p, _bgmEntries.ToDictionary(p => p.DbRoot.UiBgmId, p => p)));
-                _playlistsEntries.AddRange(playlists);
-                _logger.LogInformation("Playlists Loaded.");
-            });
+            return Task.CompletedTask;
         }
 
         public void ReorderSongs()
@@ -292,5 +334,6 @@ namespace Sm5sh.GUI.ViewModels
             }
             return null;
         }
+        #endregion
     }
 }

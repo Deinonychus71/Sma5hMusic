@@ -54,7 +54,7 @@ namespace Sm5sh.Mods.Music
             return true;
         }
 
-        public override bool Build()
+        public override bool Build(bool useCache)
         {
             //Persist DB changes
             _audioStateService.SaveBgmEntriesToStateManager();
@@ -69,7 +69,7 @@ namespace Sm5sh.Mods.Music
                 _nus3AudioService.GenerateNus3Bank(bgmEntry.ToneId, nusBankOutputFile);
 
                 //Test for audio cache
-                if (_config.Value.Sm5shMusic.EnableAudioCaching)
+                if (useCache)
                 {
                     var cachedAudioFile = Path.Combine(_config.Value.Sm5shMusic.CachePath, string.Format(Constants.GameResources.NUS3AUDIO_FILE, bgmEntry.ToneId));
                     if (!File.Exists(cachedAudioFile))

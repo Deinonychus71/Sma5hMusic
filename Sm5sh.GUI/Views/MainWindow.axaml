@@ -12,29 +12,29 @@
         Title="Sm5sh Music">
   <i:Interaction.Behaviors>
     <ia:EventTriggerBehavior EventName="Opened">
-      <ia:InvokeCommandAction Command="{Binding ResetBgmList}"/>
+      <ia:InvokeCommandAction Command="{Binding OnInitData}"/>
     </ia:EventTriggerBehavior>
   </i:Interaction.Behaviors>
   <Grid RowDefinitions="20,70,*,5,0" ColumnDefinitions="*">
     <Menu Grid.Row="0">
       <MenuItem Header="File">
-        <MenuItem Header="Choose Mod Workspace..."></MenuItem>
+        <!--<MenuItem Header="Choose Mod Workspace..."></MenuItem>
+        <Separator></Separator>-->
+        <MenuItem Header="Build" Command="{Binding ActionBuild}"></MenuItem>
+        <!--<MenuItem Header="Build [no cache]" Command="{Binding ActionBuildNoCache}"></MenuItem>-->
         <Separator></Separator>
-        <MenuItem Header="Build"></MenuItem>
-        <MenuItem Header="Build [no cache]"></MenuItem>
+        <MenuItem Header="Refresh Data" Command="{Binding ActionRefreshData}"></MenuItem>
         <Separator></Separator>
-        <MenuItem Header="Refresh Data"></MenuItem>
-        <Separator></Separator>
-        <MenuItem Header="Exit"></MenuItem>
+        <MenuItem Header="Exit" Command="{Binding ActionExit}"></MenuItem>
       </MenuItem>
-      <MenuItem Header="Tools">
+      <!--<MenuItem Header="Tools">
         <MenuItem Header="Export to CSV"></MenuItem>
       </MenuItem>
       <MenuItem Header="Settings">
         <MenuItem Header="Global Settings"></MenuItem>
         <Separator></Separator>
         <MenuItem Header="About"></MenuItem>
-      </MenuItem>
+      </MenuItem>-->
     </Menu>
     <DockPanel Grid.Row="1">
       <Image Classes="logo" Source="/Assets/smash_logo.png"/>

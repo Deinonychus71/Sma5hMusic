@@ -18,6 +18,6 @@ namespace Sm5sh
 
         public virtual bool Run() { return true; }
 
-        public virtual bool Build() { return true; }
+        public virtual bool Build(bool useCache) { return true; }
     }
 }

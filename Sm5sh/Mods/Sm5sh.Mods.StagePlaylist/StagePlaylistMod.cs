@@ -83,7 +83,7 @@ namespace Sm5sh.Mods.StagePlaylist
             return true;
         }
 
-        public override bool Build()
+        public override bool Build(bool useCache)
         {
             var daoUiStageDatabase = _state.LoadResource<PrcUiStageDatabase>(Constants.GameResources.PRC_UI_STAGE_DB_PATH);
 
