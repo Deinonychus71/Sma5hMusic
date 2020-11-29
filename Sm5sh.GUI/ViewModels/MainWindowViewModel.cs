@@ -10,11 +10,11 @@ using System.Threading.Tasks;
 using ILogger = Microsoft.Extensions.Logging.ILogger;
 using Microsoft.Extensions.DependencyInjection;
 using System;
+using System.Linq;
 using Sm5sh.GUI.Interfaces;
 using Microsoft.Extensions.Options;
 using Sm5sh.GUI.Views;
 using System.Collections.ObjectModel;
-using System.Linq;
 using Sm5sh.GUI.Helpers;
 using AutoMapper;
 using System.Reactive.Linq;
@@ -51,6 +51,8 @@ namespace Sm5sh.GUI.ViewModels
         public GamePickerModalWindowViewModel VMGamePicker { get; }
         public ModPropertiesModalWindowViewModel VMModEditor { get; }
         public ModPickerModalWindowViewModel VMModPicker { get; }
+        public PlaylistPropertiesModalWindowViewModel VMPlaylistEditor { get; }
+        public PlaylistPickerModalWindowViewModel VMPlaylistPicker { get; }
         public BgmSongsViewModel VMBgmSongs { get; }
         public PlaylistViewModel VMPlaylists { get; }
         public BgmFiltersViewModel VMBgmFilters { get; }
@@ -116,13 +118,16 @@ namespace Sm5sh.GUI.ViewModels
                 observableLocaleList, observableSeriesEntriesList, observableGameEntriesList);
             VMGamePicker = ActivatorUtilities.CreateInstance<GamePickerModalWindowViewModel>(serviceProvider,
                 observableGameEntriesList);
-            VMModEditor = ActivatorUtilities.CreateInstance<ModPropertiesModalWindowViewModel>(serviceProvider,
-                observableMusicModsList);
+            VMModEditor = ActivatorUtilities.CreateInstance<ModPropertiesModalWindowViewModel>(serviceProvider);
             VMModPicker = ActivatorUtilities.CreateInstance<ModPickerModalWindowViewModel>(serviceProvider,
                 observableMusicModsList);
             VMBgmEditor = ActivatorUtilities.CreateInstance<BgmPropertiesModalWindowViewModel>(serviceProvider,
                 observableLocaleList, observableSeriesEntriesList, observableGameEntriesList, observableBgmEntriesList);
             VMBgmEditor.VMGamePropertiesModal = VMGameEditor;
+            VMPlaylistEditor = ActivatorUtilities.CreateInstance<PlaylistPropertiesModalWindowViewModel>(serviceProvider,
+               observablePlaylistEntriesList);
+            VMPlaylistPicker = ActivatorUtilities.CreateInstance<PlaylistPickerModalWindowViewModel>(serviceProvider,
+                observablePlaylistEntriesList);
 
             //Listen to requests from children
             this.VMContextMenu.WhenNewRequestToAddBgmEntry.Subscribe(async (o) => await AddNewBgmEntry(o));
@@ -135,6 +140,9 @@ namespace Sm5sh.GUI.ViewModels
             this.VMBgmSongs.WhenNewRequestToDeleteBgmEntry.Subscribe(async (o) => await DeleteBgmEntry(o));
             this.VMBgmSongs.WhenNewRequestToReorderBgmEntries.Subscribe((o) => ReorderSongs());
             this.VMPlaylists.WhenNewRequestToUpdatePlaylists.Subscribe((o) => UpdatePlaylists());
+            this.VMPlaylists.WhenNewRequestToCreatePlaylist.Subscribe(async (o) => await AddNewOrEditPlaylist());
+            this.VMPlaylists.WhenNewRequestToEditPlaylist.Subscribe(async (o) => await EditPlaylist());
+            this.VMPlaylists.WhenNewRequestToDeletePlaylist.Subscribe(async (o) => await DeletePlaylist());
 
             ActionExit = ReactiveCommand.Create(OnExit);
             ActionBuild = ReactiveCommand.CreateFromTask(OnBuild);
@@ -235,10 +243,17 @@ namespace Sm5sh.GUI.ViewModels
 
         public void UpdatePlaylists()
         {
-            //TODO - The data should be first persisted in the Playlists - currently not mapped back to the original PlaylistEntry
-            //TODO - Handle anything saving in a specific service
-            var playlists = _playlistsEntries.ToDictionary(p => p.Id, p => p.ToPlaylistEntry().Tracks);
-            _sm5shMusicOverride.UpdatePlaylistConfig(playlists);
+            try
+            {
+                //TODO - The data should be first persisted in the Playlists - currently not mapped back to the original PlaylistEntry
+                //TODO - Handle anything saving in a specific service
+                var playlists = _playlistsEntries.ToDictionary(p => p.Id, p => p.ToPlaylistEntry());
+                _sm5shMusicOverride.UpdatePlaylistConfig(playlists);
+            }
+            catch(Exception e)
+            {
+                _logger.LogError("Error while saying playlists. Most likely a concurrency issue.", e.Message);
+            }
         }
 
         public async Task AddNewOrEditMod(Window parent = null, ModEntryViewModel vmModEntry = null)
@@ -389,6 +404,52 @@ namespace Sm5sh.GUI.ViewModels
             if (results != null)
             {
                 await AddNewOrEditMod(parent, VMModPicker.SelectedModEntry);
+            }
+        }
+
+        public async Task AddNewOrEditPlaylist(Window parent = null, PlaylistEntryViewModel vmPlaylist = null)
+        {
+            VMPlaylistEditor.LoadPlaylist(vmPlaylist);
+            var modalPickerGame = new PlaylistPropertiesModalWindow() { DataContext = VMPlaylistEditor };
+            var results = await modalPickerGame.ShowDialog<PlaylistPropertiesModalWindow>(parent != null ? parent : _rootDialog.Window);
+
+            if (results != null)
+            {
+                if (!VMPlaylistEditor.IsEdit)
+                {
+                    _playlistsEntries.Add(VMPlaylistEditor.SelectedPlaylistEntry);
+                }
+            }
+        }
+
+        public async Task EditPlaylist(Window parent = null)
+        {
+            var modalPickerGame = new PlaylistPickerModalWindow() { DataContext = VMPlaylistPicker };
+            var results = await modalPickerGame.ShowDialog<PlaylistPickerModalWindow>(parent != null ? parent : _rootDialog.Window);
+            if (results != null)
+            {
+                await AddNewOrEditPlaylist(parent, VMPlaylistPicker.SelectedPlaylistEntry);
+                UpdatePlaylists();
+            }
+        }
+
+        public async Task DeletePlaylist(Window parent = null)
+        {
+            var modalPickerGame = new PlaylistPickerModalWindow() { DataContext = VMPlaylistPicker };
+            var results = await modalPickerGame.ShowDialog<PlaylistPickerModalWindow>(_rootDialog.Window);
+            if (results != null)
+            {
+                await DeletePlaylist(VMPlaylistPicker.SelectedPlaylistEntry);
+            }
+        }
+
+        public async Task DeletePlaylist(PlaylistEntryViewModel vmPlaylistEntry)
+        {
+            var result = await _messageDialog.ShowWarningConfirm($"Delete Playlist '{vmPlaylistEntry.Title}'?", "Do you really want to remove this playlist? If it's a Core playlist, this could cause unknown issues.");
+            if (result)
+            {
+                _playlistsEntries.Remove(vmPlaylistEntry);
+                UpdatePlaylists();
             }
         }
         #endregion

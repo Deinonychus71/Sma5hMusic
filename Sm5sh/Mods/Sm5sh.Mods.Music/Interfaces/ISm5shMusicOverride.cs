@@ -11,6 +11,6 @@ namespace Sm5sh.Mods.Music.Interfaces
         bool UpdateCoreBgmEntry(BgmEntry bgmEntry);
         bool RemoveCoreBgmEntry(string toneId);
         bool UpdateCoreGameTitleEntry(Models.GameTitleEntry gameTitleEntry);
-        bool UpdatePlaylistConfig(Dictionary<string, List<PlaylistValueEntry>> playlistEntries);
+        bool UpdatePlaylistConfig(Dictionary<string, PlaylistEntry> playlistEntries);
     }
 }

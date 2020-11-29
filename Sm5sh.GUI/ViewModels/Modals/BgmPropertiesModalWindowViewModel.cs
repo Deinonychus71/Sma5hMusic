@@ -86,7 +86,7 @@ namespace Sm5sh.GUI.ViewModels
 
             ActionCancel = ReactiveCommand.Create<Window>(CancelChanges);
             ActionSave = ReactiveCommand.Create<Window>(SaveChanges);
-            ActionNewGame = ReactiveCommand.CreateFromTask<Window>(AddNewGame);
+            ActionNewGame = ReactiveCommand.Create<Window>(AddNewGame);
             ActionEditGame = ReactiveCommand.Create<Window>(SaveChanges);
 
             //Bind observables
@@ -156,7 +156,7 @@ namespace Sm5sh.GUI.ViewModels
             window.Close(window);
         }
         
-        private async Task AddNewGame(Window window)
+        private void AddNewGame(Window window)
         {
             _whenNewRequestToAddGameEntry.OnNext(window);
         }

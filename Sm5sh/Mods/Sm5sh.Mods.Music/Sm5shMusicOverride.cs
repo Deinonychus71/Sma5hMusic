@@ -6,7 +6,6 @@ using Sm5sh.Interfaces;
 using Sm5sh.Mods.Music.Helpers;
 using Sm5sh.Mods.Music.Interfaces;
 using Sm5sh.Mods.Music.Models;
-using Sm5sh.Mods.Music.Models.PlaylistEntryModels;
 using Sm5sh.Mods.Music.MusicMods.AdvancedMusicModModels;
 using Sm5sh.Mods.Music.MusicOverride;
 using Sm5sh.Mods.Music.MusicOverride.MusicOverrideConfigModels;
@@ -76,18 +75,19 @@ namespace Sm5sh.Mods.Music
             }
 
             //Playlist Override
-            if(_musicOverrideConfig.Playlists != null)
+            if(_musicOverrideConfig.Playlists != null && _musicOverrideConfig.Playlists.Count > 0)
             {
-                foreach(var playlist in _audioStateService.GetPlaylists())
+                foreach (var playlistEntry in _audioStateService.GetPlaylists())
+                    _audioStateService.RemovePlaylistEntry(playlistEntry.Id);
+
+                foreach (var playlistConfig in _musicOverrideConfig.Playlists)
                 {
-                    if (_musicOverrideConfig.Playlists.ContainsKey(playlist.Id))
+                    var newPlaylist = new PlaylistEntry(playlistConfig.Key, playlistConfig.Value.Title);
+                    foreach(var overrideTrack in playlistConfig.Value.Tracks)
                     {
-                        playlist.Tracks.Clear();
-                        foreach(var overrideTrack in _musicOverrideConfig.Playlists[playlist.Id])
-                        {
-                            playlist.Tracks.Add(_mapper.Map<Models.PlaylistEntryModels.PlaylistValueEntry>(overrideTrack));
-                        }
+                        newPlaylist.Tracks.Add(_mapper.Map<Models.PlaylistEntryModels.PlaylistValueEntry>(overrideTrack));
                     }
+                    _audioStateService.AddPlaylistEntry(newPlaylist);
                 }
             }
 
@@ -118,7 +118,7 @@ namespace Sm5sh.Mods.Music
             _musicOverrideConfig = new MusicOverrideConfig()
             {
                 CoreBgmOverrides = new Dictionary<string, BgmConfig>(),
-                Playlists = new Dictionary<string, List<PlaylistConfig>>(),
+                Playlists = new Dictionary<string, PlaylistConfig>(),
                 SoundTestOrder = new Dictionary<string, short>(),
                 StageOverrides = new Dictionary<string, StageConfig>(),
                 CoreGameOverrides = new Dictionary<string, GameConfig>()
@@ -143,7 +143,7 @@ namespace Sm5sh.Mods.Music
             {
                 var file = File.ReadAllText(overridePlaylistJsonFile);
                 _logger.LogDebug("Parsing {MusicOverrideFile} Json File", overridePlaylistJsonFile);
-                var outputPlaylist = JsonConvert.DeserializeObject<Dictionary<string, List<PlaylistConfig>>>(file);
+                var outputPlaylist = JsonConvert.DeserializeObject<Dictionary<string, PlaylistConfig>>(file);
                 _logger.LogDebug("Parsed {MusicOverrideFile} Json File", overridePlaylistJsonFile);
                 _musicOverrideConfig.Playlists = outputPlaylist;
             }
@@ -224,9 +224,9 @@ namespace Sm5sh.Mods.Music
             return true;
         }
 
-        public bool UpdatePlaylistConfig(Dictionary<string, List<PlaylistValueEntry>> playlistEntries)
+        public bool UpdatePlaylistConfig(Dictionary<string, PlaylistEntry> playlistEntries)
         {
-            _musicOverrideConfig.Playlists = _mapper.Map<Dictionary<string, List<PlaylistConfig>>>(playlistEntries);
+            _musicOverrideConfig.Playlists = _mapper.Map<Dictionary<string, PlaylistConfig>>(playlistEntries);
             var overrideJsonFile = Path.Combine(_config.Value.Sm5shMusicOverride.ModPath, Constants.MusicModFiles.MUSIC_OVERRIDE_PLAYLIST_JSON_FILE);
             File.WriteAllText(overrideJsonFile, JsonConvert.SerializeObject(_musicOverrideConfig.Playlists, _defaultFormatting));
             return true;

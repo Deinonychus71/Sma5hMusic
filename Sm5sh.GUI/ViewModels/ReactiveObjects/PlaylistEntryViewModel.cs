@@ -22,11 +22,13 @@ namespace Sm5sh.GUI.ViewModels
 
         public string Id { get { return _refPlaylistEntry.Id; } }
 
-        public PlaylistEntryViewModel(PlaylistEntry playlistEntry, Dictionary<string, BgmEntryViewModel> refBgms)
+        public PlaylistEntryViewModel(PlaylistEntry playlistEntry, Dictionary<string, BgmEntryViewModel> refBgms = null)
         {
             _refPlaylistEntry = playlistEntry;
-            if(string.IsNullOrEmpty(playlistEntry.Label))
+            if(string.IsNullOrEmpty(playlistEntry.Title))
                 Title = Constants.GetBgmPlaylistName(playlistEntry.Id);
+            else
+                Title = playlistEntry.Title;
             Tracks = ToPlaylistValueViewModelsByOrder(refBgms);
             for (short i = 0; i < 16; i++)
                 ReorderSongs(i);
@@ -74,7 +76,7 @@ namespace Sm5sh.GUI.ViewModels
 
         public PlaylistEntry ToPlaylistEntry()
         {
-            var output = new PlaylistEntry(this.Id, _refPlaylistEntry.Label);
+            var output = new PlaylistEntry(this.Id, Title);
 
             var nbrItems = Tracks[0].Count;
             for(int i = 0; i < nbrItems; i++)
@@ -127,7 +129,7 @@ namespace Sm5sh.GUI.ViewModels
             foreach (var track in _refPlaylistEntry.Tracks)
             {
                 BgmEntryViewModel vmBgmEntry = null;
-                if (refBgms.ContainsKey(track.UiBgmId))
+                if (refBgms != null && refBgms.ContainsKey(track.UiBgmId))
                     vmBgmEntry = refBgms[track.UiBgmId];
 
                 for (short i = 0; i < 16; i++)

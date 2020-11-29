@@ -6,13 +6,13 @@ namespace Sm5sh.Mods.Music.Models
     public class PlaylistEntry
     {
         public string Id { get; }
-        public string Label { get; set; }
+        public string Title { get; set; }
         public List<PlaylistEntryModels.PlaylistValueEntry> Tracks { get; set; }
 
-        public PlaylistEntry(string id, string label = null)
+        public PlaylistEntry(string id, string title = null)
         {
             Id = id;
-            Label = label;
+            Title = title;
             Tracks = new List<PlaylistEntryModels.PlaylistValueEntry>();
         }
     }

@@ -7,8 +7,6 @@ using ReactiveUI;
 using System.Text.RegularExpressions;
 using Avalonia.Controls;
 using System.Reactive;
-using DynamicData;
-using System.Collections.ObjectModel;
 using System.Reactive.Linq;
 using ReactiveUI.Validation.Helpers;
 using ReactiveUI.Validation.Extensions;
@@ -21,7 +19,6 @@ namespace Sm5sh.GUI.ViewModels
     public class ModPropertiesModalWindowViewModel : ReactiveValidationObject
     {
         private readonly IOptions<Sm5shMusicOptions> _config;
-        private readonly ReadOnlyObservableCollection<ModEntryViewModel> _mods;
         private const string REGEX_REPLACE = @"[^a-zA-Z0-9\-_ ]";
         private string REGEX_VALIDATION = @"^[\w\-. ]+$";
         private readonly ILogger _logger;
@@ -42,24 +39,15 @@ namespace Sm5sh.GUI.ViewModels
         [Reactive]
         public bool IsEdit { get; set; }
 
-        public ReadOnlyObservableCollection<ModEntryViewModel> Series { get { return _mods; } }
-
         public ReactiveCommand<Window, Unit> ActionOK { get; }
         public ReactiveCommand<Window, Unit> ActionCancel { get; }
 
-        public ModPropertiesModalWindowViewModel(ILogger<ModPropertiesModalWindowViewModel> logger, IOptions<Sm5shMusicOptions> config, IObservable<IChangeSet<ModEntryViewModel, string>> observableMods)
+        public ModPropertiesModalWindowViewModel(ILogger<ModPropertiesModalWindowViewModel> logger, IOptions<Sm5shMusicOptions> config)
         {
             _config = config;
             _logger = logger;
 
             this.WhenAnyValue(p => p.ModName).Subscribe((o) => { FormatModPath(o); });
-
-            //Bind observables
-            observableMods
-                .ObserveOn(RxApp.MainThreadScheduler)
-                .Bind(out _mods)
-                .DisposeMany()
-                .Subscribe();
 
             this.ValidationRule(p => p.ModPath,
                 p => !string.IsNullOrEmpty(p) && ((Regex.IsMatch(p, REGEX_VALIDATION) && !Directory.Exists(Path.Combine(_config.Value.Sm5shMusic.ModPath, p))) || IsEdit),

@@ -99,6 +99,10 @@ namespace Sm5sh.GUI.ViewModels
                 p => !string.IsNullOrEmpty(p) && Regex.IsMatch(p, REGEX_VALIDATION),
                 $"The Game ID must start by '{Constants.GAME_TITLE_PREFIX}' and only contain lowercase letters, digits and underscore.");
 
+            this.ValidationRule(p => p.UiGameTitleId,
+                p => !_games.Select(p => p.UiGameTitleId).Contains(p),
+                $"The Game ID already exists.");
+
             this.ValidationRule(p => p.SelectedSeries,
                 p => p != null,
                 $"Please select a series.");

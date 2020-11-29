@@ -25,7 +25,7 @@ namespace Sm5sh.GUI.ViewModels
         public PlaylistEntryValueViewModel(PlaylistEntryViewModel parent, short orderId, string bgmId, short order, ushort incidence, BgmEntryViewModel vmBgmEntry = null)
         {
             Parent = parent;
-            UniqueId = $"{bgmId}{orderId}";
+            UniqueId = Guid.NewGuid().ToString(); // $"{bgmId}{orderId}";
             UiBgmId = bgmId;
             Order = order;
             Incidence = incidence;

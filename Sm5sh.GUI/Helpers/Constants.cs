@@ -26,6 +26,7 @@ namespace Sm5sh.GUI.Helpers
         }
 
         public const string GAME_TITLE_PREFIX = "ui_gametitle_";
+        public const string PLAYLIST_TITLE_PREFIX = "bgm";
 
         public const string DEFAULT_LOCALE = "us_en";
 
@@ -110,6 +111,7 @@ namespace Sm5sh.GUI.Helpers
             {"bgmmario", "Mario" },
             {"bgmmkart", "Mario Kart" },
             {"bgmdk", "Donkey Kong" },
+            {"bgmkirby", "Kirby" },
             {"bgmzelda", "The Legend of Zelda" },
             {"bgmmetroid", "Metroid" },
             {"bgmfzero", "F-Zero" },

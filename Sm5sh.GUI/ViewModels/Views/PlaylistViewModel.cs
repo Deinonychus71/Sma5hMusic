@@ -16,12 +16,16 @@ using Sm5sh.GUI.Models;
 using DynamicData.Binding;
 using DynamicData;
 using Microsoft.Extensions.DependencyInjection;
+using Sm5sh.GUI.Interfaces;
+using Sm5sh.GUI.Views;
 
 namespace Sm5sh.GUI.ViewModels
 {
     public class PlaylistViewModel : ViewModelBase
     {
         private readonly ILogger _logging;
+        private readonly IMessageDialog _messageDialog;
+        private readonly IDialogWindow _rootDialog;
         private readonly ReadOnlyObservableCollection<BgmEntryViewModel> _bgms;
         private readonly ReadOnlyObservableCollection<PlaylistEntryViewModel> _playlists;
         private readonly ReadOnlyObservableCollection<PlaylistEntryValueViewModel> _selectedPlaylistOrderedEntry;
@@ -29,6 +33,9 @@ namespace Sm5sh.GUI.ViewModels
         private readonly BehaviorSubject<ComboItem> _whenPlaylistOrderSelected;
         private readonly Subject<Unit> _whenNewRequestToUpdatePlaylistsInternal;
         private readonly Subject<Unit> _whenNewRequestToUpdatePlaylists;
+        private readonly Subject<Unit> _whenNewRequestToCreatePlaylist;
+        private readonly Subject<Unit> _whenNewRequestToEditPlaylist;
+        private readonly Subject<Unit> _whenNewRequestToDeletePlaylist;
         private const string DATAOBJECT_FORMAT_BGM = "BGM";
         private const string DATAOBJECT_FORMAT_PLAYLIST = "PLAYLIST";
         private readonly List<ComboItem> _orderMenu;
@@ -42,6 +49,9 @@ namespace Sm5sh.GUI.ViewModels
         public IObservable<ComboItem> WhenPlaylistOrderSelected { get { return _whenPlaylistOrderSelected; } }
         private IObservable<Unit> WhenNewRequestToUpdatePlaylistsInternal { get { return _whenNewRequestToUpdatePlaylistsInternal; } }
         public IObservable<Unit> WhenNewRequestToUpdatePlaylists { get { return _whenNewRequestToUpdatePlaylists; } }
+        public IObservable<Unit> WhenNewRequestToCreatePlaylist { get { return _whenNewRequestToCreatePlaylist; } }
+        public IObservable<Unit> WhenNewRequestToEditPlaylist { get { return _whenNewRequestToEditPlaylist; } }
+        public IObservable<Unit> WhenNewRequestToDeletePlaylist { get { return _whenNewRequestToDeletePlaylist; } }
         public ReadOnlyObservableCollection<BgmEntryViewModel> Bgms { get { return _bgms; } }
         public ReadOnlyObservableCollection<PlaylistEntryViewModel> Playlists { get { return _playlists; } }
         public ReadOnlyObservableCollection<PlaylistEntryValueViewModel> SelectedPlaylistOrderedEntry { get { return _selectedPlaylistOrderedEntry; } }
@@ -60,16 +70,23 @@ namespace Sm5sh.GUI.ViewModels
         public ReactiveCommand<PlaylistEntryViewModel, Unit> ActionSelectPlaylist { get; }
         public ReactiveCommand<PlaylistEntryValueViewModel, Unit> ActionDeletePlaylistItem { get; }
         public ReactiveCommand<ComboItem, Unit> ActionSelectPlaylistOrder { get; }
+        public ReactiveCommand<Unit, Unit> ActionCreatePlaylist { get; }
+        public ReactiveCommand<Unit, Unit> ActionEditPlaylist { get; }
+        public ReactiveCommand<Unit, Unit> ActionDeletePlaylist { get; }
 
-
-        public PlaylistViewModel(ILogger<PlaylistViewModel> logging, IObservable<IChangeSet<BgmEntryViewModel, string>> observableBgmEntries,
+        public PlaylistViewModel(ILogger<PlaylistViewModel> logging, IDialogWindow rootDialog, IMessageDialog messageDialog, IObservable<IChangeSet<BgmEntryViewModel, string>> observableBgmEntries,
             IObservable<IChangeSet<PlaylistEntryViewModel, string>> observablePlaylistEntries, ContextMenuViewModel vmContextMenu)
         {
             _logging = logging;
+            _messageDialog = messageDialog;
+            _rootDialog = rootDialog;
             VMContextMenu = vmContextMenu;
             _orderMenu = GetOrderList();
             _whenNewRequestToUpdatePlaylistsInternal = new Subject<Unit>();
             _whenNewRequestToUpdatePlaylists = new Subject<Unit>();
+            _whenNewRequestToCreatePlaylist = new Subject<Unit>();
+            _whenNewRequestToEditPlaylist = new Subject<Unit>();
+            _whenNewRequestToDeletePlaylist = new Subject<Unit>();
 
             //Bgms
             observableBgmEntries
@@ -121,7 +138,10 @@ namespace Sm5sh.GUI.ViewModels
             ActionInitializeDragAndDrop = ReactiveCommand.Create<DataGrid>(InitializeDragAndDropHandlers);
             ActionSelectPlaylist = ReactiveCommand.Create<PlaylistEntryViewModel>(SelectPlaylistId);
             ActionSelectPlaylistOrder = ReactiveCommand.Create<ComboItem>(SelectPlaylistOrder);
-            ActionDeletePlaylistItem = ReactiveCommand.Create<PlaylistEntryValueViewModel>(RemoveItem);
+            ActionDeletePlaylistItem = ReactiveCommand.CreateFromTask<PlaylistEntryValueViewModel>(RemoveItem);
+            ActionCreatePlaylist = ReactiveCommand.Create(() => AddNewPlaylist());
+            ActionEditPlaylist = ReactiveCommand.Create(() => EditPlaylist());
+            ActionDeletePlaylist = ReactiveCommand.Create(() => DeletePlaylist());
 
             //Trigger behavior subjets
             _whenPlaylistSelected = new BehaviorSubject<PlaylistEntryViewModel>(_playlists.FirstOrDefault());
@@ -167,26 +187,43 @@ namespace Sm5sh.GUI.ViewModels
 
         public void Drop(object sender, DragEventArgs e)
         {
-            if (((Control)e.Source).DataContext is PlaylistEntryValueViewModel destinationObj)
+            var destinationObj = ((Control)e.Source).DataContext as PlaylistEntryValueViewModel;
+            if (destinationObj != null)
             {
-                if (e.Data.Get(DATAOBJECT_FORMAT_BGM) is BgmEntryViewModel sourceBgmObj)
-                {
-                    AddToPlaylist(sourceBgmObj, destinationObj);
-                }
-                else if (e.Data.Get(DATAOBJECT_FORMAT_PLAYLIST) is PlaylistEntryValueViewModel sourcePlaylistObj)
+                if (e.Data.Get(DATAOBJECT_FORMAT_PLAYLIST) is PlaylistEntryValueViewModel sourcePlaylistObj)
                 {
                     ReorderPlaylist(sourcePlaylistObj, destinationObj);
-                }
+                } 
+            }
+            if (e.Data.Get(DATAOBJECT_FORMAT_BGM) is BgmEntryViewModel sourceBgmObj)
+            {
+                AddToPlaylist(sourceBgmObj, destinationObj);
             }
         }
         #endregion
 
         #region Playlist manipulation
+        public void AddNewPlaylist()
+        {
+            _whenNewRequestToCreatePlaylist.OnNext(Unit.Default);
+        }
+
+        public void EditPlaylist()
+        {
+            _whenNewRequestToEditPlaylist.OnNext(Unit.Default);
+        }
+
+        public void DeletePlaylist()
+        {
+            _whenNewRequestToDeletePlaylist.OnNext(Unit.Default);
+        }
+
         public void AddToPlaylist(BgmEntryViewModel sourceObj, PlaylistEntryValueViewModel destinationObj)
         {
-            var newEntry = destinationObj.Parent.AddSong(sourceObj, SelectedPlaylistOrder, (short)(destinationObj.Order + 1));
+            var order = destinationObj != null ? (short)(destinationObj.Order + 1): (short)999;
+            var newEntry = SelectedPlaylistEntry.AddSong(sourceObj, SelectedPlaylistOrder, order);
             _postReorderSelection = () => _refGrid.SelectedItem = newEntry;
-            destinationObj.Parent.ReorderSongs(SelectedPlaylistOrder);
+            SelectedPlaylistEntry.ReorderSongs(SelectedPlaylistOrder);
             _whenNewRequestToUpdatePlaylistsInternal.OnNext(Unit.Default);
         }
 
@@ -202,10 +239,13 @@ namespace Sm5sh.GUI.ViewModels
             _whenNewRequestToUpdatePlaylistsInternal.OnNext(Unit.Default);
         }
 
-        public void RemoveItem(PlaylistEntryValueViewModel sourceObj)
+        public async Task RemoveItem(PlaylistEntryValueViewModel sourceObj)
         {
-            sourceObj.Parent.RemoveSong(sourceObj.UiBgmId);
-            _whenNewRequestToUpdatePlaylistsInternal.OnNext(Unit.Default);
+            if (await _messageDialog.ShowWarningConfirm($"Delete '{sourceObj.BgmReference?.Title}'?", "Do you really want to remove this song from the playlist? Deleting the song in the playlist does not remove it from the game."))
+            {
+                sourceObj.Parent.RemoveSong(sourceObj.UiBgmId);
+                _whenNewRequestToUpdatePlaylistsInternal.OnNext(Unit.Default);
+            }
         }
 
         public void FocusAfterMove()

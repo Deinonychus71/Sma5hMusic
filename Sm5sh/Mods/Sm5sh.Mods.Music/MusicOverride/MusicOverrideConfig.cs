@@ -8,7 +8,7 @@ namespace Sm5sh.Mods.Music.MusicOverride
     public class MusicOverrideConfig
     {
         public Dictionary<string, short> SoundTestOrder { get; set; }
-        public Dictionary<string, List<PlaylistConfig>> Playlists { get; set; }
+        public Dictionary<string, PlaylistConfig> Playlists { get; set; }
         public Dictionary<string, BgmConfig> CoreBgmOverrides { get; set; }
         public Dictionary<string, StageConfig> StageOverrides { get; set; }
         public Dictionary<string, GameConfig> CoreGameOverrides { get; set; }
@@ -17,6 +17,18 @@ namespace Sm5sh.Mods.Music.MusicOverride
     namespace MusicOverrideConfigModels
     {
         public class PlaylistConfig
+        {
+            [JsonProperty("id")]
+            public string Id { get; set; }
+
+            [JsonProperty("title")]
+            public string Title { get; set; }
+
+            [JsonProperty("tracks")]
+            public List<PlaylistValueConfig> Tracks { get; set; }
+        }
+
+        public class PlaylistValueConfig
         {
             [JsonProperty("ui_bgm_id")]
             public string UiBgmId { get; set; }

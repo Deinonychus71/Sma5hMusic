@@ -6,7 +6,16 @@ namespace Sm5sh.Mods.Music.Models.AutoMapper
     {
         public MappingOverrideConfig()
         {
-            CreateMap<PlaylistEntryModels.PlaylistValueEntry, MusicOverride.MusicOverrideConfigModels.PlaylistConfig>()
+            CreateMap<PlaylistEntry, MusicOverride.MusicOverrideConfigModels.PlaylistConfig>()
+                .ForMember(i => i.Id, me => me.MapFrom(p => p.Id))
+                .ForMember(i => i.Title, me => me.MapFrom(p => p.Title))
+                .ForMember(i => i.Tracks, me => me.MapFrom(p => p.Tracks));
+            CreateMap<MusicOverride.MusicOverrideConfigModels.PlaylistConfig, PlaylistEntry>()
+                .ForMember(i => i.Id, me => me.MapFrom(p => p.Id))
+                .ForMember(i => i.Title, me => me.MapFrom(p => p.Title))
+                .ForMember(i => i.Tracks, me => me.MapFrom(p => p.Tracks));
+
+            CreateMap<PlaylistEntryModels.PlaylistValueEntry, MusicOverride.MusicOverrideConfigModels.PlaylistValueConfig>()
                 .ForMember(i => i.UiBgmId, me => me.MapFrom(p => p.UiBgmId))
                 .ForMember(i => i.Incidence0, me => me.MapFrom(p => p.Incidence0))
                 .ForMember(i => i.Incidence1, me => me.MapFrom(p => p.Incidence1))
@@ -40,7 +49,7 @@ namespace Sm5sh.Mods.Music.Models.AutoMapper
                 .ForMember(i => i.Order13, me => me.MapFrom(p => p.Order13))
                 .ForMember(i => i.Order14, me => me.MapFrom(p => p.Order14))
                 .ForMember(i => i.Order15, me => me.MapFrom(p => p.Order15));
-            CreateMap<MusicOverride.MusicOverrideConfigModels.PlaylistConfig, PlaylistEntryModels.PlaylistValueEntry>()
+            CreateMap<MusicOverride.MusicOverrideConfigModels.PlaylistValueConfig, PlaylistEntryModels.PlaylistValueEntry>()
                 .ForMember(i => i.UiBgmId, me => me.MapFrom(p => p.UiBgmId))
                 .ForMember(i => i.Incidence0, me => me.MapFrom(p => p.Incidence0))
                 .ForMember(i => i.Incidence1, me => me.MapFrom(p => p.Incidence1))

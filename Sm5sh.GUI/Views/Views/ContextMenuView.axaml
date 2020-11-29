@@ -5,7 +5,7 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Sm5sh.GUI.Views.ContextMenuView">
   <Menu>
-    <MenuItem Header="Import Songs..." Items="{Binding Mods}" IsEnabled="True">
+    <MenuItem Header="Import Songs to..." Items="{Binding Mods}" IsEnabled="True">
       <MenuItem.Styles>
         <Style Selector="MenuItem > MenuItem">
           <Setter Property="Header" Value="{Binding ModName}"/>
