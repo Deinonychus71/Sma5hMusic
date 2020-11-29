@@ -4,6 +4,7 @@ using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using Sm5sh.GUI.Helpers;
 using Sm5sh.GUI.Models;
+using Sm5sh.Mods.Music.Models;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -67,8 +68,8 @@ namespace Sm5sh.GUI.ViewModels
                 .Filter(p =>
                     (SelectedShowHiddenSongs || (!SelectedShowHiddenSongs && !p.HiddenInSoundTest)) &&
                     (SelectedShowInSoundTest || (!SelectedShowInSoundTest && p.HiddenInSoundTest)) &&
-                    (SelectedModSongs || (!SelectedModSongs && p.Source == Sm5sh.Mods.Music.Models.BgmEntryModels.EntrySource.Core)) &&
-                    (SelectedCoreSongs || (!SelectedCoreSongs && p.Source == Sm5sh.Mods.Music.Models.BgmEntryModels.EntrySource.Mod)) &&
+                    (SelectedModSongs || (!SelectedModSongs && p.Source == EntrySource.Core)) &&
+                    (SelectedCoreSongs || (!SelectedCoreSongs && p.Source == EntrySource.Mod)) &&
                     (SelectedMod == null || SelectedMod.AllFlag || p.ModId == SelectedMod.ModId) &&
                     (SelectedRecordType == null || SelectedRecordType.AllFlag || p.RecordType == SelectedRecordType.Id) &&
                     (SelectedSeries == null || SelectedSeries.AllFlag || p.SeriesId == SelectedSeries.SeriesId) &&

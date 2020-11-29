@@ -5,6 +5,7 @@ using Newtonsoft.Json;
 using Sm5sh.Interfaces;
 using Sm5sh.Mods.Music.Helpers;
 using Sm5sh.Mods.Music.Interfaces;
+using Sm5sh.Mods.Music.Models;
 using Sm5sh.Mods.Music.Models.PlaylistEntryModels;
 using Sm5sh.Mods.Music.MusicMods.AdvancedMusicModModels;
 using Sm5sh.Mods.Music.MusicOverride;
@@ -50,15 +51,15 @@ namespace Sm5sh.Mods.Music
                     bgmEntry.DbRoot.TestDispOrder = _musicOverrideConfig.SoundTestOrder[bgmEntry.ToneId];
 
                 //Replace Core Files / Delete Core
-                if (bgmEntry.Source == Models.BgmEntryModels.EntrySource.Core && _musicOverrideConfig.CoreOverrides.ContainsKey(bgmEntry.ToneId))
+                if (bgmEntry.Source == EntrySource.Core && _musicOverrideConfig.CoreBgmOverrides.ContainsKey(bgmEntry.ToneId))
                 {
-                    var bgmConfig = _musicOverrideConfig.CoreOverrides[bgmEntry.ToneId];
+                    var bgmConfig = _musicOverrideConfig.CoreBgmOverrides[bgmEntry.ToneId];
                     if (bgmConfig.IsDeleted)
                         _audioStateService.RemoveBgmEntry(bgmConfig.ToneId);
                     else
                     {
                         var filename = bgmEntry.Filename; //Temporary file while we need filename
-                        _mapper.Map(_musicOverrideConfig.CoreOverrides[bgmEntry.ToneId], bgmEntry);
+                        _mapper.Map(_musicOverrideConfig.CoreBgmOverrides[bgmEntry.ToneId], bgmEntry);
                         bgmEntry.Filename = filename;
                     }
                 }
@@ -90,6 +91,18 @@ namespace Sm5sh.Mods.Music
                 }
             }
 
+            //Game Override
+            if (_musicOverrideConfig.CoreGameOverrides != null)
+            {
+                foreach (var gameTitleEntry in _audioStateService.GetGameTitleEntries())
+                {
+                    if (_musicOverrideConfig.CoreGameOverrides.ContainsKey(gameTitleEntry.UiGameTitleId))
+                    {
+                        _mapper.Map(_musicOverrideConfig.CoreGameOverrides[gameTitleEntry.UiGameTitleId], gameTitleEntry);
+                    }
+                }
+            }
+
             return true;
         }
 
@@ -104,11 +117,11 @@ namespace Sm5sh.Mods.Music
         {
             _musicOverrideConfig = new MusicOverrideConfig()
             {
-                CoreOverrides = new Dictionary<string, BgmConfig>(),
+                CoreBgmOverrides = new Dictionary<string, BgmConfig>(),
                 Playlists = new Dictionary<string, List<PlaylistConfig>>(),
                 SoundTestOrder = new Dictionary<string, short>(),
                 StageOverrides = new Dictionary<string, StageConfig>(),
-                GameOverrides = new Dictionary<string, GameConfig>()
+                CoreGameOverrides = new Dictionary<string, GameConfig>()
             };
 
             //Override order
@@ -151,27 +164,27 @@ namespace Sm5sh.Mods.Music
                 _logger.LogInformation("File {MusicOverrideFile} does not exist! Creating...", overrideStageJsonFile);
 
             //Override Core Bgm
-            var overrideCoreJsonFile = Path.Combine(_config.Value.Sm5shMusicOverride.ModPath, Constants.MusicModFiles.MUSIC_OVERRIDE_CORE_JSON_FILE);
+            var overrideCoreJsonFile = Path.Combine(_config.Value.Sm5shMusicOverride.ModPath, Constants.MusicModFiles.MUSIC_OVERRIDE_CORE_BGM_JSON_FILE);
             if (File.Exists(overrideCoreJsonFile))
             {
                 var file = File.ReadAllText(overrideCoreJsonFile);
                 _logger.LogDebug("Parsing {MusicOverrideFile} Json File", overrideCoreJsonFile);
                 var outputCoreBgm = JsonConvert.DeserializeObject<Dictionary<string, BgmConfig>>(file);
                 _logger.LogDebug("Parsed {MusicOverrideFile} Json File", overrideCoreJsonFile);
-                _musicOverrideConfig.CoreOverrides = outputCoreBgm;
+                _musicOverrideConfig.CoreBgmOverrides = outputCoreBgm;
             }
             else
                 _logger.LogInformation("File {MusicOverrideFile} does not exist! Creating...", overrideCoreJsonFile);
 
             //Override Core Game
-            var overrideCoreGameJsonFile = Path.Combine(_config.Value.Sm5shMusicOverride.ModPath, Constants.MusicModFiles.MUSIC_OVERRIDE_GAME_JSON_FILE);
+            var overrideCoreGameJsonFile = Path.Combine(_config.Value.Sm5shMusicOverride.ModPath, Constants.MusicModFiles.MUSIC_OVERRIDE_CORE_GAME_JSON_FILE);
             if (File.Exists(overrideCoreGameJsonFile))
             {
                 var file = File.ReadAllText(overrideCoreGameJsonFile);
                 _logger.LogDebug("Parsing {MusicOverrideFile} Json File", overrideCoreGameJsonFile);
                 var outputCoreGame = JsonConvert.DeserializeObject<Dictionary<string, GameConfig>>(file);
                 _logger.LogDebug("Parsed {MusicOverrideFile} Json File", overrideCoreGameJsonFile);
-                _musicOverrideConfig.GameOverrides = outputCoreGame;
+                _musicOverrideConfig.CoreGameOverrides = outputCoreGame;
             }
             else
                 _logger.LogInformation("File {MusicOverrideFile} does not exist! Creating...", overrideCoreGameJsonFile);
@@ -189,17 +202,25 @@ namespace Sm5sh.Mods.Music
 
         public bool UpdateCoreBgmEntry(Models.BgmEntry bgmEntry)
         {
-            _musicOverrideConfig.CoreOverrides[bgmEntry.ToneId] = _mapper.Map<BgmConfig>(bgmEntry);
-            var overrideJsonFile = Path.Combine(_config.Value.Sm5shMusicOverride.ModPath, Constants.MusicModFiles.MUSIC_OVERRIDE_CORE_JSON_FILE);
-            File.WriteAllText(overrideJsonFile, JsonConvert.SerializeObject(_musicOverrideConfig.CoreOverrides, _defaultFormatting));
+            _musicOverrideConfig.CoreBgmOverrides[bgmEntry.ToneId] = _mapper.Map<BgmConfig>(bgmEntry);
+            var overrideJsonFile = Path.Combine(_config.Value.Sm5shMusicOverride.ModPath, Constants.MusicModFiles.MUSIC_OVERRIDE_CORE_BGM_JSON_FILE);
+            File.WriteAllText(overrideJsonFile, JsonConvert.SerializeObject(_musicOverrideConfig.CoreBgmOverrides, _defaultFormatting));
             return true;
         }
 
         public bool RemoveCoreBgmEntry(string toneId)
         {
-            _musicOverrideConfig.CoreOverrides[toneId] = new BgmConfig() { ToneId = toneId, IsDeleted = true };
-            var overrideJsonFile = Path.Combine(_config.Value.Sm5shMusicOverride.ModPath, Constants.MusicModFiles.MUSIC_OVERRIDE_CORE_JSON_FILE);
-            File.WriteAllText(overrideJsonFile, JsonConvert.SerializeObject(_musicOverrideConfig.CoreOverrides, _defaultFormatting));
+            _musicOverrideConfig.CoreBgmOverrides[toneId] = new BgmConfig() { ToneId = toneId, IsDeleted = true };
+            var overrideJsonFile = Path.Combine(_config.Value.Sm5shMusicOverride.ModPath, Constants.MusicModFiles.MUSIC_OVERRIDE_CORE_BGM_JSON_FILE);
+            File.WriteAllText(overrideJsonFile, JsonConvert.SerializeObject(_musicOverrideConfig.CoreBgmOverrides, _defaultFormatting));
+            return true;
+        }
+
+        public bool UpdateCoreGameTitleEntry(Models.GameTitleEntry gameTitleEntry)
+        {
+            _musicOverrideConfig.CoreGameOverrides[gameTitleEntry.UiGameTitleId] = _mapper.Map<GameConfig>(gameTitleEntry);
+            var overrideJsonFile = Path.Combine(_config.Value.Sm5shMusicOverride.ModPath, Constants.MusicModFiles.MUSIC_OVERRIDE_CORE_GAME_JSON_FILE);
+            File.WriteAllText(overrideJsonFile, JsonConvert.SerializeObject(_musicOverrideConfig.CoreGameOverrides, _defaultFormatting));
             return true;
         }
 

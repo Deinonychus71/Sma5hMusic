@@ -5,6 +5,7 @@ namespace Sm5sh.Mods.Music.Models
 {
     public class GameTitleEntry
     {
+        public EntrySource Source { get; }
         public string UiGameTitleId { get; }
         public string NameId { get; set; }
         public string UiSeriesId { get; set; }
@@ -19,8 +20,9 @@ namespace Sm5sh.Mods.Music.Models
             return UiGameTitleId;
         }
 
-        public GameTitleEntry(string uiGameTitleId)
+        public GameTitleEntry(string uiGameTitleId, EntrySource source = EntrySource.Core)
         {
+            Source = source;
             UiGameTitleId = uiGameTitleId;
             MSBTTitle = new Dictionary<string, string>();
         }

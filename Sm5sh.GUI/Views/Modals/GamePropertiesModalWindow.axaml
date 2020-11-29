@@ -3,40 +3,41 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-        Width="500" Height="500" MinWidth="500"  MinHeight="500"
+        Width="500" Height="600" MinWidth="500"  MinHeight="600"
         x:Class="Sm5sh.GUI.Views.GamePropertiesModalWindow"
         xmlns:fields="clr-namespace:Sm5sh.GUI.Views.Fields"
-        Title="GamePropertiesModalWindow">
+        Title="Game Properties">
   <Window.Styles>
     <StyleInclude Source="/Assets/Styles/ContentStyles.xaml" />
     <StyleInclude Source="/Assets/Styles/ModalStyles.xaml" />
   </Window.Styles>
-  <DockPanel Classes="modal">
-    <Border Classes="contentTitle" DockPanel.Dock="Top">
-      <Label>Game Entry</Label>
-    </Border>
-    <StackPanel Classes="content" DockPanel.Dock="Top">
-      <fields:PropertyField IsRequired="True" Label="Game Title" ToolTip="Enter the title of a game you wish to link to your music.">
-        <fields:PropertyField.FieldContent>
-          <ContentControl Content="{Binding MSBTTitleEditor}"/>
-        </fields:PropertyField.FieldContent>
-      </fields:PropertyField>
-      <fields:PropertyTextField IsRequired="True" Label="Game Id" Text="{Binding UiGameTitleId, Mode=OneWay}" ToolTip="The ID for the game generated in the background. This is mostly informational." />
-      <fields:PropertyField Label="Series" ToolTip="The Series associated to this game. This list cannot be updated at this time.">
-        <fields:PropertyField.FieldContent>
-          <ComboBox SelectedItem="{Binding SelectedSeries, Mode=TwoWay}" Items="{Binding Series}">
-            <ComboBox.ItemTemplate>
-              <DataTemplate>
-                <TextBlock Text="{Binding Title}" FontFamily="{Binding}" />
-              </DataTemplate>
-            </ComboBox.ItemTemplate>
-          </ComboBox>
-        </fields:PropertyField.FieldContent>
-      </fields:PropertyField>
-    </StackPanel>
-    <StackPanel Classes="modalActions" DockPanel.Dock="Bottom">
-      <Button Content="Create" Command="{Binding ActionOK}" CommandParameter="{Binding $parent[Window]}"></Button>
-      <Button Content="Cancel" Command="{Binding ActionCancel}" CommandParameter="{Binding $parent[Window]}"></Button>
-    </StackPanel>
-  </DockPanel>
+    <DockPanel Classes="modal">
+      <Border Classes="headerTitle" DockPanel.Dock="Top">
+        <Label>Game Entry</Label>
+      </Border>
+      <StackPanel Classes="content" DockPanel.Dock="Top">
+        <fields:PropertyField x:Name="Title" IsRequired="True" Label="Game Title" ToolTip="Enter the title of a game you wish to link to your music.">
+          <fields:PropertyField.FieldContent>
+            <ContentControl Content="{Binding MSBTTitleEditor}"/>
+          </fields:PropertyField.FieldContent>
+        </fields:PropertyField>
+        <fields:PropertyTextField x:Name="GameId" IsReadOnly="{Binding IsEdit}" IsRequired="True" Label="Game Id" Text="{Binding UiGameTitleId, Mode=TwoWay}" ToolTip="The ID for the game generated in the background. This is mostly informational." />
+        <fields:PropertyField x:Name="Series" Label="Series" ToolTip="The Series associated to this game. This list cannot be updated at this time.">
+          <fields:PropertyField.FieldContent>
+            <ComboBox SelectedItem="{Binding SelectedSeries, Mode=TwoWay}" Items="{Binding Series}">
+              <ComboBox.ItemTemplate>
+                <DataTemplate>
+                  <TextBlock Text="{Binding Title}" FontFamily="{Binding}" />
+                </DataTemplate>
+              </ComboBox.ItemTemplate>
+            </ComboBox>
+          </fields:PropertyField.FieldContent>
+        </fields:PropertyField>
+      </StackPanel>
+      <StackPanel Classes="modalActions" DockPanel.Dock="Bottom">
+        <Button IsVisible="{Binding !IsEdit}" Content="Create" Command="{Binding ActionOK}" CommandParameter="{Binding $parent[Window]}"></Button>
+        <Button IsVisible="{Binding IsEdit}" Content="Save Changes" Command="{Binding ActionOK}" CommandParameter="{Binding $parent[Window]}"></Button>
+        <Button Content="Cancel" Command="{Binding ActionCancel}" CommandParameter="{Binding $parent[Window]}"></Button>
+      </StackPanel>
+    </DockPanel>
 </Window>

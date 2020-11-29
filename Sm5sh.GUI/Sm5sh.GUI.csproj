@@ -33,6 +33,7 @@
     <PackageReference Include="Microsoft.Extensions.Logging" Version="5.0.0" />
     <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="5.0.0" />
     <PackageReference Include="ReactiveUI.Fody" Version="12.1.5" />
+    <PackageReference Include="ReactiveUI.Validation" Version="1.8.6" />
     <PackageReference Include="Serilog.Extensions.Logging.File" Version="2.0.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="5.0.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="5.0.0" />
@@ -66,9 +67,6 @@
     </Compile>
     <Compile Update="Views\Fields\PropertyField.axaml.cs">
       <DependentUpon>PropertyField.axaml</DependentUpon>
-    </Compile>
-    <Compile Update="Views\Modals\ModsManagerModalWindow.axaml.cs">
-      <DependentUpon>ModsManagerModalWindow.axaml</DependentUpon>
     </Compile>
     <Compile Update="Views\Views\PlaylistView.axaml.cs">
       <DependentUpon>PlaylistView.axaml</DependentUpon>

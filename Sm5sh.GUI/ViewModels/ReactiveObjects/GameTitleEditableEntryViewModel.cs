@@ -10,6 +10,7 @@ namespace Sm5sh.GUI.ViewModels
         protected readonly GameTitleEntry _refGameTitleEntry;
 
         public string UiGameTitleId { get { return _refGameTitleEntry?.UiGameTitleId; } }
+        public EntrySource Source { get { return _refGameTitleEntry.Source; } }
         public string NameId { get; set; }
         public string UiSeriesId { get; set; }
         public bool Unk1 { get; set; }

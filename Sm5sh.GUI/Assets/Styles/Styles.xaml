@@ -3,6 +3,7 @@
   <Styles.Resources>
     <SolidColorBrush x:Key="BrushGrayDark">#202020</SolidColorBrush>
     <SolidColorBrush x:Key="BrushGrayLight">#606060</SolidColorBrush>
+    <SolidColorBrush x:Key="BrushBackgroundDark">#191919</SolidColorBrush>
   </Styles.Resources>
   
   <Style Selector="Label.title">

@@ -4,9 +4,9 @@ using Avalonia.Markup.Xaml;
 
 namespace Sm5sh.GUI.Views
 {
-    public class GamesManagerModelWindow : Window
+    public class GamePickerModalWindow : Window
     {
-        public GamesManagerModelWindow()
+        public GamePickerModalWindow()
         {
             this.InitializeComponent();
         }

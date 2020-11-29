@@ -9,14 +9,17 @@
       <MenuItem.Styles>
         <Style Selector="MenuItem > MenuItem">
           <Setter Property="Header" Value="{Binding ModName}"/>
-          <Setter Property="Command" Value="{Binding $parent[Menu].DataContext.AddNewBgmEntry}"/>
+          <Setter Property="Command" Value="{Binding $parent[Menu].DataContext.ActionAddNewBgm}"/>
           <Setter Property="CommandParameter" Value="{Binding .}"/>
         </Style>
       </MenuItem.Styles>
     </MenuItem>
     <MenuItem Header="Manage..." IsEnabled="True">
-      <MenuItem Header="Games"/>
-      <MenuItem Header="Mods"/>
+      <MenuItem Header="Create Game" Command="{Binding ActionNewGame}" />
+      <MenuItem Header="Edit a Game" Command="{Binding ActionEditGame}"/>
+      <Separator/>
+      <MenuItem Header="Create a Mod" Command="{Binding ActionNewMod}"/>
+      <MenuItem Header="Edit a Mod" Command="{Binding ActionEditMod}"/>
     </MenuItem>
     <MenuItem Header="{Binding WhenLocaleChanged^, Converter={StaticResource LocaleNameConverter}}" Items="{Binding Locales}">
       <MenuItem.Styles>

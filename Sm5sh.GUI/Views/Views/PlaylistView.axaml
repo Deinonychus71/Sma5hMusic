@@ -34,7 +34,7 @@
     </Grid>
     <GridSplitter Grid.Row="1" Grid.Column="1" ResizeDirection="Columns"/>
     <Menu Grid.Row="0" Grid.Column="2">
-      <MenuItem Header="{Binding WhenPlaylistSelected^.Title}" Items="{Binding Playlists}">
+      <MenuItem Header="{Binding WhenPlaylistSelected^.Title, FallbackValue='Select a playlist'}" Items="{Binding Playlists}">
         <MenuItem.Styles>
           <Style Selector="MenuItem > MenuItem">
             <Setter Property="Header" Value="{Binding Title}"/>
@@ -53,7 +53,12 @@
           </Style>
         </MenuItem.Styles>
       </MenuItem>
-      <MenuItem Header="Assign to Stage..."/>
+      <MenuItem Header="Manage">
+        <MenuItem Header="Create new playlist"/>
+        <MenuItem Header="Edit playlist"/>
+        <Separator/>
+        <MenuItem Header="Assign a Stage to playlist"/>
+      </MenuItem>
     </Menu>
     <Grid Grid.Row="1" Grid.Column="2" Classes="list" Margin="0,0,20,0">
       <DataGrid DragDrop.AllowDrop="True" Classes="bgmList" SelectedItem="{Binding SelectedPlaylistValueEntry, Mode=TwoWay}" Items="{Binding SelectedPlaylistOrderedEntry}">

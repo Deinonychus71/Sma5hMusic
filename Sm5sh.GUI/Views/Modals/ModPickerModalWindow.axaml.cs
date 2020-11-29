@@ -4,9 +4,9 @@ using Avalonia.Markup.Xaml;
 
 namespace Sm5sh.GUI.Views
 {
-    public class ModsManagerModalWindow : Window
+    public class ModPickerModalWindow : Window
     {
-        public ModsManagerModalWindow()
+        public ModPickerModalWindow()
         {
             this.InitializeComponent();
         }

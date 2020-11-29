@@ -20,7 +20,7 @@ using AutoMapper;
 using System.Reactive.Linq;
 using ReactiveUI;
 using System.Reactive;
-using Avalonia.Threading;
+using Avalonia.Controls;
 
 namespace Sm5sh.GUI.ViewModels
 {
@@ -48,7 +48,9 @@ namespace Sm5sh.GUI.ViewModels
 
         public BgmPropertiesModalWindowViewModel VMBgmEditor { get; }
         public GamePropertiesModalWindowViewModel VMGameEditor { get; }
+        public GamePickerModalWindowViewModel VMGamePicker { get; }
         public ModPropertiesModalWindowViewModel VMModEditor { get; }
+        public ModPickerModalWindowViewModel VMModPicker { get; }
         public BgmSongsViewModel VMBgmSongs { get; }
         public PlaylistViewModel VMPlaylists { get; }
         public BgmFiltersViewModel VMBgmFilters { get; }
@@ -112,7 +114,11 @@ namespace Sm5sh.GUI.ViewModels
             //Initialize Editors
             VMGameEditor = ActivatorUtilities.CreateInstance<GamePropertiesModalWindowViewModel>(serviceProvider,
                 observableLocaleList, observableSeriesEntriesList, observableGameEntriesList);
+            VMGamePicker = ActivatorUtilities.CreateInstance<GamePickerModalWindowViewModel>(serviceProvider,
+                observableGameEntriesList);
             VMModEditor = ActivatorUtilities.CreateInstance<ModPropertiesModalWindowViewModel>(serviceProvider,
+                observableMusicModsList);
+            VMModPicker = ActivatorUtilities.CreateInstance<ModPickerModalWindowViewModel>(serviceProvider,
                 observableMusicModsList);
             VMBgmEditor = ActivatorUtilities.CreateInstance<BgmPropertiesModalWindowViewModel>(serviceProvider,
                 observableLocaleList, observableSeriesEntriesList, observableGameEntriesList, observableBgmEntriesList);
@@ -120,10 +126,14 @@ namespace Sm5sh.GUI.ViewModels
 
             //Listen to requests from children
             this.VMContextMenu.WhenNewRequestToAddBgmEntry.Subscribe(async (o) => await AddNewBgmEntry(o));
+            this.VMContextMenu.WhenNewRequestToAddModEntry.Subscribe(async (o) => await AddNewOrEditMod());
+            this.VMContextMenu.WhenNewRequestToAddGameEntry.Subscribe(async (o) => await AddNewOrEditGame());
+            this.VMContextMenu.WhenNewRequestToEditGameEntry.Subscribe(async (o) => await EditGame());
+            this.VMContextMenu.WhenNewRequestToEditModEntry.Subscribe(async (o) => await EditMod());
+            this.VMBgmEditor.WhenNewRequestToAddGameEntry.Subscribe(async (o) => await AddNewOrEditGame(o));
             this.VMBgmSongs.WhenNewRequestToEditBgmEntry.Subscribe(async (o) => await EditBgmEntry(o));
             this.VMBgmSongs.WhenNewRequestToDeleteBgmEntry.Subscribe(async (o) => await DeleteBgmEntry(o));
             this.VMBgmSongs.WhenNewRequestToReorderBgmEntries.Subscribe((o) => ReorderSongs());
-            this.VMGameEditor.WhenNewRequestToAddGameEntry.Subscribe((o) => AddNewGame(o));
             this.VMPlaylists.WhenNewRequestToUpdatePlaylists.Subscribe((o) => UpdatePlaylists());
 
             ActionExit = ReactiveCommand.Create(OnExit);
@@ -219,41 +229,69 @@ namespace Sm5sh.GUI.ViewModels
                 i += 2;
             }
             //TODO - The data should be first persisted in the BgmEntries
+            //TODO - Handle anything saving in a specific service
             _sm5shMusicOverride.UpdateSoundTestOrderConfig(_bgmEntries.ToDictionary(p => p.ToneId, p => p.DbRoot.TestDispOrder));
         }
 
         public void UpdatePlaylists()
         {
             //TODO - The data should be first persisted in the Playlists - currently not mapped back to the original PlaylistEntry
+            //TODO - Handle anything saving in a specific service
             var playlists = _playlistsEntries.ToDictionary(p => p.Id, p => p.ToPlaylistEntry().Tracks);
             _sm5shMusicOverride.UpdatePlaylistConfig(playlists);
         }
 
+        public async Task AddNewOrEditMod(Window parent = null, ModEntryViewModel vmModEntry = null)
+        {
+            VMModEditor.LoadMusicMod(vmModEntry?.MusicMod);
+            var modalCreateMod = new ModPropertiesModalWindow() { DataContext = VMModEditor };
+            var results = await modalCreateMod.ShowDialog<ModPropertiesModalWindow>(parent != null ? parent : _rootDialog.Window);
+
+            if (results != null)
+            {
+                if (!VMModEditor.IsEdit)
+                {
+                    var newManagerMod = _musicModManagerService.AddMusicMod(new MusicModInformation()
+                    {
+                        Name = VMModEditor.ModName,
+                        Author = VMModEditor.ModAuthor,
+                        Website = VMModEditor.ModWebsite,
+                        Description = VMModEditor.ModDescription
+                    }, VMModEditor.ModPath);
+
+                    //TODO - Handle anything saving in a specific service
+                    var newVmMusicMod = new ModEntryViewModel(newManagerMod.Id, newManagerMod);
+                    _musicMods.Add(newVmMusicMod);
+                    await AddNewBgmEntry(newVmMusicMod);
+                }
+            }
+        }
+
         public async Task AddNewBgmEntry(ModEntryViewModel managerMod)
         {
-            if (managerMod.MusicMod == null)
-                managerMod = await CreateNewMod();
-
-            if (managerMod == null)
+            if (managerMod?.MusicMod == null)
+            {
+                await _messageDialog.ShowError("Error", "The mod could not be found.");
                 return;
-
+            }
+                
             var results = await _fileDialog.OpenFileDialogAudio();
             if (results.Length == 0)
                 return;
 
+            //TODO - Handle anything saving in a specific service
             _logger.LogInformation("Adding {NbrFiles} files to Mod {ModPath}", results.Length, managerMod.ModPath);
             foreach (var inputFile in results)
             {
                 var newBgm = managerMod.MusicMod.AddBgm(inputFile);
-                //TODO: Handle error while adding file into mod
                 if (newBgm == null)
                 {
-
+                    await _messageDialog.ShowError("Error", $"The song {inputFile} could not be added to the mod. Please check the logs.");
                     continue;
                 }
-                //TODO: Handle error while adding file into DB
                 if (!_audioState.AddBgmEntry(newBgm))
                 {
+                    await _messageDialog.ShowError("Error", $"The song {inputFile} could not be added to the DB. Please check the logs.");
                     continue;
                 }
                 var vmBgmEntry = new BgmEntryViewModel(_musicPlayer, newBgm);
@@ -275,8 +313,10 @@ namespace Sm5sh.GUI.ViewModels
                 vmBgmEntry.LoadLocalized(_currentLocale);
                 var bgmNew = _mapper.Map(vmBgmEntry, vmBgmEntry.GetBgmEntryReference());
                 bgmNew.GameTitle = _mapper.Map(vmBgmEntry.GameTitleViewModel, new GameTitleEntry(vmBgmEntry.UiGameTitleId));
+
+                //TODO - Handle anything saving in a specific service
                 //TODO - The data should be first persisted in the BgmEntries
-                if (bgmNew.Source == Mods.Music.Models.BgmEntryModels.EntrySource.Mod)
+                if (bgmNew.Source == EntrySource.Mod)
                     vmBgmEntry.MusicMod.UpdateBgm(bgmNew);
                 else
                     _sm5shMusicOverride.UpdateCoreBgmEntry(bgmNew);
@@ -293,9 +333,10 @@ namespace Sm5sh.GUI.ViewModels
                 {
                     if (vmBgmEntry != null)
                     {
+                        //TODO - Handle anything saving in a specific service
                         _logger.LogInformation("Deleting {ToneId}...", vmBgmEntry.ToneId);
                         var bgmDelete = vmBgmEntry.GetBgmEntryReference();
-                        if (bgmDelete.Source == Mods.Music.Models.BgmEntryModels.EntrySource.Mod)
+                        if (bgmDelete.Source == EntrySource.Mod)
                             vmBgmEntry.MusicMod.RemoveBgm(bgmDelete.ToneId);
                         else
                             _sm5shMusicOverride.RemoveCoreBgmEntry(bgmDelete.ToneId);
@@ -307,32 +348,48 @@ namespace Sm5sh.GUI.ViewModels
             }
         }
 
-        public void AddNewGame(GameTitleEntryViewModel vmGameEntry)
+        public async Task AddNewOrEditGame(Window parent = null, GameTitleEntryViewModel vmGameTitleEntry = null)
         {
-            _gameTitleEntries.Add(vmGameEntry);
-        }
-
-        public async Task<ModEntryViewModel> CreateNewMod()
-        {
-            VMModEditor.LoadMusicMod(null);
-            var modalCreateMod = new ModPropertiesModalWindow() { DataContext = VMModEditor };
-            var results = await modalCreateMod.ShowDialog<ModPropertiesModalWindow>(_rootDialog.Window);
+            var isEdit = vmGameTitleEntry != null;
+            VMGameEditor.LoadGame(vmGameTitleEntry);
+            var modalCreateGame = new GamePropertiesModalWindow() { DataContext = VMGameEditor };
+            var results = await modalCreateGame.ShowDialog<GamePropertiesModalWindow>(parent != null ? parent : _rootDialog.Window);
 
             if (results != null)
             {
-                var newManagerMod = _musicModManagerService.AddMusicMod(new MusicModInformation()
-                {
-                    Name = VMModEditor.ModName,
-                    Author = VMModEditor.ModAuthor,
-                    Website = VMModEditor.ModWebsite,
-                    Description = VMModEditor.ModDescription
-                }, VMModEditor.ModPath);
+                if (VMGameEditor.SelectedGameTitleEntry != null)
+                    VMGameEditor.SelectedGameTitleEntry.LoadLocalized(_currentLocale);
 
-                var newVmMusicMod = new ModEntryViewModel(newManagerMod.Id, newManagerMod);
-                _musicMods.Add(newVmMusicMod);
-                return newVmMusicMod;
+                //TODO - Handle anything saving in a specific service
+                if (!isEdit) {
+                    _gameTitleEntries.Add(VMGameEditor.SelectedGameTitleEntry);
+                }
+                //No need to handle mod, it is saved with the song
+                else if (VMGameEditor.SelectedGameTitleEntry.Source == EntrySource.Core)
+                {
+                    _sm5shMusicOverride.UpdateCoreGameTitleEntry(VMGameEditor.SelectedGameTitleEntry.GetGameEntryReference());
+                }
             }
-            return null;
+        }
+
+        public async Task EditGame(Window parent = null)
+        {
+            var modalPickerGame = new GamePickerModalWindow() { DataContext = VMGamePicker };
+            var results = await modalPickerGame.ShowDialog<GamePickerModalWindow>(parent != null ? parent : _rootDialog.Window);
+            if (results != null)
+            {
+                await AddNewOrEditGame(parent, VMGamePicker.SelectedGameTitleEntry);
+            }
+        }
+
+        public async Task EditMod(Window parent = null)
+        {
+            var modalPickerMod = new ModPickerModalWindow() { DataContext = VMModPicker };
+            var results = await modalPickerMod.ShowDialog<ModPickerModalWindow>(parent != null ? parent : _rootDialog.Window);
+            if (results != null)
+            {
+                await AddNewOrEditMod(parent, VMModPicker.SelectedModEntry);
+            }
         }
         #endregion
     }

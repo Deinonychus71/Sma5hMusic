@@ -4,25 +4,30 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Sm5sh.GUI.Views.MSBTFieldView">
+  <UserControl.Styles>
+    <Style Selector="ComboBox:pointerover">
+      <Setter Property="BorderThickness" Value="1"/>
+    </Style>
+    <Style Selector="ComboBox">
+      <Setter Property="BorderThickness" Value="0"/>
+    </Style>
+  </UserControl.Styles>
   <StackPanel>
     <StackPanel Orientation="Horizontal">
-      <Menu>
-        <MenuItem Header="{Binding SelectedLocale.Label}" Items="{Binding Locales}" IsEnabled="True">
-          <MenuItem.Styles>
-            <Style Selector="MenuItem > MenuItem">
-              <Setter Property="Header" Value="{Binding Label}"/>
-              <Setter Property="Command" Value="{Binding $parent[StackPanel].DataContext.ActionChangeLocale}"/>
-              <Setter Property="CommandParameter" Value="{Binding .}"/>
-            </Style>
-          </MenuItem.Styles>
-        </MenuItem>
-      </Menu>
-      <Menu>
-        <MenuItem Header="Copy to...">
-          <MenuItem Header="All other languages" Command="{Binding ActionCopyToAll}"/>
-          <MenuItem Header="All languages with empty values" Command="{Binding ActionCopyToEmptyLanguages}"/>
-        </MenuItem>
-      </Menu>
+      <ComboBox PlaceholderText="Select a language" SelectedItem="{Binding SelectedLocale}" Items="{Binding Locales}">
+        <ComboBox.ItemTemplate>
+          <DataTemplate>
+            <TextBlock Text="{Binding Label}" />
+          </DataTemplate>
+        </ComboBox.ItemTemplate>
+      </ComboBox>
+      <ComboBox PlaceholderText="Copy..." SelectedItem="{Binding SelectedCopyAction, Mode=TwoWay}" Items="{Binding CopyActions}">
+        <ComboBox.ItemTemplate>
+          <DataTemplate>
+            <TextBlock Text="{Binding Label}" />
+          </DataTemplate>
+        </ComboBox.ItemTemplate>
+      </ComboBox>
     </StackPanel>
     <TextBox Classes="jpnSupport" Text="{Binding CurrentLocalizedValue}" AcceptsReturn="{Binding AcceptsReturn}"/>
   </StackPanel>

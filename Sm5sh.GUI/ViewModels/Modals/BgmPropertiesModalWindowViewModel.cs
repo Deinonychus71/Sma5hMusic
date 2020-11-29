@@ -17,6 +17,7 @@ using Avalonia.Controls;
 using Sm5sh.Mods.Music.Models;
 using System.Threading.Tasks;
 using Sm5sh.GUI.Views;
+using System.Reactive.Subjects;
 
 namespace Sm5sh.GUI.ViewModels
 {
@@ -34,7 +35,9 @@ namespace Sm5sh.GUI.ViewModels
         private readonly ReadOnlyObservableCollection<string> _songs;
         private BgmEntryViewModel _fakeBgm = new BgmEntryViewModel(null, new Mods.Music.Models.BgmEntry("fake"));
         private BgmEntryViewModel _refSavedBgmEntryView;
+        private readonly Subject<Window> _whenNewRequestToAddGameEntry;
 
+        public IObservable<Window> WhenNewRequestToAddGameEntry { get { return _whenNewRequestToAddGameEntry; } }
         public GamePropertiesModalWindowViewModel VMGamePropertiesModal { get; set; }
 
         [Reactive]
@@ -79,6 +82,7 @@ namespace Sm5sh.GUI.ViewModels
             _recordTypes = GetRecordTypes();
             _specialCategories = GetSpecialCategories();
             _personaStages = GetSpecialCategoriesPersonaStages();
+            _whenNewRequestToAddGameEntry = new Subject<Window>();
 
             ActionCancel = ReactiveCommand.Create<Window>(CancelChanges);
             ActionSave = ReactiveCommand.Create<Window>(SaveChanges);
@@ -154,14 +158,7 @@ namespace Sm5sh.GUI.ViewModels
         
         private async Task AddNewGame(Window window)
         {
-            VMGamePropertiesModal.LoadGame(null);
-            var modalCreateMod = new GamePropertiesModalWindow() { DataContext = VMGamePropertiesModal };
-            var results = await modalCreateMod.ShowDialog<GamePropertiesModalWindow>(window);
-
-            if(results != null)
-            {
-
-            }
+            _whenNewRequestToAddGameEntry.OnNext(window);
         }
 
         private List<ComboItem> GetRecordTypes()

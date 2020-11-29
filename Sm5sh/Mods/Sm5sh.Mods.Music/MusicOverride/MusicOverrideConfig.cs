@@ -9,9 +9,9 @@ namespace Sm5sh.Mods.Music.MusicOverride
     {
         public Dictionary<string, short> SoundTestOrder { get; set; }
         public Dictionary<string, List<PlaylistConfig>> Playlists { get; set; }
-        public Dictionary<string, BgmConfig> CoreOverrides { get; set; }
+        public Dictionary<string, BgmConfig> CoreBgmOverrides { get; set; }
         public Dictionary<string, StageConfig> StageOverrides { get; set; }
-        public Dictionary<string, GameConfig> GameOverrides { get; set; }
+        public Dictionary<string, GameConfig> CoreGameOverrides { get; set; }
     }
 
     namespace MusicOverrideConfigModels

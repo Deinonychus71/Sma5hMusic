@@ -11,5 +11,6 @@
       <Label Content="&#128712;" Classes="tooltip" ToolTip.Tip="{Binding $parent[UserControl].ToolTip}"/>
     </StackPanel>
     <ContentControl Content="{Binding $parent[UserControl].FieldContent}"/>
+    <TextBlock Classes="error" Text="{Binding $parent[UserControl].ValidationError}"/>
   </StackPanel>
 </UserControl>

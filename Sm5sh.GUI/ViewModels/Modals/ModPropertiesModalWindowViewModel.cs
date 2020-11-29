@@ -10,13 +10,20 @@ using System.Reactive;
 using DynamicData;
 using System.Collections.ObjectModel;
 using System.Reactive.Linq;
+using ReactiveUI.Validation.Helpers;
+using ReactiveUI.Validation.Extensions;
+using System.IO;
+using Microsoft.Extensions.Options;
+using Sm5sh.Mods.Music;
 
 namespace Sm5sh.GUI.ViewModels
 {
-    public class ModPropertiesModalWindowViewModel : ViewModelBase
+    public class ModPropertiesModalWindowViewModel : ReactiveValidationObject
     {
+        private readonly IOptions<Sm5shMusicOptions> _config;
         private readonly ReadOnlyObservableCollection<ModEntryViewModel> _mods;
         private const string REGEX_REPLACE = @"[^a-zA-Z0-9\-_ ]";
+        private string REGEX_VALIDATION = @"^[\w\-. ]+$";
         private readonly ILogger _logger;
 
         public IMusicMod ModManager { get; }
@@ -40,8 +47,9 @@ namespace Sm5sh.GUI.ViewModels
         public ReactiveCommand<Window, Unit> ActionOK { get; }
         public ReactiveCommand<Window, Unit> ActionCancel { get; }
 
-        public ModPropertiesModalWindowViewModel(ILogger<ModPropertiesModalWindowViewModel> logger, IObservable<IChangeSet<ModEntryViewModel, string>> observableMods)
+        public ModPropertiesModalWindowViewModel(ILogger<ModPropertiesModalWindowViewModel> logger, IOptions<Sm5shMusicOptions> config, IObservable<IChangeSet<ModEntryViewModel, string>> observableMods)
         {
+            _config = config;
             _logger = logger;
 
             this.WhenAnyValue(p => p.ModName).Subscribe((o) => { FormatModPath(o); });
@@ -53,8 +61,16 @@ namespace Sm5sh.GUI.ViewModels
                 .DisposeMany()
                 .Subscribe();
 
-            var canExecute = this.WhenAnyValue(x => x.ModName, x => x.ModPath, (n, p) =>
-            !string.IsNullOrEmpty(n) && !string.IsNullOrEmpty(p));
+            this.ValidationRule(p => p.ModPath,
+                p => !string.IsNullOrEmpty(p) && ((Regex.IsMatch(p, REGEX_VALIDATION) && !Directory.Exists(Path.Combine(_config.Value.Sm5shMusic.ModPath, p))) || IsEdit),
+                $"The folder name is invalid or the folder already exists.");
+
+            //Validation
+            this.ValidationRule(p => p.ModName,
+                p => !string.IsNullOrEmpty(p),
+                $"Please enter a Title.");
+
+            var canExecute = this.WhenAnyValue(x => x.ValidationContext.IsValid);
             ActionOK = ReactiveCommand.Create<Window>(SubmitDialogOK, canExecute);
             ActionCancel = ReactiveCommand.Create<Window>(SubmitDialogCancel);
         }
@@ -72,12 +88,12 @@ namespace Sm5sh.GUI.ViewModels
             }
             else
             {
+                IsEdit = true;
                 ModName = musicMod.Mod.Name;
                 ModPath = musicMod.ModPath;
                 ModWebsite = musicMod.Mod.Website;
                 ModAuthor = musicMod.Mod.Author;
                 ModDescription = musicMod.Mod.Description;
-                IsEdit = true;
             }
         }
 
@@ -94,6 +110,13 @@ namespace Sm5sh.GUI.ViewModels
 
         public void SubmitDialogOK(Window window)
         {
+            if (IsEdit)
+            {
+                ModManager.Mod.Author = this.ModAuthor;
+                ModManager.Mod.Description = this.ModDescription;
+                ModManager.Mod.Name = this.ModName;
+            }
+
             window.Close(window);
         }
 

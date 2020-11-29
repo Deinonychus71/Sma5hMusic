@@ -90,10 +90,6 @@ namespace Sm5sh.GUI.ViewModels
                 .DisposeMany()
                 .Subscribe();
 
-            //Trigger behavior subjets
-            _whenPlaylistSelected = new BehaviorSubject<PlaylistEntryViewModel>(_playlists.FirstOrDefault());
-            _whenPlaylistOrderSelected = new BehaviorSubject<ComboItem>(_orderMenu.FirstOrDefault());
-
             //How
             var baseObs = observablePlaylistEntries
                 .AutoRefreshOnObservable(p => this.WhenPlaylistSelected)
@@ -126,6 +122,10 @@ namespace Sm5sh.GUI.ViewModels
             ActionSelectPlaylist = ReactiveCommand.Create<PlaylistEntryViewModel>(SelectPlaylistId);
             ActionSelectPlaylistOrder = ReactiveCommand.Create<ComboItem>(SelectPlaylistOrder);
             ActionDeletePlaylistItem = ReactiveCommand.Create<PlaylistEntryValueViewModel>(RemoveItem);
+
+            //Trigger behavior subjets
+            _whenPlaylistSelected = new BehaviorSubject<PlaylistEntryViewModel>(_playlists.FirstOrDefault());
+            _whenPlaylistOrderSelected = new BehaviorSubject<ComboItem>(_orderMenu.FirstOrDefault());
         }
 
         #region Drag & Drop

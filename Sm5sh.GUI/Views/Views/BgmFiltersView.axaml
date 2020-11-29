@@ -29,7 +29,7 @@
           <ComboBox SelectedItem="{Binding SelectedMod, Mode=TwoWay}" Items="{Binding Mods}">
             <ComboBox.ItemTemplate>
               <DataTemplate>
-                <TextBlock Text="{Binding ModName}" FontFamily="{Binding}" />
+                <TextBlock Text="{Binding ModName}" />
               </DataTemplate>
             </ComboBox.ItemTemplate>
           </ComboBox>
@@ -40,7 +40,7 @@
           <ComboBox SelectedItem="{Binding SelectedSeries, Mode=TwoWay}" Items="{Binding Series}">
             <ComboBox.ItemTemplate>
               <DataTemplate>
-                <TextBlock Text="{Binding Title}" FontFamily="{Binding}" />
+                <TextBlock Text="{Binding Title}" />
               </DataTemplate>
             </ComboBox.ItemTemplate>
           </ComboBox>
@@ -51,7 +51,7 @@
           <ComboBox SelectedItem="{Binding SelectedGame, Mode=TwoWay}" Items="{Binding Games}">
             <ComboBox.ItemTemplate>
               <DataTemplate>
-                <TextBlock Text="{Binding Title}" FontFamily="{Binding}" />
+                <TextBlock Text="{Binding Title}" />
               </DataTemplate>
             </ComboBox.ItemTemplate>
           </ComboBox>
@@ -62,7 +62,7 @@
           <ComboBox SelectedItem="{Binding SelectedRecordType, Mode=TwoWay}" Items="{Binding RecordTypes}">
             <ComboBox.ItemTemplate>
               <DataTemplate>
-                <TextBlock Text="{Binding Label}" FontFamily="{Binding}" />
+                <TextBlock Text="{Binding Label}" />
               </DataTemplate>
             </ComboBox.ItemTemplate>
           </ComboBox>

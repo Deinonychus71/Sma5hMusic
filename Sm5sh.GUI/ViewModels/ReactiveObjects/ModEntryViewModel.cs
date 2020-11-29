@@ -1,4 +1,5 @@
 ﻿using ReactiveUI;
+using ReactiveUI.Fody.Helpers;
 using Sm5sh.Mods.Music.Interfaces;
 
 namespace Sm5sh.GUI.ViewModels

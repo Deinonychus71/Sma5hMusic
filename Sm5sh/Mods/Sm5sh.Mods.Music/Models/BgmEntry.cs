@@ -1,6 +1,5 @@
 ﻿using Sm5sh.Mods.Music.Helpers;
 using Sm5sh.Mods.Music.Interfaces;
-using System;
 using System.Collections.Generic;
 
 namespace Sm5sh.Mods.Music.Models
@@ -26,7 +25,7 @@ namespace Sm5sh.Mods.Music.Models
 
 
         //Helper objects for common properties
-        public BgmEntryModels.EntrySource Source { get { return MusicMod == null ? BgmEntryModels.EntrySource.Core : BgmEntryModels.EntrySource.Mod; } }
+        public EntrySource Source { get { return MusicMod == null ? EntrySource.Core : EntrySource.Mod; } }
 
         //KeyHelper
         public string DbRootKey { get { return DbRoot.UiBgmId; } }
@@ -260,14 +259,6 @@ namespace Sm5sh.Mods.Music.Models
             {
                 Parent = parent;
             }
-        }
-
-        //Facilitators
-        public enum EntrySource
-        {
-            Unknown = 0,
-            Core = 1,
-            Mod = 2
         }
     }
 }

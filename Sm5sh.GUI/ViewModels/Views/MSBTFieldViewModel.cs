@@ -5,16 +5,23 @@ using System.Collections.ObjectModel;
 using System.Reactive;
 using System;
 using System.Reactive.Linq;
+using Sm5sh.GUI.Models;
+using Avalonia.Threading;
 
 namespace Sm5sh.GUI.ViewModels
 {
     public class MSBTFieldViewModel : ViewModelBase
     {
         private Dictionary<string, string> _msbtValues;
+        private const string COPY_ACTION_ALL = "all";
+        private const string COPY_ACTION_EMPTY = "empty";
+        private IEnumerable<ComboItem> _copyActions;
 
         public ReadOnlyObservableCollection<LocaleViewModel> Locales { get; set; }
 
         public bool AcceptsReturn { get; set; }
+
+        public IEnumerable<ComboItem> CopyActions { get { return _copyActions; } }
 
         [Reactive]
         public LocaleViewModel SelectedLocale { get; set; }
@@ -32,24 +39,46 @@ namespace Sm5sh.GUI.ViewModels
         [Reactive]
         public string CurrentLocalizedValue { get; set; }
 
+        [Reactive]
+        public ComboItem SelectedCopyAction { get; set; }
         public ReactiveCommand<LocaleViewModel, Unit> ActionChangeLocale { get; }
         public ReactiveCommand<Unit, Unit> ActionCopyToAll { get; }
         public ReactiveCommand<Unit, Unit> ActionCopyToEmptyLanguages { get; }
 
         public MSBTFieldViewModel()
         {
+            _copyActions = GetCopyActions();
             ActionChangeLocale = ReactiveCommand.Create<LocaleViewModel>(ChangeLocale);
             ActionCopyToAll = ReactiveCommand.Create(CopyToAllLanguages);
             ActionCopyToEmptyLanguages = ReactiveCommand.Create(CopyToEmptyLanguages);
 
+            this.WhenAnyValue(p => p.SelectedCopyAction).Subscribe(o => HandleCopyAction(o));
+            this.WhenAnyValue(p => p.SelectedLocale).Subscribe(o => ChangeLocale(o));
             this.WhenAnyValue(p => p.CurrentLocalizedValue).Subscribe((p) => { SaveValueToCurrentLocale(); });
         }
 
         private void ChangeLocale(LocaleViewModel locale)
         {
-            MSBTValues[SelectedLocale.Id] = CurrentLocalizedValue;
-            SelectedLocale = locale;
-            SetCurrentLocalizedValue();
+            if (MSBTValues != null && SelectedLocale != null)
+            {
+                SetCurrentLocalizedValue();
+            }
+        }
+
+        private void HandleCopyAction(ComboItem o)
+        {
+            if (o == null)
+                return;
+
+            if (o.Id == COPY_ACTION_ALL)
+                CopyToAllLanguages();
+            else if (o.Id == COPY_ACTION_EMPTY)
+                CopyToEmptyLanguages();
+            
+            Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                SelectedCopyAction = null;
+            }, DispatcherPriority.Background);
         }
 
         private void CopyToEmptyLanguages()
@@ -95,6 +124,15 @@ namespace Sm5sh.GUI.ViewModels
                     _msbtValues.Add(SelectedLocale.Id, string.Empty);
                 MSBTValues[SelectedLocale.Id] = CurrentLocalizedValue;
             }
+        }
+
+        private IEnumerable<ComboItem> GetCopyActions()
+        {
+            return new List<ComboItem>()
+            {
+                new ComboItem(COPY_ACTION_ALL, "All other languages"),
+                new ComboItem(COPY_ACTION_EMPTY, "All languages with empty values")
+            };
         }
     }
 }

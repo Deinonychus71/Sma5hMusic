@@ -1,7 +1,6 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
-using Avalonia.Metadata;
 
 namespace Sm5sh.GUI.Views.Fields
 {
@@ -12,6 +11,13 @@ namespace Sm5sh.GUI.Views.Fields
         public static readonly StyledProperty<bool> IsReadOnlyProperty = AvaloniaProperty.Register<PropertyField, bool>(nameof(IsReadOnly), inherits: true, defaultBindingMode: Avalonia.Data.BindingMode.OneWay);
         public static readonly StyledProperty<bool> IsRequiredProperty = AvaloniaProperty.Register<PropertyField, bool>(nameof(IsRequired), inherits: true, defaultBindingMode: Avalonia.Data.BindingMode.OneWay);
         public static readonly StyledProperty<object> FieldContentProperty = AvaloniaProperty.Register<PropertyField, object>(nameof(FieldContent));
+        public static readonly StyledProperty<string> ValidationErrorProperty = AvaloniaProperty.Register<PropertyField, string>(nameof(ValidationError), inherits: true, defaultBindingMode: Avalonia.Data.BindingMode.OneWay);
+
+        public string ValidationError
+        {
+            get { return GetValue(ValidationErrorProperty); }
+            set { SetValue(ValidationErrorProperty, value); }
+        }
 
         public object FieldContent
         {

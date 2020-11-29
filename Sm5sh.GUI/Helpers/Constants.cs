@@ -25,6 +25,8 @@ namespace Sm5sh.GUI.Helpers
         };
         }
 
+        public const string GAME_TITLE_PREFIX = "ui_gametitle_";
+
         public const string DEFAULT_LOCALE = "us_en";
 
         public readonly static Dictionary<string, string> CONVERTER_SERIES = new Dictionary<string, string>()

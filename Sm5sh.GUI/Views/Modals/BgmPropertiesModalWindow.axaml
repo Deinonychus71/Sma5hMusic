@@ -6,7 +6,7 @@
         Width="1200" Height="900" MinWidth="1200"  MinHeight="900"
         x:Class="Sm5sh.GUI.Views.BgmPropertiesModalWindow"
         xmlns:fields="clr-namespace:Sm5sh.GUI.Views.Fields"
-        Title="BgmPropertiesWindow">
+        Title="BGM Properties">
   <Window.Styles>
     <StyleInclude Source="/Assets/Styles/ContentStyles.xaml"/>
     <StyleInclude Source="/Assets/Styles/ModalStyles.xaml"/>
