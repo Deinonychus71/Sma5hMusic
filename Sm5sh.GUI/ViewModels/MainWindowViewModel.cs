@@ -195,6 +195,7 @@ namespace Sm5sh.GUI.ViewModels
             _locales.Clear();
             _musicMods.Clear();
             _playlistsEntries.Clear();
+            _stagesEntries.Clear();
 
             //Init view models
             //Bind

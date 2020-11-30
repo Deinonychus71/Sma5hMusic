@@ -37,7 +37,10 @@ namespace Sm5sh.Mods.Music
             _logger.LogInformation("Cache Path: {CachePath}", _config.Value.Sm5shMusic.CachePath);
             _logger.LogInformation("Default Locale: {DefaultLocale}", _config.Value.Sm5shMusic.DefaultLocale);
 
+
             //Load Music Mods
+            _logger.LogInformation("Loading AudioState Service");
+            _audioStateService.InitBgmEntriesFromStateManager();
             _logger.LogInformation("Loading Sm5shMusic Mods");
             var musicMods = _musicModManagerService.RefreshMusicMods();
 

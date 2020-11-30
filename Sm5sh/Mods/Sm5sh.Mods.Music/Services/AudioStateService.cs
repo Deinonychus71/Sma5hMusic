@@ -15,6 +15,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Sm5sh.ResourceProviders.Constants;
 using System.IO;
+using Sm5sh.Data.Ui.Param.Database.PrcUiStageDatabaseModels;
 
 namespace Sm5sh.Mods.Music.Services
 {
@@ -45,7 +46,6 @@ namespace Sm5sh.Mods.Music.Services
             _bgmEntries = new Dictionary<string, BgmEntry>();
             _playlistsEntries = new Dictionary<string, PlaylistEntry>();
             _stageEntries = new Dictionary<string, StageEntry>();
-            InitBgmEntriesFromStateManager();
         }
 
         public IEnumerable<BgmEntry> GetBgmEntries()
@@ -171,6 +171,7 @@ namespace Sm5sh.Mods.Music.Services
             //Load Data
             var paramBgmDatabase = _state.LoadResource<PrcUiBgmDatabase>(PrcExtConstants.PRC_UI_BGM_DB_PATH);
             var paramGameTitleDatabaseRoot = _state.LoadResource<PrcUiGameTitleDatabase>(PrcExtConstants.PRC_UI_GAMETITLE_DB_PATH).DbRootEntries;
+            var paramStageDbRoot = _state.LoadResource<PrcUiStageDatabase>(PrcExtConstants.PRC_UI_STAGE_DB_PATH).DbRootEntries;
             var binBgmPropertyEntries = _state.LoadResource<Data.Sound.Config.BinBgmProperty>(BgmPropertyFileConstants.BGM_PROPERTY_PATH).Entries;
             var daoMsbtBgms = GetBgmDatabases();
             var daoMsbtTitle = GetGameTitleDatabases();
@@ -270,11 +271,18 @@ namespace Sm5sh.Mods.Music.Services
                 }
             }
 
+            //Mapping stage
+            paramStageDbRoot.Clear();
+            foreach (var stage in _stageEntries)
+            {
+                paramStageDbRoot.Add(stage.Key, _mapper.Map<StageDbRootEntry>(stage.Value));
+            }
+
             return true;
         }
 
         #region Private
-        private void InitBgmEntriesFromStateManager()
+        public void InitBgmEntriesFromStateManager()
         {
             //Make sure resources are unloaded
             _state.UnloadResources();

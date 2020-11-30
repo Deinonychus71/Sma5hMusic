@@ -17,6 +17,7 @@ namespace Sm5sh.Mods.Music.Interfaces
         bool RemoveBgmEntry(string toneId);
         bool AddPlaylistEntry(PlaylistEntry playlistEntry);
         bool RemovePlaylistEntry(string playlistId);
+        void InitBgmEntriesFromStateManager();
         bool SaveBgmEntriesToStateManager();
     }
 }
