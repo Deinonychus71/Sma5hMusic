@@ -307,7 +307,7 @@ namespace Sm5sh.GUI.ViewModels
                     await _messageDialog.ShowError("Error", $"The song {inputFile} could not be added to the mod. The filename should only contain lowercase characters, digits or underscore.");
                     continue;
                 }
-                if (Path.GetExtension(inputFile.ToLower()) == "nus3audio")
+                if (Path.GetExtension(inputFile.ToLower()) == ".nus3audio")
                 {
                     //TODO: Fix tone ID later if needed
                     await _messageDialog.ShowInformation("Error", $"The song {inputFile} is being imported as a nus3audio without additional processing. Make sure the tone ID match the filename.");
@@ -320,6 +320,7 @@ namespace Sm5sh.GUI.ViewModels
                 }
                 if (!_audioState.AddBgmEntry(newBgm))
                 {
+                    newBgm.MusicMod.RemoveBgm(newBgm.ToneId);
                     await _messageDialog.ShowError("Error", $"The song {inputFile} could not be added to the DB. Please check the logs.");
                     continue;
                 }

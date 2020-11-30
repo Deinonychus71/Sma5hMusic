@@ -10,7 +10,6 @@ using Sm5sh.Interfaces;
 using Sm5sh.Mods.Music.Helpers;
 using Sm5sh.Mods.Music.Interfaces;
 using Sm5sh.Mods.Music.Models;
-using Sm5sh.Mods.Music.Models.BgmEntryModels;
 using Sm5sh.ResourceProviders.Prc.Helpers;
 using System.Collections.Generic;
 using System.Linq;
@@ -113,7 +112,10 @@ namespace Sm5sh.Mods.Music.Services
             if (!_bgmEntries.ContainsKey(bgmEntry.ToneId))
                 _bgmEntries.Add(bgmEntry.ToneId, bgmEntry);
             else
+            {
                 _logger.LogError("Bgm with ToneId {ToneId} already exist in the database.", bgmEntry.ToneId);
+                return false;
+            }
 
             return true;
         }
