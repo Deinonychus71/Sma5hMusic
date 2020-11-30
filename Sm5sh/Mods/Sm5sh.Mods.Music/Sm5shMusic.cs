@@ -66,7 +66,7 @@ namespace Sm5sh.Mods.Music
                 var nusAudioOutputFile = Path.Combine(_config.Value.OutputPath, "stream;", "sound", "bgm", string.Format(Constants.GameResources.NUS3AUDIO_FILE, bgmEntry.ToneId));
                 
                 //We always generate a new Nus3Bank as the internal ID might change
-                _nus3AudioService.GenerateNus3Bank(bgmEntry.ToneId, nusBankOutputFile);
+                _nus3AudioService.GenerateNus3Bank(bgmEntry.ToneId, bgmEntry.NUS3BankConfig.AudioVolume, nusBankOutputFile);
 
                 //Test for audio cache
                 if (useCache)

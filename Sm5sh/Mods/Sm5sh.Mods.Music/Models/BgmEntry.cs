@@ -46,7 +46,10 @@ namespace Sm5sh.Mods.Music.Models
                 Copyright = new Dictionary<string, string>()
             };
             BgmProperties = new BgmEntryModels.BgmPropertyEntry(this);
-            NUS3BankConfig = new BgmEntryModels.NUS3BankConfigEntry(this);
+            NUS3BankConfig = new BgmEntryModels.NUS3BankConfigEntry(this)
+            {
+                AudioVolume = 2.7f
+            };
             DbRoot = new BgmEntryModels.BgmDbRootEntry(this)
             {
                 Rarity = Constants.InternalIds.RARITY_DEFAULT,

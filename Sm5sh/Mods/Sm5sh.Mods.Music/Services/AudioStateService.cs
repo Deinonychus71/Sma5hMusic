@@ -237,7 +237,7 @@ namespace Sm5sh.Mods.Music.Services
                     }
                 }
                 //Game Title
-                if (!string.IsNullOrEmpty(bgmEntry.GameTitle.NameId))
+                if (!string.IsNullOrEmpty(bgmEntry.GameTitle?.NameId))
                 {
                     var gameTitleLabel = bgmEntry.GameTitle.MSBTTitleKey;
                     var titleDict = bgmEntry.GameTitle.MSBTTitle;

@@ -79,7 +79,7 @@ namespace Sm5sh.Mods.Music.Services
             return true;
         }
 
-        public bool GenerateNus3Bank(string toneId, string outputMediaFile)
+        public bool GenerateNus3Bank(string toneId, float volume, string outputMediaFile)
         {
             _logger.LogDebug("Generate nus3bank {InternalToneName} from {Nus3BankInputFile} to {Nus3BankOutputFile}", toneId, _nus3BankTemplateFile, outputMediaFile);
 
@@ -90,10 +90,21 @@ namespace Sm5sh.Mods.Music.Services
                 {
                     fileStream.CopyTo(memoryStream);
                 }
+                var bytes = memoryStream.ToArray();
+                var found = ByteHelper.Locate(bytes, new byte[] { 0xE8, 0x22, 0x00, 0x00 });
                 using (var w = new BinaryWriter(memoryStream))
                 {
                     w.BaseStream.Position = 0xc8;
                     w.Write(GetNewNus3BankId());
+                    if (found.Length != 3)
+                    {
+                        _logger.LogError("Error while locating the volume offset in the nus3bank");
+                    }
+                    else
+                    {
+                        w.BaseStream.Position = found[1] + 4;
+                        w.Write(volume);
+                    }
                 }
                 Directory.CreateDirectory(Path.GetDirectoryName(outputMediaFile));
                 File.WriteAllBytes(outputMediaFile, memoryStream.ToArray());

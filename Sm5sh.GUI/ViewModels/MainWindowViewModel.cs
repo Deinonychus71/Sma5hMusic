@@ -324,7 +324,7 @@ namespace Sm5sh.GUI.ViewModels
                     await _messageDialog.ShowError("Error", $"The song {inputFile} could not be added to the DB. Please check the logs.");
                     continue;
                 }
-                var vmBgmEntry = new BgmEntryViewModel(_musicPlayer, newBgm);
+                var vmBgmEntry = _mapper.Map(newBgm, new BgmEntryViewModel(_musicPlayer, newBgm));
                 //Edit metadata
                 await EditBgmEntry(vmBgmEntry);
                 //Add to UI
