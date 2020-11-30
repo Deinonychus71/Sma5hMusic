@@ -6,6 +6,22 @@ namespace Sm5sh.Mods.Music.Models.AutoMapper
     {
         public MappingDb()
         {
+            CreateMap<AudioCuePoints, BgmEntryModels.BgmPropertyEntry>()
+               .ForMember(i => i.LoopEndMs, me => me.MapFrom(p => p.LoopEndMs))
+               .ForMember(i => i.LoopEndSample, me => me.MapFrom(p => p.LoopEndSample))
+               .ForMember(i => i.LoopStartMs, me => me.MapFrom(p => p.LoopStartMs))
+               .ForMember(i => i.LoopStartSample, me => me.MapFrom(p => p.LoopStartSample))
+               .ForMember(i => i.NameId, me => me.Ignore())
+               .ForMember(i => i.TotalSamples, me => me.MapFrom(p => p.TotalSamples))
+               .ForMember(i => i.TotalTimeMs, me => me.MapFrom(p => p.TotalTimeMs));
+            CreateMap<BgmEntryModels.BgmPropertyEntry, AudioCuePoints>()
+               .ForMember(i => i.LoopEndMs, me => me.MapFrom(p => p.LoopEndMs))
+               .ForMember(i => i.LoopEndSample, me => me.MapFrom(p => p.LoopEndSample))
+               .ForMember(i => i.LoopStartMs, me => me.MapFrom(p => p.LoopStartMs))
+               .ForMember(i => i.LoopStartSample, me => me.MapFrom(p => p.LoopStartSample))
+               .ForMember(i => i.TotalSamples, me => me.MapFrom(p => p.TotalSamples))
+               .ForMember(i => i.TotalTimeMs, me => me.MapFrom(p => p.TotalTimeMs));
+
             CreateMap<Sm5sh.Data.Ui.Param.Database.PrcUiGameTitleDatabaseModels.PrcGameTitleDbRootEntry, GameTitleEntry>()
                 .ForMember(i => i.MSBTTitle, me => me.Ignore())
                 .ForMember(i => i.NameId, me => me.MapFrom(p => p.NameId))

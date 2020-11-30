@@ -135,6 +135,7 @@ namespace Sm5sh.Mods.Music.MusicMods
             }
 
             var newBgmEntry = new BgmEntry(toneId, this);
+            _mapper.Map(audioCuePoints, newBgmEntry.BgmProperties);
             var newBgmConfig = _mapper.Map<BgmConfig>(newBgmEntry);
             newBgmConfig.Filename = filenameWithoutPath;
 
