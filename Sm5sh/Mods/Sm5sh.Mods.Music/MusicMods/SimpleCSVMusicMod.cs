@@ -55,6 +55,10 @@ namespace Sm5sh.Mods.Music.MusicMods
                         _logger.LogDebug("Parsed {MusicModFile} CSV File", metadataCsvFile);
                         var output = FromCSV(ModPath, records);
                         _logger.LogDebug("Mapped {MusicModFile} CSV File to MusicModConfig model", metadataCsvFile);
+
+                        //File backup, as it's an old version of mod
+                        File.Copy(metadataCsvFile, $"{metadataCsvFile}.bak");
+
                         return output;
                     }
                 }

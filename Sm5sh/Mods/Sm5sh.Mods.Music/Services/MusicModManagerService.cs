@@ -71,25 +71,34 @@ namespace Sm5sh.Mods.Music.Services
 
         private IMusicMod GetMusicModManager(string musicModFolder)
         {
+            IMusicMod musicMod = null;
             var jsonBaseFilename = Path.Combine(musicModFolder, Constants.MusicModFiles.MUSIC_MOD_METADATA_JSON_FILE);
             if (File.Exists(jsonBaseFilename))
             {
                 var modBase = LoadJsonBaseMod(jsonBaseFilename);
                 if (modBase.Version == 2)
                 {
-                    return ActivatorUtilities.CreateInstance<AdvancedMusicMod>(_serviceProvider, musicModFolder);
+                    musicMod = ActivatorUtilities.CreateInstance<AdvancedMusicMod>(_serviceProvider, musicModFolder);
                 }
                 else
                 {
-                    return ActivatorUtilities.CreateInstance<SimpleMusicMod>(_serviceProvider, musicModFolder);
+                    musicMod = ActivatorUtilities.CreateInstance<SimpleMusicMod>(_serviceProvider, musicModFolder);
                 }
             }
             else if (File.Exists(Path.Combine(musicModFolder, Constants.MusicModFiles.MUSIC_MOD_METADATA_CSV_FILE)))
             {
-                return ActivatorUtilities.CreateInstance<SimpleCSVMusicMod>(_serviceProvider, musicModFolder);
+                musicMod = ActivatorUtilities.CreateInstance<SimpleCSVMusicMod>(_serviceProvider, musicModFolder);
             }
 
-            return null;
+            if (musicMod?.Mod == null)
+                return null;
+
+            if(musicMod.Mod.Version != 2)
+            {
+                musicMod = ActivatorUtilities.CreateInstance<AdvancedMusicMod>(_serviceProvider,  musicModFolder, musicMod);
+            }
+
+            return musicMod;
         }
 
         private MusicModInformation LoadJsonBaseMod(string filename)

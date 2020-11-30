@@ -74,7 +74,6 @@ namespace Sm5sh.Mods.Music.MusicMods
                     newSong.MSBTLabels.Author = song.Author;
                     newSong.MSBTLabels.Copyright = song.Copyright;
                     newSong.Filename = audioFilePath;
-                    newSong.NUS3BankConfig.AudioVolume = 0;
                     newSong.BgmProperties.LoopEndMs = audioCuePoints.LoopEndMs;
                     newSong.BgmProperties.LoopEndSample = audioCuePoints.LoopEndSample;
                     newSong.BgmProperties.LoopStartMs = audioCuePoints.LoopStartMs;
@@ -136,6 +135,10 @@ namespace Sm5sh.Mods.Music.MusicMods
                 _logger.LogDebug("Parsing {MusicModFile} Json File", metadataJsonFile);
                 var output = JsonConvert.DeserializeObject<MusicModConfig>(file);
                 _logger.LogDebug("Parsed {MusicModFile} Json File", metadataJsonFile);
+
+                //File backup, as it's an old version of mod
+                File.Copy(metadataJsonFile, $"{metadataJsonFile}.bak");
+
                 return output;
             }
             else

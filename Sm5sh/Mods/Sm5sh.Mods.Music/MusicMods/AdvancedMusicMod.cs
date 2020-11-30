@@ -1,8 +1,6 @@
 ﻿using AutoMapper;
-using CsvHelper;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
-using Sm5sh.Core.Helpers;
 using Sm5sh.Mods.Music.Helpers;
 using Sm5sh.Mods.Music.Interfaces;
 using Sm5sh.Mods.Music.Models;
@@ -43,6 +41,16 @@ namespace Sm5sh.Mods.Music.MusicMods
             _logger = logger;
             _mapper = mapper;
             _musicModConfig = InitializeNewMod(newModPath, newMod);
+            SaveMusicModConfig();
+        }
+
+        public AdvancedMusicMod(IAudioMetadataService audioMetadataService, IMapper mapper, ILogger<IMusicMod> logger, string musicModPath, IMusicMod oldMod)
+        {
+            ModPath = musicModPath;
+            _audioMetadataService = audioMetadataService;
+            _logger = logger;
+            _mapper = mapper;
+            _musicModConfig = ConvertOldMod(oldMod);
             SaveMusicModConfig();
         }
 
@@ -267,9 +275,47 @@ namespace Sm5sh.Mods.Music.MusicMods
             }
 
             var metadataJsonFile = Path.Combine(ModPath, Constants.MusicModFiles.MUSIC_MOD_METADATA_JSON_FILE);
-            File.WriteAllText(metadataJsonFile, JsonConvert.SerializeObject(_musicModConfig));
+            File.WriteAllText(metadataJsonFile, JsonConvert.SerializeObject(_musicModConfig, Formatting.Indented));
 
             return true;
+        }
+
+        protected MusicModConfig ConvertOldMod(IMusicMod oldModConfig)
+        {
+            _logger.LogWarning("Convert Old Mod {ModName} to version 2. A backup file will be created...", oldModConfig.Name);
+
+            var newMod = new MusicModConfig(Guid.NewGuid().ToString())
+            {
+                Author = oldModConfig.Mod.Author,
+                Description = oldModConfig.Mod.Description,
+                Website = oldModConfig.Mod.Website,
+                Name = oldModConfig.Name,
+                Version = 2,
+                Games = new List<GameConfig>()
+            };
+            var bgms = oldModConfig.GetBgms();
+            var games = bgms.GroupBy(p => p.GameTitle);
+
+            if (games != null)
+            {
+                foreach(var gameEntry in games)
+                {
+                    var newGame = _mapper.Map<GameConfig>(gameEntry.Key);
+                    if (newGame.Bgms == null)
+                        newGame.Bgms = new List<BgmConfig>();
+                    newMod.Games.Add(newGame);
+
+                    if (gameEntry != null)
+                    {
+                        foreach(var bgmEntry in gameEntry)
+                        {
+                            var mappedSong = _mapper.Map<BgmConfig>(bgmEntry);
+                            newGame.Bgms.Add(mappedSong);
+                        }
+                    }
+                }
+            }
+            return newMod;
         }
     }
 
