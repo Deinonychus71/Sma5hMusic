@@ -20,8 +20,8 @@
       <MenuItem Header="File">
         <!--<MenuItem Header="Choose Mod Workspace..."></MenuItem>
         <Separator></Separator>-->
-        <MenuItem Header="Build" Command="{Binding ActionBuild}"></MenuItem>
-        <!--<MenuItem Header="Build [no cache]" Command="{Binding ActionBuildNoCache}"></MenuItem>-->
+        <MenuItem Header="Build" Command="{Binding ActionBuild}"/>
+        <MenuItem Header="Build [no cache]" Command="{Binding ActionBuildNoCache}"/>
         <Separator></Separator>
         <MenuItem Header="Refresh Data" Command="{Binding ActionRefreshData}"></MenuItem>
         <Separator></Separator>

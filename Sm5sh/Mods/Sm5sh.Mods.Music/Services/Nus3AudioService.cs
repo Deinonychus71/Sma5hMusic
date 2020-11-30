@@ -54,14 +54,7 @@ namespace Sm5sh.Mods.Music.Services
 
             //Handle conversation if necessary
             if (Constants.EXTENSIONS_NEED_CONVERSION.Contains(Path.GetExtension(inputMediaFile).ToLower()))
-            {
-                var tempFile = Path.Combine(_config.Value.TempPath, string.Format(Constants.Resources.NUS3AUDIO_TEMP_FILE, _config.Value.Sm5shMusic.AudioConversionFormat));
-                _audioMetadataService.ConvertAudio(inputMediaFile, tempFile);
-                inputMediaFile = tempFile;
-                var result = GenerateNus3Audio(toneId, inputMediaFile, outputMediaFile);
-                File.Delete(tempFile);
-                return result;
-            }
+                return ConvertIncompatibleFormat(toneId, ref inputMediaFile, outputMediaFile);
 
             //Create nus3audio
             try
@@ -117,6 +110,29 @@ namespace Sm5sh.Mods.Music.Services
         {
             _lastBankId++;
             return _lastBankId;
+        }
+
+        private bool ConvertIncompatibleFormat(string toneId, ref string inputMediaFile, string outputMediaFile, bool isFallback = false)
+        {
+            bool result = false;
+            var formatConversation = isFallback ? _config.Value.Sm5shMusic.AudioConversionFormatFallBack : _config.Value.Sm5shMusic.AudioConversionFormat;
+            var tempFile = Path.Combine(_config.Value.TempPath, string.Format(Constants.Resources.NUS3AUDIO_TEMP_FILE, formatConversation));
+            if (_audioMetadataService.ConvertAudio(inputMediaFile, tempFile))
+            {
+                inputMediaFile = tempFile;
+                result = GenerateNus3Audio(toneId, inputMediaFile, outputMediaFile);
+            }
+            if (File.Exists(tempFile))
+                File.Delete(tempFile);
+
+            if(!result && !isFallback && !string.IsNullOrEmpty(_config.Value.Sm5shMusic.AudioConversionFormatFallBack) 
+                && _config.Value.Sm5shMusic.AudioConversionFormat.ToLower() != _config.Value.Sm5shMusic.AudioConversionFormatFallBack.ToLower())
+            {
+                _logger.LogWarning("The conversion from {InputMediaFile} to {OutputMediaFile} failed. Trying fallback conversation format.", inputMediaFile, outputMediaFile);
+                return ConvertIncompatibleFormat(toneId, ref inputMediaFile, outputMediaFile, true);
+            }
+
+            return result;
         }
 
         private Dictionary<string, ushort> GetCoreNus3BankIds()

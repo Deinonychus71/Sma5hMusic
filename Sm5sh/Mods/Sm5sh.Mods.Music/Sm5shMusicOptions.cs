@@ -8,6 +8,7 @@
         {
             public bool EnableAudioCaching { get; set; }
             public string AudioConversionFormat { get; set; }
+            public string AudioConversionFormatFallBack { get; set; }
             public string DefaultLocale { get; set; }
             public string ModPath { get; set; }
             public string CachePath { get; set; }

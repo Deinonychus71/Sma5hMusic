@@ -3,6 +3,7 @@ using Microsoft.Extensions.Options;
 using Sm5sh.Interfaces;
 using Sm5sh.Mods.Music.Helpers;
 using Sm5sh.Mods.Music.Interfaces;
+using Sm5sh.Mods.Music.Models;
 using System.IO;
 
 namespace Sm5sh.Mods.Music
@@ -72,27 +73,41 @@ namespace Sm5sh.Mods.Music
                 _nus3AudioService.GenerateNus3Bank(bgmEntry.ToneId, bgmEntry.NUS3BankConfig.AudioVolume, nusBankOutputFile);
 
                 //Test for audio cache
-                if (useCache)
-                {
-                    var cachedAudioFile = Path.Combine(_config.Value.Sm5shMusic.CachePath, string.Format(Constants.GameResources.NUS3AUDIO_FILE, bgmEntry.ToneId));
-                    if (!File.Exists(cachedAudioFile))
-                    {
-                        _nus3AudioService.GenerateNus3Audio(bgmEntry.ToneId, bgmEntry.Filename, cachedAudioFile);
-                    }
-                    else
-                    {
-                        _logger.LogDebug("Retrieving nus3audio {InternalToneName} from cache {CacheFile}", bgmEntry.ToneId, cachedAudioFile);
-                    }
-                    _logger.LogDebug("Copy nus3audio {InternalToneName} from cache {CacheFile} to {Nus3AudioOutputFile}", bgmEntry.ToneId, cachedAudioFile, nusAudioOutputFile);
-                    File.Copy(cachedAudioFile, nusAudioOutputFile);
-                }
-                else
-                {
-                    _nus3AudioService.GenerateNus3Audio(bgmEntry.ToneId, bgmEntry.Filename, nusAudioOutputFile);
-                }
+                if (!ConvertNus3Audio(useCache, bgmEntry, nusAudioOutputFile))
+                    _logger.LogError("Error! The song with ToneId {ToneId}, File {Filename} could not be processed.", bgmEntry.ToneId, bgmEntry.Filename);
             }
 
             return true;
+        }
+
+        private bool ConvertNus3Audio(bool useCache, BgmEntry bgmEntry, string nusAudioOutputFile)
+        {
+            bool result = false;
+
+            //Test for audio cache
+            if (useCache)
+            {
+                var cachedAudioFile = Path.Combine(_config.Value.Sm5shMusic.CachePath, string.Format(Constants.GameResources.NUS3AUDIO_FILE, bgmEntry.ToneId));
+                if (!File.Exists(cachedAudioFile))
+                {
+                    result = _nus3AudioService.GenerateNus3Audio(bgmEntry.ToneId, bgmEntry.Filename, cachedAudioFile);
+                }
+                else
+                {
+                    _logger.LogDebug("Retrieving nus3audio {InternalToneName} from cache {CacheFile}", bgmEntry.ToneId, cachedAudioFile);
+                }
+                if (File.Exists(cachedAudioFile))
+                {
+                    _logger.LogDebug("Copy nus3audio {InternalToneName} from cache {CacheFile} to {Nus3AudioOutputFile}", bgmEntry.ToneId, cachedAudioFile, nusAudioOutputFile);
+                    File.Copy(cachedAudioFile, nusAudioOutputFile);
+                }
+            }
+            else
+            {
+                result = _nus3AudioService.GenerateNus3Audio(bgmEntry.ToneId, bgmEntry.Filename, nusAudioOutputFile);
+            }
+
+            return result;
         }
     }
 }

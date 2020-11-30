@@ -76,7 +76,15 @@ namespace Sm5sh.Mods.Music.Services
             using (var writer = new StringWriter(builder))
             {
                 Console.SetOut(writer);
-                Converter.RunConverterCli(new string[] { "-i", inputMediaFile, "-o", outputMediaFile });
+                if (outputMediaFile.EndsWith("lopus"))
+                {
+                    //Special tags for opus
+                    Converter.RunConverterCli(new string[] { "-i", inputMediaFile, "-o", outputMediaFile, "--opusheader", "Namco", "--cbr" });
+                }
+                else
+                {
+                    Converter.RunConverterCli(new string[] { "-i", inputMediaFile, "-o", outputMediaFile });
+                }
             }
             Console.SetOut(oldValue);
 
@@ -84,12 +92,11 @@ namespace Sm5sh.Mods.Music.Services
 
             _logger.LogDebug("VGAudio Convert for {OutputMediaFile}: {Data}", outputMediaFile, output);
 
-            if (!File.Exists(outputMediaFile))
+            if (!File.Exists(outputMediaFile) || new FileInfo(outputMediaFile).Length == 0)
             {
-                _logger.LogError("VGAudio Error - The conversion from {InputMediaFile} to {OutputMediaFile} failed.", inputMediaFile, outputMediaFile);
+                _logger.LogError("VGAudio Error - The conversion from {InputMediaFile} to {OutputMediaFile} failed. Reason {Reason}", inputMediaFile, outputMediaFile, output);
                 return false;
             }
-
             return true;
         }
 
