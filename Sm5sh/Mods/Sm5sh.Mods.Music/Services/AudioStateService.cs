@@ -122,7 +122,8 @@ namespace Sm5sh.Mods.Music.Services
         {
             if (_bgmEntries.ContainsKey(toneId))
             {
-                _deletedBgmEntries.Add(toneId, _bgmEntries[toneId]);
+                if(!_deletedBgmEntries.ContainsKey(toneId))
+                    _deletedBgmEntries.Add(toneId, _bgmEntries[toneId]);
                 _bgmEntries.Remove(toneId);
             }
             else

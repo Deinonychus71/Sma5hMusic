@@ -119,7 +119,7 @@ namespace Sm5sh.Mods.Music.MusicMods
                 _musicModConfig.Games.Add(game);
             }
 
-            var audioCuePoints = _audioMetadataService.GetCuePoints(filename);
+            var audioCuePoints = _audioMetadataService.GetCuePoints(filename).GetAwaiter().GetResult();
             if (audioCuePoints == null || audioCuePoints.TotalSamples == 0)
             {
                 _logger.LogError("The filename {Filename} didn't have cue points.", filenameWithoutPath);
@@ -177,7 +177,20 @@ namespace Sm5sh.Mods.Music.MusicMods
 
         public bool RemoveBgm(string toneId)
         {
-            //TODO
+            _logger.LogInformation("Remove ToneId {ToneId} from Mod {ModName}", toneId, Mod.Name);
+            var bgms = _musicModConfig.Games.SelectMany(g => g.Bgms.Where(s => s.ToneId == toneId)).ToList();
+            _musicModConfig.Games.ForEach(g => g.Bgms.RemoveAll(p => p.ToneId == toneId));
+            _musicModConfig.Games.RemoveAll(p => p.Bgms.Count == 0);
+            SaveMusicModConfig();
+            foreach (var bgm in bgms)
+            {
+                var file = Path.Combine(ModPath, bgm.Filename);
+                if (File.Exists(file))
+                {
+                    _logger.LogInformation("Remove File {File} from Mod {ModName}", file, Mod.Name);
+                    File.Delete(file);
+                }
+            }
             return true;
         }
 

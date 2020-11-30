@@ -6,57 +6,52 @@ using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 using VGAudio.Cli;
+using VGMMusic;
 
 namespace Sm5sh.Mods.Music.Services
 {
-    public class VGAudioMetadataService: IAudioMetadataService
+    public class VGMStreamAudioMetadataService : IAudioMetadataService
     {
         private readonly ILogger _logger;
+        private readonly IVGMMusicPlayer _vgmMusicPlayer;
 
-        public VGAudioMetadataService(ILogger<IAudioMetadataService> logger)
+        public VGMStreamAudioMetadataService(ILogger<IAudioMetadataService> logger, IVGMMusicPlayer vgmMusicPlayer)
         {
             _logger = logger;
+            _vgmMusicPlayer = vgmMusicPlayer;
         }
 
-        public Task<AudioCuePoints> GetCuePoints(string inputFile)
+        public async Task<AudioCuePoints> GetCuePoints(string inputFile)
         {
             _logger.LogDebug("Retrieving audio metadata for {FilePath}...", inputFile);
 
-            var builder = new StringBuilder();
-
-            var oldValue = Console.Out;
-            using (var writer = new StringWriter(builder))
+            VGMAudioCuePoints audioCuePoints = null;
+            try
             {
-                Console.SetOut(writer);
-                Converter.RunConverterCli(new string[] { "-m", "-i", inputFile });
+                audioCuePoints = await _vgmMusicPlayer.GetAudioCuePoints(inputFile);
             }
-            Console.SetOut(oldValue);
+            catch (Exception e)
+            {
+                _logger.LogError(e.Message);
+            } 
 
-            var output = builder.ToString();
+            _logger.LogDebug("VGAudio Metadata for {FilePath}: TotalSamples: {TotalSamples}, LoopStartSample: {LoopStartSample}, LoopEndSample: {LoopEndSample}",
+                inputFile, audioCuePoints.TotalSamples, audioCuePoints.LoopStartSample, audioCuePoints.LoopEndSample);
 
-            var totalSamples = ReadValueUInt64Safe(output, "Sample count: ");
-            var loopStartSample = ReadValueUInt64Safe(output, "Loop start: ");
-            var loopEndSample = ReadValueUInt64Safe(output, "Loop end: ");
-            var frequency = ReadValueUInt64Safe(output, "Sample rate: ");
-
-            _logger.LogDebug("VGAudio Metadata for {FilePath}: TotalSamples: {TotalSamples}, LoopStartSample: {LoopStartSample}, LoopEndSample: {LoopEndSample}, Frequency: {Frequency}",
-                inputFile, totalSamples, loopStartSample, loopEndSample, frequency);
-
-            if (totalSamples == 0 || frequency == 0 || loopEndSample == 0)
+            if (audioCuePoints.TotalSamples == 0 || audioCuePoints.LoopEndSample == 0)
             {
                 _logger.LogWarning("VGAudio Metadata for {FilePath}: Total Samples, Frequency or/and loop end sample was 0! Check the logs for more information. Use song_cue_points_override property in the payload to override these values.", inputFile);
-                _logger.LogDebug("VGAudio Metadata for {FilePath}: {Data}", inputFile, output);
             }
 
-            return Task.FromResult(new AudioCuePoints()
+            return new AudioCuePoints()
             {
-                TotalSamples = totalSamples,
-                LoopStartSample = loopStartSample,
-                LoopEndSample = loopEndSample,
-                TotalTimeMs = frequency > 0 ? totalSamples * 1000 / frequency : 0,
-                LoopStartMs = frequency > 0 ? loopStartSample * 1000 / frequency : 0,
-                LoopEndMs = frequency > 0 ? loopEndSample * 1000 / frequency : 0
-            });
+                TotalSamples = audioCuePoints.TotalSamples,
+                LoopStartSample = audioCuePoints.LoopStartSample,
+                LoopEndSample = audioCuePoints.LoopEndSample,
+                TotalTimeMs = audioCuePoints.TotalTimeMs,
+                LoopStartMs = audioCuePoints.LoopStartMs,
+                LoopEndMs = audioCuePoints.LoopEndMs
+            };
         }
 
         public bool ConvertAudio(string inputMediaFile, string outputMediaFile)

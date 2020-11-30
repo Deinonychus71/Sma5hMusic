@@ -22,6 +22,7 @@ using ReactiveUI;
 using System.Reactive;
 using Avalonia.Controls;
 using System.Collections.Generic;
+using System.IO;
 
 namespace Sm5sh.GUI.ViewModels
 {
@@ -195,15 +196,6 @@ namespace Sm5sh.GUI.ViewModels
             _musicMods.Clear();
             _playlistsEntries.Clear();
 
-            //Load
-            var stateManager = _serviceProvider.GetService<IStateManager>();
-            var mods = _serviceProvider.GetServices<ISm5shMod>();
-            stateManager.Init();
-            foreach (var mod in mods)
-            {
-                mod.Init();
-            }
-
             //Init view models
             //Bind
             var localeList = _audioState.GetLocales().Select(p => new LocaleViewModel(p, Constants.GetLocaleDisplayName(p)));
@@ -309,6 +301,17 @@ namespace Sm5sh.GUI.ViewModels
             _logger.LogInformation("Adding {NbrFiles} files to Mod {ModPath}", results.Length, managerMod.ModPath);
             foreach (var inputFile in results)
             {
+                if(!System.Text.RegularExpressions.Regex.IsMatch(Path.GetFileNameWithoutExtension(inputFile), @"^[a-z0-9_]+$"))
+                {
+                    //TODO: Fix later, and let user change id
+                    await _messageDialog.ShowError("Error", $"The song {inputFile} could not be added to the mod. The filename should only contain lowercase characters, digits or underscore.");
+                    continue;
+                }
+                if (Path.GetExtension(inputFile.ToLower()) == "nus3audio")
+                {
+                    //TODO: Fix tone ID later if needed
+                    await _messageDialog.ShowInformation("Error", $"The song {inputFile} is being imported as a nus3audio without additional processing. Make sure the tone ID match the filename.");
+                }
                 var newBgm = managerMod.MusicMod.AddBgm(inputFile);
                 if (newBgm == null)
                 {
@@ -360,6 +363,9 @@ namespace Sm5sh.GUI.ViewModels
                     if (vmBgmEntry != null)
                     {
                         //TODO - Handle anything saving in a specific service
+                        vmBgmEntry.StopPlay();
+                        await Task.Delay(1500);
+
                         _logger.LogInformation("Deleting {ToneId}...", vmBgmEntry.ToneId);
                         var bgmDelete = vmBgmEntry.GetBgmEntryReference();
                         if (bgmDelete.Source == EntrySource.Mod)
@@ -367,6 +373,7 @@ namespace Sm5sh.GUI.ViewModels
                         else
                             _sm5shMusicOverride.RemoveCoreBgmEntry(bgmDelete.ToneId);
 
+                        _audioState.RemoveBgmEntry(bgmDelete.ToneId);
                         _bgmEntries.Remove(vmBgmEntry);
                         _logger.LogInformation("{ToneId} deleted.", vmBgmEntry.ToneId);
                     }

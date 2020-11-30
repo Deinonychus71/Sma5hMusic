@@ -14,8 +14,8 @@ namespace Sm5sh.GUI.ViewModels
         public IMusicMod MusicMod { get { return _refBgmEntry.MusicMod; } }
         public EntrySource Source { get { return _refBgmEntry != null ? _refBgmEntry.Source : EntrySource.Unknown; } }
         public SeriesEntryViewModel SeriesViewModel { get { return GameTitleViewModel?.SeriesViewModel; } }
-        public string UiGameTitleId { get { return GameTitleViewModel.UiGameTitleId; } }
-        public string SeriesId { get { return GameTitleViewModel.SeriesId; } }
+        public string UiGameTitleId { get { return GameTitleViewModel?.UiGameTitleId; } }
+        public string SeriesId { get { return GameTitleViewModel?.SeriesId; } }
         public string ModName { get { return MusicMod?.Name; } }
         public string ModAuthor { get { return MusicMod?.Mod.Author; } }
         public string ModWebsite { get { return MusicMod?.Mod.Website; } }
@@ -57,6 +57,14 @@ namespace Sm5sh.GUI.ViewModels
                     if (DoesFileExist)
                         MusicPlayer = new MusicPlayerViewModel(musicPlayer, bgmEntry.Filename);
                 }
+            }
+        }
+
+        public void StopPlay()
+        {
+            if(MusicPlayer != null)
+            {
+                MusicPlayer.StopSong();
             }
         }
 

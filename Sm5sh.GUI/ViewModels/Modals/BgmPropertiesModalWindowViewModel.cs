@@ -148,7 +148,8 @@ namespace Sm5sh.GUI.ViewModels
             var previousTestOrder = _refSavedBgmEntryView.DbRoot.TestDispOrder;
             _refSavedBgmEntryView = _mapper.Map(SelectedBgmEntry, _refSavedBgmEntryView);
             _refSavedBgmEntryView.DbRoot.TestDispOrder = (short)(IsInSoundTest ? previousTestOrder > -1 ? previousTestOrder : 0 : -1);
-            _refSavedBgmEntryView.DbRoot.RecordType = SelectedRecordType.Id;
+            if(SelectedRecordType != null)
+                _refSavedBgmEntryView.DbRoot.RecordType = SelectedRecordType.Id;
             _refSavedBgmEntryView.MSBTLabels.Title = MSBTTitleEditor.MSBTValues;
             _refSavedBgmEntryView.MSBTLabels.Author = MSBTAuthorEditor.MSBTValues;
             _refSavedBgmEntryView.MSBTLabels.Copyright = MSBTCopyrightEditor.MSBTValues;

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace VGMMusic
 {
-    public class VGMMusicPlayer : IVGMMusicPlayer
+    public class VGMMusicPlayer : IVGMMusicPlayer, IDisposable
     {
         private readonly ILogger _logger;
         private VGMStreamReader _reader;
@@ -49,6 +49,22 @@ namespace VGMMusic
             _filename = filename;
 
             return true;
+        }
+
+        public async Task<VGMAudioCuePoints> GetAudioCuePoints(string filename)
+        {
+            LoadFile(filename);
+            var audioCuePoints = new VGMAudioCuePoints()
+            {
+                LoopEndMs = (ulong)_reader.LoopEndMilliseconds,
+                LoopEndSample = (ulong)_reader.LoopEndSample,
+                LoopStartMs = (ulong)_reader.LoopStartMilliseconds,
+                LoopStartSample = (ulong)_reader.LoopStartSample,
+                TotalTimeMs = (ulong)_reader.TotalMilliseconds,
+                TotalSamples = (ulong)_reader.TotalSamples,
+            };
+            await Stop();
+            return audioCuePoints;
         }
 
         public bool Play()
@@ -126,6 +142,11 @@ namespace VGMMusic
             _reader = null;
             _requestStop = false;
             IsPlaying = false;
+        }
+
+        public void Dispose()
+        {
+            InternalStop();
         }
     }
 }

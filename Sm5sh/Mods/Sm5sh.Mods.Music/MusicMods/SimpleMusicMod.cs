@@ -58,7 +58,7 @@ namespace Sm5sh.Mods.Music.MusicMods
                 foreach (var song in game.Songs)
                 {
                     var audioFilePath = GetMusicModAudioFile(song.FileName);
-                    var audioCuePoints = _audioMetadataService.GetCuePoints(audioFilePath);
+                    var audioCuePoints = _audioMetadataService.GetCuePoints(audioFilePath).GetAwaiter().GetResult();
 
                     var toneId = song.Id;
                     var hasDlcPlaylistId = song.Playlists != null && song.Playlists.Any(p => CoreConstants.DLC_STAGES.Contains(p.Id));

@@ -6,6 +6,7 @@ using Sm5sh.Mods.Music.Services;
 using Sm5sh.ResourceProviders;
 using Sm5sh.Mods.Music.Models.AutoMapper;
 using AutoMapper;
+using VGMMusic;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
@@ -20,7 +21,9 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddSingleton<IResourceProvider, PrcResourceProvider>();
             services.AddSingleton<IMusicModManagerService, MusicModManagerService>();
             services.AddSingleton<IAudioStateService, AudioStateService>();
-            services.AddSingleton<IAudioMetadataService, VGAudioMetadataService>();
+            //services.AddSingleton<IAudioMetadataService, VGAudioMetadataService>();
+            services.AddSingleton<IAudioMetadataService, VGMStreamAudioMetadataService>();
+            services.AddSingleton<IVGMMusicPlayer, VGMMusicPlayer>();
             services.AddSingleton<INus3AudioService, Nus3AudioService>();
             services.AddAutoMapper(typeof(MappingDb), typeof(MappingAdvancedConfig));
             return services;
