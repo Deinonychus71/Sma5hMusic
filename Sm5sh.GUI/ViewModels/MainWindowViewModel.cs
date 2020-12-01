@@ -23,6 +23,7 @@ using System.Reactive;
 using Avalonia.Controls;
 using System.Collections.Generic;
 using System.IO;
+using ReactiveUI.Fody.Helpers;
 
 namespace Sm5sh.GUI.ViewModels
 {
@@ -48,6 +49,9 @@ namespace Sm5sh.GUI.ViewModels
         private readonly ObservableCollection<ModEntryViewModel> _musicMods;
         private readonly List<StageEntryViewModel> _stagesEntries; //Don't need obs yet
         private string _currentLocale;
+
+        [Reactive]
+        public bool IsAdvanced { get; set; }
 
         public BgmPropertiesModalWindowViewModel VMBgmEditor { get; }
         public GamePropertiesModalWindowViewModel VMGameEditor { get; }
@@ -158,7 +162,7 @@ namespace Sm5sh.GUI.ViewModels
             ActionRefreshData = ReactiveCommand.Create(OnInitData);
         }
 
- 
+
         #region Actions
         public void OnExit()
         {
@@ -180,6 +184,22 @@ namespace Sm5sh.GUI.ViewModels
         public void OnInitData()
         {
             _buildDialog.Init((o) => InitAllDataAsync());
+        }
+
+        public async Task OnAboutOpen()
+        {
+            await _messageDialog.ShowInformation("About",
+                "Sm5sh Music - v0.03 by deinonychus71\r\n\r\n\r\n" +
+                "Research: soneek\r\n\r\n" +
+                "Testing: Demonslayerx8\r\n\r\n" +
+                "prcEditor: https://github.com/BenHall-7/paracobNET \r\nBenHall-7\r\n\r\n" +
+                "paramLabels: https://github.com/ultimate-research/param-labels \r\nBenHall-7, jam1garner, Dr-HyperCake, Birdwards, ThatNintendoNerd, ScanMountGoat, Meshima, Blazingflare, TheSmartKid, jugeeya, Demonslayerx8\r\n\r\n" +
+                "msbtEditor: https://github.com/IcySon55/3DLandMSBTeditor \r\nIcySon55, exelix11 \r\n\r\n" +
+                "nus3audio: https://github.com/jam1garner/nus3audio-rs \r\njam1garner \r\n\r\n" +
+                "bgm-property: https://github.com/jam1garner/smash-bgm-property \r\njam1garner \r\n\r\n" +
+                "VGAudio: https://github.com/Thealexbarney/VGAudio \r\nThealexbarney, soneek, jam1garner, devlead, Raytwo, nnn1590\r\n\r\n" +
+                "vgmstream: https://github.com/vgmstream/vgmstream \r\nbnnm, kode54, NicknineTheEagle, bxaimc, Thealexbarney\r\nAll contributors: https://github.com/vgmstream/vgmstream/graphs/contributors \r\n\r\n" +
+                "CrossArc: https://github.com/Ploaj/ArcCross \r\nPloaj, ScanMountGoat, BenHall-7, shadowninja108, jam1garner, M-1-RLG\r\n\r\n");
         }
         #endregion
 
@@ -254,7 +274,7 @@ namespace Sm5sh.GUI.ViewModels
                 var playlists = _playlistsEntries.ToDictionary(p => p.Id, p => p.ToPlaylistEntry());
                 _sm5shMusicOverride.UpdatePlaylistConfig(playlists);
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 _logger.LogError("Error while saying playlists. Most likely a concurrency issue.", e.Message);
             }
@@ -293,7 +313,7 @@ namespace Sm5sh.GUI.ViewModels
                 await _messageDialog.ShowError("Error", "The mod could not be found.");
                 return;
             }
-                
+
             var results = await _fileDialog.OpenFileDialogAudio();
             if (results.Length == 0)
                 return;
@@ -341,7 +361,11 @@ namespace Sm5sh.GUI.ViewModels
         public async Task EditBgmEntry(BgmEntryViewModel vmBgmEntry)
         {
             VMBgmEditor.LoadBgmEntry(vmBgmEntry);
-            var modalEditBgmProps = new BgmPropertiesModalWindow() { DataContext = VMBgmEditor };
+            Window modalEditBgmProps;
+            if (IsAdvanced)
+                modalEditBgmProps = new BgmAdvancedPropertiesModalWindow() { DataContext = VMBgmEditor };
+            else
+                modalEditBgmProps = new BgmPropertiesModalWindow() { DataContext = VMBgmEditor };
             var results = await modalEditBgmProps.ShowDialog<BgmPropertiesModalWindow>(_rootDialog.Window);
 
             if (results != null)
@@ -401,7 +425,8 @@ namespace Sm5sh.GUI.ViewModels
                     VMGameEditor.SelectedGameTitleEntry.LoadLocalized(_currentLocale);
 
                 //TODO - Handle anything saving in a specific service
-                if (!isEdit) {
+                if (!isEdit)
+                {
                     _gameTitleEntries.Add(VMGameEditor.SelectedGameTitleEntry);
                 }
                 //No need to handle mod, it is saved with the song
@@ -486,7 +511,7 @@ namespace Sm5sh.GUI.ViewModels
             var results = await modalPickerAssignStagePlaylist.ShowDialog<PlaylistStageAssignementModalWindow>(_rootDialog.Window);
             if (results != null)
             {
-                foreach(var vmStage in VMStageAssignemnt.Stages)
+                foreach (var vmStage in VMStageAssignemnt.Stages)
                     _mapper.Map(vmStage, vmStage.GetStageEntryReference());
 
                 //TODO - Handle anything saving in a specific service

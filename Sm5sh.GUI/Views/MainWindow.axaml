@@ -29,12 +29,18 @@
       </MenuItem>
       <!--<MenuItem Header="Tools">
         <MenuItem Header="Export to CSV"></MenuItem>
-      </MenuItem>
-      <MenuItem Header="Settings">
-        <MenuItem Header="Global Settings"></MenuItem>
-        <Separator></Separator>
-        <MenuItem Header="About"></MenuItem>
       </MenuItem>-->
+      <MenuItem Header="Settings">
+        <MenuItem Header="Advanced">
+          <MenuItem.Icon>
+            <CheckBox IsChecked="{Binding IsAdvanced}"/>
+          </MenuItem.Icon>
+        </MenuItem>
+        <!--
+        <MenuItem Header="Global Settings"></MenuItem>-->
+        <Separator></Separator>
+        <MenuItem Header="About" Command="{Binding OnAboutOpen}"></MenuItem>
+      </MenuItem>
     </Menu>
     <DockPanel Grid.Row="1">
       <Image Classes="logo" Source="/Assets/smash_logo.png"/>

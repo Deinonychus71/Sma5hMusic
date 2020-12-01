@@ -1,0 +1,274 @@
+﻿<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        Width="1200" Height="900" MinWidth="1200"  MinHeight="900"
+        x:Class="Sm5sh.GUI.Views.BgmAdvancedPropertiesModalWindow"
+        xmlns:fields="clr-namespace:Sm5sh.GUI.Views.Fields"
+        Title="BGM Properties">
+  <Window.Styles>
+    <StyleInclude Source="/Assets/Styles/ContentStyles.xaml"/>
+    <StyleInclude Source="/Assets/Styles/ModalStyles.xaml"/>
+    <Style Selector=".content Button:pointerover">
+      <Setter Property="Background" Value="Gray"/>
+    </Style>
+    <Style Selector=".content Button">
+      <Setter Property="Background" Value="Transparent"/>
+    </Style>
+  </Window.Styles>
+
+  <DockPanel Classes="modal" LastChildFill="True" HorizontalAlignment="Stretch">
+    <Border Classes="headerTitle" DockPanel.Dock="Top">
+      <TextBlock>Edit BGM Properties</TextBlock>
+    </Border>
+    <StackPanel Classes="modalActions" DockPanel.Dock="Bottom">
+      <Button Content="Save Changes" Command="{Binding ActionSave}" CommandParameter="{Binding $parent[Window]}"></Button>
+      <Button Content="Cancel" Command="{Binding ActionCancel}" CommandParameter="{Binding $parent[Window]}"></Button>
+    </StackPanel>
+
+    <!-- Properties -->
+    <Grid IsVisible="{Binding SelectedBgmEntry, Mode=OneWay, Converter={x:Static ObjectConverters.IsNotNull}}">
+      <TabControl Classes="content" TabStripPlacement="Bottom">
+        <TabItem Header="General" FontSize="14">
+          <Grid ColumnDefinitions="*,*,*" RowDefinitions="100,*">
+            <!-- File Properties-->
+            <StackPanel Grid.Row="0" Grid.ColumnSpan="3" Grid.Column="0" HorizontalAlignment="Stretch">
+              <Border Classes="contentTitle" DockPanel.Dock="Top">
+                <TextBlock>File Properties</TextBlock>
+              </Border>
+              <fields:PropertyMusicField Label="File" Text="{Binding SelectedBgmEntry.Filename, Mode=OneWay}" MusicPlayer="{Binding SelectedBgmEntry.MusicPlayer, Mode=OneWay}" ToolTip="Path to the song in the File System" IsReadOnly="True" />
+            </StackPanel>
+            <!-- Song Information -->
+            <StackPanel Classes="content" Grid.Column="0" Grid.Row="1" HorizontalAlignment="Stretch">
+              <Border Classes="contentTitle" DockPanel.Dock="Top">
+                <TextBlock>Song Information</TextBlock>
+              </Border>
+              <fields:PropertyTextField Label="Tone ID" Text="{Binding SelectedBgmEntry.ToneId, Mode=OneWay}" ToolTip="Unique ID of the song" IsReadOnly="True" />
+              <fields:PropertyField IsRequired="True" Label="Game" ToolTip="Game representing the song. If the game you want isn't in the database, click 'Add New Game Entry'">
+                <fields:PropertyField.FieldContent>
+                  <StackPanel>
+                    <Button Content="Create New Game" Command="{Binding ActionNewGame}" CommandParameter="{Binding $parent[Window]}"/>
+                    <AutoCompleteBox Items="{Binding Games}" ValueMemberBinding="{Binding Title}" IsTextCompletionEnabled="True" MinimumPrefixLength="2"
+                                   MinimumPopulateDelay="0.5" SelectedItem="{Binding SelectedBgmEntry.GameTitleViewModel, Mode=TwoWay}" FilterMode="Contains"/>
+                  </StackPanel>
+                </fields:PropertyField.FieldContent>
+              </fields:PropertyField>
+              <fields:PropertyTextField IsRequired="True" IsVisible="{Binding SelectedBgmEntry.GameTitleViewModel, Converter={x:Static ObjectConverters.IsNotNull}}"
+                                        Label="Series" Text="{Binding SelectedBgmEntry.GameTitleViewModel.SeriesViewModel.Title, Mode=OneWay}"
+                                        ToolTip="Series associated with the game selected. This cannot be changed here." IsReadOnly="True" />
+              <fields:PropertyTextField IsRequired="True" IsVisible="{Binding SelectedBgmEntry.GameTitleViewModel, Converter={x:Static ObjectConverters.IsNull}}"
+                                        Label="Series" Text="Select a game"
+                                        ToolTip="Series associated with the game selected. This cannot be changed here." IsReadOnly="True" />
+              <fields:PropertyField IsRequired="True" Label="Record Type" ToolTip="Select a Record Type. Valid values are 'Original', 'Remix' and 'New Remix'">
+                <fields:PropertyField.FieldContent>
+                  <ComboBox SelectedItem="{Binding SelectedRecordType, Mode=TwoWay}" Items="{Binding RecordTypes}">
+                    <ComboBox.ItemTemplate>
+                      <DataTemplate>
+                        <TextBlock Text="{Binding Label}" />
+                      </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                  </ComboBox>
+                </fields:PropertyField.FieldContent>
+              </fields:PropertyField>
+            </StackPanel>
+            <!-- Song Labels -->
+            <StackPanel Classes="content" Grid.Column="1" Grid.Row="1" HorizontalAlignment="Stretch">
+              <Border Classes="contentTitle" DockPanel.Dock="Top">
+                <TextBlock>Song Labels</TextBlock>
+              </Border>
+              <fields:PropertyField Label="Title" ToolTip="Title of the song.">
+                <fields:PropertyField.FieldContent>
+                  <ContentControl Content="{Binding MSBTTitleEditor}"/>
+                </fields:PropertyField.FieldContent>
+              </fields:PropertyField>
+              <fields:PropertyField Label="Author" ToolTip="Author of the song.">
+                <fields:PropertyField.FieldContent>
+                  <ContentControl Content="{Binding MSBTAuthorEditor}"/>
+                </fields:PropertyField.FieldContent>
+              </fields:PropertyField>
+              <fields:PropertyField Label="Copyright" ToolTip="Copyright of the song.">
+                <fields:PropertyField.FieldContent>
+                  <ContentControl Content="{Binding MSBTCopyrightEditor}"/>
+                </fields:PropertyField.FieldContent>
+              </fields:PropertyField>
+            </StackPanel>
+            <!-- Advanced Options -->
+            <StackPanel Classes="content" Grid.Column="2" Grid.Row="1" HorizontalAlignment="Stretch">
+              <Border Classes="contentTitle" DockPanel.Dock="Top">
+                <TextBlock>Advanced Options</TextBlock>
+              </Border>
+              <fields:PropertyField Label="Volume" ToolTip="Change the volume of the song in game.">
+                <fields:PropertyField.FieldContent>
+                  <Grid ColumnDefinitions="*,60">
+                    <Slider TickFrequency="0.1" TickPlacement="Outside" IsSnapToTickEnabled="True" Minimum="-20" Maximum="20" Orientation="Horizontal" Value="{Binding Path=SelectedBgmEntry.NUS3BankConfig.AudioVolume, Mode=TwoWay}"/>
+                    <Label Grid.Column="1" VerticalContentAlignment="Center" VerticalAlignment="Center" Content="{Binding Path=SelectedBgmEntry.NUS3BankConfig.AudioVolume, Mode=TwoWay}"/>
+                  </Grid>
+                </fields:PropertyField.FieldContent>
+              </fields:PropertyField>
+              <fields:PropertyField Label="Sound Test" ToolTip="The song will be given an index and be sortable in the list of songs.">
+                <fields:PropertyField.FieldContent>
+                  <CheckBox IsChecked="{Binding IsInSoundTest}"/>
+                </fields:PropertyField.FieldContent>
+              </fields:PropertyField>
+              <fields:PropertyField Label="Special Category" ToolTip="This option can be used in game to trigger different effects.">
+                <fields:PropertyField.FieldContent>
+                  <ComboBox SelectedItem="{Binding SelectedSpecialCategory, Mode=TwoWay}" Items="{Binding SpecialCategories}">
+                    <ComboBox.ItemTemplate>
+                      <DataTemplate>
+                        <TextBlock Text="{Binding Label}" />
+                      </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                  </ComboBox>
+                </fields:PropertyField.FieldContent>
+              </fields:PropertyField>
+              <fields:PropertyField IsVisible="{Binding IsSpecialCategoryPinch}" Label="Pinch Song" ToolTip="The song will play during last stock or last minute. Make sure you pick an existing song!">
+                <fields:PropertyField.FieldContent>
+                  <AutoCompleteBox Items="{Binding Bgms}" ValueMemberBinding="{Binding}" IsTextCompletionEnabled="True" MinimumPrefixLength="2"
+                                   MinimumPopulateDelay="0.5" SelectedItem="{Binding SelectedBgmEntry.StreamSet.Info1, Mode=TwoWay}" FilterMode="Contains"/>
+                </fields:PropertyField.FieldContent>
+              </fields:PropertyField>
+            </StackPanel>
+          </Grid>
+        </TabItem>
+        <TabItem Header="PRC DBRoot" FontSize="14">
+          <Grid ColumnDefinitions="*,*,*" RowDefinitions="*">
+            <StackPanel Grid.Row="0" Grid.Column="0" HorizontalAlignment="Stretch">
+              <fields:PropertyTextField Label="ui_bgm_id" Text="{Binding SelectedBgmEntry.DbRoot.UiBgmId, Mode=OneWay}" ToolTip="[Read-Only][Hash40] ID in db_root" IsReadOnly="True" />
+              <fields:PropertyTextField Label="stream_set_id" Text="{Binding SelectedBgmEntry.DbRoot.StreamSetId, Mode=OneWay}" ToolTip="[Read-Only][Hash40] ID in stream_set" IsReadOnly="True" />
+              <fields:PropertyTextField Label="rarity" Text="{Binding SelectedBgmEntry.DbRoot.Rarity, Mode=TwoWay}" ToolTip="[Hash40] Known values are: 'bgm_rarity_0'" />
+              <fields:PropertyTextField Label="record_type" Text="{Binding SelectedBgmEntry.DbRoot.RecordType, Mode=TwoWay}" ToolTip="[Read-Only][Hash40] Known values are: 'record_none' 'record_original' 'record_arrange' 'record_new_arrange'" IsReadOnly="True" />
+              <fields:PropertyTextField Label="ui_gametitle_id" Text="{Binding SelectedBgmEntry.DbRoot.UiGameTitleId, Mode=OneWay}" ToolTip="[Read-Only][Hash40] Game ID" IsReadOnly="True" />
+              <fields:PropertyTextField Label="ui_gametitle_id_1" Text="{Binding SelectedBgmEntry.DbRoot.UiGameTitleId1, Mode=TwoWay}" ToolTip="[Hash40] Known values are: 'ui_gametitle_none'" />
+              <fields:PropertyTextField Label="ui_gametitle_id_2" Text="{Binding SelectedBgmEntry.DbRoot.UiGameTitleId2, Mode=TwoWay}" ToolTip="[Hash40] Known values are: 'ui_gametitle_none'" />
+              <fields:PropertyTextField Label="ui_gametitle_id_3" Text="{Binding SelectedBgmEntry.DbRoot.UiGameTitleId3, Mode=TwoWay}" ToolTip="[Hash40] Known values are: 'ui_gametitle_none'" />
+              <fields:PropertyTextField Label="ui_gametitle_id_4" Text="{Binding SelectedBgmEntry.DbRoot.UiGameTitleId4, Mode=TwoWay}" ToolTip="[Hash40] Known values are: 'ui_gametitle_none'" />
+            </StackPanel>
+            <StackPanel Grid.Row="0" Grid.Column="1" HorizontalAlignment="Stretch">
+              <fields:PropertyTextField Label="name_id" Text="{Binding SelectedBgmEntry.DbRoot.NameId, Mode=OneWay}" ToolTip="[String] ID for MSBT. Will be regenerated automatically." IsReadOnly="True" />
+              <fields:PropertyShortField Label="save_no" Value="{Binding SelectedBgmEntry.DbRoot.SaveNo, Mode=TwoWay}" ToolTip="[Short] Seems to be an index. Setting it to -1 or above the highest known value will cause the song not to show up in SoundTest or work." />
+              <fields:PropertyShortField Label="test_disp_order" Value="{Binding SelectedBgmEntry.DbRoot.TestDispOrder, Mode=TwoWay}" ToolTip="[Read-Only][Short] Order index in SoundTest. This value gets overriden automatically when using the GUI." IsReadOnly="True" />
+              <fields:PropertyIntField Label="menu_value" Value="{Binding SelectedBgmEntry.DbRoot.MenuValue, Mode=TwoWay}" ToolTip="[Int32] To figure out." />
+              <StackPanel Orientation="Horizontal">
+                <fields:PropertyBooleanField Label="jp_region" IsChecked="{Binding SelectedBgmEntry.DbRoot.JpRegion, Mode=TwoWay}" ToolTip="[Boolean]" />
+                <fields:PropertyBooleanField Label="other_region" IsChecked="{Binding SelectedBgmEntry.DbRoot.OtherRegion, Mode=TwoWay}" ToolTip="[Boolean]" />
+              </StackPanel>
+              <fields:PropertyBooleanField Label="possessed" IsChecked="{Binding SelectedBgmEntry.DbRoot.Possessed, Mode=TwoWay}" ToolTip="[Boolean]" />
+              <fields:PropertyBooleanField Label="prize_lottery" IsChecked="{Binding SelectedBgmEntry.DbRoot.PrizeLottery, Mode=TwoWay}" ToolTip="[Boolean]" />
+              <fields:PropertyUIntField Label="shop_price" Value="{Binding SelectedBgmEntry.DbRoot.ShopPrice, Mode=TwoWay}" ToolTip="[UInt32]" />
+              <fields:PropertyBooleanField Label="count_target" IsChecked="{Binding SelectedBgmEntry.DbRoot.CountTarget, Mode=TwoWay}" ToolTip="[Boolean]" />
+            </StackPanel>
+            <StackPanel Grid.Row="0" Grid.Column="2" HorizontalAlignment="Stretch">
+              <fields:PropertyByteField Label="menu_loop" Value="{Binding SelectedBgmEntry.DbRoot.MenuLoop, Mode=TwoWay}" ToolTip="[Byte]" />
+              <fields:PropertyBooleanField Label="is_selectable_stage_make" IsChecked="{Binding SelectedBgmEntry.DbRoot.IsSelectableStageMake, Mode=TwoWay}" ToolTip="[Boolean]" />
+              <fields:PropertyBooleanField Label="0x18db285704" IsChecked="{Binding SelectedBgmEntry.DbRoot.Unk1, Mode=TwoWay}" ToolTip="[Boolean]" />
+              <fields:PropertyBooleanField Label="0x16fe9a28fe" IsChecked="{Binding SelectedBgmEntry.DbRoot.Unk2, Mode=TwoWay}" ToolTip="[Boolean]" />
+              <StackPanel Orientation="Horizontal">
+                <fields:PropertyBooleanField Label="is_dlc" IsChecked="{Binding SelectedBgmEntry.DbRoot.IsDlc, Mode=TwoWay}" ToolTip="[Boolean]" />
+                <fields:PropertyBooleanField Label="is_patch" IsChecked="{Binding SelectedBgmEntry.DbRoot.IsPatch, Mode=TwoWay}" ToolTip="[Boolean]" />
+              </StackPanel>
+              <fields:PropertyTextField Label="0x0ff71e57ec" Text="{Binding SelectedBgmEntry.DbRoot.Unk3, Mode=TwoWay}" ToolTip="[Hash40]" />
+              <fields:PropertyTextField Label="0x14341640b8" Text="{Binding SelectedBgmEntry.DbRoot.Unk4, Mode=TwoWay}" ToolTip="[Hash40]" />
+              <fields:PropertyTextField Label="0x1560c0949b" Text="{Binding SelectedBgmEntry.DbRoot.Unk5, Mode=TwoWay}" ToolTip="[Hash40]" />
+            </StackPanel>
+          </Grid>
+        </TabItem>
+        <TabItem Header="PRC StreamSet" FontSize="14">
+          <Grid ColumnDefinitions="*,*,*" RowDefinitions="*">
+            <StackPanel Grid.Row="0" Grid.Column="0" HorizontalAlignment="Stretch">
+              <fields:PropertyTextField Label="stream_set_id" Text="{Binding SelectedBgmEntry.StreamSet.StreamSetId, Mode=OneWay}" ToolTip="[Read-Only][Hash40] ID in stream_set" IsReadOnly="True" />
+              <fields:PropertyTextField Label="special_category" Text="{Binding SelectedBgmEntry.StreamSet.SpecialCategory, Mode=TwoWay}" ToolTip="[Hash40]" />
+              <fields:PropertyTextField Label="info0" Text="{Binding SelectedBgmEntry.StreamSet.Info0, Mode=OneWay}" ToolTip="[Read-Only][Hash40] ID in assigned_info" IsReadOnly="True" />
+              <fields:PropertyTextField Label="info1" Text="{Binding SelectedBgmEntry.StreamSet.Info1, Mode=TwoWay}" ToolTip="[Hash40]" />
+              <fields:PropertyTextField Label="info2" Text="{Binding SelectedBgmEntry.StreamSet.Info2, Mode=TwoWay}" ToolTip="[Hash40]" />
+              <fields:PropertyTextField Label="info3" Text="{Binding SelectedBgmEntry.StreamSet.Info3, Mode=TwoWay}" ToolTip="[Hash40]" />
+              <fields:PropertyTextField Label="info4" Text="{Binding SelectedBgmEntry.StreamSet.Info4, Mode=TwoWay}" ToolTip="[Hash40]" />
+            </StackPanel>
+            <StackPanel Grid.Row="0" Grid.Column="1" HorizontalAlignment="Stretch">
+              <fields:PropertyTextField Label="info5" Text="{Binding SelectedBgmEntry.StreamSet.Info5, Mode=TwoWay}" ToolTip="[Hash40]" />
+              <fields:PropertyTextField Label="info6" Text="{Binding SelectedBgmEntry.StreamSet.Info6, Mode=TwoWay}" ToolTip="[Hash40]" />
+              <fields:PropertyTextField Label="info7" Text="{Binding SelectedBgmEntry.StreamSet.Info7, Mode=TwoWay}" ToolTip="[Hash40]" />
+              <fields:PropertyTextField Label="info8" Text="{Binding SelectedBgmEntry.StreamSet.Info8, Mode=TwoWay}" ToolTip="[Hash40]" />
+              <fields:PropertyTextField Label="info9" Text="{Binding SelectedBgmEntry.StreamSet.Info9, Mode=TwoWay}" ToolTip="[Hash40]" />
+              <fields:PropertyTextField Label="info10" Text="{Binding SelectedBgmEntry.StreamSet.Info10, Mode=TwoWay}" ToolTip="[Hash40]" />
+            </StackPanel>
+            <StackPanel Grid.Row="0" Grid.Column="2" HorizontalAlignment="Stretch">
+              <fields:PropertyTextField Label="info11" Text="{Binding SelectedBgmEntry.StreamSet.Info11, Mode=TwoWay}" ToolTip="[Hash40]" />
+              <fields:PropertyTextField Label="info12" Text="{Binding SelectedBgmEntry.StreamSet.Info12, Mode=TwoWay}" ToolTip="[Hash40]" />
+              <fields:PropertyTextField Label="info13" Text="{Binding SelectedBgmEntry.StreamSet.Info13, Mode=TwoWay}" ToolTip="[Hash40]" />
+              <fields:PropertyTextField Label="info14" Text="{Binding SelectedBgmEntry.StreamSet.Info14, Mode=TwoWay}" ToolTip="[Hash40]" />
+              <fields:PropertyTextField Label="info15" Text="{Binding SelectedBgmEntry.StreamSet.Info15, Mode=TwoWay}" ToolTip="[Hash40]" />
+            </StackPanel>
+          </Grid>
+        </TabItem>
+        <TabItem Header="PRC AssignedInfo" FontSize="14">
+          <Grid ColumnDefinitions="*,*,*" RowDefinitions="*">
+            <StackPanel Grid.Row="0" Grid.Column="0" HorizontalAlignment="Stretch">
+              <fields:PropertyTextField Label="info_id" Text="{Binding SelectedBgmEntry.AssignedInfo.InfoId, Mode=OneWay}" ToolTip="[Read-Only][Hash40] ID in assigned_info" IsReadOnly="True" />
+              <fields:PropertyTextField Label="stream_id" Text="{Binding SelectedBgmEntry.AssignedInfo.StreamId, Mode=OneWay}" ToolTip="[Read-Only][Hash40] ID in streaming_property" IsReadOnly="True" />
+              <fields:PropertyTextField Label="condition" Text="{Binding SelectedBgmEntry.AssignedInfo.Condition, Mode=TwoWay}" ToolTip="[Hash40]" />
+              <fields:PropertyTextField Label="condition_process" Text="{Binding SelectedBgmEntry.AssignedInfo.ConditionProcess, Mode=TwoWay}" ToolTip="[Hash40]" />
+            </StackPanel>
+            <StackPanel Grid.Row="0" Grid.Column="1" HorizontalAlignment="Stretch">
+              <fields:PropertyIntField Label="start_frame" Value="{Binding SelectedBgmEntry.AssignedInfo.StartFrame, Mode=TwoWay}" ToolTip="[Int32]" />
+              <fields:PropertyIntField Label="change_fadein_frame" Value="{Binding SelectedBgmEntry.AssignedInfo.ChangeFadeInFrame, Mode=TwoWay}" ToolTip="[Int32]" />
+              <fields:PropertyIntField Label="change_start_delay_frame" Value="{Binding SelectedBgmEntry.AssignedInfo.ChangeStartDelayFrame, Mode=TwoWay}" ToolTip="[Int32]" />
+              <fields:PropertyIntField Label="change_fadeout_frame" Value="{Binding SelectedBgmEntry.AssignedInfo.ChangeFadeoutFrame, Mode=TwoWay}" ToolTip="[Int32]" />
+              <fields:PropertyIntField Label="change_stop_delay_frame" Value="{Binding SelectedBgmEntry.AssignedInfo.ChangeStopDelayFrame, Mode=TwoWay}" ToolTip="[Int32]" />
+            </StackPanel>
+            <StackPanel Grid.Row="0" Grid.Column="2" HorizontalAlignment="Stretch">
+              <fields:PropertyIntField Label="menu_change_fadein_frame" Value="{Binding SelectedBgmEntry.AssignedInfo.MenuChangeFadeInFrame, Mode=TwoWay}" ToolTip="[Int32]" />
+              <fields:PropertyIntField Label="menu_change_start_delay_frame" Value="{Binding SelectedBgmEntry.AssignedInfo.MenuChangeStartDelayFrame, Mode=TwoWay}" ToolTip="[Int32]" />
+              <fields:PropertyIntField Label="menu_change_fadeout_frame" Value="{Binding SelectedBgmEntry.AssignedInfo.MenuChangeFadeOutFrame, Mode=TwoWay}" ToolTip="[Int32]" />
+              <fields:PropertyIntField Label="0x1c6a38c480" Value="{Binding SelectedBgmEntry.AssignedInfo.Unk1, Mode=TwoWay}" ToolTip="[Int32]" />
+            </StackPanel>
+          </Grid>
+        </TabItem>
+        <TabItem Header="PRC StreamingProperty" FontSize="14">
+          <Grid ColumnDefinitions="*,*,*" RowDefinitions="*">
+            <StackPanel Grid.Row="0" Grid.Column="0" HorizontalAlignment="Stretch">
+              <fields:PropertyTextField Label="stream_id" Text="{Binding SelectedBgmEntry.StreamingProperty.StreamId, Mode=OneWay}" ToolTip="[Read-Only][Hash40] ID in streaming_property" IsReadOnly="True" />
+              <fields:PropertyTextField Label="data_name0" Text="{Binding SelectedBgmEntry.StreamingProperty.DataName0, Mode=OneWay}" ToolTip="[Read-Only][String] Tone ID" IsReadOnly="True" />
+              <fields:PropertyTextField Label="data_name1" Text="{Binding SelectedBgmEntry.StreamingProperty.DataName1, Mode=TwoWay}" ToolTip="[String]" />
+              <fields:PropertyTextField Label="data_name2" Text="{Binding SelectedBgmEntry.StreamingProperty.DataName2, Mode=TwoWay}" ToolTip="[String]" />
+              <fields:PropertyTextField Label="data_name3" Text="{Binding SelectedBgmEntry.StreamingProperty.DataName3, Mode=TwoWay}" ToolTip="[String]" />
+              <fields:PropertyTextField Label="data_name4" Text="{Binding SelectedBgmEntry.StreamingProperty.DataName4, Mode=TwoWay}" ToolTip="[String]" />
+            </StackPanel>
+            <StackPanel Grid.Row="0" Grid.Column="1" HorizontalAlignment="Stretch">
+              <fields:PropertyByteField Label="loop" Value="{Binding SelectedBgmEntry.StreamingProperty.Loop, Mode=TwoWay}" ToolTip="[Byte]" />
+              <fields:PropertyTextField Label="end_point" Text="{Binding SelectedBgmEntry.StreamingProperty.EndPoint, Mode=TwoWay}" ToolTip="[String]" />
+              <fields:PropertyUShortField Label="fadeout_frame" Value="{Binding SelectedBgmEntry.StreamingProperty.FadeOutFrame, Mode=TwoWay}" ToolTip="[UShort]" />
+              <fields:PropertyTextField Label="start_point_suddendeath" Text="{Binding SelectedBgmEntry.StreamingProperty.StartPointSuddenDeath, Mode=TwoWay}" ToolTip="[String]" />
+              <fields:PropertyTextField Label="start_point_transition" Text="{Binding SelectedBgmEntry.StreamingProperty.StartPointTransition, Mode=TwoWay}" ToolTip="[String]" />
+            </StackPanel>
+            <StackPanel Grid.Row="0" Grid.Column="2" HorizontalAlignment="Stretch">
+              <fields:PropertyTextField Label="start_point0" Text="{Binding SelectedBgmEntry.StreamingProperty.StartPoint0, Mode=TwoWay}" ToolTip="[String]" />
+              <fields:PropertyTextField Label="start_point1" Text="{Binding SelectedBgmEntry.StreamingProperty.StartPoint1, Mode=TwoWay}" ToolTip="[String]" />
+              <fields:PropertyTextField Label="start_point2" Text="{Binding SelectedBgmEntry.StreamingProperty.StartPoint2, Mode=TwoWay}" ToolTip="[String]" />
+              <fields:PropertyTextField Label="start_point3" Text="{Binding SelectedBgmEntry.StreamingProperty.StartPoint3, Mode=TwoWay}" ToolTip="[String]" />
+              <fields:PropertyTextField Label="start_point4" Text="{Binding SelectedBgmEntry.StreamingProperty.StartPoint4, Mode=TwoWay}" ToolTip="[String]" />
+            </StackPanel>
+          </Grid>
+        </TabItem>
+        <TabItem Header="BGM Properties" FontSize="14">
+          <Grid ColumnDefinitions="*,*,*" RowDefinitions="*">
+            <StackPanel Grid.Row="0" Grid.Column="0" HorizontalAlignment="Stretch">
+              <fields:PropertyTextField Label="name_id" Text="{Binding SelectedBgmEntry.BgmProperties.NameId, Mode=OneWay}" ToolTip="[Read-Only][Hash40] ID in BGM Property" IsReadOnly="True" />
+              <fields:PropertyULongField Label="loop_start_ms" Value="{Binding SelectedBgmEntry.BgmProperties.LoopStartMs, Mode=TwoWay}" ToolTip="[ULong]" />
+              <fields:PropertyULongField Label="loop_start_sample" Value="{Binding SelectedBgmEntry.BgmProperties.LoopStartSample, Mode=TwoWay}" ToolTip="[ULong]" />
+            </StackPanel>
+            <StackPanel Grid.Row="0" Grid.Column="1" HorizontalAlignment="Stretch">
+              <fields:PropertyULongField Label="loop_end_ms" Value="{Binding SelectedBgmEntry.BgmProperties.LoopEndMs, Mode=TwoWay}" ToolTip="[ULong]" />
+              <fields:PropertyULongField Label="loop_end_sample" Value="{Binding SelectedBgmEntry.BgmProperties.LoopEndSample, Mode=TwoWay}" ToolTip="[ULong]" />
+            </StackPanel>
+            <StackPanel Grid.Row="0" Grid.Column="2" HorizontalAlignment="Stretch">
+              <fields:PropertyULongField Label="frequency" Value="{Binding SelectedBgmEntry.BgmProperties.Frequency, Mode=OneWay}" ToolTip="[ULong]" />
+              <fields:PropertyULongField Label="total_time_ms" Value="{Binding SelectedBgmEntry.BgmProperties.TotalTimeMs, Mode=TwoWay}" ToolTip="[ULong]" />
+              <fields:PropertyULongField Label="total_samples" Value="{Binding SelectedBgmEntry.BgmProperties.TotalSamples, Mode=TwoWay}" ToolTip="[ULong]" />
+            </StackPanel>
+          </Grid>
+        </TabItem>
+      </TabControl>
+    </Grid>
+  </DockPanel>
+</Window>
