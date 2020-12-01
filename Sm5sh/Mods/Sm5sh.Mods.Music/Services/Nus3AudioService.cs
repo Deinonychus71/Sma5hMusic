@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
 
 namespace Sm5sh.Mods.Music.Services
@@ -52,6 +53,20 @@ namespace Sm5sh.Mods.Music.Services
                 return false;
             }
 
+            //Test nus3audio
+            if (Path.GetExtension(inputMediaFile).ToLower() == ".nus3audio")
+            {
+                //Double checking that tone ids match
+                var fileToneId = GetToneIdFromNus3Audio(inputMediaFile);
+                if (fileToneId != toneId)
+                {
+                    _logger.LogError("The ToneId within the nus3audio {ToneIdNus3Audio} doesn't match the ToneId {ToneId} registered in the mod..", fileToneId, toneId);
+                    return false;
+                }
+                File.Copy(inputMediaFile, outputMediaFile);
+                return true;
+            }
+
             //Handle conversation if necessary
             if (Constants.EXTENSIONS_NEED_CONVERSION.Contains(Path.GetExtension(inputMediaFile).ToLower()))
                 return ConvertIncompatibleFormat(toneId, ref inputMediaFile, outputMediaFile);
@@ -72,11 +87,43 @@ namespace Sm5sh.Mods.Music.Services
             return true;
         }
 
+        public string GetToneIdFromNus3Audio(string inputMediaFile)
+        {
+            _logger.LogDebug("Retrieving ToneId from {InputMediaFile}...", inputMediaFile);
+
+            try
+            {
+                using (var memoryStream = new MemoryStream())
+                {
+                    using (var fileStream = File.Open(inputMediaFile, FileMode.Open, FileAccess.Read))
+                    {
+                        using (var w = new BinaryReader(fileStream))
+                        {
+                            w.BaseStream.Position = 0x48; //ToneId
+
+                            var sb = new StringBuilder();
+                            char c;
+                            while((c = w.ReadChar()) != '\0')
+                            {
+ 
+                                sb.Append(c);
+                            };
+                            return sb.ToString();
+                        }
+                    }
+                }
+            }
+            catch(Exception e)
+            {
+                _logger.LogError(e.Message);
+                return null;
+            }
+        }
+
         public bool GenerateNus3Bank(string toneId, float volume, string outputMediaFile)
         {
             _logger.LogDebug("Generate nus3bank {InternalToneName} from {Nus3BankInputFile} to {Nus3BankOutputFile}", toneId, _nus3BankTemplateFile, outputMediaFile);
 
-            //TODO Rough implementation, to fix
             using (var memoryStream = new MemoryStream())
             {
                 using (var fileStream = File.Open(_nus3BankTemplateFile, FileMode.Open, FileAccess.Read))
@@ -87,7 +134,7 @@ namespace Sm5sh.Mods.Music.Services
                 var found = ByteHelper.Locate(bytes, new byte[] { 0xE8, 0x22, 0x00, 0x00 });
                 using (var w = new BinaryWriter(memoryStream))
                 {
-                    w.BaseStream.Position = 0xc8;
+                    w.BaseStream.Position = 0xc8; //NameId
                     w.Write(GetNewNus3BankId());
                     if (found.Length != 3)
                     {

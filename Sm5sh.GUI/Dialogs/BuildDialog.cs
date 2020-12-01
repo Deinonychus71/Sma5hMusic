@@ -72,6 +72,7 @@ namespace Sm5sh.GUI.Dialogs
                     await Dispatcher.UIThread.InvokeAsync(() =>
                     {
                         _messageDialog.ShowError("Build", "Could not initialize the build.");
+                        callbackError?.Invoke(new Exception("Mod Init Exception"));
                     }, DispatcherPriority.Background);
                 }
 
@@ -84,10 +85,20 @@ namespace Sm5sh.GUI.Dialogs
                         var mods = _serviceProvider.GetServices<ISm5shMod>();
                         foreach (var mod in mods)
                         {
-                            mod.Build(useCache);
+                            if(!mod.Build(useCache))
+                            {
+                                await ShowBuildFailedError();
+                                callbackError?.Invoke(new Exception("Mod Build Exception"));
+                                return;
+                            }
                         }
 
-                        _stateManager.WriteChanges();
+                        if (!_stateManager.WriteChanges())
+                        {
+                            await ShowBuildFailedError();
+                            callbackError?.Invoke(new Exception("StateManager Exception"));
+                            return;
+                        }
                         _logger.LogInformation(" Build Complete");
                     }
                     catch (Exception e)
@@ -147,6 +158,15 @@ namespace Sm5sh.GUI.Dialogs
             {
                 File.Delete(fileToDelete);
             }
+        }
+
+        private async Task ShowBuildFailedError()
+        {
+            await Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                _messageDialog.ShowError("Failed", "Build failed. Errors happened while writing the resource files. Please check the logs.");
+
+            }, DispatcherPriority.Background);
         }
     }
 }

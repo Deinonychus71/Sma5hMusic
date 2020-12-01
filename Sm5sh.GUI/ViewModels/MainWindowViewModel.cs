@@ -4,8 +4,6 @@ using Microsoft.Extensions.Logging;
 using Sm5sh.Mods.Music.Interfaces;
 using Sm5sh.Mods.Music.Models;
 using VGMMusic;
-using Sm5sh.Interfaces;
-using Splat;
 using System.Threading.Tasks;
 using ILogger = Microsoft.Extensions.Logging.ILogger;
 using Microsoft.Extensions.DependencyInjection;
@@ -23,6 +21,7 @@ using System.Reactive;
 using Avalonia.Controls;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using ReactiveUI.Fody.Helpers;
 
 namespace Sm5sh.GUI.ViewModels
@@ -30,8 +29,8 @@ namespace Sm5sh.GUI.ViewModels
     public class MainWindowViewModel : ViewModelBase
     {
         private readonly IAudioStateService _audioState;
-        private readonly IServiceProvider _serviceProvider;
         private readonly IMusicModManagerService _musicModManagerService;
+        private readonly INus3AudioService _nus3AudioService;
         private readonly IVGMMusicPlayer _musicPlayer;
         private readonly ISm5shMusicOverride _sm5shMusicOverride;
         private readonly IMessageDialog _messageDialog;
@@ -77,11 +76,11 @@ namespace Sm5sh.GUI.ViewModels
         public ReactiveCommand<Unit, Unit> ActionBuildNoCache { get; }
         public ReactiveCommand<Unit, Unit> ActionRefreshData { get; }
 
-        public MainWindowViewModel(IServiceProvider serviceProvider, IOptions<Sm5shOptions> config, IMapper mapper, IAudioStateService audioState, IVGMMusicPlayer musicPlayer,
+        public MainWindowViewModel(IServiceProvider serviceProvider, IOptions<Sm5shOptions> config, IMapper mapper, IAudioStateService audioState, INus3AudioService nus3AudioService, IVGMMusicPlayer musicPlayer,
             IMusicModManagerService musicModManagerService, ISm5shMusicOverride sm5shMusicOverride, IDialogWindow rootDialog, IMessageDialog messageDialog, IFileDialog fileDialog, IBuildDialog buildDialog, ILogger<MainWindowViewModel> logger)
         {
-            _serviceProvider = serviceProvider;
             _musicModManagerService = musicModManagerService;
+            _nus3AudioService = nus3AudioService;
             _musicPlayer = musicPlayer;
             _sm5shMusicOverride = sm5shMusicOverride;
             _fileDialog = fileDialog;
@@ -180,6 +179,7 @@ namespace Sm5sh.GUI.ViewModels
         {
             IsLoading = true;
             IsShowingDebug = true;
+            await _musicPlayer.Stop();
             _logger.LogInformation("Building with cache option ON. Don't touch anything :)");
             await _buildDialog.Build(true, (o) =>
             {
@@ -196,6 +196,7 @@ namespace Sm5sh.GUI.ViewModels
         {
             IsLoading = true;
             IsShowingDebug = true;
+            await _musicPlayer.Stop();
             _logger.LogInformation("Building with cache option OFF. Don't touch anything :)");
             await _buildDialog.Build(false, (o) =>
             {
@@ -211,7 +212,11 @@ namespace Sm5sh.GUI.ViewModels
         public void OnInitData()
         {
             IsLoading = true;
-            _buildDialog.Init((o) => InitAllDataAsync());
+            _buildDialog.Init((o) =>
+            {
+                InitAllDataAsync();
+                IsLoading = false;
+            });
         }
 
         public async Task OnAboutOpen()
@@ -275,9 +280,6 @@ namespace Sm5sh.GUI.ViewModels
             var stages = _audioState.GetStagesEntries().Select(p => new StageEntryViewModel(p));
             _stagesEntries.AddRange(stages);
             _logger.LogInformation("Stages Loaded.");
-
-            //Done
-            IsLoading = false;
 
             return Task.CompletedTask;
         }
@@ -353,22 +355,40 @@ namespace Sm5sh.GUI.ViewModels
             _logger.LogInformation("Adding {NbrFiles} files to Mod {ModPath}", results.Length, managerMod.ModPath);
             foreach (var inputFile in results)
             {
-                string toneId = Path.GetFileNameWithoutExtension(inputFile);
-                if (!System.Text.RegularExpressions.Regex.IsMatch(Path.GetFileNameWithoutExtension(inputFile), @"^[a-z0-9_]+$"))
+                string toneId = null;
+
+                //Nus3audio - Retrieve Tone ID from file
+                if (Path.GetExtension(inputFile).ToLower() == ".nus3audio")
                 {
-                    toneId = await _messageDialog.PromptTest("Tone ID?", "Could not extract a Tone ID from the filename.\r\nPlease enter a valid Tone ID.");
-                    if (!System.Text.RegularExpressions.Regex.IsMatch(toneId, @"^[a-z0-9_]+$"))
+                    toneId = _nus3AudioService.GetToneIdFromNus3Audio(inputFile);
+                    if (!await _messageDialog.ShowWarningConfirm("ToneId", $"The ToneId found in the Nus3Audio was '{toneId}'. Do you wish to use that?"))
+                        toneId = null;
+                }
+
+                //Other file - Attempt to retrieve Tone Id from filename, otherwise ask user to type it
+                if (string.IsNullOrEmpty(toneId))
+                {
+                    toneId = Path.GetFileNameWithoutExtension(inputFile);
+                    if (!System.Text.RegularExpressions.Regex.IsMatch(Path.GetFileNameWithoutExtension(inputFile), @"^[a-z0-9_]+$"))
                     {
-                        //TODO: Fix later, and let user change id
-                        await _messageDialog.ShowError("Error", $"The song {inputFile} could not be added to the mod.\r\nThe Tone ID should only contain lowercase characters, digits or underscore.");
-                        continue;
+                        toneId = await _messageDialog.PromptInput("Tone ID?", "Could not extract a Tone ID from the filename.\r\nPlease enter a valid Tone ID.");
+                        if (!System.Text.RegularExpressions.Regex.IsMatch(toneId, @"^[a-z0-9_]+$"))
+                        {
+                            //TODO: Fix later, and let user change id
+                            await _messageDialog.ShowError("Error", $"The song {inputFile} could not be added to the mod.\r\nThe Tone ID should only contain lowercase characters, digits or underscore.");
+                            continue;
+                        }
                     }
                 }
-                if (Path.GetExtension(inputFile.ToLower()) == ".nus3audio")
+
+                //Check if exists
+                if (_audioState.DoesToneIdExist(toneId))
                 {
-                    //TODO: Fix tone ID later if needed
-                    await _messageDialog.ShowInformation("Error", $"The song {inputFile} is being imported as a nus3audio without additional processing.\r\nMake sure the tone ID match the filename.");
+                    await _messageDialog.ShowError("Error", $"The Tone Id {toneId} already exists in the database. Make sure to pick a unique ID.");
+                    continue;
                 }
+
+                //Create
                 var newBgm = managerMod.MusicMod.AddBgm(toneId, inputFile);
                 if (newBgm == null)
                 {
@@ -418,7 +438,7 @@ namespace Sm5sh.GUI.ViewModels
         {
             if (vmBgmEntry != null)
             {
-                var result = await _messageDialog.ShowWarningConfirm($"Delete '{vmBgmEntry.Title}'?", "Do you really want to remove this song? If it's a Core song, this could cause unknown issues. Prefer hiding the song instead.");
+                var result = await _messageDialog.ShowWarningConfirm($"Delete '{vmBgmEntry.Title}'?", "Do you really want to remove this song?\r\nIf it's a Core song, this could cause unknown issues. Prefer hiding the song instead.");
 
                 if (result)
                 {
@@ -438,6 +458,10 @@ namespace Sm5sh.GUI.ViewModels
                         _audioState.RemoveBgmEntry(bgmDelete.ToneId);
                         _bgmEntries.Remove(vmBgmEntry);
                         _logger.LogInformation("{ToneId} deleted.", vmBgmEntry.ToneId);
+
+                        //Delete from playlist
+                        foreach(var playlist in _playlistsEntries)
+                            playlist.RemoveSong(vmBgmEntry.DbRoot.UiBgmId);
                     }
                 }
             }
@@ -527,7 +551,7 @@ namespace Sm5sh.GUI.ViewModels
 
         public async Task DeletePlaylist(PlaylistEntryViewModel vmPlaylistEntry)
         {
-            var result = await _messageDialog.ShowWarningConfirm($"Delete Playlist '{vmPlaylistEntry.Title}'?", "Do you really want to remove this playlist? If it's a Core playlist, this could cause unknown issues.");
+            var result = await _messageDialog.ShowWarningConfirm($"Delete Playlist '{vmPlaylistEntry.Title}'?", "Do you really want to remove this playlist?\r\nIf it's a Core playlist, this could cause unknown issues.");
             if (result)
             {
                 _playlistsEntries.Remove(vmPlaylistEntry);

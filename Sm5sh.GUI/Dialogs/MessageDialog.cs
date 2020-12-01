@@ -23,6 +23,7 @@ namespace Sm5sh.GUI.Dialogs
 
         public async Task<bool> ShowWarningConfirm(string title, string message)
         {
+            _logger.LogWarning("Showing Warning Confirm: {Title} - {Message}", title, message);
             var msBoxStandardWindow = MessageBoxManager.GetMessageBoxStandardWindow(new MessageBoxStandardParams
             {
                 ButtonDefinitions = ButtonEnum.OkCancel,
@@ -38,6 +39,7 @@ namespace Sm5sh.GUI.Dialogs
 
         public async Task ShowError(string title, string message)
         {
+            _logger.LogWarning("Showing Error: {Title} - {Message}", title, message);
             var msBoxStandardWindow = MessageBoxManager.GetMessageBoxStandardWindow(new MessageBoxStandardParams
             {
                 ButtonDefinitions = ButtonEnum.Ok,
@@ -52,6 +54,7 @@ namespace Sm5sh.GUI.Dialogs
 
         public async Task ShowInformation(string title, string message)
         {
+            _logger.LogDebug("Showing Information: {Title} - {Message}", title, message);
             var msBoxStandardWindow = MessageBoxManager.GetMessageBoxStandardWindow(new MessageBoxStandardParams
             {
                 ButtonDefinitions = ButtonEnum.Ok,
@@ -64,8 +67,9 @@ namespace Sm5sh.GUI.Dialogs
             await msBoxStandardWindow.ShowDialog(_rootDialogWindow.Window);
         }
 
-        public async Task<string> PromptTest(string title, string message)
+        public async Task<string> PromptInput(string title, string message)
         {
+            _logger.LogDebug("Showing PromptInput: {Title} - {Message}", title, message);
             var msBoxStandardWindow = MessageBoxManager.GetMessageBoxInputWindow(new MessageBoxInputParams
             {
                 ButtonDefinitions = new List<ButtonDefinition>() { new ButtonDefinition() { Name = "Cancel", Type = ButtonType.Default }, new ButtonDefinition() { Name = "OK", Type = ButtonType.Default } },

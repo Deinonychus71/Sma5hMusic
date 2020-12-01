@@ -53,7 +53,7 @@ namespace VGMMusic
 
         public async Task<VGMAudioCuePoints> GetAudioCuePoints(string filename)
         {
-            LoadFile(filename);
+            await LoadFile(filename);
             var audioCuePoints = new VGMAudioCuePoints()
             {
                 LoopEndMs = (ulong)_reader.LoopEndMilliseconds,

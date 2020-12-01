@@ -96,11 +96,15 @@ namespace Sm5sh.ResourceProviders
             try
             {
                 _processService.RunProcess(_bgmPropertyExeFile, $"\"{tempFile}\" \"{outputFile}\"");
+                if (!File.Exists(outputFile))
+                {
+                    throw new Exception("Bgm property was not generated. Check the yaml manually in the temp folder");
+                }
                 File.Delete(tempFile);
             }
             catch (Exception e)
             {
-                _logger.LogError(e, "Error while generating nus3audio file");
+                _logger.LogError(e, "Error while generating bgm property file");
                 return false;
             }
 

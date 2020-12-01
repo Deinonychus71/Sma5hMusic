@@ -41,7 +41,7 @@ namespace Sm5sh.GUI.ViewModels
         public ReactiveCommand<Window, Unit> ActionOK { get; }
 
 
-        public PlaylistStageAssignementModalWindowViewModel(ILogger<ModPickerModalWindowViewModel> logger, IObservable<IChangeSet<PlaylistEntryViewModel, string>> observablePlaylists, 
+        public PlaylistStageAssignementModalWindowViewModel(ILogger<ModPickerModalWindowViewModel> logger, IObservable<IChangeSet<PlaylistEntryViewModel, string>> observablePlaylists,
             List<StageEntryViewModel> stages)
         {
             _logger = logger;
@@ -50,6 +50,8 @@ namespace Sm5sh.GUI.ViewModels
 
             //Bind observables
             observablePlaylists
+               .Sort(SortExpressionComparer<PlaylistEntryViewModel>.Ascending(p => p.Title), SortOptimisations.ComparesImmutableValuesOnly, 8000)
+               .TreatMovesAsRemoveAdd()
                .ObserveOn(RxApp.MainThreadScheduler)
                .Bind(out _playlists)
                .DisposeMany()
@@ -96,7 +98,7 @@ namespace Sm5sh.GUI.ViewModels
 
         private void SavePlaylistEntry(PlaylistEntryViewModel vmPlaylist)
         {
-            if(SelectedStageEntry != null && vmPlaylist != null)
+            if (SelectedStageEntry != null && vmPlaylist != null)
             {
                 SelectedStageEntry.PlaylistId = vmPlaylist.Id;
             }

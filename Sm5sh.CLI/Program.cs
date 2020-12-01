@@ -2,12 +2,6 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Console;
-using Sm5sh.Interfaces;
-using Sm5sh.Mods.Music;
-using Sm5sh.Mods.Music.Interfaces;
-using Sm5sh.Mods.Music.Services;
-using Sm5sh.Mods.StagePlaylist;
-using Sm5sh.ResourceProviders;
 using System;
 using System.IO;
 using System.Threading.Tasks;
@@ -56,10 +50,6 @@ namespace Sm5sh.CLI
             //Sm5sh Core
             services.AddSm5shCore(configuration);
             services.AddSm5shMusic(configuration);
-
-            //Mod Stage Playlist
-            services.Configure<Sm5shStagePlaylistOptions>(configuration);
-            services.AddSingleton<ISm5shMod, StagePlaylistMod>();
 
             //CLI
             services.AddScoped<IWorkspaceManager, WorkspaceManager>();

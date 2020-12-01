@@ -17,7 +17,6 @@ using DynamicData.Binding;
 using DynamicData;
 using Microsoft.Extensions.DependencyInjection;
 using Sm5sh.GUI.Interfaces;
-using Sm5sh.GUI.Views;
 
 namespace Sm5sh.GUI.ViewModels
 {

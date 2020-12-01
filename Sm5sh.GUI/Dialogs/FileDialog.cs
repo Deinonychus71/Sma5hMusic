@@ -33,7 +33,7 @@ namespace Sm5sh.GUI.Dialogs
                 {
                     Extensions = new List<string>()
                     {
-                        "brstm", "lopus", "idsp" //, "nus3audio" //Disabling until issue is resolved
+                        "brstm", "lopus", "idsp", "nus3audio"
                     },
                     Name = "Songs"
                 }

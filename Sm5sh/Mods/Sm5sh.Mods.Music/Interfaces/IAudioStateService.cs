@@ -13,6 +13,7 @@ namespace Sm5sh.Mods.Music.Interfaces
         IEnumerable<string> GetLocales();
         IEnumerable<PlaylistEntry> GetPlaylists();
         BgmEntry GetBgmEntry(string toneId);
+        bool DoesToneIdExist(string toneId);
         bool AddBgmEntry(BgmEntry bgmEntry);
         bool RemoveBgmEntry(string toneId);
         bool AddPlaylistEntry(PlaylistEntry playlistEntry);

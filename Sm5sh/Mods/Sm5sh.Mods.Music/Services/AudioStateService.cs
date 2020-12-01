@@ -88,6 +88,11 @@ namespace Sm5sh.Mods.Music.Services
             return _playlistsEntries.Values;
         }
 
+        public bool DoesToneIdExist(string toneId)
+        {
+            return _bgmEntries.ContainsKey(toneId);
+        }
+
         public bool AddBgmEntry(BgmEntry bgmEntry)
         {
             //TODO TODO TODO

@@ -94,7 +94,8 @@ namespace Sm5sh
 
                 _logger.LogInformation("Write State Changes for Resource {GameResource} to {OutputPath} using provider {ResourceProvider}", resource.Key, outputResourceFile, resourceProvider.GetType().Name);
 
-                resourceProvider.WriteFile(inputResourceFile, outputResourceFile, resource.Value);
+                if (!resourceProvider.WriteFile(inputResourceFile, outputResourceFile, resource.Value))
+                    return false;
             }
 
             return true;
@@ -138,7 +139,8 @@ namespace Sm5sh
                 {
                     var attribute = service.GetType().GetCustomAttributes(true).FirstOrDefault(p => p.GetType() == typeof(ResourceProviderMatchAttribute)) as ResourceProviderMatchAttribute;
                     _logger.LogDebug("Initialize Resource Provider {ResourceProvider} for the following match: {ProviderMatch}", service.GetType().Name, attribute.ExtensionOrPath);
-                    providers.Add(attribute.ExtensionOrPath, service);
+                    if(!providers.ContainsKey(attribute.ExtensionOrPath))
+                        providers.Add(attribute.ExtensionOrPath, service);
                 }
             }
             catch(Exception e)
