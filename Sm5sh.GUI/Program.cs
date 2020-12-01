@@ -4,8 +4,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Splat.Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Sm5sh.Interfaces;
-using Sm5sh.Mods.StagePlaylist;
 using System;
 using System.IO;
 using Sm5sh.GUI.ViewModels;

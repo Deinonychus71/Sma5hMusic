@@ -10,6 +10,12 @@
   <Window.Styles>
     <StyleInclude Source="/Assets/Styles/ContentStyles.xaml"/>
     <StyleInclude Source="/Assets/Styles/ModalStyles.xaml"/>
+    <Style Selector="Button:pointerover">
+      <Setter Property="Background" Value="Gray"/>
+    </Style>
+    <Style Selector="Button">
+      <Setter Property="Background" Value="Transparent"/>
+    </Style>
   </Window.Styles>
 
   <DockPanel Classes="modal" LastChildFill="True" HorizontalAlignment="Stretch">
@@ -42,9 +48,7 @@
               <fields:PropertyField IsRequired="True" Label="Game" ToolTip="Game representing the song. If the game you want isn't in the database, click 'Add New Game Entry'">
                 <fields:PropertyField.FieldContent>
                   <StackPanel>
-                    <Menu>
-                      <MenuItem Header="Create New Game" Command="{Binding ActionNewGame}" CommandParameter="{Binding $parent[Window]}"/>
-                    </Menu>
+                    <Button Content="Create New Game" Command="{Binding ActionNewGame}" CommandParameter="{Binding $parent[Window]}"/>
                     <AutoCompleteBox Items="{Binding Games}" ValueMemberBinding="{Binding Title}" IsTextCompletionEnabled="True" MinimumPrefixLength="2"
                                    MinimumPopulateDelay="0.5" SelectedItem="{Binding SelectedBgmEntry.GameTitleViewModel, Mode=TwoWay}" FilterMode="Contains"/>
                   </StackPanel>
@@ -141,7 +145,7 @@
               <fields:PropertyTextField Label="ui_gametitle_id_4" Text="{Binding SelectedBgmEntry.DbRoot.UiGameTitleId4, Mode=TwoWay}" ToolTip="[Hash40] Known values are: 'ui_gametitle_none'" />
             </StackPanel>
             <StackPanel Grid.Row="0" Grid.Column="1" HorizontalAlignment="Stretch">
-              <fields:PropertyTextField Label="name_id" Text="{Binding SelectedBgmEntry.DbRoot.NameId, Mode=OneWay}" ToolTip="[String] Tone ID" IsReadOnly="True" />
+              <fields:PropertyTextField Label="name_id" Text="{Binding SelectedBgmEntry.DbRoot.NameId, Mode=OneWay}" ToolTip="[String] ID for MSBT. Will be regenerated automatically." IsReadOnly="True" />
               <fields:PropertyShortField Label="save_no" Value="{Binding SelectedBgmEntry.DbRoot.SaveNo, Mode=TwoWay}" ToolTip="[Short] Seems to be an index. Setting it to -1 or above the highest known value will cause the song not to show up in SoundTest or work." />
               <fields:PropertyShortField Label="test_disp_order" Value="{Binding SelectedBgmEntry.DbRoot.TestDispOrder, Mode=TwoWay}" ToolTip="[Read-Only][Short] Order index in SoundTest. This value gets overriden automatically when using the GUI." IsReadOnly="True" />
               <fields:PropertyIntField Label="menu_value" Value="{Binding SelectedBgmEntry.DbRoot.MenuValue, Mode=TwoWay}" ToolTip="[Int32] To figure out." />
