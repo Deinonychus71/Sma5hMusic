@@ -261,19 +261,19 @@ namespace Sm5sh.Data.Ui.Param.Database
             public string StreamId { get; set; }
 
             [PrcHexMapping("data_name0")]
-            public string DateName0 { get; set; }
+            public string DataName0 { get; set; }
 
             [PrcHexMapping("data_name1")]
-            public string DateName1 { get; set; }
+            public string DataName1 { get; set; }
 
             [PrcHexMapping("data_name2")]
-            public string DateName2 { get; set; }
+            public string DataName2 { get; set; }
 
             [PrcHexMapping("data_name3")]
-            public string DateName3 { get; set; }
+            public string DataName3 { get; set; }
 
             [PrcHexMapping("data_name4")]
-            public string DateName4 { get; set; }
+            public string DataName4 { get; set; }
 
             [PrcHexMapping("loop")]
             public byte Loop { get; set; }

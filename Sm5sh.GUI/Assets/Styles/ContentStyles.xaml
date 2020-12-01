@@ -7,7 +7,7 @@
     <Setter Property="BorderThickness" Value="0,0,0,2"/>
     <Setter Property="Margin" Value="0,10,0,10"/>
   </Style>
-  <Style Selector=".headerTitle > Label">
+  <Style Selector=".headerTitle > TextBlock">
     <Setter Property="FontSize" Value="24"/>
     <Setter Property="FontWeight" Value="Bold"/>
     <Setter Property="Margin" Value="13"/>
@@ -19,7 +19,7 @@
     <Setter Property="BorderThickness" Value="0,0,0,1"/>
     <Setter Property="Margin" Value="0,1,0,0"/>
   </Style>
-  <Style Selector=".contentTitle > Label">
+  <Style Selector=".contentTitle > TextBlock">
     <Setter Property="FontSize" Value="14"/>
     <Setter Property="Foreground" Value="{StaticResource BrushGrayLight}"/>
     <Setter Property="FontWeight" Value="Bold"/>
@@ -44,16 +44,16 @@
     <Setter Property="Margin" Value="10,10,10,2"/>
     <Setter Property="HorizontalAlignment" Value="Stretch"/>
   </Style>
-  <Style Selector=".propertyField > StackPanel > Label">
+  <Style Selector=".propertyField > StackPanel > TextBlock">
     <Setter Property="FontSize" Value="14"/>
     <Setter Property="HorizontalAlignment" Value="Stretch"/>
     <Setter Property="Margin" Value="0,1,0,0"/>
   </Style>
-  <Style Selector=".propertyField > StackPanel > Label.tooltip">
-    <Setter Property="VerticalContentAlignment" Value="Top"/>
+  <Style Selector=".propertyField > StackPanel > TextBlock.tooltip">
     <Setter Property="VerticalAlignment" Value="Top"/>
+    <Setter Property="Margin" Value="5,0,0,5"/>
   </Style>
-  <Style Selector=".propertyField > StackPanel > Label.subLabel">
+  <Style Selector=".propertyField > StackPanel > TextBlock.subLabel">
     <Setter Property="FontSize" Value="13"/>
     <Setter Property="FontStyle" Value="Oblique"/>
     <Setter Property="HorizontalAlignment" Value="Stretch"/>
@@ -73,17 +73,26 @@
   <Style Selector="TextBox.readonly">
     <Setter Property="Foreground" Value="Gray"/>
   </Style>
-  <Style Selector="fields|PropertyTextField.error Label">
+  <Style Selector="fields|PropertyTextField.readonly NumericUpDown">
+    <Setter Property="Foreground" Value="Gray"/>
+  </Style>
+  <Style Selector="fields|PropertyField.readonly NumericUpDown">
+    <Setter Property="Foreground" Value="Gray"/>
+  </Style>
+  <Style Selector="NumericUpDown.readonly">
+    <Setter Property="Foreground" Value="Gray"/>
+  </Style>
+  <Style Selector="fields|PropertyTextField.error TextBlock">
     <Setter Property="Foreground" Value="Red"/>
   </Style>
-  <Style Selector="fields|PropertyField.error Label">
+  <Style Selector="fields|PropertyField.error TextBlock">
     <Setter Property="Foreground" Value="Red"/>
   </Style>
-  <Style Selector="Label.error">
+  <Style Selector="TextBlock.error">
     <Setter Property="Foreground" Value="Red"/>
     <Setter Property="FontSize" Value="12"/>
   </Style>
-  <Style Selector="Label.required">
+  <Style Selector="TextBlock.required">
     <Setter Property="Foreground" Value="Red"/>
   </Style>
   <Style Selector="TextBlock.error">

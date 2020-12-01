@@ -14,7 +14,7 @@
 
   <DockPanel Classes="modal" LastChildFill="True" HorizontalAlignment="Stretch">
     <Border Classes="headerTitle" DockPanel.Dock="Top">
-      <Label>Pick Game to Edit</Label>
+      <TextBlock>Pick Game to Edit</TextBlock>
     </Border>
     <StackPanel Classes="modalActions" DockPanel.Dock="Bottom">
       <Button Content="Select" Command="{Binding ActionSelect}" CommandParameter="{Binding $parent[Window]}"></Button>

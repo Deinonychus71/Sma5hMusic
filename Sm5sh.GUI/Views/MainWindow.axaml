@@ -17,7 +17,7 @@
   </i:Interaction.Behaviors>
   <Grid RowDefinitions="20,70,*,5,0" ColumnDefinitions="*">
     <Menu Grid.Row="0">
-      <MenuItem Header="File">
+      <MenuItem Header="Project">
         <!--<MenuItem Header="Choose Mod Workspace..."></MenuItem>
         <Separator></Separator>-->
         <MenuItem Header="Build" Command="{Binding ActionBuild}"/>
@@ -38,7 +38,7 @@
     </Menu>
     <DockPanel Grid.Row="1">
       <Image Classes="logo" Source="/Assets/smash_logo.png"/>
-      <Label DockPanel.Dock="Left" Classes="title">Sm5sh Music</Label>
+      <TextBlock DockPanel.Dock="Left" Classes="title">Sm5sh Music</TextBlock>
       <TabStrip DockPanel.Dock="Right" Name="TabsMenu" HorizontalAlignment="Right" Margin="10">
         <TabStripItem Content="Songs"/>
         <TabStripItem Content="Playlists"/>

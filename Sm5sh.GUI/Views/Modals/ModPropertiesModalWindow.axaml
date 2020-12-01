@@ -13,7 +13,7 @@
   </Window.Styles>
   <DockPanel Classes="modal">
     <Border Classes="headerTitle" DockPanel.Dock="Top">
-      <Label>Mod Properties</Label>
+      <TextBlock>Mod Properties</TextBlock>
     </Border>
     <StackPanel Classes="content" DockPanel.Dock="Top">
       <fields:PropertyTextField x:Name="ModTitle" IsRequired="True" Label="Name" Text="{Binding ModName, Mode=TwoWay}" ToolTip="The name of your mod. It can be arbitrary and won't impact the game." />

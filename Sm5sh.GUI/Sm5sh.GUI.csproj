@@ -42,7 +42,6 @@
   <ItemGroup>
     <ProjectReference Include="..\Sm5sh\Core\Helpers\VGMMusic\VGMMusic.csproj" />
     <ProjectReference Include="..\Sm5sh\Mods\Sm5sh.Mods.Music\Sm5sh.Mods.Music.csproj" />
-    <ProjectReference Include="..\Sm5sh\Mods\Sm5sh.Mods.StagePlaylist\Sm5sh.Mods.StagePlaylist.csproj" />
   </ItemGroup>
   <ItemGroup>
     <AvaloniaResource Update="Assets\Styles\ContentStyles.xaml">
@@ -62,11 +61,32 @@
     </AvaloniaResource>
   </ItemGroup>
   <ItemGroup>
+    <Compile Update="Views\Fields\PropertyByteField.axaml.cs">
+      <DependentUpon>PropertyByteField.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\Fields\PropertyULongField.axaml.cs">
+      <DependentUpon>PropertyULongField.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\Fields\PropertyUShortField.axaml.cs">
+      <DependentUpon>PropertyUShortField.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\Fields\PropertyUIntField.axaml.cs">
+      <DependentUpon>PropertyUIntField.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\Fields\PropertyIntField.axaml.cs">
+      <DependentUpon>PropertyIntField.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\Fields\PropertyShortField.axaml.cs">
+      <DependentUpon>PropertyShortField.axaml</DependentUpon>
+    </Compile>
     <Compile Update="Views\Fields\PropertyMusicField.axaml.cs">
       <DependentUpon>PropertyMusicField.axaml</DependentUpon>
     </Compile>
     <Compile Update="Views\Fields\PropertyField.axaml.cs">
       <DependentUpon>PropertyField.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\Fields\PropertyBooleanField.axaml.cs">
+      <DependentUpon>PropertyBooleanField.axaml</DependentUpon>
     </Compile>
     <Compile Update="Views\Views\PlaylistView.axaml.cs">
       <DependentUpon>PlaylistView.axaml</DependentUpon>

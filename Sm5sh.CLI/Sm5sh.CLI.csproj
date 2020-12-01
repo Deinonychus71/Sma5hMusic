@@ -35,7 +35,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Sm5sh\Mods\Sm5sh.Mods.Music\Sm5sh.Mods.Music.csproj" />
-    <ProjectReference Include="..\Sm5sh\Mods\Sm5sh.Mods.StagePlaylist\Sm5sh.Mods.StagePlaylist.csproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -13,7 +13,7 @@
   </Window.Styles>
     <DockPanel Classes="modal">
       <Border Classes="headerTitle" DockPanel.Dock="Top">
-        <Label>Game Entry</Label>
+        <TextBlock>Game Entry</TextBlock>
       </Border>
       <StackPanel Classes="content" DockPanel.Dock="Top">
         <fields:PropertyField x:Name="Title" IsRequired="True" Label="Game Title" ToolTip="Enter the title of a game you wish to link to your music.">

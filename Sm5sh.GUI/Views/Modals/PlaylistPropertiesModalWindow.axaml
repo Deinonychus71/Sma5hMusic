@@ -13,7 +13,7 @@
   </Window.Styles>
   <DockPanel Classes="modal">
     <Border Classes="headerTitle" DockPanel.Dock="Top">
-      <Label>Playlist Properties</Label>
+      <TextBlock>Playlist Properties</TextBlock>
     </Border>
     <StackPanel Classes="content" DockPanel.Dock="Top">
       <fields:PropertyTextField x:Name="PlaylistTitle" IsRequired="True" Label="Title" Text="{Binding PlaylistTitle, Mode=TwoWay}" ToolTip="The name of a playlist. It is unused in game and can be arbitrary." />

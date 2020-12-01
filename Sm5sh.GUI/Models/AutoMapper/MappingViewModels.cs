@@ -251,11 +251,11 @@ namespace Sm5sh.Mods.Music.Models.AutoMapper
                 .ForMember(i => i.StreamId, me => me.MapFrom(p => p.StreamId));
 
             CreateMap<GUI.ViewModels.BgmEntryEditableViewModels.BgmStreamPropertyEntryEditableViewModel, BgmEntryModels.BgmStreamPropertyEntry>()
-                .ForMember(i => i.DateName0, me => me.Ignore())
-                .ForMember(i => i.DateName1, me => me.MapFrom(p => p.DateName1))
-                .ForMember(i => i.DateName2, me => me.MapFrom(p => p.DateName2))
-                .ForMember(i => i.DateName3, me => me.MapFrom(p => p.DateName3))
-                .ForMember(i => i.DateName4, me => me.MapFrom(p => p.DateName4))
+                .ForMember(i => i.DataName0, me => me.Ignore())
+                .ForMember(i => i.DataName1, me => me.MapFrom(p => p.DataName1))
+                .ForMember(i => i.DataName2, me => me.MapFrom(p => p.DataName2))
+                .ForMember(i => i.DataName3, me => me.MapFrom(p => p.DataName3))
+                .ForMember(i => i.DataName4, me => me.MapFrom(p => p.DataName4))
                 .ForMember(i => i.EndPoint, me => me.MapFrom(p => p.EndPoint))
                 .ForMember(i => i.FadeOutFrame, me => me.MapFrom(p => p.FadeOutFrame))
                 .ForMember(i => i.Loop, me => me.MapFrom(p => p.Loop))
@@ -268,11 +268,11 @@ namespace Sm5sh.Mods.Music.Models.AutoMapper
                 .ForMember(i => i.StartPointTransition, me => me.MapFrom(p => p.StartPointTransition))
                 .ForMember(i => i.StreamId, me => me.Ignore());
             CreateMap<BgmEntryModels.BgmStreamPropertyEntry, GUI.ViewModels.BgmEntryEditableViewModels.BgmStreamPropertyEntryEditableViewModel>()
-                .ForMember(i => i.DateName0, me => me.MapFrom(p => p.DateName0))
-                .ForMember(i => i.DateName1, me => me.MapFrom(p => p.DateName1))
-                .ForMember(i => i.DateName2, me => me.MapFrom(p => p.DateName2))
-                .ForMember(i => i.DateName3, me => me.MapFrom(p => p.DateName3))
-                .ForMember(i => i.DateName4, me => me.MapFrom(p => p.DateName4))
+                .ForMember(i => i.DataName0, me => me.MapFrom(p => p.DataName0))
+                .ForMember(i => i.DataName1, me => me.MapFrom(p => p.DataName1))
+                .ForMember(i => i.DataName2, me => me.MapFrom(p => p.DataName2))
+                .ForMember(i => i.DataName3, me => me.MapFrom(p => p.DataName3))
+                .ForMember(i => i.DataName4, me => me.MapFrom(p => p.DataName4))
                 .ForMember(i => i.EndPoint, me => me.MapFrom(p => p.EndPoint))
                 .ForMember(i => i.FadeOutFrame, me => me.MapFrom(p => p.FadeOutFrame))
                 .ForMember(i => i.Loop, me => me.MapFrom(p => p.Loop))
@@ -292,7 +292,7 @@ namespace Sm5sh.Mods.Music.Models.AutoMapper
             CreateMap<GUI.ViewModels.BgmEntryEditableViewModels.BgmStreamSetEntryEditableViewModel, GUI.ViewModels.BgmEntryEditableViewModels.BgmStreamSetEntryEditableViewModel>();
             CreateMap<GUI.ViewModels.BgmEntryEditableViewModels.NUS3BankConfigEntryEditableViewModel, GUI.ViewModels.BgmEntryEditableViewModels.NUS3BankConfigEntryEditableViewModel>();
             CreateMap<GUI.ViewModels.BgmEntryEditableViewModels.MSBTLabelsEntryEditableViewModel, GUI.ViewModels.BgmEntryEditableViewModels.MSBTLabelsEntryEditableViewModel>();
-            CreateMap<GUI.ViewModels.BgmEntryEditableViewModels.BgmStreamPropertyEntryEditableViewModel, GUI.ViewModels.BgmEntryEditableViewModels.BgmStreamPropertyEntryEditableViewModel>();
+            CreateMap<GUI.ViewModels.BgmEntryEditableViewModels.BgmPropertyEntryEditableViewModel, GUI.ViewModels.BgmEntryEditableViewModels.BgmPropertyEntryEditableViewModel>();
             CreateMap<GUI.ViewModels.BgmEntryEditableViewModel, GUI.ViewModels.BgmEntryViewModel>()
                 .ForMember(i => i.ToneId, me => me.Ignore())
                 .ForMember(i => i.Filename, me => me.Ignore())

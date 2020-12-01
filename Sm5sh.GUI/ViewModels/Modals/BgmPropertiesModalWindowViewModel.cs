@@ -15,8 +15,6 @@ using VGMMusic;
 using System.Reactive;
 using Avalonia.Controls;
 using Sm5sh.Mods.Music.Models;
-using System.Threading.Tasks;
-using Sm5sh.GUI.Views;
 using System.Reactive.Subjects;
 
 namespace Sm5sh.GUI.ViewModels
@@ -28,7 +26,6 @@ namespace Sm5sh.GUI.ViewModels
         private readonly IVGMMusicPlayer _musicPlayer;
         private readonly List<ComboItem> _recordTypes;
         private readonly List<ComboItem> _specialCategories;
-        private readonly List<ComboItem> _personaStages;
         private readonly ReadOnlyObservableCollection<LocaleViewModel> _locales;
         private readonly ReadOnlyObservableCollection<SeriesEntryViewModel> _series;
         private readonly ReadOnlyObservableCollection<GameTitleEntryViewModel> _games;
@@ -36,6 +33,7 @@ namespace Sm5sh.GUI.ViewModels
         private BgmEntryViewModel _fakeBgm = new BgmEntryViewModel(null, new Mods.Music.Models.BgmEntry("fake"));
         private BgmEntryViewModel _refSavedBgmEntryView;
         private readonly Subject<Window> _whenNewRequestToAddGameEntry;
+        private bool _isUpdatingSpecialRule = false;
 
         public IObservable<Window> WhenNewRequestToAddGameEntry { get { return _whenNewRequestToAddGameEntry; } }
         public GamePropertiesModalWindowViewModel VMGamePropertiesModal { get; set; }
@@ -49,7 +47,6 @@ namespace Sm5sh.GUI.ViewModels
 
         public IEnumerable<ComboItem> RecordTypes { get { return _recordTypes; } }
         public IEnumerable<ComboItem> SpecialCategories { get { return _specialCategories; } }
-        public IEnumerable<ComboItem> SpecialCategoriesPersonaStages { get { return _personaStages; } }
         [Reactive]
         public ComboItem SelectedRecordType { get; set; }
 
@@ -57,8 +54,6 @@ namespace Sm5sh.GUI.ViewModels
         public ComboItem SelectedSpecialCategory { get; set; }
         [Reactive]
         public bool IsSpecialCategoryPinch { get; set; }
-        [Reactive]
-        public bool IsSpecialCategoryPersona { get; set; }
         [Reactive]
         public bool IsInSoundTest { get; set; }
 
@@ -81,7 +76,6 @@ namespace Sm5sh.GUI.ViewModels
             _musicPlayer = musicPlayer;
             _recordTypes = GetRecordTypes();
             _specialCategories = GetSpecialCategories();
-            _personaStages = GetSpecialCategoriesPersonaStages();
             _whenNewRequestToAddGameEntry = new Subject<Window>();
 
             ActionCancel = ReactiveCommand.Create<Window>(CancelChanges);
@@ -133,6 +127,7 @@ namespace Sm5sh.GUI.ViewModels
 
             //Set up subscriber on special category
             this.WhenAnyValue(p => p.SelectedSpecialCategory).Subscribe(o => SetSpecialCategoryRules(o?.Id));
+            this.WhenAnyValue(p => p.SelectedBgmEntry.StreamSet.SpecialCategory).Subscribe(o => SetSpecialCategoryRules(o));
 
             SelectedBgmEntry = _fakeBgm;
         }
@@ -171,15 +166,8 @@ namespace Sm5sh.GUI.ViewModels
 
         private List<ComboItem> GetSpecialCategories()
         {
-            var recordTypes = new List<ComboItem>() { new ComboItem(string.Empty, "None") };
+            var recordTypes = new List<ComboItem>() { new ComboItem(string.Empty, "None/Other") };
             recordTypes.AddRange(Constants.SpecialCategories.UI_SPECIAL_CATEGORY.Select(p => new ComboItem(p.Key, p.Value)));
-            return recordTypes;
-        }
-
-        private List<ComboItem> GetSpecialCategoriesPersonaStages()
-        {
-            var recordTypes = new List<ComboItem>() { new ComboItem(string.Empty, "None") };
-            recordTypes.AddRange(Constants.SpecialCategories.CONVERTER_SPECIAL_CATEGORY_PERSONA.Select(p => new ComboItem(p.Key, p.Value)));
             return recordTypes;
         }
 
@@ -195,37 +183,31 @@ namespace Sm5sh.GUI.ViewModels
             MSBTCopyrightEditor.MSBTValues = SelectedBgmEntry.MSBTLabels.Copyright;
             IsInSoundTest = SelectedBgmEntry.DbRoot.TestDispOrder > -1;
             SelectedRecordType = _recordTypes.FirstOrDefault(p => p.Id == vmBgmEntry.RecordType);
-            SetSpecialCategory();
-        }
-
-        private void SetSpecialCategory()
-        {
-            var rule = string.Empty;
-
-            if (SelectedBgmEntry.StreamSet.SpecialCategory == Constants.SpecialCategories.SPECIAL_CATEGORY_PINCH_VALUE)
-                rule = Constants.SpecialCategories.SPECIAL_CATEGORY_PINCH;
-            else if (SelectedBgmEntry.StreamSet.Info1 != null && Constants.SpecialCategories.CONVERTER_SPECIAL_CATEGORY_PERSONA.ContainsKey(SelectedBgmEntry.StreamSet.Info1))
-                rule = Constants.SpecialCategories.SPECIAL_CATEGORY_PERSONA;
-
-            SelectedSpecialCategory = _specialCategories.FirstOrDefault(p => p.Id == rule);
-            SetSpecialCategoryRules(rule);
+            SetSpecialCategoryRules(SelectedBgmEntry.StreamSet.SpecialCategory);
         }
 
         private void SetSpecialCategoryRules(string specialRule)
         {
-            IsSpecialCategoryPinch = false;
-            IsSpecialCategoryPersona = false;
-
-            switch (specialRule)
+            if (!_isUpdatingSpecialRule)
             {
-                case Constants.SpecialCategories.SPECIAL_CATEGORY_PINCH:
-                    IsSpecialCategoryPinch = true;
-                    if(SelectedBgmEntry != null)
-                        SelectedBgmEntry.StreamSet.SpecialCategory = Constants.SpecialCategories.SPECIAL_CATEGORY_PINCH_VALUE;
-                    break;
-                case Constants.SpecialCategories.SPECIAL_CATEGORY_PERSONA:
-                    IsSpecialCategoryPersona = true;
-                    break;
+                _isUpdatingSpecialRule = true;
+                IsSpecialCategoryPinch = false;
+
+                if (SelectedBgmEntry != null)
+                {
+                    SelectedSpecialCategory = _specialCategories.FirstOrDefault(p => p.Id == specialRule);
+                    if (SelectedSpecialCategory == null)
+                        SelectedSpecialCategory = _specialCategories[0];
+                    SelectedBgmEntry.StreamSet.SpecialCategory = specialRule;
+
+                    switch (specialRule)
+                    {
+                        case Constants.SpecialCategories.SPECIAL_CATEGORY_PINCH_VALUE:
+                            IsSpecialCategoryPinch = true;
+                            break;
+                    }
+                }
+                _isUpdatingSpecialRule = false;
             }
         }
     }

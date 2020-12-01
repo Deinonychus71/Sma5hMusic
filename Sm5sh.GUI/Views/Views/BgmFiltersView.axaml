@@ -13,7 +13,7 @@
   </UserControl.Styles>
   <StackPanel>
     <Border Classes="headerTitle">
-      <Label>Filters</Label>
+      <TextBlock>Filters</TextBlock>
     </Border>
     <StackPanel Classes="content" Margin="10">
       <fields:PropertyField Label="Source" ToolTip="Select a source. 'Core' Songs are all the songs from the vanilla game. 'Mod' will also retrieve the songs from your mods.">

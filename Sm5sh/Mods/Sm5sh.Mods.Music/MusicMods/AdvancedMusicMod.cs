@@ -594,19 +594,19 @@ namespace Sm5sh.Mods.Music.MusicMods
             public string StreamId { get; set; }
 
             [JsonProperty("data_name0")]
-            public string DateName0 { get; set; }
+            public string DataName0 { get; set; }
 
             [JsonProperty("data_name1")]
-            public string DateName1 { get; set; }
+            public string DataName1 { get; set; }
 
             [JsonProperty("data_name2")]
-            public string DateName2 { get; set; }
+            public string DataName2 { get; set; }
 
             [JsonProperty("data_name3")]
-            public string DateName3 { get; set; }
+            public string DataName3 { get; set; }
 
             [JsonProperty("data_name4")]
-            public string DateName4 { get; set; }
+            public string DataName4 { get; set; }
 
             [JsonProperty("loop")]
             public byte Loop { get; set; }

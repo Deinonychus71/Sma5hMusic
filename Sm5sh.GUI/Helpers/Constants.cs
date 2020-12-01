@@ -8,21 +8,18 @@ namespace Sm5sh.GUI.Helpers
     {
         public class SpecialCategories
         {
-            public const string SPECIAL_CATEGORY_PERSONA = "persona";
-            public const string SPECIAL_CATEGORY_PINCH = "pinch";
+            public const string SPECIAL_CATEGORY_PERSONA_STAGE_3_VALUE = "jack_mementoes_p3";
+            public const string SPECIAL_CATEGORY_PERSONA_STAGE_4_VALUE = "jack_mementoes_p4";
+            public const string SPECIAL_CATEGORY_PERSONA_STAGE_5_VALUE = "jack_mementoes_p5";
             public const string SPECIAL_CATEGORY_PINCH_VALUE = "0x105274ba4f";
-            public readonly static Dictionary<string, string> CONVERTER_SPECIAL_CATEGORY_PERSONA = new Dictionary<string, string>()
-        {
-            { "jack_mementoes_p3", "Persona 3 Stage" },
-            { "jack_mementoes_p4", "Persona 4 Stage" },
-            { "jack_mementoes_p5", "Persona 5 Stage" },
-        };
 
             public readonly static Dictionary<string, string> UI_SPECIAL_CATEGORY = new Dictionary<string, string>()
-        {
-            { SPECIAL_CATEGORY_PINCH, "Pinch Songs" },
-            { SPECIAL_CATEGORY_PERSONA, "Persona Stage" },
-        };
+            {
+                { SPECIAL_CATEGORY_PINCH_VALUE, "Pinch Songs" },
+                { SPECIAL_CATEGORY_PERSONA_STAGE_3_VALUE, "Persona 3 Stage" },
+                { SPECIAL_CATEGORY_PERSONA_STAGE_4_VALUE, "Persona 4 Stage" },
+                { SPECIAL_CATEGORY_PERSONA_STAGE_5_VALUE, "Persona 5 Stage" }
+            };
         }
 
         public const string GAME_TITLE_PREFIX = "ui_gametitle_";

@@ -3,7 +3,6 @@ using Sm5sh.Mods.Music.Models;
 using VGMMusic;
 using System.IO;
 using Sm5sh.Mods.Music.Interfaces;
-using Sm5sh.Mods.Music.Models.BgmEntryModels;
 using System.Collections.Generic;
 
 namespace Sm5sh.GUI.ViewModels

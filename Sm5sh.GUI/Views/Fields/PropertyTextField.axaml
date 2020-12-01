@@ -6,9 +6,9 @@
              x:Class="Sm5sh.GUI.Views.Fields.PropertyTextField">
   <StackPanel Classes="propertyField">
     <StackPanel Orientation="Horizontal">
-      <Label Content="{Binding $parent[UserControl].Label}"/>
-      <Label Classes="required" IsVisible="{Binding $parent[UserControl].IsRequired}" Content="*"/>
-      <Label Content="&#128712;" ToolTip.Tip="{Binding $parent[UserControl].ToolTip}"/>
+      <TextBlock Text="{Binding $parent[UserControl].Label}"/>
+      <TextBlock Classes="required" IsVisible="{Binding $parent[UserControl].IsRequired}" Text="*"/>
+      <TextBlock Text="&#128712;" Classes="tooltip" ToolTip.Tip="{Binding $parent[UserControl].ToolTip}"/>
     </StackPanel>
     <TextBox AcceptsReturn="{Binding !$parent[UserControl].AcceptsReturn}" IsVisible="{Binding $parent[UserControl].IsReadOnly}" Classes="readonly" IsReadOnly="True" Text="{Binding $parent[UserControl].Text}"></TextBox>
     <TextBox AcceptsReturn="{Binding !$parent[UserControl].AcceptsReturn}" IsVisible="{Binding !$parent[UserControl].IsReadOnly}" Text="{Binding $parent[UserControl].Text}"></TextBox>

@@ -1,6 +1,5 @@
 ﻿using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
-using Sm5sh.GUI.ViewModels;
 using Sm5sh.Mods.Music.Models;
 using System.Collections.Generic;
 
@@ -200,11 +199,11 @@ namespace Sm5sh.GUI.ViewModels
             public BgmEntryEditableViewModel Parent { get; }
 
             public string StreamId { get; set; }
-            public string DateName0 { get { return Parent.ToneId; } }
-            public string DateName1 { get; set; }
-            public string DateName2 { get; set; }
-            public string DateName3 { get; set; }
-            public string DateName4 { get; set; }
+            public string DataName0 { get { return Parent.ToneId; } }
+            public string DataName1 { get; set; }
+            public string DataName2 { get; set; }
+            public string DataName3 { get; set; }
+            public string DataName4 { get; set; }
             public byte Loop { get; set; }
             public string EndPoint { get; set; }
             public ushort FadeOutFrame { get; set; }

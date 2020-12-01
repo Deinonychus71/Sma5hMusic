@@ -6,7 +6,7 @@
     <SolidColorBrush x:Key="BrushBackgroundDark">#191919</SolidColorBrush>
   </Styles.Resources>
   
-  <Style Selector="Label.title">
+  <Style Selector="TextBlock.title">
     <Setter Property="FontSize" Value="32"/>
     <Setter Property="FontWeight" Value="Bold"/>
     <Setter Property="Margin" Value="13"/>

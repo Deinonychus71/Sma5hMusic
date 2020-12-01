@@ -10,7 +10,7 @@
   </UserControl.Styles>
   <DockPanel>
     <Border Classes="headerTitle" DockPanel.Dock="Top">
-      <Label>Properties</Label>
+      <TextBlock>Properties</TextBlock>
     </Border>
     <TabControl IsVisible="{Binding SelectedBgmEntry, Mode=OneWay, Converter={x:Static ObjectConverters.IsNotNull}}" TabStripPlacement="Bottom" DockPanel.Dock="Top">
       <TabItem Header="General" FontSize="14">

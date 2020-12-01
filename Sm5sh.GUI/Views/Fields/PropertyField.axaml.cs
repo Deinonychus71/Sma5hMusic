@@ -8,7 +8,6 @@ namespace Sm5sh.GUI.Views.Fields
     {
         public static readonly StyledProperty<string> LabelProperty = AvaloniaProperty.Register<PropertyField, string>(nameof(Label), inherits: true, defaultBindingMode: Avalonia.Data.BindingMode.OneWay);
         public static readonly StyledProperty<string> ToolTipProperty = AvaloniaProperty.Register<PropertyField, string>(nameof(ToolTip), inherits: true, defaultBindingMode: Avalonia.Data.BindingMode.OneWay);
-        public static readonly StyledProperty<bool> IsReadOnlyProperty = AvaloniaProperty.Register<PropertyField, bool>(nameof(IsReadOnly), inherits: true, defaultBindingMode: Avalonia.Data.BindingMode.OneWay);
         public static readonly StyledProperty<bool> IsRequiredProperty = AvaloniaProperty.Register<PropertyField, bool>(nameof(IsRequired), inherits: true, defaultBindingMode: Avalonia.Data.BindingMode.OneWay);
         public static readonly StyledProperty<object> FieldContentProperty = AvaloniaProperty.Register<PropertyField, object>(nameof(FieldContent));
         public static readonly StyledProperty<string> ValidationErrorProperty = AvaloniaProperty.Register<PropertyField, string>(nameof(ValidationError), inherits: true, defaultBindingMode: Avalonia.Data.BindingMode.OneWay);
@@ -35,12 +34,6 @@ namespace Sm5sh.GUI.Views.Fields
         {
             get { return GetValue(LabelProperty); }
             set { SetValue(LabelProperty, value); }
-        }
-
-        public bool IsReadOnly
-        {
-            get { return GetValue(IsReadOnlyProperty); }
-            set { SetValue(IsReadOnlyProperty, value); }
         }
 
         public bool IsRequired
