@@ -56,12 +56,12 @@ namespace VGMMusic
             await LoadFile(filename);
             var audioCuePoints = new VGMAudioCuePoints()
             {
-                LoopEndMs = (ulong)_reader.LoopEndMilliseconds,
-                LoopEndSample = (ulong)_reader.LoopEndSample,
-                LoopStartMs = (ulong)_reader.LoopStartMilliseconds,
-                LoopStartSample = (ulong)_reader.LoopStartSample,
-                TotalTimeMs = (ulong)_reader.TotalMilliseconds,
-                TotalSamples = (ulong)_reader.TotalSamples,
+                LoopEndMs = _reader.LoopEndMilliseconds,
+                LoopEndSample = _reader.LoopEndSample,
+                LoopStartMs = _reader.LoopStartMilliseconds,
+                LoopStartSample = _reader.LoopStartSample,
+                TotalTimeMs = _reader.TotalMilliseconds,
+                TotalSamples = _reader.TotalSamples,
             };
             await Stop();
             return audioCuePoints;

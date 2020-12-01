@@ -645,22 +645,22 @@ namespace Sm5sh.Mods.Music.MusicMods
             public string NameId { get; set; }
 
             [JsonProperty("loop_start_ms")]
-            public ulong LoopStartMs { get; set; }
+            public uint LoopStartMs { get; set; }
 
             [JsonProperty("loop_start_sample")]
-            public ulong LoopStartSample { get; set; }
+            public uint LoopStartSample { get; set; }
 
             [JsonProperty("loop_end_ms")]
-            public ulong LoopEndMs { get; set; }
+            public uint LoopEndMs { get; set; }
 
             [JsonProperty("loop_end_sample")]
-            public ulong LoopEndSample { get; set; }
+            public uint LoopEndSample { get; set; }
 
             [JsonProperty("total_time_ms")]
-            public ulong TotalTimeMs { get; set; }
+            public uint TotalTimeMs { get; set; }
 
             [JsonProperty("total_samples")]
-            public ulong TotalSamples { get; set; }
+            public uint TotalSamples { get; set; }
         }
     }
 }

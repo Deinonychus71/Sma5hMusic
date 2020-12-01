@@ -35,22 +35,28 @@ namespace Sm5sh.Mods.Music.Services
                 _logger.LogError(e.Message);
             }
 
-            _logger.LogDebug("VGAudio Metadata for {FilePath}: TotalSamples: {TotalSamples}, LoopStartSample: {LoopStartSample}, LoopEndSample: {LoopEndSample}",
-                inputFile, audioCuePoints.TotalSamples, audioCuePoints.LoopStartSample, audioCuePoints.LoopEndSample);
+            _logger.LogDebug("VGMAudio Metadata for {FilePath}: TotalSamples: {TotalSamples}, LoopStartSample: {LoopStartSample}, LoopEndSample: {LoopEndSample}, LoopStartMs: {LoopStartMs}, LoopEndMs: {LoopEndMs}",
+                inputFile, audioCuePoints.TotalSamples, audioCuePoints.LoopStartSample, audioCuePoints.LoopEndSample, audioCuePoints.LoopStartMs, audioCuePoints.LoopEndMs);
 
             if (audioCuePoints.TotalSamples == 0 || audioCuePoints.LoopEndSample == 0)
             {
-                _logger.LogWarning("VGAudio Metadata for {FilePath}: Total Samples, Frequency or/and loop end sample was 0! Check the logs for more information. Use song_cue_points_override property in the payload to override these values.", inputFile);
+                _logger.LogWarning("VGMAudio Metadata for {FilePath}: Total Samples, Frequency or/and loop end sample was 0! Check the logs for more information. Use song_cue_points_override property in the payload to override these values.", inputFile);
+            }
+
+            if(audioCuePoints.TotalSamples < 0 || audioCuePoints.LoopStartSample < 0 || audioCuePoints.LoopEndSample < 0 
+                || audioCuePoints.TotalTimeMs < 0 || audioCuePoints.LoopStartMs < 0)
+            {
+                _logger.LogWarning("VGMAudio Metadata for {FilePath}: Some cue values are negative. This is shouldn't happen.", inputFile);
             }
 
             return new AudioCuePoints()
             {
-                TotalSamples = audioCuePoints.TotalSamples,
-                LoopStartSample = audioCuePoints.LoopStartSample,
-                LoopEndSample = audioCuePoints.LoopEndSample,
-                TotalTimeMs = audioCuePoints.TotalTimeMs,
-                LoopStartMs = audioCuePoints.LoopStartMs,
-                LoopEndMs = audioCuePoints.LoopEndMs
+                TotalSamples = (uint)audioCuePoints.TotalSamples,
+                LoopStartSample = (uint)audioCuePoints.LoopStartSample,
+                LoopEndSample = (uint)audioCuePoints.LoopEndSample,
+                TotalTimeMs = (uint)audioCuePoints.TotalTimeMs,
+                LoopStartMs = (uint)audioCuePoints.LoopStartMs,
+                LoopEndMs = (uint)audioCuePoints.LoopEndMs
             };
         }
 

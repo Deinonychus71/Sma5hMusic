@@ -34,10 +34,10 @@ namespace Sm5sh.Mods.Music.Services
 
             var output = builder.ToString();
 
-            var totalSamples = ReadValueUInt64Safe(output, "Sample count: ");
-            var loopStartSample = ReadValueUInt64Safe(output, "Loop start: ");
-            var loopEndSample = ReadValueUInt64Safe(output, "Loop end: ");
-            var frequency = ReadValueUInt64Safe(output, "Sample rate: ");
+            var totalSamples = ReadValueUInt32Safe(output, "Sample count: ");
+            var loopStartSample = ReadValueUInt32Safe(output, "Loop start: ");
+            var loopEndSample = ReadValueUInt32Safe(output, "Loop end: ");
+            var frequency = ReadValueUInt32Safe(output, "Sample rate: ");
 
             _logger.LogDebug("VGAudio Metadata for {FilePath}: TotalSamples: {TotalSamples}, LoopStartSample: {LoopStartSample}, LoopEndSample: {LoopEndSample}, Frequency: {Frequency}",
                 inputFile, totalSamples, loopStartSample, loopEndSample, frequency);

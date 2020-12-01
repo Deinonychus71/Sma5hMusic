@@ -2,11 +2,11 @@
 {
     public class VGMAudioCuePoints
     {
-        public ulong LoopStartMs { get; set; }
-        public ulong LoopStartSample { get; set; }
-        public ulong LoopEndMs { get; set; }
-        public ulong LoopEndSample { get; set; }
-        public ulong TotalTimeMs { get; set; }
-        public ulong TotalSamples { get; set; }
+        public int LoopStartMs { get; set; }
+        public int LoopStartSample { get; set; }
+        public int LoopEndMs { get; set; }
+        public int LoopEndSample { get; set; }
+        public int TotalTimeMs { get; set; }
+        public int TotalSamples { get; set; }
     }
 }
