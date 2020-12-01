@@ -60,6 +60,8 @@ namespace Sm5sh.Mods.Music
 
         public override bool Build(bool useCache)
         {
+            _logger.LogInformation("Starting Build...");
+
             //Persist DB changes
             _audioStateService.SaveBgmEntriesToStateManager();
 
@@ -68,11 +70,13 @@ namespace Sm5sh.Mods.Music
             {
                 var nusBankOutputFile = Path.Combine(_config.Value.OutputPath, "stream;", "sound", "bgm", string.Format(Constants.GameResources.NUS3BANK_FILE, bgmEntry.ToneId));
                 var nusAudioOutputFile = Path.Combine(_config.Value.OutputPath, "stream;", "sound", "bgm", string.Format(Constants.GameResources.NUS3AUDIO_FILE, bgmEntry.ToneId));
-                
+
                 //We always generate a new Nus3Bank as the internal ID might change
+                _logger.LogInformation("Generating Nus3Bank for {ToneId}", bgmEntry.ToneId);
                 _nus3AudioService.GenerateNus3Bank(bgmEntry.ToneId, bgmEntry.NUS3BankConfig.AudioVolume, nusBankOutputFile);
 
                 //Test for audio cache
+                _logger.LogInformation("Generating or Copying Nus3Audio for {ToneId}", bgmEntry.ToneId);
                 if (!ConvertNus3Audio(useCache, bgmEntry, nusAudioOutputFile))
                     _logger.LogError("Error! The song with ToneId {ToneId}, File {Filename} could not be processed.", bgmEntry.ToneId, bgmEntry.Filename);
             }
@@ -100,6 +104,7 @@ namespace Sm5sh.Mods.Music
                 {
                     _logger.LogDebug("Copy nus3audio {InternalToneName} from cache {CacheFile} to {Nus3AudioOutputFile}", bgmEntry.ToneId, cachedAudioFile, nusAudioOutputFile);
                     File.Copy(cachedAudioFile, nusAudioOutputFile);
+                    return true;
                 }
             }
             else

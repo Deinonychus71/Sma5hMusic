@@ -44,6 +44,9 @@ namespace Sm5sh.Mods.Music
             _logger.LogInformation("Loading Sm5shMusic Override Config");
             LoadOrCreateMusicOverrideConfig();
 
+            if(_musicOverrideConfig.SoundTestOrder.Count > 0)
+                _logger.LogInformation("Overriding SoundTest Order...");
+
             foreach (var bgmEntry in _audioStateService.GetBgmEntries())
             {
                 //Sound Test Order
@@ -53,6 +56,7 @@ namespace Sm5sh.Mods.Music
                 //Replace Core Files / Delete Core
                 if (bgmEntry.Source == EntrySource.Core && _musicOverrideConfig.CoreBgmOverrides.ContainsKey(bgmEntry.ToneId))
                 {
+                    _logger.LogInformation("Overriding Core Song {ToneId}...", bgmEntry.ToneId);
                     var bgmConfig = _musicOverrideConfig.CoreBgmOverrides[bgmEntry.ToneId];
                     if (bgmConfig.IsDeleted)
                         _audioStateService.RemoveBgmEntry(bgmConfig.ToneId);
@@ -65,19 +69,10 @@ namespace Sm5sh.Mods.Music
                 }
             }
 
-            //Stage Override
-            if (_musicOverrideConfig.StageOverrides != null)
-            {
-                foreach (var stageEntry in _audioStateService.GetStagesEntries())
-                {
-                    if(_musicOverrideConfig.StageOverrides.ContainsKey(stageEntry.UiStageId))
-                        _mapper.Map(_musicOverrideConfig.StageOverrides[stageEntry.UiStageId], stageEntry);
-                }
-            }
-
             //Playlist Override
             if(_musicOverrideConfig.Playlists != null && _musicOverrideConfig.Playlists.Count > 0)
             {
+                _logger.LogInformation("Overriding Playlists...");
                 foreach (var playlistEntry in _audioStateService.GetPlaylists())
                     _audioStateService.RemovePlaylistEntry(playlistEntry.Id);
 
@@ -92,6 +87,17 @@ namespace Sm5sh.Mods.Music
                 }
             }
 
+            //Stage Override
+            if (_musicOverrideConfig.StageOverrides != null && _musicOverrideConfig.StageOverrides.Count > 0)
+            {
+                _logger.LogInformation("Overriding Stage Playlists...");
+                foreach (var stageEntry in _audioStateService.GetStagesEntries())
+                {
+                    if (_musicOverrideConfig.StageOverrides.ContainsKey(stageEntry.UiStageId))
+                        _mapper.Map(_musicOverrideConfig.StageOverrides[stageEntry.UiStageId], stageEntry);
+                }
+            }
+
             //Game Override
             if (_musicOverrideConfig.CoreGameOverrides != null)
             {
@@ -99,6 +105,7 @@ namespace Sm5sh.Mods.Music
                 {
                     if (_musicOverrideConfig.CoreGameOverrides.ContainsKey(gameTitleEntry.UiGameTitleId))
                     {
+                        _logger.LogInformation("Overriding Core Game {GameId}...", gameTitleEntry.UiGameTitleId);
                         _mapper.Map(_musicOverrideConfig.CoreGameOverrides[gameTitleEntry.UiGameTitleId], gameTitleEntry);
                     }
                 }
@@ -110,7 +117,7 @@ namespace Sm5sh.Mods.Music
         public override bool Build(bool useCache)
         {
             //Persist DB changes
-            _audioStateService.SaveBgmEntriesToStateManager();
+            //_audioStateService.SaveBgmEntriesToStateManager();
             return true;
         }
 
@@ -136,7 +143,7 @@ namespace Sm5sh.Mods.Music
                 _musicOverrideConfig.SoundTestOrder = outputOrder;
             }
             else
-                _logger.LogInformation("File {MusicOverrideFile} does not exist!", overrideOrderJsonFile);
+                _logger.LogInformation("File {MusicOverrideFile} does not exist.", overrideOrderJsonFile);
 
             //Override Playlist
             var overridePlaylistJsonFile = Path.Combine(_config.Value.Sm5shMusicOverride.ModPath, Constants.MusicModFiles.MUSIC_OVERRIDE_PLAYLIST_JSON_FILE);
@@ -149,7 +156,7 @@ namespace Sm5sh.Mods.Music
                 _musicOverrideConfig.Playlists = outputPlaylist;
             }
             else
-                _logger.LogInformation("File {MusicOverrideFile} does not exist! Creating...", overridePlaylistJsonFile);
+                _logger.LogInformation("File {MusicOverrideFile} does not exist.", overridePlaylistJsonFile);
 
             //Override Stage
             var overrideStageJsonFile = Path.Combine(_config.Value.Sm5shMusicOverride.ModPath, Constants.MusicModFiles.MUSIC_OVERRIDE_STAGE_JSON_FILE);
@@ -162,7 +169,7 @@ namespace Sm5sh.Mods.Music
                 _musicOverrideConfig.StageOverrides = outputStage;
             }
             else
-                _logger.LogInformation("File {MusicOverrideFile} does not exist! Creating...", overrideStageJsonFile);
+                _logger.LogInformation("File {MusicOverrideFile} does not exist.", overrideStageJsonFile);
 
             //Override Core Bgm
             var overrideCoreJsonFile = Path.Combine(_config.Value.Sm5shMusicOverride.ModPath, Constants.MusicModFiles.MUSIC_OVERRIDE_CORE_BGM_JSON_FILE);
@@ -175,7 +182,7 @@ namespace Sm5sh.Mods.Music
                 _musicOverrideConfig.CoreBgmOverrides = outputCoreBgm;
             }
             else
-                _logger.LogInformation("File {MusicOverrideFile} does not exist! Creating...", overrideCoreJsonFile);
+                _logger.LogInformation("File {MusicOverrideFile} does not exist.", overrideCoreJsonFile);
 
             //Override Core Game
             var overrideCoreGameJsonFile = Path.Combine(_config.Value.Sm5shMusicOverride.ModPath, Constants.MusicModFiles.MUSIC_OVERRIDE_CORE_GAME_JSON_FILE);
@@ -188,7 +195,7 @@ namespace Sm5sh.Mods.Music
                 _musicOverrideConfig.CoreGameOverrides = outputCoreGame;
             }
             else
-                _logger.LogInformation("File {MusicOverrideFile} does not exist! Creating...", overrideCoreGameJsonFile);
+                _logger.LogInformation("File {MusicOverrideFile} does not exist.", overrideCoreGameJsonFile);
         }
 
 

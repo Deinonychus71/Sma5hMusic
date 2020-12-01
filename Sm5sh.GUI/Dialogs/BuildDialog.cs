@@ -60,7 +60,10 @@ namespace Sm5sh.GUI.Dialogs
         public async Task Build(bool useCache, Action<bool> callbackSuccess = null, Action<Exception> callbackError = null)
         {
             if (!await EnsureArcOutputIsClean())
+            {
+                callbackSuccess?.Invoke(false);
                 return;
+            }
 
             Init(async (o) =>
             {
@@ -75,11 +78,6 @@ namespace Sm5sh.GUI.Dialogs
                 //Check if ArcOutput is empty
                 _ = Task.Run(async () =>
                 {
-                    await Dispatcher.UIThread.InvokeAsync(async () =>
-                    {
-                        await _messageDialog.ShowInformation("Build", "Starting the build now. Avoid touching anything while it's running.\r\nMy developer didn't want to make a proper spinner :(");
-                    }, DispatcherPriority.Background);
-
                     try
                     {
                         //Load

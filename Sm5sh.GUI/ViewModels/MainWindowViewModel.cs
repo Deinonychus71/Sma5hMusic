@@ -53,6 +53,12 @@ namespace Sm5sh.GUI.ViewModels
         [Reactive]
         public bool IsAdvanced { get; set; }
 
+        [Reactive]
+        public bool IsLoading { get; set; }
+
+        [Reactive]
+        public bool IsShowingDebug { get; set; }
+
         public BgmPropertiesModalWindowViewModel VMBgmEditor { get; }
         public GamePropertiesModalWindowViewModel VMGameEditor { get; }
         public GamePickerModalWindowViewModel VMGamePicker { get; }
@@ -85,6 +91,7 @@ namespace Sm5sh.GUI.ViewModels
             _logger = logger;
             _mapper = mapper;
             _config = config;
+            IsLoading = true;
 
             //DI
             _audioState = audioState;
@@ -171,18 +178,39 @@ namespace Sm5sh.GUI.ViewModels
 
         public async Task OnBuild()
         {
+            IsLoading = true;
+            IsShowingDebug = true;
             _logger.LogInformation("Building with cache option ON. Don't touch anything :)");
-            await _buildDialog.Build(true);
+            await _buildDialog.Build(true, (o) =>
+            {
+                IsLoading = false;
+                IsShowingDebug = false;
+            }, (o) =>
+            {
+                IsLoading = false;
+                IsShowingDebug = false;
+            });
         }
 
         public async Task OnBuildNoCache()
         {
+            IsLoading = true;
+            IsShowingDebug = true;
             _logger.LogInformation("Building with cache option OFF. Don't touch anything :)");
-            await _buildDialog.Build(false);
+            await _buildDialog.Build(false, (o) =>
+            {
+                IsLoading = false;
+                IsShowingDebug = false;
+            }, (o) =>
+            {
+                IsLoading = false;
+                IsShowingDebug = false;
+            });
         }
 
         public void OnInitData()
         {
+            IsLoading = true;
             _buildDialog.Init((o) => InitAllDataAsync());
         }
 
@@ -247,6 +275,9 @@ namespace Sm5sh.GUI.ViewModels
             var stages = _audioState.GetStagesEntries().Select(p => new StageEntryViewModel(p));
             _stagesEntries.AddRange(stages);
             _logger.LogInformation("Stages Loaded.");
+
+            //Done
+            IsLoading = false;
 
             return Task.CompletedTask;
         }
