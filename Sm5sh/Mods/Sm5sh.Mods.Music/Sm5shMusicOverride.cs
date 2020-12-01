@@ -132,6 +132,9 @@ namespace Sm5sh.Mods.Music
                 CoreGameOverrides = new Dictionary<string, GameConfig>()
             };
 
+            //Ensure Directory is created
+            Directory.CreateDirectory(_config.Value.Sm5shMusicOverride.ModPath);
+
             //Override order
             var overrideOrderJsonFile = Path.Combine(_config.Value.Sm5shMusicOverride.ModPath, Constants.MusicModFiles.MUSIC_OVERRIDE_ORDER_JSON_FILE);
             if (File.Exists(overrideOrderJsonFile))

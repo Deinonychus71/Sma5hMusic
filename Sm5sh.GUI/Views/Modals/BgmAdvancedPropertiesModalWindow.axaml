@@ -251,20 +251,23 @@
           </Grid>
         </TabItem>
         <TabItem Header="BGM Properties" FontSize="14">
-          <Grid ColumnDefinitions="*,*,*" RowDefinitions="*">
-            <StackPanel Grid.Row="0" Grid.Column="0" HorizontalAlignment="Stretch">
+          <Grid ColumnDefinitions="*,*,*" RowDefinitions="100, *">
+            <!-- File Properties-->
+            <StackPanel Grid.Row="0" Grid.ColumnSpan="3" Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Stretch">
               <fields:PropertyTextField Label="name_id" Text="{Binding SelectedBgmEntry.BgmProperties.NameId, Mode=OneWay}" ToolTip="[Read-Only][Hash40] ID in BGM Property" IsReadOnly="True" />
-              <fields:PropertyULongField Label="loop_start_ms" Value="{Binding SelectedBgmEntry.BgmProperties.LoopStartMs, Mode=TwoWay}" ToolTip="[ULong]" />
-              <fields:PropertyULongField Label="loop_start_sample" Value="{Binding SelectedBgmEntry.BgmProperties.LoopStartSample, Mode=TwoWay}" ToolTip="[ULong]" />
+              <fields:PropertyUIntField Label="frequency" Value="{Binding SelectedBgmEntry.BgmProperties.Frequency, Mode=OneWay}" ToolTip="[UInt]" IsReadOnly="True" />
             </StackPanel>
-            <StackPanel Grid.Row="0" Grid.Column="1" HorizontalAlignment="Stretch">
-              <fields:PropertyULongField Label="loop_end_ms" Value="{Binding SelectedBgmEntry.BgmProperties.LoopEndMs, Mode=TwoWay}" ToolTip="[ULong]" />
-              <fields:PropertyULongField Label="loop_end_sample" Value="{Binding SelectedBgmEntry.BgmProperties.LoopEndSample, Mode=TwoWay}" ToolTip="[ULong]" />
+            <StackPanel Grid.Row="1" Grid.Column="0" HorizontalAlignment="Stretch">
+              <fields:PropertyUIntField Label="loop_start_ms" Value="{Binding SelectedBgmEntry.BgmProperties.LoopStartMs, Mode=TwoWay}" ToolTip="[UInt]" />
+              <fields:PropertyUIntField Label="loop_start_sample" Value="{Binding SelectedBgmEntry.BgmProperties.LoopStartSample, Mode=TwoWay}" ToolTip="[UInt]" />
             </StackPanel>
-            <StackPanel Grid.Row="0" Grid.Column="2" HorizontalAlignment="Stretch">
-              <fields:PropertyULongField Label="frequency" Value="{Binding SelectedBgmEntry.BgmProperties.Frequency, Mode=OneWay}" ToolTip="[ULong]" />
-              <fields:PropertyULongField Label="total_time_ms" Value="{Binding SelectedBgmEntry.BgmProperties.TotalTimeMs, Mode=TwoWay}" ToolTip="[ULong]" />
-              <fields:PropertyULongField Label="total_samples" Value="{Binding SelectedBgmEntry.BgmProperties.TotalSamples, Mode=TwoWay}" ToolTip="[ULong]" />
+            <StackPanel Grid.Row="1" Grid.Column="1" HorizontalAlignment="Stretch">
+              <fields:PropertyUIntField Label="loop_end_ms" Value="{Binding SelectedBgmEntry.BgmProperties.LoopEndMs, Mode=TwoWay}" ToolTip="[UInt]" />
+              <fields:PropertyUIntField Label="loop_end_sample" Value="{Binding SelectedBgmEntry.BgmProperties.LoopEndSample, Mode=TwoWay}" ToolTip="[UInt]" />
+            </StackPanel>
+            <StackPanel Grid.Row="1" Grid.Column="2" HorizontalAlignment="Stretch">
+              <fields:PropertyUIntField Label="total_time_ms" Value="{Binding SelectedBgmEntry.BgmProperties.TotalTimeMs, Mode=TwoWay}" ToolTip="[UInt]" />
+              <fields:PropertyUIntField Label="total_samples" Value="{Binding SelectedBgmEntry.BgmProperties.TotalSamples, Mode=TwoWay}" ToolTip="[UInt]" />
             </StackPanel>
           </Grid>
         </TabItem>

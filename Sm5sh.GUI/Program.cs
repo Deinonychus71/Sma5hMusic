@@ -10,7 +10,8 @@ using Sm5sh.GUI.ViewModels;
 using Sm5sh.GUI.Views;
 using Sm5sh.Mods.Music.Models.AutoMapper;
 using Splat.Microsoft.Extensions.DependencyInjection;
-using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using VGMMusic;
 
@@ -41,8 +42,10 @@ namespace Sm5sh.GUI
             var services = new ServiceCollection();
 
             var configuration = new ConfigurationBuilder()
-               .SetBasePath(Directory.GetParent(AppContext.BaseDirectory).FullName)
-               .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+               .SetBasePath(GetBasePath())
+               .AddInMemoryCollection(GetDefaultConfiguration())
+               .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+               //.AddJsonFile(GetCurrentPathFile("user.json"), optional: false, reloadOnChange: true)
                .Build();
 
             var loggerFactory = LoggerFactory.Create(builder => builder
@@ -74,6 +77,33 @@ namespace Sm5sh.GUI
 
             //Add to Splat
             services.UseMicrosoftDependencyResolver();
+        }
+
+        private static string GetBasePath()
+        {
+            using var processModule = Process.GetCurrentProcess().MainModule;
+            return Path.GetDirectoryName(processModule?.FileName);
+        }
+
+        private static Dictionary<string, string> GetDefaultConfiguration()
+        {
+            return new Dictionary<string, string>()
+            {
+                { "GameResourcesPath",$"Resources{Path.DirectorySeparatorChar}Game" },
+                { "ResourcesPath", "Resources" },
+                { "OutputPath", "ArcOutput" },
+                { "ToolsPath", "Tools" },
+                { "TempPath", "Temp" },
+                { "LogPath", "Log" },
+                { "SkipOutputPathCleanupConfirmation", "false" },
+                { "Sm5shMusic:ModPath", $"Mods{Path.DirectorySeparatorChar}MusicMods" },
+                { "Sm5shMusic:CachePath", "Cache" },
+                { "Sm5shMusic:EnableAudioCaching", "false" },
+                { "Sm5shMusic:AudioConversionFormat", "lopus" },
+                { "Sm5shMusic:AudioConversionFormatFallBack", "idsp" },
+                { "Sm5shMusic:DefaultLocale", "en_us" },
+                { "Sm5shMusicOverride:ModPath", $"Mods{Path.DirectorySeparatorChar}MusicOverride" },
+            };
         }
     }
 }

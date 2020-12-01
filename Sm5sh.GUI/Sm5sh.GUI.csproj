@@ -32,6 +32,7 @@
     <PackageReference Include="MessageBox.Avalonia" Version="0.10.0-prev2" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="5.0.0" />
     <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="5.0.0" />
+    <PackageReference Include="Nett" Version="0.15.0" />
     <PackageReference Include="ReactiveUI.Fody" Version="12.1.5" />
     <PackageReference Include="ReactiveUI.Validation" Version="1.8.6" />
     <PackageReference Include="Serilog.Extensions.Logging.File" Version="2.0.0" />
