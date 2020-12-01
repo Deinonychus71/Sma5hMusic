@@ -1,22 +1,22 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Avalonia.Controls;
+using Avalonia.Input;
+using DynamicData;
+using DynamicData.Binding;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
-using ILogger = Microsoft.Extensions.Logging.ILogger;
+using Sm5sh.GUI.Interfaces;
+using Sm5sh.GUI.Models;
 using System;
-using System.Linq;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using ReactiveUI;
-using Avalonia.Controls;
+using System.Linq;
 using System.Reactive;
-using System.Reactive.Subjects;
 using System.Reactive.Linq;
-using Avalonia.Input;
+using System.Reactive.Subjects;
 using System.Threading.Tasks;
-using Sm5sh.GUI.Models;
-using DynamicData.Binding;
-using DynamicData;
-using Microsoft.Extensions.DependencyInjection;
-using Sm5sh.GUI.Interfaces;
+using ILogger = Microsoft.Extensions.Logging.ILogger;
 
 namespace Sm5sh.GUI.ViewModels
 {

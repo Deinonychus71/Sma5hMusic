@@ -4,8 +4,6 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 using Sm5sh.GUI.Interfaces;
 using Sm5sh.GUI.ViewModels;
-using Sm5sh.GUI.Views;
-using Sm5sh.Interfaces;
 using Splat;
 
 namespace Sm5sh.GUI

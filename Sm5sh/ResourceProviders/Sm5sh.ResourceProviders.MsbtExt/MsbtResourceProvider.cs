@@ -1,13 +1,13 @@
 ﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using MsbtEditor;
+using Sm5sh.Attributes;
+using Sm5sh.Data;
 using System;
 using System.Collections.Generic;
-using Microsoft.Extensions.Options;
-using Sm5sh.Attributes;
-using MsbtEditor;
-using Sm5sh.Data;
+using System.IO;
 using System.Linq;
 using System.Text;
-using System.IO;
 
 namespace Sm5sh.ResourceProviders
 {
@@ -34,7 +34,7 @@ namespace Sm5sh.ResourceProviders
                 var output = new MsbtDatabase() { Entries = new Dictionary<string, string>() };
                 var msbtFile = new MSBT(inputFile);
 
-                foreach(var msbtEntry in msbtFile.LBL1.Labels)
+                foreach (var msbtEntry in msbtFile.LBL1.Labels)
                 {
                     var value = msbtFile.TXT2.OriginalStrings.FirstOrDefault(p => p.Index == msbtEntry.Index);
                     output.Entries.Add(((Label)msbtEntry).Name, Encoding.Unicode.GetString(value.Value).TrimEnd('\0'));

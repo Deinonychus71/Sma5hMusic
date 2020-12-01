@@ -85,7 +85,7 @@ namespace Sm5sh.GUI.Dialogs
                         var mods = _serviceProvider.GetServices<ISm5shMod>();
                         foreach (var mod in mods)
                         {
-                            if(!mod.Build(useCache))
+                            if (!mod.Build(useCache))
                             {
                                 await ShowBuildFailedError();
                                 callbackError?.Invoke(new Exception("Mod Build Exception"));

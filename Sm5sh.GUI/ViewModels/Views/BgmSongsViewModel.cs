@@ -1,18 +1,18 @@
-﻿using DynamicData;
+﻿using Avalonia.Controls;
+using Avalonia.Input;
+using DynamicData;
+using DynamicData.Binding;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using ReactiveUI;
-using ILogger = Microsoft.Extensions.Logging.ILogger;
-using System;
-using Microsoft.Extensions.DependencyInjection;
-using Avalonia.Controls;
 using ReactiveUI.Fody.Helpers;
+using System;
 using System.Collections.ObjectModel;
 using System.Reactive;
-using System.Reactive.Subjects;
-using DynamicData.Binding;
-using Avalonia.Input;
-using System.Threading.Tasks;
 using System.Reactive.Linq;
+using System.Reactive.Subjects;
+using System.Threading.Tasks;
+using ILogger = Microsoft.Extensions.Logging.ILogger;
 
 namespace Sm5sh.GUI.ViewModels
 {
@@ -43,7 +43,7 @@ namespace Sm5sh.GUI.ViewModels
         public ReactiveCommand<BgmEntryViewModel, Unit> ActionDeleteBgm { get; }
         public BgmPropertiesViewModel VMBgmProperties { get; }
 
-        public BgmSongsViewModel(IServiceProvider serviceProvider, ILogger<BgmSongsViewModel> logger, 
+        public BgmSongsViewModel(IServiceProvider serviceProvider, ILogger<BgmSongsViewModel> logger,
             IObservable<IChangeSet<BgmEntryViewModel, string>> observableBgmEntriesList, ContextMenuViewModel vmContextMenu)
         {
             _logger = logger;

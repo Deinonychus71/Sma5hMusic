@@ -21,7 +21,8 @@ namespace Sm5sh.GUI.ViewModels
         public BgmEntryEditableViewModels.BgmStreamSetEntryEditableViewModel StreamSet { get; }
         public BgmEntryEditableViewModels.BgmStreamPropertyEntryEditableViewModel StreamingProperty { get; }
 
-        public BgmEntryEditableViewModel() {
+        public BgmEntryEditableViewModel()
+        {
             MSBTLabels = new BgmEntryEditableViewModels.MSBTLabelsEntryEditableViewModel(this);
             BgmProperties = new BgmEntryEditableViewModels.BgmPropertyEntryEditableViewModel(this);
             NUS3BankConfig = new BgmEntryEditableViewModels.NUS3BankConfigEntryEditableViewModel(this);

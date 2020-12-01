@@ -44,7 +44,7 @@ namespace Sm5sh.Mods.Music
             _logger.LogInformation("Loading Sm5shMusic Override Config");
             LoadOrCreateMusicOverrideConfig();
 
-            if(_musicOverrideConfig.SoundTestOrder.Count > 0)
+            if (_musicOverrideConfig.SoundTestOrder.Count > 0)
                 _logger.LogInformation("Overriding SoundTest Order...");
 
             foreach (var bgmEntry in _audioStateService.GetBgmEntries())
@@ -70,7 +70,7 @@ namespace Sm5sh.Mods.Music
             }
 
             //Playlist Override
-            if(_musicOverrideConfig.Playlists != null && _musicOverrideConfig.Playlists.Count > 0)
+            if (_musicOverrideConfig.Playlists != null && _musicOverrideConfig.Playlists.Count > 0)
             {
                 _logger.LogInformation("Overriding Playlists...");
                 foreach (var playlistEntry in _audioStateService.GetPlaylists())
@@ -79,7 +79,7 @@ namespace Sm5sh.Mods.Music
                 foreach (var playlistConfig in _musicOverrideConfig.Playlists)
                 {
                     var newPlaylist = new PlaylistEntry(playlistConfig.Key, playlistConfig.Value.Title);
-                    foreach(var overrideTrack in playlistConfig.Value.Tracks)
+                    foreach (var overrideTrack in playlistConfig.Value.Tracks)
                     {
                         newPlaylist.Tracks.Add(_mapper.Map<Models.PlaylistEntryModels.PlaylistValueEntry>(overrideTrack));
                     }

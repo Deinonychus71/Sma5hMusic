@@ -54,7 +54,7 @@ namespace Sm5sh.CLI
 
                 return true;
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 _logger.LogError(e, "Workspace error");
                 return false;

@@ -1,5 +1,4 @@
 ﻿using ReactiveUI;
-using ReactiveUI.Fody.Helpers;
 using Sm5sh.Mods.Music.Interfaces;
 
 namespace Sm5sh.GUI.ViewModels
@@ -9,7 +8,7 @@ namespace Sm5sh.GUI.ViewModels
         public bool AllFlag { get; set; }
         public bool CreateFlag { get; set; }
         public IMusicMod MusicMod { get; }
-        public string ModId { get;  }
+        public string ModId { get; }
         public string ModName { get; set; }
         public string ModPath { get { return MusicMod.ModPath; } }
 

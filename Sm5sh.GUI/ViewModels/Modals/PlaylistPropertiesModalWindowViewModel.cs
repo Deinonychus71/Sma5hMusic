@@ -1,21 +1,20 @@
-﻿using Microsoft.Extensions.Logging;
-using ILogger = Microsoft.Extensions.Logging.ILogger;
-using System;
-using ReactiveUI.Fody.Helpers;
-using ReactiveUI;
-using System.Text.RegularExpressions;
-using Avalonia.Controls;
-using System.Reactive;
+﻿using Avalonia.Controls;
 using DynamicData;
-using System.Collections.ObjectModel;
-using System.Reactive.Linq;
-using ReactiveUI.Validation.Helpers;
-using ReactiveUI.Validation.Extensions;
-using System.IO;
-using System.Linq;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Sm5sh.Mods.Music;
+using ReactiveUI;
+using ReactiveUI.Fody.Helpers;
+using ReactiveUI.Validation.Extensions;
+using ReactiveUI.Validation.Helpers;
 using Sm5sh.GUI.Helpers;
+using Sm5sh.Mods.Music;
+using System;
+using System.Collections.ObjectModel;
+using System.Linq;
+using System.Reactive;
+using System.Reactive.Linq;
+using System.Text.RegularExpressions;
+using ILogger = Microsoft.Extensions.Logging.ILogger;
 
 namespace Sm5sh.GUI.ViewModels
 {
@@ -76,7 +75,7 @@ namespace Sm5sh.GUI.ViewModels
 
         public void LoadPlaylist(PlaylistEntryViewModel vmPlaylist)
         {
-            if(vmPlaylist == null)
+            if (vmPlaylist == null)
             {
                 SelectedPlaylistEntry = null;
                 PlaylistId = string.Empty;

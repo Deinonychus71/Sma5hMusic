@@ -1,9 +1,9 @@
 ﻿using ReactiveUI.Fody.Helpers;
-using Sm5sh.Mods.Music.Models;
-using VGMMusic;
-using System.IO;
 using Sm5sh.Mods.Music.Interfaces;
+using Sm5sh.Mods.Music.Models;
 using System.Collections.Generic;
+using System.IO;
+using VGMMusic;
 
 namespace Sm5sh.GUI.ViewModels
 {
@@ -61,7 +61,7 @@ namespace Sm5sh.GUI.ViewModels
 
         public void StopPlay()
         {
-            if(MusicPlayer != null)
+            if (MusicPlayer != null)
             {
                 MusicPlayer.StopSong();
             }

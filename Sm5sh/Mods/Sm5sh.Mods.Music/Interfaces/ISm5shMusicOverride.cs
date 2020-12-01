@@ -1,6 +1,5 @@
 ﻿using Sm5sh.Interfaces;
 using Sm5sh.Mods.Music.Models;
-using Sm5sh.Mods.Music.Models.PlaylistEntryModels;
 using System.Collections.Generic;
 
 namespace Sm5sh.Mods.Music.Interfaces

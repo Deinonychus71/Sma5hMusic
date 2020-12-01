@@ -1,13 +1,13 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
+using Sm5sh.Attributes;
+using Sm5sh.Interfaces;
 using System;
-using System.Linq;
 using System.Collections.Generic;
 using System.IO;
-using Sm5sh.Interfaces;
-using Sm5sh.Attributes;
-using Newtonsoft.Json;
+using System.Linq;
 
 namespace Sm5sh
 {
@@ -74,7 +74,7 @@ namespace Sm5sh
         public void ResetResource()
         {
             _resources.Clear();
-            foreach(var resource in _originalResources)
+            foreach (var resource in _originalResources)
             {
                 _resources.Add(resource.Key, JsonClone(resource.Value));
             }
@@ -85,7 +85,7 @@ namespace Sm5sh
         {
             _logger.LogDebug("Write State Changes to {OutputPath}", _config.Value.OutputPath);
 
-            foreach(var resource in _resources)
+            foreach (var resource in _resources)
             {
                 var outputResourceFile = Path.Combine(_config.Value.OutputPath, resource.Key);
                 var inputResourceFile = Path.Combine(_config.Value.GameResourcesPath, resource.Key);
@@ -139,11 +139,11 @@ namespace Sm5sh
                 {
                     var attribute = service.GetType().GetCustomAttributes(true).FirstOrDefault(p => p.GetType() == typeof(ResourceProviderMatchAttribute)) as ResourceProviderMatchAttribute;
                     _logger.LogDebug("Initialize Resource Provider {ResourceProvider} for the following match: {ProviderMatch}", service.GetType().Name, attribute.ExtensionOrPath);
-                    if(!providers.ContainsKey(attribute.ExtensionOrPath))
+                    if (!providers.ContainsKey(attribute.ExtensionOrPath))
                         providers.Add(attribute.ExtensionOrPath, service);
                 }
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 _logger.LogError(e, "A Resource Provider could not load. Please make sure that all the file paths are correct.");
             }

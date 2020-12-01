@@ -18,7 +18,7 @@ namespace Sm5sh.Mods.Music
 
         public override string ModName => "Sm5shMusic";
 
-        public Sm5shMusic(IOptions<Sm5shMusicOptions> config, IMusicModManagerService musicModManagerService, IAudioStateService audioStateService, 
+        public Sm5shMusic(IOptions<Sm5shMusicOptions> config, IMusicModManagerService musicModManagerService, IAudioStateService audioStateService,
             INus3AudioService nus3AudioService, IStateManager state, ILogger<Sm5shMusic> logger)
             : base(state)
         {
@@ -49,7 +49,7 @@ namespace Sm5sh.Mods.Music
             {
                 //Add to Audio State Service
                 var newBgmEntries = musicMod.GetBgms();
-                foreach(var newBgmEntry in newBgmEntries)
+                foreach (var newBgmEntry in newBgmEntries)
                 {
                     _audioStateService.AddBgmEntry(newBgmEntry);
                 }

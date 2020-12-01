@@ -1,7 +1,7 @@
 ﻿//From lioncash
 //https://github.com/lioncash/vgmstreamSharp
-using System;
 using NAudio.Wave;
+using System;
 using VGMMusic.Native;
 
 namespace VGMMusic

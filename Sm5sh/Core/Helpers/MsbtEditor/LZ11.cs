@@ -1,17 +1,20 @@
 ﻿using System;
 using System.IO;
-namespace YATA {
+namespace YATA
+{
     #region dsdecmp Classes
     public class dsdecmp // LZ11 (de)compression
     {
-        public static long Decompress(string infile, string outfile) {
+        public static long Decompress(string infile, string outfile)
+        {
             // make sure the output directory exists
             string outDirectory = Path.GetDirectoryName(outfile);
             if (!Directory.Exists(outDirectory))
                 Directory.CreateDirectory(outDirectory);
             // open the two given files, and delegate to the format-specific code.
             using (FileStream inStream = new FileStream(infile, FileMode.Open),
-            outStream = new FileStream(outfile, FileMode.Create)) {
+            outStream = new FileStream(outfile, FileMode.Create))
+            {
                 return Decompress(inStream, inStream.Length, outStream);
             }
         }
@@ -30,7 +33,8 @@ namespace YATA {
         /// <returns>The length of the output data.</returns>
         /// <exception cref="NotEnoughDataException">When the given length of the input data
         /// is not enough to properly decompress the input.</exception>
-        public static long Decompress(Stream instream, long inLength, Stream outstream) {
+        public static long Decompress(Stream instream, long inLength, Stream outstream)
+        {
             #region Format definition in NDSTEK style
             /* Data header (32bit)
 Bit 0-3 Reserved
@@ -78,7 +82,8 @@ Bit 16-23 Disp LSBs
             instream.Read(sizeBytes, 0, 3);
             int decompressedSize = IOUtils.ToNDSu24(sizeBytes, 0);
             readBytes += 4;
-            if (decompressedSize == 0) {
+            if (decompressedSize == 0)
+            {
                 sizeBytes = new byte[4];
                 instream.Read(sizeBytes, 0, 4);
                 decompressedSize = IOUtils.ToNDSs32(sizeBytes, 0);
@@ -90,12 +95,14 @@ Bit 16-23 Disp LSBs
             int bufferOffset = 0;
             int currentOutSize = 0;
             int flags = 0, mask = 1;
-            while (currentOutSize < decompressedSize) {
+            while (currentOutSize < decompressedSize)
+            {
                 // (throws when requested new flags byte is not available)
                 #region Update the mask. If all flag bits have been read, get a new set.
                 // the current mask is the mask used in the previous run. So if it masks the
                 // last flag bit, get a new flags byte.
-                if (mask == 1) {
+                if (mask == 1)
+                {
                     if (readBytes >= inLength)
                         throw new NotEnoughDataException(currentOutSize, decompressedSize);
                     flags = instream.ReadByte(); readBytes++;
@@ -103,12 +110,14 @@ Bit 16-23 Disp LSBs
                         throw new StreamTooShortException();
                     mask = 0x80;
                 }
-                else {
+                else
+                {
                     mask >>= 1;
                 }
                 #endregion
                 // bit = 1 <=> compressed.
-                if ((flags & mask) > 0) {
+                if ((flags & mask) > 0)
+                {
                     // (throws when not enough bytes are available)
                     #region Get length and displacement('disp') values from next 2, 3 or 4 bytes
                     // read the first byte first, which also signals the size of the compressed block
@@ -119,7 +128,8 @@ Bit 16-23 Disp LSBs
                         throw new StreamTooShortException();
                     int length = byte1 >> 4;
                     int disp = -1;
-                    if (length == 0) {
+                    if (length == 0)
+                    {
                         #region case 0; 0(B C)(D EF) + (0x11)(0x1) = (LEN)(DISP)
                         // case 0:
                         // data = AB CD EF (with A=0)
@@ -136,7 +146,8 @@ Bit 16-23 Disp LSBs
                         disp = (((byte2 & 0x0F) << 8) | byte3) + 0x1;
                         #endregion
                     }
-                    else if (length == 1) {
+                    else if (length == 1)
+                    {
                         #region case 1: 1(B CD E)(F GH) + (0x111)(0x1) = (LEN)(DISP)
                         // case 1:
                         // data = AB CD EF GH (with A=1)
@@ -154,7 +165,8 @@ Bit 16-23 Disp LSBs
                         disp = (((byte3 & 0x0F) << 8) | byte4) + 0x1;
                         #endregion
                     }
-                    else {
+                    else
+                    {
                         #region case > 1: (A)(B CD) + (0x1)(0x1) = (LEN)(DISP)
                         // case other:
                         // data = AB CD
@@ -177,7 +189,8 @@ Bit 16-23 Disp LSBs
                         + (byte1 >> 4).ToString("X"));
                     #endregion
                     int bufIdx = bufferOffset + bufferLength - disp;
-                    for (int i = 0; i < length; i++) {
+                    for (int i = 0; i < length; i++)
+                    {
                         byte next = buffer[bufIdx % bufferLength];
                         bufIdx++;
                         outstream.WriteByte(next);
@@ -186,7 +199,8 @@ Bit 16-23 Disp LSBs
                     }
                     currentOutSize += length;
                 }
-                else {
+                else
+                {
                     if (readBytes >= inLength)
                         throw new NotEnoughDataException(currentOutSize, decompressedSize);
                     int next = instream.ReadByte(); readBytes++;
@@ -197,21 +211,24 @@ Bit 16-23 Disp LSBs
                     bufferOffset = (bufferOffset + 1) % bufferLength;
                 }
             }
-            if (readBytes < inLength) {
+            if (readBytes < inLength)
+            {
                 // the input may be 4-byte aligned.
                 //if ((readBytes ^ (readBytes & 3)) + 4 < inLength)
-                    //throw new TooMuchInputException(readBytes, inLength);
+                //throw new TooMuchInputException(readBytes, inLength);
             }
             return decompressedSize;
         }
-        public static int Compress(string infile, string outfile) {
+        public static int Compress(string infile, string outfile)
+        {
             // make sure the output directory exists
             string outDirectory = Path.GetDirectoryName(outfile);
             if (!Directory.Exists(outDirectory))
                 Directory.CreateDirectory(outDirectory);
             // open the proper Streams, and delegate to the format-specific code.
             using (FileStream inStream = File.Open(infile, FileMode.Open),
-            outStream = File.Create(outfile)) {
+            outStream = File.Create(outfile))
+            {
                 return dsdecmp.Compress(inStream, inStream.Length, outStream, true);
             }
         }
@@ -221,14 +238,16 @@ Bit 16-23 Disp LSBs
         /// This algorithm should yield files that are the same as those found in the games.
         /// (delegates to the optimized method if LookAhead is set)
         /// </summary>
-        public unsafe static int Compress(Stream instream, long inLength, Stream outstream, bool original) {
+        public unsafe static int Compress(Stream instream, long inLength, Stream outstream, bool original)
+        {
             // make sure the decompressed size fits in 3 bytes.
             // There should be room for four bytes, however I'm not 100% sure if that can be used
             // in every game, as it may not be a built-in function.
             if (inLength > 0xFFFFFF)
                 throw new InputTooLargeException();
             // use the other method if lookahead is enabled
-            if (!original) {
+            if (!original)
+            {
                 return CompressWithLA(instream, inLength, outstream);
             }
             // save the input data in an array to prevent having to go back and forth in a file
@@ -242,7 +261,8 @@ Bit 16-23 Disp LSBs
             outstream.WriteByte((byte)((inLength >> 8) & 0xFF));
             outstream.WriteByte((byte)((inLength >> 16) & 0xFF));
             int compressedLength = 4;
-            fixed (byte* instart = &indata[0]) {
+            fixed (byte* instart = &indata[0])
+            {
                 // we do need to buffer the output, as the first byte indicates which blocks are compressed.
                 // this version does not use a look-ahead, so we do not need to buffer more than 8 blocks at a time.
                 // (a block is at most 4 bytes long)
@@ -250,10 +270,12 @@ Bit 16-23 Disp LSBs
                 outbuffer[0] = 0;
                 int bufferlength = 1, bufferedBlocks = 0;
                 int readBytes = 0;
-                while (readBytes < inLength) {
+                while (readBytes < inLength)
+                {
                     #region If 8 blocks are bufferd, write them and reset the buffer
                     // we can only buffer 8 blocks at a time.
-                    if (bufferedBlocks == 8) {
+                    if (bufferedBlocks == 8)
+                    {
                         outstream.Write(outbuffer, 0, bufferlength);
                         compressedLength += bufferlength;
                         // reset the buffer
@@ -270,15 +292,18 @@ Bit 16-23 Disp LSBs
                     int length = LZUtil.GetOccurrenceLength(instart + readBytes, (int)Math.Min(inLength - readBytes, 0x10110),
                     instart + readBytes - oldLength, oldLength, out disp);
                     // length not 3 or more? next byte is raw data
-                    if (length < 3) {
+                    if (length < 3)
+                    {
                         outbuffer[bufferlength++] = *(instart + (readBytes++));
                     }
-                    else {
+                    else
+                    {
                         // 3 or more bytes can be copied? next (length) bytes will be compressed into 2 bytes
                         readBytes += length;
                         // mark the next block as compressed
                         outbuffer[0] |= (byte)(1 << (7 - bufferedBlocks));
-                        if (length > 0x110) {
+                        if (length > 0x110)
+                        {
                             // case 1: 1(B CD E)(F GH) + (0x111)(0x1) = (LEN)(DISP)
                             outbuffer[bufferlength] = 0x10;
                             outbuffer[bufferlength] |= (byte)(((length - 0x111) >> 12) & 0x0F);
@@ -287,14 +312,16 @@ Bit 16-23 Disp LSBs
                             bufferlength++;
                             outbuffer[bufferlength] = (byte)(((length - 0x111) << 4) & 0xF0);
                         }
-                        else if (length > 0x10) {
+                        else if (length > 0x10)
+                        {
                             // case 0; 0(B C)(D EF) + (0x11)(0x1) = (LEN)(DISP)
                             outbuffer[bufferlength] = 0x00;
                             outbuffer[bufferlength] |= (byte)(((length - 0x111) >> 4) & 0x0F);
                             bufferlength++;
                             outbuffer[bufferlength] = (byte)(((length - 0x111) << 4) & 0xF0);
                         }
-                        else {
+                        else
+                        {
                             // case > 1: (A)(B CD) + (0x1)(0x1) = (LEN)(DISP)
                             outbuffer[bufferlength] = (byte)(((length - 1) << 4) & 0xF0);
                         }
@@ -307,7 +334,8 @@ Bit 16-23 Disp LSBs
                     bufferedBlocks++;
                 }
                 // copy the remaining blocks to the output
-                if (bufferedBlocks > 0) {
+                if (bufferedBlocks > 0)
+                {
                     outstream.Write(outbuffer, 0, bufferlength);
                     compressedLength += bufferlength;
                     /*/ make the compressed file 4-byte aligned.
@@ -326,7 +354,8 @@ Bit 16-23 Disp LSBs
         /// and determine the optimal 'length' values for the compressed blocks. Is not 100% optimal,
         /// as the flag-bytes are not taken into account.
         /// </summary>
-        private unsafe static int CompressWithLA(Stream instream, long inLength, Stream outstream) {
+        private unsafe static int CompressWithLA(Stream instream, long inLength, Stream outstream)
+        {
             // save the input data in an array to prevent having to go back and forth in a file
             byte[] indata = new byte[inLength];
             int numReadBytes = instream.Read(indata, 0, (int)inLength);
@@ -338,7 +367,8 @@ Bit 16-23 Disp LSBs
             outstream.WriteByte((byte)((inLength >> 8) & 0xFF));
             outstream.WriteByte((byte)((inLength >> 16) & 0xFF));
             int compressedLength = 4;
-            fixed (byte* instart = &indata[0]) {
+            fixed (byte* instart = &indata[0])
+            {
                 // we do need to buffer the output, as the first byte indicates which blocks are compressed.
                 // this version does not use a look-ahead, so we do not need to buffer more than 8 blocks at a time.
                 // blocks are at most 4 bytes long.
@@ -349,9 +379,11 @@ Bit 16-23 Disp LSBs
                 // get the optimal choices for len and disp
                 int[] lengths, disps;
                 GetOptimalCompressionLengths(instart, indata.Length, out lengths, out disps);
-                while (readBytes < inLength) {
+                while (readBytes < inLength)
+                {
                     // we can only buffer 8 blocks at a time.
-                    if (bufferedBlocks == 8) {
+                    if (bufferedBlocks == 8)
+                    {
                         outstream.Write(outbuffer, 0, bufferlength);
                         compressedLength += bufferlength;
                         // reset the buffer
@@ -359,13 +391,16 @@ Bit 16-23 Disp LSBs
                         bufferlength = 1;
                         bufferedBlocks = 0;
                     }
-                    if (lengths[readBytes] == 1) {
+                    if (lengths[readBytes] == 1)
+                    {
                         outbuffer[bufferlength++] = *(instart + (readBytes++));
                     }
-                    else {
+                    else
+                    {
                         // mark the next block as compressed
                         outbuffer[0] |= (byte)(1 << (7 - bufferedBlocks));
-                        if (lengths[readBytes] > 0x110) {
+                        if (lengths[readBytes] > 0x110)
+                        {
                             // case 1: 1(B CD E)(F GH) + (0x111)(0x1) = (LEN)(DISP)
                             outbuffer[bufferlength] = 0x10;
                             outbuffer[bufferlength] |= (byte)(((lengths[readBytes] - 0x111) >> 12) & 0x0F);
@@ -374,14 +409,16 @@ Bit 16-23 Disp LSBs
                             bufferlength++;
                             outbuffer[bufferlength] = (byte)(((lengths[readBytes] - 0x111) << 4) & 0xF0);
                         }
-                        else if (lengths[readBytes] > 0x10) {
+                        else if (lengths[readBytes] > 0x10)
+                        {
                             // case 0; 0(B C)(D EF) + (0x11)(0x1) = (LEN)(DISP)
                             outbuffer[bufferlength] = 0x00;
                             outbuffer[bufferlength] |= (byte)(((lengths[readBytes] - 0x111) >> 4) & 0x0F);
                             bufferlength++;
                             outbuffer[bufferlength] = (byte)(((lengths[readBytes] - 0x111) << 4) & 0xF0);
                         }
-                        else {
+                        else
+                        {
                             // case > 1: (A)(B CD) + (0x1)(0x1) = (LEN)(DISP)
                             outbuffer[bufferlength] = (byte)(((lengths[readBytes] - 1) << 4) & 0xF0);
                         }
@@ -395,7 +432,8 @@ Bit 16-23 Disp LSBs
                     bufferedBlocks++;
                 }
                 // copy the remaining blocks to the output
-                if (bufferedBlocks > 0) {
+                if (bufferedBlocks > 0)
+                {
                     outstream.Write(outbuffer, 0, bufferlength);
                     compressedLength += bufferlength;
                     /*/ make the compressed file 4-byte aligned.
@@ -421,11 +459,13 @@ Bit 16-23 Disp LSBs
         /// this value is the optimal 'length' value. If it is 1, the block should not be compressed.</param>
         /// <param name="disps">The 'disp' values of the compressed blocks. May be 0, in which case the
         /// corresponding length will never be anything other than 1.</param>
-        private unsafe static void GetOptimalCompressionLengths(byte* indata, int inLength, out int[] lengths, out int[] disps) {
+        private unsafe static void GetOptimalCompressionLengths(byte* indata, int inLength, out int[] lengths, out int[] disps)
+        {
             lengths = new int[inLength];
             disps = new int[inLength];
             int[] minLengths = new int[inLength];
-            for (int i = inLength - 1; i >= 0; i--) {
+            for (int i = inLength - 1; i >= 0; i--)
+            {
                 // first get the compression length when the next byte is not compressed
                 minLengths[i] = int.MaxValue;
                 lengths[i] = 1;
@@ -442,7 +482,8 @@ Bit 16-23 Disp LSBs
                 indata + i - oldLength, oldLength, out disps[i]);
                 if (disps[i] > i)
                     throw new Exception("disp is too large");
-                for (int j = 3; j <= maxLen; j++) {
+                for (int j = 3; j <= maxLen; j++)
+                {
                     int blocklen;
                     if (j > 0x110)
                         blocklen = 4;
@@ -455,7 +496,8 @@ Bit 16-23 Disp LSBs
                         newCompLen = blocklen;
                     else
                         newCompLen = blocklen + minLengths[i + j];
-                    if (newCompLen < minLengths[i]) {
+                    if (newCompLen < minLengths[i])
+                    {
                         lengths[i] = j;
                         minLengths[i] = newCompLen;
                     }
@@ -472,19 +514,22 @@ Bit 16-23 Disp LSBs
     /// An exception indicating that the file cannot be compressed, because the decompressed size
     /// cannot be represented in the current compression format.
     /// </summary>
-    public class InputTooLargeException : Exception {
+    public class InputTooLargeException : Exception
+    {
         /// <summary>
         /// Creates a new exception that indicates that the input is too big to be compressed.
         /// </summary>
         public InputTooLargeException()
             : base("The compression ratio is not high enough to fit the input "
-            + "in a single compressed file.") { }
+            + "in a single compressed file.")
+        { }
     }
     /// <summary>
     /// An exception that is thrown by the decompression functions when there
     /// is not enough data available in order to properly decompress the input.
     /// </summary>
-    public class NotEnoughDataException : IOException {
+    public class NotEnoughDataException : IOException
+    {
         private long currentOutSize;
         private long totalOutSize;
         /// <summary>
@@ -503,7 +548,8 @@ Bit 16-23 Disp LSBs
         public NotEnoughDataException(long currentOutSize, long totalOutSize)
             : base("Not enough data availble; 0x" + currentOutSize.ToString("X")
             + " of " + (totalOutSize < 0 ? "???" : ("0x" + totalOutSize.ToString("X")))
-            + " bytes written.") {
+            + " bytes written.")
+        {
             this.currentOutSize = currentOutSize;
             this.totalOutSize = totalOutSize;
         }
@@ -512,19 +558,22 @@ Bit 16-23 Disp LSBs
     /// An exception thrown by the compression or decompression function, indicating that the
     /// given input length was too large for the given input stream.
     /// </summary>
-    public class StreamTooShortException : EndOfStreamException {
+    public class StreamTooShortException : EndOfStreamException
+    {
         /// <summary>
         /// Creates a new exception that indicates that the stream was shorter than the given input length.
         /// </summary>
         public StreamTooShortException()
             : base("The end of the stream was reached "
-            + "before the given amout of data was read.") { }
+            + "before the given amout of data was read.")
+        { }
     }
     /// <summary>
     /// An exception indication that the input has more data than required in order
     /// to decompress it. This may indicate that more sub-files are present in the file.
     /// </summary>
-    public class TooMuchInputException : Exception {
+    public class TooMuchInputException : Exception
+    {
         /// <summary>
         /// Gets the number of bytes read by the decompressed to decompress the stream.
         /// </summary>
@@ -538,7 +587,8 @@ Bit 16-23 Disp LSBs
         /// <param name="totLength">The indicated length of the input stream.</param>
         public TooMuchInputException(long readBytes, long totLength)
             : base("The input contains more data than necessary. Only used 0x"
-            + readBytes.ToString("X") + " of 0x" + totLength.ToString("X") + " bytes") {
+            + readBytes.ToString("X") + " of 0x" + totLength.ToString("X") + " bytes")
+        {
             this.ReadBytes = readBytes;
         }
     }
@@ -547,7 +597,8 @@ Bit 16-23 Disp LSBs
     /// <summary>
     /// Class for I/O-related utility methods.
     /// </summary>
-    public static class LZUtil {
+    public static class LZUtil
+    {
         /// <summary>
         /// Determine the maximum size of a LZ-compressed block starting at newPtr, using the already compressed data
         /// starting at oldPtr. Takes O(inLength * oldLength) = O(n^2) time.
@@ -560,13 +611,15 @@ Bit 16-23 Disp LSBs
         /// <param name="disp">The offset of the start of the longest block to refer to.</param>
         /// <param name="minDisp">The minimum allowed value for 'disp'.</param>
         /// <returns>The length of the longest sequence of bytes that can be copied from the already decompressed data.</returns>
-        public static unsafe int GetOccurrenceLength(byte* newPtr, int newLength, byte* oldPtr, int oldLength, out int disp, int minDisp = 1) {
+        public static unsafe int GetOccurrenceLength(byte* newPtr, int newLength, byte* oldPtr, int oldLength, out int disp, int minDisp = 1)
+        {
             disp = 0;
             if (newLength == 0)
                 return 0;
             int maxLength = 0;
             // try every possible 'disp' value (disp = oldLength - i)
-            for (int i = 0; i < oldLength - minDisp; i++) {
+            for (int i = 0; i < oldLength - minDisp; i++)
+            {
                 // work from the start of the old data to the end, to mimic the original implementation's behaviour
                 // (and going from start to end or from end to start does not influence the compression ratio anyway)
                 byte* currentOldStart = oldPtr + i;
@@ -574,14 +627,16 @@ Bit 16-23 Disp LSBs
                 // determine the length we can copy if we go back (oldLength - i) bytes
                 // always check the next 'newLength' bytes, and not just the available 'old' bytes,
                 // as the copied data can also originate from what we're currently trying to compress.
-                for (int j = 0; j < newLength; j++) {
+                for (int j = 0; j < newLength; j++)
+                {
                     // stop when the bytes are no longer the same
                     if (*(currentOldStart + j) != *(newPtr + j))
                         break;
                     currentLength++;
                 }
                 // update the optimal value
-                if (currentLength > maxLength) {
+                if (currentLength > maxLength)
+                {
                     maxLength = currentLength;
                     disp = oldLength - i;
                     // if we cannot do better anyway, stop trying.
@@ -592,7 +647,8 @@ Bit 16-23 Disp LSBs
             return maxLength;
         }
     }
-    public static class IOUtils {
+    public static class IOUtils
+    {
         #region byte[] <-> (u)int
         /// <summary>
         /// Returns a 4-byte unsigned integer as used on the NDS converted from four bytes
@@ -601,7 +657,8 @@ Bit 16-23 Disp LSBs
         /// <param name="buffer">The source of the data.</param>
         /// <param name="offset">The location of the data in the source.</param>
         /// <returns>The indicated 4 bytes converted to uint</returns>
-        public static uint ToNDSu32(byte[] buffer, int offset) {
+        public static uint ToNDSu32(byte[] buffer, int offset)
+        {
             return (uint)(buffer[offset]
             | (buffer[offset + 1] << 8)
             | (buffer[offset + 2] << 16)
@@ -614,7 +671,8 @@ Bit 16-23 Disp LSBs
         /// <param name="buffer">The source of the data.</param>
         /// <param name="offset">The location of the data in the source.</param>
         /// <returns>The indicated 4 bytes converted to int</returns>
-        public static int ToNDSs32(byte[] buffer, int offset) {
+        public static int ToNDSs32(byte[] buffer, int offset)
+        {
             return (int)(buffer[offset]
             | (buffer[offset + 1] << 8)
             | (buffer[offset + 2] << 16)
@@ -624,7 +682,8 @@ Bit 16-23 Disp LSBs
         /// Converts a u32 value into a sequence of bytes that would make ToNDSu32 return
         /// the given input value.
         /// </summary>
-        public static byte[] FromNDSu32(uint value) {
+        public static byte[] FromNDSu32(uint value)
+        {
             return new byte[] {
 (byte)(value & 0xFF),
 (byte)((value >> 8) & 0xFF),
@@ -639,7 +698,8 @@ Bit 16-23 Disp LSBs
         /// <param name="buffer">The source of the data.</param>
         /// <param name="offset">The location of the data in the source.</param>
         /// <returns>The indicated 3 bytes converted to an integer.</returns>
-        public static int ToNDSu24(byte[] buffer, int offset) {
+        public static int ToNDSu24(byte[] buffer, int offset)
+        {
             return (int)(buffer[offset]
             | (buffer[offset + 1] << 8)
             | (buffer[offset + 2] << 16));

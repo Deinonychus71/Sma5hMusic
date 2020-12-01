@@ -1,18 +1,18 @@
-﻿using Microsoft.Extensions.Logging;
-using ILogger = Microsoft.Extensions.Logging.ILogger;
-using System;
-using Sm5sh.Mods.Music.Interfaces;
-using ReactiveUI.Fody.Helpers;
+﻿using Avalonia.Controls;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using ReactiveUI;
-using System.Text.RegularExpressions;
-using Avalonia.Controls;
+using ReactiveUI.Fody.Helpers;
+using ReactiveUI.Validation.Extensions;
+using ReactiveUI.Validation.Helpers;
+using Sm5sh.Mods.Music;
+using Sm5sh.Mods.Music.Interfaces;
+using System;
+using System.IO;
 using System.Reactive;
 using System.Reactive.Linq;
-using ReactiveUI.Validation.Helpers;
-using ReactiveUI.Validation.Extensions;
-using System.IO;
-using Microsoft.Extensions.Options;
-using Sm5sh.Mods.Music;
+using System.Text.RegularExpressions;
+using ILogger = Microsoft.Extensions.Logging.ILogger;
 
 namespace Sm5sh.GUI.ViewModels
 {
@@ -65,7 +65,7 @@ namespace Sm5sh.GUI.ViewModels
 
         public void LoadMusicMod(IMusicMod musicMod)
         {
-            if(musicMod == null)
+            if (musicMod == null)
             {
                 ModName = string.Empty;
                 ModPath = string.Empty;

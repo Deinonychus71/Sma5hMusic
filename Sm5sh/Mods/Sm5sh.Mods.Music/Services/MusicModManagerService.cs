@@ -6,7 +6,6 @@ using Sm5sh.Mods.Music.Helpers;
 using Sm5sh.Mods.Music.Interfaces;
 using Sm5sh.Mods.Music.Models;
 using Sm5sh.Mods.Music.MusicMods;
-using Sm5sh.Mods.Music.MusicMods.AdvancedMusicModModels;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -93,9 +92,9 @@ namespace Sm5sh.Mods.Music.Services
             if (musicMod?.Mod == null)
                 return null;
 
-            if(musicMod.Mod.Version != 2)
+            if (musicMod.Mod.Version != 2)
             {
-                musicMod = ActivatorUtilities.CreateInstance<AdvancedMusicMod>(_serviceProvider,  musicModFolder, musicMod);
+                musicMod = ActivatorUtilities.CreateInstance<AdvancedMusicMod>(_serviceProvider, musicModFolder, musicMod);
             }
 
             return musicMod;

@@ -1,5 +1,4 @@
 ﻿using ReactiveUI;
-using ReactiveUI.Fody.Helpers;
 using Sm5sh.GUI.Helpers;
 
 namespace Sm5sh.GUI.ViewModels

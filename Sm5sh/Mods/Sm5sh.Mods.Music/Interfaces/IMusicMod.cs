@@ -1,5 +1,4 @@
 ﻿using Sm5sh.Mods.Music.Models;
-using System;
 using System.Collections.Generic;
 
 namespace Sm5sh.Mods.Music.Interfaces

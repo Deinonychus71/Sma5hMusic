@@ -1,28 +1,27 @@
-﻿using DynamicData;
+﻿using AutoMapper;
+using Avalonia.Controls;
+using DynamicData;
 using DynamicData.Binding;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using ReactiveUI;
+using ReactiveUI.Fody.Helpers;
+using Sm5sh.GUI.Helpers;
+using Sm5sh.GUI.Interfaces;
+using Sm5sh.GUI.Views;
 using Sm5sh.Mods.Music.Interfaces;
 using Sm5sh.Mods.Music.Models;
-using VGMMusic;
-using System.Threading.Tasks;
-using ILogger = Microsoft.Extensions.Logging.ILogger;
-using Microsoft.Extensions.DependencyInjection;
 using System;
-using System.Linq;
-using Sm5sh.GUI.Interfaces;
-using Microsoft.Extensions.Options;
-using Sm5sh.GUI.Views;
-using System.Collections.ObjectModel;
-using Sm5sh.GUI.Helpers;
-using AutoMapper;
-using System.Reactive.Linq;
-using ReactiveUI;
-using System.Reactive;
-using Avalonia.Controls;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
-using ReactiveUI.Fody.Helpers;
+using System.Reactive;
+using System.Reactive.Linq;
+using System.Threading.Tasks;
+using VGMMusic;
+using ILogger = Microsoft.Extensions.Logging.ILogger;
 
 namespace Sm5sh.GUI.ViewModels
 {
@@ -460,7 +459,7 @@ namespace Sm5sh.GUI.ViewModels
                         _logger.LogInformation("{ToneId} deleted.", vmBgmEntry.ToneId);
 
                         //Delete from playlist
-                        foreach(var playlist in _playlistsEntries)
+                        foreach (var playlist in _playlistsEntries)
                             playlist.RemoveSong(vmBgmEntry.DbRoot.UiBgmId);
                     }
                 }

@@ -1,18 +1,18 @@
-﻿using Avalonia;
+﻿using AutoMapper;
+using Avalonia;
 using Avalonia.ReactiveUI;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Splat.Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Sm5sh.GUI.Dialogs;
+using Sm5sh.GUI.Interfaces;
+using Sm5sh.GUI.ViewModels;
+using Sm5sh.GUI.Views;
+using Sm5sh.Mods.Music.Models.AutoMapper;
+using Splat.Microsoft.Extensions.DependencyInjection;
 using System;
 using System.IO;
-using Sm5sh.GUI.ViewModels;
 using VGMMusic;
-using Sm5sh.GUI.Views;
-using Sm5sh.GUI.Interfaces;
-using Sm5sh.GUI.Dialogs;
-using AutoMapper;
-using Sm5sh.Mods.Music.Models.AutoMapper;
 
 namespace Sm5sh.GUI
 {

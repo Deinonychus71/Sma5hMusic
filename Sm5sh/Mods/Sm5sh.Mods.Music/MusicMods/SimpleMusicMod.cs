@@ -1,5 +1,4 @@
-﻿using CsvHelper;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Sm5sh.Core.Helpers;
 using Sm5sh.Mods.Music.Helpers;
@@ -168,7 +167,7 @@ namespace Sm5sh.Mods.Music.MusicMods
         private bool ValidateAndSanitizeModConfig()
         {
             //Validate
-            if(_musicModConfig.Games == null || _musicModConfig.Games.Count == 0)
+            if (_musicModConfig.Games == null || _musicModConfig.Games.Count == 0)
             {
                 _logger.LogWarning("MusicModFile {MusicMod} is invalid. Skipping...", _musicModConfig.Name);
                 return false;
@@ -266,7 +265,7 @@ namespace Sm5sh.Mods.Music.MusicMods
                     //Special cat info fix
                     if (song.SpecialCategory != null && song.SpecialCategory.Parameters != null)
                     {
-                        for(int i = 0; i < song.SpecialCategory.Parameters.Count; i++)
+                        for (int i = 0; i < song.SpecialCategory.Parameters.Count; i++)
                         {
                             var param = song.SpecialCategory.Parameters[i];
                             if (!param.StartsWith(Constants.InternalIds.INFO_ID_PREFIX))

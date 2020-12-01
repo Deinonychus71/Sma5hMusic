@@ -74,7 +74,7 @@ namespace Sm5sh.ResourceProviders.Prc.Helpers
 
                     var keyString = _paramHashes[node.Key];
 
-                    foreach(var filterRegex in filtersRegex) 
+                    foreach (var filterRegex in filtersRegex)
                     {
                         if (Regex.IsMatch(keyString, filterRegex.Value.Regex))
                         {
@@ -85,7 +85,7 @@ namespace Sm5sh.ResourceProviders.Prc.Helpers
                         }
                     }
 
-                    if(propertyInfo == null)
+                    if (propertyInfo == null)
                         throw new Exception($"Hex 0x{node.Key:X} was not mapped to any property.");
                 }
             }
@@ -151,7 +151,7 @@ namespace Sm5sh.ResourceProviders.Prc.Helpers
                     throw new Exception("Data error");
 
                 var nodeValue = node as ParamValue;
-                if(nodeValue.TypeKey == ParamType.hash40)
+                if (nodeValue.TypeKey == ParamType.hash40)
                 {
                     propertyInfo.SetValue(objToMap, GetStringFromHex((ulong)nodeValue.Value));
                 }
@@ -230,7 +230,7 @@ namespace Sm5sh.ResourceProviders.Prc.Helpers
                 {
                     newValue = new ParamValue(paramType, GetHexFromString((string)propertyValue));
                 }
-                else if(propertyValue == null && paramType == ParamType.@string)
+                else if (propertyValue == null && paramType == ParamType.@string)
                 {
                     newValue = new ParamValue(paramType, string.Empty);
                 }

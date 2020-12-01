@@ -41,12 +41,12 @@ namespace Sm5sh.GUI.Dialogs
             _openFileDialog.Title = "Load Audio Files";
 
             string[] results;
-            if(parent == null)
+            if (parent == null)
                 results = await _openFileDialog.ShowAsync(_rootDialogWindow.Window);
             else
                 results = await _openFileDialog.ShowAsync(parent);
 
-            if(results.Length > 0)
+            if (results.Length > 0)
                 _savedDirectory = Path.GetDirectoryName(results[0]);
 
             return results;

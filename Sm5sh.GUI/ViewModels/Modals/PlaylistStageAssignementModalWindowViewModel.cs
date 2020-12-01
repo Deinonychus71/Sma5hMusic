@@ -6,9 +6,9 @@ using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using Sm5sh.GUI.Models;
 using System;
-using System.Linq;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
 

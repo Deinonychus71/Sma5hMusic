@@ -33,7 +33,7 @@ namespace Sm5sh.Mods.Music.Services
             catch (Exception e)
             {
                 _logger.LogError(e.Message);
-            } 
+            }
 
             _logger.LogDebug("VGAudio Metadata for {FilePath}: TotalSamples: {TotalSamples}, LoopStartSample: {LoopStartSample}, LoopEndSample: {LoopEndSample}",
                 inputFile, audioCuePoints.TotalSamples, audioCuePoints.LoopStartSample, audioCuePoints.LoopEndSample);
@@ -103,10 +103,10 @@ namespace Sm5sh.Mods.Music.Services
         private ulong ReadValueUInt64Safe(string searchString, string parsingStartIndex, string parsingEndIndex = " ")
         {
             var output = searchString.Split(parsingStartIndex);
-            if(output.Length > 1)
+            if (output.Length > 1)
             {
                 var foundValue = output[1].Split(parsingEndIndex)[0];
-                if(ulong.TryParse(foundValue, out ulong result))
+                if (ulong.TryParse(foundValue, out ulong result))
                 {
                     return result;
                 }

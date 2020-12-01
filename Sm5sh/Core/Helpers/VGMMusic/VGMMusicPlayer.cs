@@ -126,7 +126,7 @@ namespace VGMMusic
                 }
                 _requestStop = false;
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 _logger.LogError(e.Message, "Error while initializing/playing the song {FileName}", _filename);
             }

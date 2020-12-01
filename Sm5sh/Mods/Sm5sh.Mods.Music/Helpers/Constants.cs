@@ -1,7 +1,4 @@
-﻿using Sm5sh.Mods.Music.Models;
-using System.Collections.Generic;
-
-namespace Sm5sh.Mods.Music.Helpers
+﻿namespace Sm5sh.Mods.Music.Helpers
 {
     internal class Constants
     {

@@ -1,22 +1,22 @@
-﻿using Microsoft.Extensions.Logging;
-using ILogger = Microsoft.Extensions.Logging.ILogger;
-using System;
-using Sm5sh.Mods.Music.Interfaces;
-using ReactiveUI.Fody.Helpers;
-using ReactiveUI;
-using System.Text.RegularExpressions;
-using Avalonia.Controls;
-using System.Reactive;
+﻿using Avalonia.Controls;
 using DynamicData;
-using System.Reactive.Linq;
-using System.Collections.ObjectModel;
-using Sm5sh.GUI.Helpers;
-using System.Collections.Generic;
 using DynamicData.Binding;
-using System.Linq;
+using Microsoft.Extensions.Logging;
+using ReactiveUI;
+using ReactiveUI.Fody.Helpers;
 using ReactiveUI.Validation.Extensions;
 using ReactiveUI.Validation.Helpers;
+using Sm5sh.GUI.Helpers;
+using Sm5sh.Mods.Music.Interfaces;
 using Sm5sh.Mods.Music.Models;
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
+using System.Reactive;
+using System.Reactive.Linq;
+using System.Text.RegularExpressions;
+using ILogger = Microsoft.Extensions.Logging.ILogger;
 
 namespace Sm5sh.GUI.ViewModels
 {
@@ -61,7 +61,7 @@ namespace Sm5sh.GUI.ViewModels
         public ReactiveCommand<Window, Unit> ActionOK { get; }
         public ReactiveCommand<Window, Unit> ActionCancel { get; }
 
-        public GamePropertiesModalWindowViewModel(ILogger<GamePropertiesModalWindowViewModel> logger, AutoMapper.IMapper mapper, IObservable<IChangeSet<LocaleViewModel, string>> observableLocales, 
+        public GamePropertiesModalWindowViewModel(ILogger<GamePropertiesModalWindowViewModel> logger, AutoMapper.IMapper mapper, IObservable<IChangeSet<LocaleViewModel, string>> observableLocales,
             IObservable<IChangeSet<SeriesEntryViewModel, string>> observableSeries, IObservable<IChangeSet<GameTitleEntryViewModel, string>> observableGames)
         {
             _logger = logger;
@@ -120,7 +120,7 @@ namespace Sm5sh.GUI.ViewModels
 
         public void LoadGame(GameTitleEntryViewModel gameEntryViewModel)
         {
-            if(gameEntryViewModel == null)
+            if (gameEntryViewModel == null)
             {
                 UiGameTitleId = string.Empty;
                 NameId = string.Empty;

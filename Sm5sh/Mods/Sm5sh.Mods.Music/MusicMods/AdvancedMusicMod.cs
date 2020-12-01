@@ -115,7 +115,7 @@ namespace Sm5sh.Mods.Music.MusicMods
 
             //Create default game
             var game = _musicModConfig.Games.Where(p => p.UiGameTitleId == Constants.InternalIds.GAME_TITLE_ID_DEFAULT).FirstOrDefault();
-            if(game == null)
+            if (game == null)
             {
                 game = new GameConfig()
                 {
@@ -299,7 +299,7 @@ namespace Sm5sh.Mods.Music.MusicMods
 
             if (games != null)
             {
-                foreach(var gameEntry in games)
+                foreach (var gameEntry in games)
                 {
                     var newGame = _mapper.Map<GameConfig>(gameEntry.Key);
                     if (newGame.Bgms == null)
@@ -308,7 +308,7 @@ namespace Sm5sh.Mods.Music.MusicMods
 
                     if (gameEntry != null)
                     {
-                        foreach(var bgmEntry in gameEntry)
+                        foreach (var bgmEntry in gameEntry)
                         {
                             var mappedSong = _mapper.Map<BgmConfig>(bgmEntry);
                             newGame.Bgms.Add(mappedSong);

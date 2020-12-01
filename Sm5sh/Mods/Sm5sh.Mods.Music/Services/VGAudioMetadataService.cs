@@ -9,7 +9,7 @@ using VGAudio.Cli;
 
 namespace Sm5sh.Mods.Music.Services
 {
-    public class VGAudioMetadataService: IAudioMetadataService
+    public class VGAudioMetadataService : IAudioMetadataService
     {
         private readonly ILogger _logger;
 
@@ -109,10 +109,10 @@ namespace Sm5sh.Mods.Music.Services
         private ulong ReadValueUInt64Safe(string searchString, string parsingStartIndex, string parsingEndIndex = " ")
         {
             var output = searchString.Split(parsingStartIndex);
-            if(output.Length > 1)
+            if (output.Length > 1)
             {
                 var foundValue = output[1].Split(parsingEndIndex)[0];
-                if(ulong.TryParse(foundValue, out ulong result))
+                if (ulong.TryParse(foundValue, out ulong result))
                 {
                     return result;
                 }

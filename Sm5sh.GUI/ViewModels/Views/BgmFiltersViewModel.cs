@@ -61,7 +61,7 @@ namespace Sm5sh.GUI.ViewModels
             _recordTypes = GetRecordTypes();
 
             var whenAnyPropertyChanged = this.WhenAnyPropertyChanged("SelectedSeries", "SelectedGame",
-                "SelectedRecordType", "SelectedMod", "SelectedShowInSoundTest", "SelectedShowHiddenSongs", 
+                "SelectedRecordType", "SelectedMod", "SelectedShowInSoundTest", "SelectedShowHiddenSongs",
                 "SelectedCharacterVictorySongs", "SelectedPinchSongs", "SelectedCoreSongs", "SelectedModSongs");
             WhenFiltersAreApplied = observableBgmEntries
                 .AutoRefreshOnObservable(p => whenAnyPropertyChanged)
@@ -80,10 +80,11 @@ namespace Sm5sh.GUI.ViewModels
             observableBgmEntries
                 .Filter(p => p.MusicMod != null)
                 .Group(p => p.ModId, modsChanged.Select(_ => Unit.Default))
-                .Transform(p => {
+                .Transform(p =>
+                {
                     var mod = p.Cache.Items.First();
                     return new ModEntryViewModel(mod.ModId, mod.MusicMod);
-                 })
+                })
                 .Prepend(_allModsChangeSet)
                 .Sort(SortExpressionComparer<ModEntryViewModel>.Descending(p => p.AllFlag).ThenByAscending(p => p.ModName), SortOptimisations.IgnoreEvaluates)
                 .ObserveOn(RxApp.MainThreadScheduler)
@@ -129,7 +130,7 @@ namespace Sm5sh.GUI.ViewModels
             {
                 new Change<SeriesEntryViewModel, string>(ChangeReason.Add, "-1", new SeriesEntryViewModel()
                 {
-                    AllFlag = true, 
+                    AllFlag = true,
                     Title = "All"
                 })
             });

@@ -2,14 +2,14 @@
 using Microsoft.Extensions.Options;
 using Sm5sh.Attributes;
 using Sm5sh.Interfaces;
-using System;
-using System.Linq;
-using System.Collections.Generic;
-using System.IO;
-using Sm5sh.ResourceProviders.BgmPropertyFile.Helpers;
 using Sm5sh.Mods.Data.Sound.Config;
 using Sm5sh.Mods.Data.Sound.Config.BgmPropertyStructs;
+using Sm5sh.ResourceProviders.BgmPropertyFile.Helpers;
 using Sm5sh.ResourceProviders.Constants;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 
 namespace Sm5sh.ResourceProviders
 {

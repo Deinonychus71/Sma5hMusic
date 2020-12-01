@@ -1,10 +1,9 @@
-﻿using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Threading.Tasks;
+﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Sm5sh.Interfaces;
+using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Sm5sh.CLI
 {
@@ -53,7 +52,7 @@ namespace Sm5sh.CLI
             //Load existing mods
             _logger.LogInformation("--------------------");
             var initMods = new List<ISm5shMod>();
-            foreach(var mod in mods)
+            foreach (var mod in mods)
             {
                 _logger.LogInformation("{ModeName}: Initialize mod", mod.ModName);
                 if (mod.Init())

@@ -1,12 +1,12 @@
-﻿using ReactiveUI;
+﻿using Avalonia.Threading;
+using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
+using Sm5sh.GUI.Models;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Reactive;
-using System;
 using System.Reactive.Linq;
-using Sm5sh.GUI.Models;
-using Avalonia.Threading;
 
 namespace Sm5sh.GUI.ViewModels
 {
@@ -74,7 +74,7 @@ namespace Sm5sh.GUI.ViewModels
                 CopyToAllLanguages();
             else if (o.Id == COPY_ACTION_EMPTY)
                 CopyToEmptyLanguages();
-            
+
             Dispatcher.UIThread.InvokeAsync(() =>
             {
                 SelectedCopyAction = null;
@@ -83,13 +83,13 @@ namespace Sm5sh.GUI.ViewModels
 
         private void CopyToEmptyLanguages()
         {
-            foreach(var locale in Locales)
+            foreach (var locale in Locales)
             {
                 if (locale.Id == SelectedLocale.Id)
                     continue;
                 if (!_msbtValues.ContainsKey(locale.Id))
                     _msbtValues.Add(locale.Id, string.Empty);
-                if(string.IsNullOrEmpty(MSBTValues[locale.Id]))
+                if (string.IsNullOrEmpty(MSBTValues[locale.Id]))
                     MSBTValues[locale.Id] = CurrentLocalizedValue;
             }
         }
@@ -108,7 +108,7 @@ namespace Sm5sh.GUI.ViewModels
 
         private void SetCurrentLocalizedValue()
         {
-            if(_msbtValues != null && SelectedLocale != null)
+            if (_msbtValues != null && SelectedLocale != null)
             {
                 if (!_msbtValues.ContainsKey(SelectedLocale.Id))
                     _msbtValues.Add(SelectedLocale.Id, string.Empty);

@@ -5,8 +5,8 @@ namespace Sm5sh.GUI.ViewModels
     public class LocaleViewModel : ReactiveObject
     {
         public bool AllFlag { get; }
-        public string Id { get;  }
-        public string Label { get;  }
+        public string Id { get; }
+        public string Label { get; }
 
         public LocaleViewModel(string id, string label, bool allFlag = false)
         {

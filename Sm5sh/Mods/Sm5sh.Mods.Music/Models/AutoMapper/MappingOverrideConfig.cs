@@ -48,7 +48,7 @@ namespace Sm5sh.Mods.Music.Models.AutoMapper
                 .ForMember(i => i.IsDlc, me => me.MapFrom(p => p.IsDlc))
                 .ForMember(i => i.IsPatch, me => me.MapFrom(p => p.IsPatch))
                 .ForMember(i => i.DlcCharaId, me => me.MapFrom(p => p.DlcCharaId));
-           
+
 
             CreateMap<PlaylistEntry, MusicOverride.MusicOverrideConfigModels.PlaylistConfig>()
                 .ForMember(i => i.Id, me => me.MapFrom(p => p.Id))

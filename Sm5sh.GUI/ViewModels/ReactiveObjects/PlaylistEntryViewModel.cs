@@ -29,7 +29,7 @@ namespace Sm5sh.GUI.ViewModels
         public PlaylistEntryViewModel(PlaylistEntry playlistEntry, Dictionary<string, BgmEntryViewModel> refBgms = null)
         {
             _refPlaylistEntry = playlistEntry;
-            if(string.IsNullOrEmpty(playlistEntry.Title))
+            if (string.IsNullOrEmpty(playlistEntry.Title))
                 Title = Constants.GetBgmPlaylistName(playlistEntry.Id);
             else
                 Title = playlistEntry.Title;
@@ -67,7 +67,7 @@ namespace Sm5sh.GUI.ViewModels
 
         public PlaylistEntryValueViewModel AddSong(BgmEntryViewModel sourceObj, short orderId, short destinationIndex)
         {
-            PlaylistEntryValueViewModel output = null ;
+            PlaylistEntryValueViewModel output = null;
 
             for (short i = 0; i < 16; i++)
             {
@@ -87,7 +87,7 @@ namespace Sm5sh.GUI.ViewModels
             for (short i = 0; i < 16; i++)
             {
                 var refValue = Tracks[i].FirstOrDefault(p => p.UiBgmId == bgmId);
-                if(refValue != null)
+                if (refValue != null)
                     Tracks[i].Remove(refValue);
             }
             _cachedTracks = false;
@@ -98,7 +98,7 @@ namespace Sm5sh.GUI.ViewModels
             var output = new PlaylistEntry(this.Id, Title);
 
             var nbrItems = Tracks[0].Count;
-            for(int i = 0; i < nbrItems; i++)
+            for (int i = 0; i < nbrItems; i++)
             {
                 var newTrack = new PlaylistValueEntry() { UiBgmId = Tracks[0][i].UiBgmId };
                 output.Tracks.Add(newTrack);
@@ -142,7 +142,7 @@ namespace Sm5sh.GUI.ViewModels
         public Dictionary<short, ObservableCollection<PlaylistEntryValueViewModel>> ToPlaylistValueViewModelsByOrder(Dictionary<string, BgmEntryViewModel> refBgms)
         {
             var output = new Dictionary<short, List<PlaylistEntryValueViewModel>>();
-            for(short i = 0; i < 16; i++)
+            for (short i = 0; i < 16; i++)
                 output.Add(i, new List<PlaylistEntryValueViewModel>());
 
             foreach (var track in _refPlaylistEntry.Tracks)

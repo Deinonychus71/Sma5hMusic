@@ -1,11 +1,11 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using AutoMapper;
+using Microsoft.Extensions.Configuration;
 using Sm5sh.Interfaces;
 using Sm5sh.Mods.Music;
 using Sm5sh.Mods.Music.Interfaces;
+using Sm5sh.Mods.Music.Models.AutoMapper;
 using Sm5sh.Mods.Music.Services;
 using Sm5sh.ResourceProviders;
-using Sm5sh.Mods.Music.Models.AutoMapper;
-using AutoMapper;
 using VGMMusic;
 
 namespace Microsoft.Extensions.DependencyInjection

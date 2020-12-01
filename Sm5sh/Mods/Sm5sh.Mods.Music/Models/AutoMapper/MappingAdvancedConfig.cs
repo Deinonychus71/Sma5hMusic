@@ -7,14 +7,14 @@ namespace Sm5sh.Mods.Music.Models.AutoMapper
     {
         public MappingAdvancedConfig()
         {
-             CreateMap<AudioCuePoints, MusicMods.AdvancedMusicModModels.BgmPropertyEntryConfig>()
-                .ForMember(i => i.LoopEndMs, me => me.MapFrom(p => p.LoopEndMs))
-                .ForMember(i => i.LoopEndSample, me => me.MapFrom(p => p.LoopEndSample))
-                .ForMember(i => i.LoopStartMs, me => me.MapFrom(p => p.LoopStartMs))
-                .ForMember(i => i.LoopStartSample, me => me.MapFrom(p => p.LoopStartSample))
-                .ForMember(i => i.NameId, me => me.Ignore())
-                .ForMember(i => i.TotalSamples, me => me.MapFrom(p => p.TotalSamples))
-                .ForMember(i => i.TotalTimeMs, me => me.MapFrom(p => p.TotalTimeMs));
+            CreateMap<AudioCuePoints, MusicMods.AdvancedMusicModModels.BgmPropertyEntryConfig>()
+               .ForMember(i => i.LoopEndMs, me => me.MapFrom(p => p.LoopEndMs))
+               .ForMember(i => i.LoopEndSample, me => me.MapFrom(p => p.LoopEndSample))
+               .ForMember(i => i.LoopStartMs, me => me.MapFrom(p => p.LoopStartMs))
+               .ForMember(i => i.LoopStartSample, me => me.MapFrom(p => p.LoopStartSample))
+               .ForMember(i => i.NameId, me => me.Ignore())
+               .ForMember(i => i.TotalSamples, me => me.MapFrom(p => p.TotalSamples))
+               .ForMember(i => i.TotalTimeMs, me => me.MapFrom(p => p.TotalTimeMs));
             CreateMap<MusicMods.AdvancedMusicModModels.BgmPropertyEntryConfig, AudioCuePoints>()
                 .ForMember(i => i.LoopEndMs, me => me.MapFrom(p => p.LoopEndMs))
                 .ForMember(i => i.LoopEndSample, me => me.MapFrom(p => p.LoopEndSample))

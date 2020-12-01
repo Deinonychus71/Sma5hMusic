@@ -1,21 +1,21 @@
-﻿using Microsoft.Extensions.Logging;
-using ILogger = Microsoft.Extensions.Logging.ILogger;
-using ReactiveUI.Fody.Helpers;
-using System.Collections.ObjectModel;
-using Sm5sh.GUI.Models;
-using System.Collections.Generic;
-using Sm5sh.GUI.Helpers;
-using System.Linq;
-using System;
-using DynamicData;
-using System.Reactive.Linq;
-using ReactiveUI;
-using AutoMapper;
-using VGMMusic;
-using System.Reactive;
+﻿using AutoMapper;
 using Avalonia.Controls;
+using DynamicData;
+using Microsoft.Extensions.Logging;
+using ReactiveUI;
+using ReactiveUI.Fody.Helpers;
+using Sm5sh.GUI.Helpers;
+using Sm5sh.GUI.Models;
 using Sm5sh.Mods.Music.Models;
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
+using System.Reactive;
+using System.Reactive.Linq;
 using System.Reactive.Subjects;
+using VGMMusic;
+using ILogger = Microsoft.Extensions.Logging.ILogger;
 
 namespace Sm5sh.GUI.ViewModels
 {
@@ -143,7 +143,7 @@ namespace Sm5sh.GUI.ViewModels
             var previousTestOrder = _refSavedBgmEntryView.DbRoot.TestDispOrder;
             _refSavedBgmEntryView = _mapper.Map(SelectedBgmEntry, _refSavedBgmEntryView);
             _refSavedBgmEntryView.DbRoot.TestDispOrder = (short)(IsInSoundTest ? previousTestOrder > -1 ? previousTestOrder : 0 : -1);
-            if(SelectedRecordType != null)
+            if (SelectedRecordType != null)
                 _refSavedBgmEntryView.DbRoot.RecordType = SelectedRecordType.Id;
             _refSavedBgmEntryView.MSBTLabels.Title = MSBTTitleEditor.MSBTValues;
             _refSavedBgmEntryView.MSBTLabels.Author = MSBTAuthorEditor.MSBTValues;
@@ -151,7 +151,7 @@ namespace Sm5sh.GUI.ViewModels
 
             window.Close(window);
         }
-        
+
         private void AddNewGame(Window window)
         {
             _whenNewRequestToAddGameEntry.OnNext(window);
@@ -177,7 +177,7 @@ namespace Sm5sh.GUI.ViewModels
 
             //TODO: Cleanup
             //Manually setting fields to breaks references
-            SelectedBgmEntry = _mapper.Map(vmBgmEntry, new BgmEntryViewModel(_musicPlayer, new BgmEntry(vmBgmEntry.ToneId, vmBgmEntry.MusicMod, vmBgmEntry.Filename)) { GameTitleViewModel = vmBgmEntry.GameTitleViewModel});
+            SelectedBgmEntry = _mapper.Map(vmBgmEntry, new BgmEntryViewModel(_musicPlayer, new BgmEntry(vmBgmEntry.ToneId, vmBgmEntry.MusicMod, vmBgmEntry.Filename)) { GameTitleViewModel = vmBgmEntry.GameTitleViewModel });
             MSBTTitleEditor.MSBTValues = SelectedBgmEntry.MSBTLabels.Title;
             MSBTAuthorEditor.MSBTValues = SelectedBgmEntry.MSBTLabels.Author;
             MSBTCopyrightEditor.MSBTValues = SelectedBgmEntry.MSBTLabels.Copyright;

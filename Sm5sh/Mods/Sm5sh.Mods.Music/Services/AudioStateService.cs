@@ -5,17 +5,17 @@ using Sm5sh.Data;
 using Sm5sh.Data.Ui.Param.Database;
 using Sm5sh.Data.Ui.Param.Database.PrcUiBgmDatabaseModels;
 using Sm5sh.Data.Ui.Param.Database.PrcUiGameTitleDatabaseModels;
+using Sm5sh.Data.Ui.Param.Database.PrcUiStageDatabaseModels;
 using Sm5sh.Helpers;
 using Sm5sh.Interfaces;
 using Sm5sh.Mods.Music.Helpers;
 using Sm5sh.Mods.Music.Interfaces;
 using Sm5sh.Mods.Music.Models;
+using Sm5sh.ResourceProviders.Constants;
 using Sm5sh.ResourceProviders.Prc.Helpers;
 using System.Collections.Generic;
-using System.Linq;
-using Sm5sh.ResourceProviders.Constants;
 using System.IO;
-using Sm5sh.Data.Ui.Param.Database.PrcUiStageDatabaseModels;
+using System.Linq;
 
 namespace Sm5sh.Mods.Music.Services
 {
@@ -129,7 +129,7 @@ namespace Sm5sh.Mods.Music.Services
         {
             if (_bgmEntries.ContainsKey(toneId))
             {
-                if(!_deletedBgmEntries.ContainsKey(toneId))
+                if (!_deletedBgmEntries.ContainsKey(toneId))
                     _deletedBgmEntries.Add(toneId, _bgmEntries[toneId]);
                 _bgmEntries.Remove(toneId);
             }
@@ -378,7 +378,7 @@ namespace Sm5sh.Mods.Music.Services
             }
 
             //Mapping stage
-            foreach(var stage in paramStageDbRoot)
+            foreach (var stage in paramStageDbRoot)
             {
                 _stageEntries.Add(stage.Key, _mapper.Map<StageEntry>(stage.Value));
             }

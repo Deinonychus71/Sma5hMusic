@@ -38,7 +38,8 @@ namespace Sm5sh.CLI
             var loggerFactory = LoggerFactory.Create(builder => builder
                 .AddFilter<ConsoleLoggerProvider>((ll) => ll >= LogLevel.Information)
                 .AddFile(Path.Combine(configuration.GetValue<string>("LogPath"), "log_{Date}.txt"), LogLevel.Debug, retainedFileCountLimit: 7)
-                .AddSimpleConsole((c) => {
+                .AddSimpleConsole((c) =>
+                {
                     c.SingleLine = true;
                 }));
 
@@ -54,7 +55,7 @@ namespace Sm5sh.CLI
             //CLI
             services.AddScoped<IWorkspaceManager, WorkspaceManager>();
             services.AddScoped<Script>();
-            
+
             services.AddLogging();
         }
     }

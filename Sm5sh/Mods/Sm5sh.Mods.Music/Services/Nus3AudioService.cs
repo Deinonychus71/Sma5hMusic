@@ -78,7 +78,7 @@ namespace Sm5sh.Mods.Music.Services
                 _processService.RunProcess(_nus3AudioExeFile, $"-n -w \"{outputMediaFile}\"");
                 _processService.RunProcess(_nus3AudioExeFile, $"-A {toneId} \"{inputMediaFile}\" -w \"{outputMediaFile}\"");
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 _logger.LogError(e, "Error while generating nus3audio file");
                 return false;
@@ -103,9 +103,9 @@ namespace Sm5sh.Mods.Music.Services
 
                             var sb = new StringBuilder();
                             char c;
-                            while((c = w.ReadChar()) != '\0')
+                            while ((c = w.ReadChar()) != '\0')
                             {
- 
+
                                 sb.Append(c);
                             };
                             return sb.ToString();
@@ -113,7 +113,7 @@ namespace Sm5sh.Mods.Music.Services
                     }
                 }
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 _logger.LogError(e.Message);
                 return null;
@@ -172,7 +172,7 @@ namespace Sm5sh.Mods.Music.Services
             if (File.Exists(tempFile))
                 File.Delete(tempFile);
 
-            if(!result && !isFallback && !string.IsNullOrEmpty(_config.Value.Sm5shMusic.AudioConversionFormatFallBack) 
+            if (!result && !isFallback && !string.IsNullOrEmpty(_config.Value.Sm5shMusic.AudioConversionFormatFallBack)
                 && _config.Value.Sm5shMusic.AudioConversionFormat.ToLower() != _config.Value.Sm5shMusic.AudioConversionFormatFallBack.ToLower())
             {
                 _logger.LogWarning("The conversion from {InputMediaFile} to {OutputMediaFile} failed. Trying fallback conversation format.", inputMediaFile, outputMediaFile);
