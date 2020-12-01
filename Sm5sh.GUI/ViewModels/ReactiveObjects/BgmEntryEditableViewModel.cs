@@ -67,7 +67,7 @@ namespace Sm5sh.GUI.ViewModels
             public uint LoopEndSample { get; set; }
             public uint TotalTimeMs { get; set; }
             public uint TotalSamples { get; set; }
-            public uint Frequency { get { return TotalTimeMs / 1000 * TotalSamples; } }
+            public uint Frequency { get { return TotalTimeMs == 0 ? 0 : (uint)((double)TotalSamples / (double)TotalTimeMs * 1000.0); } }
 
             public BgmPropertyEntryEditableViewModel(BgmEntryEditableViewModel parent)
             {
