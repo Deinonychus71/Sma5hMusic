@@ -302,27 +302,32 @@ namespace Sm5sh.GUI.ViewModels
             _logger.LogInformation("Adding {NbrFiles} files to Mod {ModPath}", results.Length, managerMod.ModPath);
             foreach (var inputFile in results)
             {
-                if(!System.Text.RegularExpressions.Regex.IsMatch(Path.GetFileNameWithoutExtension(inputFile), @"^[a-z0-9_]+$"))
+                string toneId = Path.GetFileNameWithoutExtension(inputFile);
+                if (!System.Text.RegularExpressions.Regex.IsMatch(Path.GetFileNameWithoutExtension(inputFile), @"^[a-z0-9_]+$"))
                 {
-                    //TODO: Fix later, and let user change id
-                    await _messageDialog.ShowError("Error", $"The song {inputFile} could not be added to the mod. The filename should only contain lowercase characters, digits or underscore.");
-                    continue;
+                    toneId = await _messageDialog.PromptTest("Tone ID?", "Could not extract a Tone ID from the filename.\r\nPlease enter a valid Tone ID.");
+                    if (!System.Text.RegularExpressions.Regex.IsMatch(toneId, @"^[a-z0-9_]+$"))
+                    {
+                        //TODO: Fix later, and let user change id
+                        await _messageDialog.ShowError("Error", $"The song {inputFile} could not be added to the mod.\r\nThe Tone ID should only contain lowercase characters, digits or underscore.");
+                        continue;
+                    }
                 }
                 if (Path.GetExtension(inputFile.ToLower()) == ".nus3audio")
                 {
                     //TODO: Fix tone ID later if needed
-                    await _messageDialog.ShowInformation("Error", $"The song {inputFile} is being imported as a nus3audio without additional processing. Make sure the tone ID match the filename.");
+                    await _messageDialog.ShowInformation("Error", $"The song {inputFile} is being imported as a nus3audio without additional processing.\r\nMake sure the tone ID match the filename.");
                 }
-                var newBgm = managerMod.MusicMod.AddBgm(inputFile);
+                var newBgm = managerMod.MusicMod.AddBgm(toneId, inputFile);
                 if (newBgm == null)
                 {
-                    await _messageDialog.ShowError("Error", $"The song {inputFile} could not be added to the mod. Please check the logs.");
+                    await _messageDialog.ShowError("Error", $"The song {inputFile} could not be added to the mod.\r\nPlease check the logs.");
                     continue;
                 }
                 if (!_audioState.AddBgmEntry(newBgm))
                 {
                     newBgm.MusicMod.RemoveBgm(newBgm.ToneId);
-                    await _messageDialog.ShowError("Error", $"The song {inputFile} could not be added to the DB. Please check the logs.");
+                    await _messageDialog.ShowError("Error", $"The song {inputFile} could not be added to the DB.\r\nPlease check the logs.");
                     continue;
                 }
                 var vmBgmEntry = _mapper.Map(newBgm, new BgmEntryViewModel(_musicPlayer, newBgm));
@@ -366,7 +371,7 @@ namespace Sm5sh.GUI.ViewModels
                     {
                         //TODO - Handle anything saving in a specific service
                         vmBgmEntry.StopPlay();
-                        await Task.Delay(1500);
+                        await Task.Delay(500);
 
                         _logger.LogInformation("Deleting {ToneId}...", vmBgmEntry.ToneId);
                         var bgmDelete = vmBgmEntry.GetBgmEntryReference();

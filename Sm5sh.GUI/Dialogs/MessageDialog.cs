@@ -1,8 +1,10 @@
 ﻿using MessageBox.Avalonia;
 using MessageBox.Avalonia.DTO;
 using MessageBox.Avalonia.Enums;
+using MessageBox.Avalonia.Models;
 using Microsoft.Extensions.Logging;
 using Sm5sh.GUI.Interfaces;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Sm5sh.GUI.Dialogs
@@ -60,6 +62,21 @@ namespace Sm5sh.GUI.Dialogs
                 Style = STYLE
             });
             await msBoxStandardWindow.ShowDialog(_rootDialogWindow.Window);
+        }
+
+        public async Task<string> PromptTest(string title, string message)
+        {
+            var msBoxStandardWindow = MessageBoxManager.GetMessageBoxInputWindow(new MessageBoxInputParams
+            {
+                ButtonDefinitions = new List<ButtonDefinition>() { new ButtonDefinition() { Name = "Cancel", Type = ButtonType.Default }, new ButtonDefinition() { Name = "OK", Type = ButtonType.Default } },
+                WindowStartupLocation = Avalonia.Controls.WindowStartupLocation.CenterOwner,
+                ContentTitle = title,
+                ContentMessage = message,
+                Icon = Icon.Info,
+                Style = Style.DarkMode
+            });
+            var result = await msBoxStandardWindow.ShowDialog(_rootDialogWindow.Window);
+            return result.Button == "OK" ? result.Message : string.Empty;
         }
     }
 }

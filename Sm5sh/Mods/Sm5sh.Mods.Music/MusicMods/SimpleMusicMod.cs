@@ -100,7 +100,7 @@ namespace Sm5sh.Mods.Music.MusicMods
             return output;
         }
 
-        public BgmEntry AddBgm(string filename)
+        public BgmEntry AddBgm(string toneId, string filename)
         {
             throw new NotImplementedException();
         }

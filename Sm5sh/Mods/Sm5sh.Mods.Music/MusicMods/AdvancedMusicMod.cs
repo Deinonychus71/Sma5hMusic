@@ -87,7 +87,7 @@ namespace Sm5sh.Mods.Music.MusicMods
             return output;
         }
 
-        public BgmEntry AddBgm(string filename)
+        public BgmEntry AddBgm(string toneId, string filename)
         {
             if (_musicModConfig == null)
             {
@@ -97,7 +97,7 @@ namespace Sm5sh.Mods.Music.MusicMods
             _logger.LogInformation("Adding {Filename} file to Mod {ModName}", filename, _musicModConfig.Name);
 
             //Get toneId
-            var toneId = Path.GetFileNameWithoutExtension(filename).Replace(Constants.InternalIds.NUS3AUDIO_FILE_PREFIX, string.Empty).ToLower();
+            toneId = toneId.Replace(Constants.InternalIds.NUS3AUDIO_FILE_PREFIX, string.Empty).ToLower();
             var filenameWithoutPath = Path.GetFileName(filename);
 
             var toneIdExists = _musicModConfig.Games.Any(p => p.Bgms.Any(s => s.ToneId == toneId));

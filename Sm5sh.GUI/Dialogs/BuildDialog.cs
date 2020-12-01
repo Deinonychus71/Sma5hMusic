@@ -77,7 +77,7 @@ namespace Sm5sh.GUI.Dialogs
                 {
                     await Dispatcher.UIThread.InvokeAsync(async () =>
                     {
-                        await _messageDialog.ShowInformation("Build", "Starting the build now. Avoid touching anything while it's running. My developer didn't want to make a proper spinner :(");
+                        await _messageDialog.ShowInformation("Build", "Starting the build now. Avoid touching anything while it's running.\r\nMy developer didn't want to make a proper spinner :(");
                     }, DispatcherPriority.Background);
 
                     try
@@ -125,7 +125,7 @@ namespace Sm5sh.GUI.Dialogs
                 if (!_config.Value.SkipOutputPathCleanupConfirmation)
                 {
                     _logger.LogWarning("Files found in the workspace folder.");
-                    if (await _messageDialog.ShowWarningConfirm("Clean Output folder?", $"Your folder {_config.Value.OutputPath} must be empty before building the mod. Proceed?"))
+                    if (await _messageDialog.ShowWarningConfirm("Clean Output folder?", $"Your folder {_config.Value.OutputPath} must be empty before building the mod.\r\nProceed?"))
                     {
                         CleaningWorkspaceFolder(existingFiles);
                     }
