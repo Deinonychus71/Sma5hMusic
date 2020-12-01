@@ -12,8 +12,7 @@
     </StackPanel>
     <StackPanel Orientation="Horizontal">
       <ContentControl Content="{Binding $parent[UserControl].MusicPlayer}"/>
-      <TextBox AcceptsReturn="{Binding !$parent[UserControl].AcceptsReturn}" IsVisible="{Binding $parent[UserControl].IsReadOnly}" Classes="readonly" IsReadOnly="True" Text="{Binding $parent[UserControl].Text}"></TextBox>
-      <TextBox AcceptsReturn="{Binding !$parent[UserControl].AcceptsReturn}" IsVisible="{Binding !$parent[UserControl].IsReadOnly}" Text="{Binding $parent[UserControl].Text}"></TextBox>
+      <TextBox AcceptsReturn="{Binding !$parent[UserControl].AcceptsReturn}" IsReadOnly="{Binding $parent[UserControl].IsReadOnly}" Text="{Binding $parent[UserControl].Text}"></TextBox>
     </StackPanel>
   </StackPanel>
 </UserControl>

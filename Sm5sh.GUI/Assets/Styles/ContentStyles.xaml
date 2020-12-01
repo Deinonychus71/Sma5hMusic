@@ -64,22 +64,10 @@
     <Setter Property="MinWidth" Value="200"/>
     <Setter Property="Margin" Value="0,1,0,0"/>
   </Style>
-  <Style Selector="fields|PropertyTextField.readonly TextBlock">
+  <Style Selector="TextBox[IsReadOnly=true]">
     <Setter Property="Foreground" Value="Gray"/>
   </Style>
-  <Style Selector="fields|PropertyField.readonly TextBlock">
-    <Setter Property="Foreground" Value="Gray"/>
-  </Style>
-  <Style Selector="TextBox.readonly">
-    <Setter Property="Foreground" Value="Gray"/>
-  </Style>
-  <Style Selector="fields|PropertyTextField.readonly NumericUpDown">
-    <Setter Property="Foreground" Value="Gray"/>
-  </Style>
-  <Style Selector="fields|PropertyField.readonly NumericUpDown">
-    <Setter Property="Foreground" Value="Gray"/>
-  </Style>
-  <Style Selector="NumericUpDown.readonly">
+  <Style Selector="NumericUpDown[IsReadOnly=true]">
     <Setter Property="Foreground" Value="Gray"/>
   </Style>
   <Style Selector="fields|PropertyTextField.error TextBlock">

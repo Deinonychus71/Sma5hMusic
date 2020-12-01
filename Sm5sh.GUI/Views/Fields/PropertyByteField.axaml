@@ -10,8 +10,7 @@
       <TextBlock Classes="required" IsVisible="{Binding $parent[UserControl].IsRequired}" Text="*"/>
       <TextBlock Text="&#128712;" Classes="tooltip" ToolTip.Tip="{Binding $parent[UserControl].ToolTip}"/>
     </StackPanel>
-    <NumericUpDown Value="{Binding $parent[UserControl].Value}" Maximum="255" Minimum="0" IsVisible="{Binding $parent[UserControl].IsReadOnly}" Classes="readonly" IsReadOnly="True"/>
-    <NumericUpDown Value="{Binding $parent[UserControl].Value}" Maximum="255" Minimum="0" IsVisible="{Binding !$parent[UserControl].IsReadOnly}"/>
+    <NumericUpDown Value="{Binding $parent[UserControl].Value}" Maximum="255" Minimum="0" IsReadOnly="{Binding $parent[UserControl].IsReadOnly}"/>
     <TextBlock Classes="error" Text="{Binding $parent[UserControl].ValidationError}"/>
   </StackPanel>
 </UserControl>
