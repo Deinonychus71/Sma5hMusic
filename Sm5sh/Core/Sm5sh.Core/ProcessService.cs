@@ -22,13 +22,19 @@ namespace Sm5sh
             {
                 void onError(object sender, DataReceivedEventArgs data)
                 {
-                    _logger.LogError("Error while running {Executable} with arguments {Arguments} - {Error}", executablePath, arguments, data.Data);
-                    errorRedirect?.Invoke(sender, data);
+                    if (data != null && data.Data != null)
+                    {
+                        _logger.LogError("Error while running {Executable} with arguments {Arguments} - {Error}", executablePath, arguments, data.Data);
+                        errorRedirect?.Invoke(sender, data);
+                    }
                 }
                 void onInfo(object sender, DataReceivedEventArgs data)
                 {
-                    _logger.LogDebug("{Executable}: {Data}", executablePath, data.Data);
-                    standardRedirect?.Invoke(sender, data);
+                    if (data != null && data.Data != null)
+                    {
+                        _logger.LogDebug("{Executable}: {Data}", executablePath, data.Data);
+                        standardRedirect?.Invoke(sender, data);
+                    }
                 }
                 process.StartInfo.FileName = executablePath;
                 process.StartInfo.Arguments = arguments;
@@ -39,9 +45,16 @@ namespace Sm5sh
                 process.StartInfo.RedirectStandardOutput = true;
                 process.OutputDataReceived += onInfo;
                 process.Start();
+                process.BeginOutputReadLine();
+                process.BeginErrorReadLine();
+
                 process.WaitForExit();
+
+                process.CancelOutputRead();
+                process.CancelErrorRead();
                 process.ErrorDataReceived -= onError;
                 process.OutputDataReceived -= onInfo;
+                process.Close();
             }
         }
 
