@@ -32,12 +32,46 @@
               </DataTemplate>
             </DataGridTemplateColumn.CellTemplate>
           </DataGridTemplateColumn>
-          <DataGridTextColumn Header="Series" Width="*" Binding="{Binding GameTitleViewModel.SeriesViewModel.Title, Mode=OneWay}" />
-          <DataGridTextColumn MaxWidth="300" Width="3*" Header="Game" Binding="{Binding GameTitleViewModel.Title, Mode=OneWay}" />
-          <DataGridTextColumn MaxWidth="400" Width="3*" Header="Title" Binding="{Binding Title, Mode=OneWay}"/>
-          <DataGridTextColumn Header="Record" Width="*" Binding="{Binding DbRoot.RecordType, Mode=OneWay, Converter={StaticResource RecordTypeConverter}}" />
-          <DataGridTextColumn Header="Source" Width="*" Binding="{Binding Source, Mode=OneWay}" />
-          <DataGridTextColumn Header="Mod Name" Width="2*" Binding="{Binding ModName, Mode=OneWay}" />
+          <DataGridTemplateColumn Header="Series" Width="*">
+            <DataGridTemplateColumn.CellTemplate>
+              <DataTemplate>
+                <TextBlock Margin="{StaticResource DataGridTextColumnCellTextBlockMargin}" VerticalAlignment="Center" 
+                           Foreground="{Binding DbRoot.TestDispOrder, Converter={StaticResource HiddenColumnConverter}}" Text="{Binding GameTitleViewModel.SeriesViewModel.Title, Mode=OneWay}"></TextBlock>
+              </DataTemplate>
+            </DataGridTemplateColumn.CellTemplate>
+          </DataGridTemplateColumn>
+          <DataGridTemplateColumn MaxWidth="300" Width="3*" Header="Game">
+            <DataGridTemplateColumn.CellTemplate>
+              <DataTemplate>
+                <TextBlock Margin="{StaticResource DataGridTextColumnCellTextBlockMargin}" VerticalAlignment="Center" 
+                           Foreground="{Binding DbRoot.TestDispOrder, Converter={StaticResource HiddenColumnConverter}}" Text="{Binding GameTitleViewModel.Title, Mode=OneWay}"></TextBlock>
+              </DataTemplate>
+            </DataGridTemplateColumn.CellTemplate>
+          </DataGridTemplateColumn>
+          <DataGridTemplateColumn MaxWidth="400" Width="3*" Header="Title">
+            <DataGridTemplateColumn.CellTemplate>
+              <DataTemplate>
+                <TextBlock Margin="{StaticResource DataGridTextColumnCellTextBlockMargin}" VerticalAlignment="Center" 
+                           Foreground="{Binding DbRoot.TestDispOrder, Converter={StaticResource HiddenColumnConverter}}" Text="{Binding Title, Mode=OneWay}"></TextBlock>
+              </DataTemplate>
+            </DataGridTemplateColumn.CellTemplate>
+          </DataGridTemplateColumn>
+          <DataGridTemplateColumn Header="Record" Width="*">
+            <DataGridTemplateColumn.CellTemplate>
+              <DataTemplate>
+                <TextBlock Margin="{StaticResource DataGridTextColumnCellTextBlockMargin}" VerticalAlignment="Center" 
+                           Foreground="{Binding DbRoot.TestDispOrder, Converter={StaticResource HiddenColumnConverter}}" Text="{Binding DbRoot.RecordType, Converter={StaticResource RecordTypeConverter}, Mode=OneWay}"></TextBlock>
+              </DataTemplate>
+            </DataGridTemplateColumn.CellTemplate>
+          </DataGridTemplateColumn>
+          <DataGridTemplateColumn Header="Mod Name" Width="2*">
+            <DataGridTemplateColumn.CellTemplate>
+              <DataTemplate>
+                <TextBlock Margin="{StaticResource DataGridTextColumnCellTextBlockMargin}" VerticalAlignment="Center" 
+                           Foreground="{Binding DbRoot.TestDispOrder, Converter={StaticResource HiddenColumnConverter}}" Text="{Binding ModName, Mode=OneWay}"></TextBlock>
+              </DataTemplate>
+            </DataGridTemplateColumn.CellTemplate>
+          </DataGridTemplateColumn>
           <DataGridTemplateColumn Header="Actions" CanUserResize="false" Width="80">
             <DataGridTemplateColumn.CellTemplate>
               <DataTemplate>

@@ -5,6 +5,7 @@ using Sm5sh.GUI.Models;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
 
@@ -38,6 +39,15 @@ namespace Sm5sh.GUI.ViewModels
 
         [Reactive]
         public string CurrentLocalizedValue { get; set; }
+
+        public bool HasValue()
+        {
+            if(MSBTValues != null)
+            {
+                return MSBTValues.Values.Any(p => !string.IsNullOrEmpty(p));
+            }
+            return false;
+        }
 
         [Reactive]
         public ComboItem SelectedCopyAction { get; set; }

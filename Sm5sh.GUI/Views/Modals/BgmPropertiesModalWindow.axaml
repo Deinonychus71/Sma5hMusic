@@ -28,7 +28,7 @@
     </StackPanel>
 
     <!-- Properties -->
-    <Grid IsVisible="{Binding SelectedBgmEntry, Mode=OneWay, Converter={x:Static ObjectConverters.IsNotNull}}">
+    <Grid>
       <TabControl Classes="content" TabStripPlacement="Bottom">
         <TabItem Header="General" FontSize="14">
           <Grid ColumnDefinitions="*,*,*" RowDefinitions="100,*">
@@ -45,7 +45,7 @@
                 <TextBlock>Song Information</TextBlock>
               </Border>
               <fields:PropertyTextField Label="Tone ID" Text="{Binding SelectedBgmEntry.ToneId, Mode=OneWay}" ToolTip="Unique ID of the song" IsReadOnly="True" />
-              <fields:PropertyField IsRequired="True" Label="Game" ToolTip="Game representing the song. If the game you want isn't in the database, click 'Add New Game Entry'">
+              <fields:PropertyField x:Name="GameId" IsRequired="True" Label="Game" ToolTip="Game representing the song. If the game you want isn't in the database, click 'Add New Game Entry'">
                 <fields:PropertyField.FieldContent>
                   <StackPanel>
                     <Button Content="Create New Game" Command="{Binding ActionNewGame}" CommandParameter="{Binding $parent[Window]}"/>

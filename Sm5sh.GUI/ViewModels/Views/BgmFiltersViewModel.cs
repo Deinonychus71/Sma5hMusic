@@ -64,6 +64,7 @@ namespace Sm5sh.GUI.ViewModels
                 "SelectedRecordType", "SelectedMod", "SelectedShowInSoundTest", "SelectedShowHiddenSongs",
                 "SelectedCharacterVictorySongs", "SelectedPinchSongs", "SelectedCoreSongs", "SelectedModSongs");
             WhenFiltersAreApplied = observableBgmEntries
+                .AutoRefresh(p => p.DbRoot.TestDispOrder, TimeSpan.FromMilliseconds(50))
                 .AutoRefreshOnObservable(p => whenAnyPropertyChanged, changeSetBuffer: TimeSpan.FromMilliseconds(50), scheduler: RxApp.TaskpoolScheduler)
                 .Filter(p =>
                     (SelectedShowHiddenSongs || (!SelectedShowHiddenSongs && !p.HiddenInSoundTest)) &&

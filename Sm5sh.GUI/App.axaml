@@ -12,6 +12,7 @@
     <cv:RecordTypeConverter x:Key="RecordTypeConverter"/>
     <cv:FilePathConverter x:Key="FilePathConverter"/>
     <cv:LocaleNameConverter x:Key="LocaleNameConverter"/>
+    <cv:HiddenColumnConverter x:Key="HiddenColumnConverter"/>
   </Application.Resources>
   <Application.Styles>
 

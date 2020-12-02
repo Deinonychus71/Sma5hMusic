@@ -4,6 +4,8 @@ using DynamicData;
 using Microsoft.Extensions.Logging;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
+using ReactiveUI.Validation.Extensions;
+using ReactiveUI.Validation.Helpers;
 using Sm5sh.GUI.Helpers;
 using Sm5sh.GUI.Models;
 using Sm5sh.Mods.Music.Models;
@@ -19,7 +21,7 @@ using ILogger = Microsoft.Extensions.Logging.ILogger;
 
 namespace Sm5sh.GUI.ViewModels
 {
-    public class BgmPropertiesModalWindowViewModel : ViewModelBase
+    public class BgmPropertiesModalWindowViewModel : ReactiveValidationObject
     {
         private readonly ILogger _logger;
         private readonly IMapper _mapper;
@@ -65,7 +67,6 @@ namespace Sm5sh.GUI.ViewModels
         public ReactiveCommand<Window, Unit> ActionCancel { get; }
         public ReactiveCommand<Window, Unit> ActionSave { get; }
         public ReactiveCommand<Window, Unit> ActionNewGame { get; }
-        public ReactiveCommand<Window, Unit> ActionEditGame { get; }
 
         public BgmPropertiesModalWindowViewModel(ILogger<BgmPropertiesModalWindowViewModel> logger, IVGMMusicPlayer musicPlayer, IMapper mapper, IObservable<IChangeSet<LocaleViewModel, string>> observableLocales,
             IObservable<IChangeSet<SeriesEntryViewModel, string>> observableSeries, IObservable<IChangeSet<GameTitleEntryViewModel, string>> observableGames,
@@ -77,11 +78,6 @@ namespace Sm5sh.GUI.ViewModels
             _recordTypes = GetRecordTypes();
             _specialCategories = GetSpecialCategories();
             _whenNewRequestToAddGameEntry = new Subject<Window>();
-
-            ActionCancel = ReactiveCommand.Create<Window>(CancelChanges);
-            ActionSave = ReactiveCommand.Create<Window>(SaveChanges);
-            ActionNewGame = ReactiveCommand.Create<Window>(AddNewGame);
-            ActionEditGame = ReactiveCommand.Create<Window>(SaveChanges);
 
             //Bind observables
             observableLocales
@@ -128,6 +124,16 @@ namespace Sm5sh.GUI.ViewModels
             //Set up subscriber on special category
             this.WhenAnyValue(p => p.SelectedSpecialCategory).Subscribe(o => SetSpecialCategoryRules(o?.Id));
             this.WhenAnyValue(p => p.SelectedBgmEntry.StreamSet.SpecialCategory).Subscribe(o => SetSpecialCategoryRules(o));
+
+            //Validation
+            this.ValidationRule(p => p.SelectedBgmEntry.GameTitleViewModel,
+                p => p != null && !string.IsNullOrWhiteSpace(p.UiGameTitleId),
+                "Please select a game.");
+            var canExecute = this.WhenAnyValue(x => x.ValidationContext.IsValid);
+
+            ActionCancel = ReactiveCommand.Create<Window>(CancelChanges);
+            ActionSave = ReactiveCommand.Create<Window>(SaveChanges, canExecute);
+            ActionNewGame = ReactiveCommand.Create<Window>(AddNewGame);
 
             SelectedBgmEntry = _fakeBgm;
         }

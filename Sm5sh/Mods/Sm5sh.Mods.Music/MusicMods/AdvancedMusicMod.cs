@@ -166,6 +166,16 @@ namespace Sm5sh.Mods.Music.MusicMods
             if (game == null)
             {
                 game = _mapper.Map<GameConfig>(bgmEntry.GameTitle);
+                if(game == null)
+                {
+                    game = new GameConfig()
+                    {
+                        UiGameTitleId = Constants.InternalIds.GAME_TITLE_ID_DEFAULT,
+                        UiSeriesId = Constants.InternalIds.GAME_SERIES_ID_DEFAULT,
+                        Title = new Dictionary<string, string>(),
+                        Bgms = new List<BgmConfig>()
+                    };
+                }
                 _musicModConfig.Games.Add(game);
                 if (game.Bgms == null)
                     game.Bgms = new List<BgmConfig>();

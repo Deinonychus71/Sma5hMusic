@@ -27,8 +27,22 @@
               </DataTemplate>
             </DataGridTemplateColumn.CellTemplate>
           </DataGridTemplateColumn>
-          <DataGridTextColumn Width="2*" Header="Game" Binding="{Binding GameTitleViewModel.Title, Mode=OneWay}" />
-          <DataGridTextColumn Width="3*" Header="Title" Binding="{Binding Title, Mode=OneWay}" />
+          <DataGridTemplateColumn Width="2*" Header="Game">
+            <DataGridTemplateColumn.CellTemplate>
+              <DataTemplate>
+                <TextBlock Margin="{StaticResource DataGridTextColumnCellTextBlockMargin}" VerticalAlignment="Center"
+                           Foreground="{Binding DbRoot.TestDispOrder, Converter={StaticResource HiddenColumnConverter}}" Text="{Binding GameTitleViewModel.Title, Mode=OneWay}"></TextBlock>
+              </DataTemplate>
+            </DataGridTemplateColumn.CellTemplate>
+          </DataGridTemplateColumn>
+          <DataGridTemplateColumn Width="3*" Header="Title">
+            <DataGridTemplateColumn.CellTemplate>
+              <DataTemplate>
+                <TextBlock Margin="{StaticResource DataGridTextColumnCellTextBlockMargin}" VerticalAlignment="Center"
+                           Foreground="{Binding DbRoot.TestDispOrder, Converter={StaticResource HiddenColumnConverter}}" Text="{Binding Title, Mode=OneWay}"></TextBlock>
+              </DataTemplate>
+            </DataGridTemplateColumn.CellTemplate>
+          </DataGridTemplateColumn>
         </DataGrid.Columns>
       </DataGrid>
     </Grid>

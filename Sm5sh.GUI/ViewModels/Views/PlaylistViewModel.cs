@@ -93,7 +93,6 @@ namespace Sm5sh.GUI.ViewModels
 
             //Bgms
             observableBgmEntries
-                .AutoRefresh(p => p.DbRoot.TestDispOrder, TimeSpan.FromMilliseconds(1))
                 .Sort(SortExpressionComparer<BgmEntryViewModel>.Ascending(p => p.HiddenInSoundTest).ThenByAscending(p => p.DbRoot.TestDispOrder), SortOptimisations.ComparesImmutableValuesOnly, 8000)
                 .TreatMovesAsRemoveAdd()
                 .ObserveOn(RxApp.MainThreadScheduler)
