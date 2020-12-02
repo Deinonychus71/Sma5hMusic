@@ -410,13 +410,19 @@ namespace Sm5sh.GUI.ViewModels
 
         public async Task EditBgmEntry(BgmEntryViewModel vmBgmEntry)
         {
-            VMBgmEditor.LoadBgmEntry(vmBgmEntry);
+            await VMBgmEditor.LoadBgmEntry(vmBgmEntry);
             Window modalEditBgmProps;
+            Window results;
             if (IsAdvanced)
+            {
                 modalEditBgmProps = new BgmAdvancedPropertiesModalWindow() { DataContext = VMBgmEditor };
+                results = await modalEditBgmProps.ShowDialog<BgmAdvancedPropertiesModalWindow>(_rootDialog.Window);
+            }
             else
+            {
                 modalEditBgmProps = new BgmPropertiesModalWindow() { DataContext = VMBgmEditor };
-            var results = await modalEditBgmProps.ShowDialog<BgmPropertiesModalWindow>(_rootDialog.Window);
+                results = await modalEditBgmProps.ShowDialog<BgmPropertiesModalWindow>(_rootDialog.Window);
+            }
 
             if (results != null)
             {

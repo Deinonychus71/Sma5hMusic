@@ -16,6 +16,7 @@ using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
+using System.Threading.Tasks;
 using VGMMusic;
 using ILogger = Microsoft.Extensions.Logging.ILogger;
 
@@ -177,8 +178,11 @@ namespace Sm5sh.GUI.ViewModels
             return recordTypes;
         }
 
-        public void LoadBgmEntry(BgmEntryViewModel vmBgmEntry)
+        public async Task LoadBgmEntry(BgmEntryViewModel vmBgmEntry)
         {
+            //Prevent random crash...?
+            await Task.Delay(100);
+
             _refSavedBgmEntryView = vmBgmEntry;
 
             //TODO: Cleanup
