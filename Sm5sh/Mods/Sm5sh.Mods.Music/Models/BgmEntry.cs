@@ -1,6 +1,7 @@
 ﻿using Sm5sh.Mods.Music.Helpers;
 using Sm5sh.Mods.Music.Interfaces;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Sm5sh.Mods.Music.Models
 {
@@ -59,7 +60,7 @@ namespace Sm5sh.Mods.Music.Models
                 UiGameTitleId3 = Constants.InternalIds.GAME_TITLE_ID_DEFAULT,
                 UiGameTitleId4 = Constants.InternalIds.GAME_TITLE_ID_DEFAULT,
                 SaveNo = -1,
-                TestDispOrder = -1,
+                TestDispOrder = short.MaxValue,
                 JpRegion = true,
                 OtherRegion = true,
                 Possessed = true,
@@ -138,6 +139,17 @@ namespace Sm5sh.Mods.Music.Models
             public string TitleKey { get { return !string.IsNullOrEmpty(Parent.DbRoot.NameId) ? string.Format(Constants.InternalIds.MSBT_BGM_TITLE, Parent.DbRoot.NameId) : null; } }
             public string AuthorKey { get { return !string.IsNullOrEmpty(Parent.DbRoot.NameId) ? string.Format(Constants.InternalIds.MSBT_BGM_AUTHOR, Parent.DbRoot.NameId) : null; } }
             public string CopyrightKey { get { return !string.IsNullOrEmpty(Parent.DbRoot.NameId) ? string.Format(Constants.InternalIds.MSBT_BGM_COPYRIGHT, Parent.DbRoot.NameId) : null; } }
+
+            public bool ContainsValidLabels
+            {
+                get
+                {
+                    return 
+                        (Title != null && Title.Values.Any(p => !string.IsNullOrEmpty(p))) ||
+                        (Author != null && Author.Values.Any(p => !string.IsNullOrEmpty(p))) ||
+                        (Copyright != null && Copyright.Values.Any(p => !string.IsNullOrEmpty(p)));
+                }
+            }
 
             public MSBTLabelsEntry(BgmEntry parent)
             {

@@ -95,17 +95,9 @@ namespace Sm5sh.Mods.Music.Services
 
         public bool AddBgmEntry(BgmEntry bgmEntry)
         {
-            //TODO TODO TODO
-            //VALIDATE FOR WEIRD CHARACTER, LENGTH
-            //VERIFY THAT IDS ARE UNIQUE IN TEMP
-            //VERIFY HASH
-            //TODO TODO TODO
-
-            //Temporary - Only do that if not hidden!
+            //TODO: Figure out how MenuValue works - Incrementing for now
+            int menuIndex = _bgmEntries.Values.OrderByDescending(p => p.DbRoot.MenuValue).First().DbRoot.MenuValue + 1; //TODO: Treat separately
             bgmEntry.DbRoot.MenuValue = _bgmEntries.Values.OrderByDescending(p => p.DbRoot.MenuValue).First().DbRoot.MenuValue + 1;
-            bgmEntry.DbRoot.TestDispOrder = (short)(_bgmEntries.Values.OrderByDescending(p => p.DbRoot.TestDispOrder).First().DbRoot.TestDispOrder + 1);
-            bgmEntry.DbRoot.NameId = GetNewBgmId();
-            bgmEntry.DbRoot.SaveNo = 0;
 
             //Save GameTitle & Series
             if (!_gameEntries.ContainsKey(bgmEntry.GameTitleId))
@@ -191,10 +183,28 @@ namespace Sm5sh.Mods.Music.Services
                 paramGameTitleDatabaseRoot[gameTitle.UiGameTitleId] = _mapper.Map<PrcGameTitleDbRootEntry>(gameTitle);
             }
 
+            //Reordering
+            short orderIndex = 0;
+            var listBgms = _bgmEntries.Values.Where(p => p.DbRoot.TestDispOrder >= 0).OrderBy(p => p.DbRoot.TestDispOrder);
+            foreach (var bgmEntry in listBgms)
+            {
+                bgmEntry.DbRoot.TestDispOrder = orderIndex;
+                orderIndex++;
+
+                //If the song needs to be display, SaveNo has to be between 0 and last SaveNo known value
+                if (bgmEntry.Source == EntrySource.Mod)
+                    bgmEntry.DbRoot.SaveNo = 0;
+               
+            }
+
             //BGM Saving
             foreach (var bgmEntry in _bgmEntries.Values)
             {
                 var toneId = bgmEntry.ToneId;
+
+                //Generate NameId - If needed
+                if (bgmEntry.MSBTLabels.ContainsValidLabels)
+                    bgmEntry.DbRoot.NameId = GetNewBgmId();
 
                 //Save Bin & BGM PRC
                 binBgmPropertyEntries[toneId] = _mapper.Map<Data.Sound.Config.BgmPropertyStructs.BgmPropertyEntry>(bgmEntry.BgmProperties);
@@ -203,7 +213,7 @@ namespace Sm5sh.Mods.Music.Services
                 paramBgmDatabase.StreamPropertyEntries[bgmEntry.StreamPropertyKey] = _mapper.Map<PrcBgmStreamPropertyEntry>(bgmEntry.StreamingProperty);
                 paramBgmDatabase.StreamSetEntries[bgmEntry.StreamSetKey] = _mapper.Map<PrcBgmStreamSetEntry>(bgmEntry.StreamSet);
 
-                //Save MSBT
+                //Save MSBT - If needed
                 #region
                 if (!string.IsNullOrEmpty(bgmEntry.DbRoot.NameId))
                 {

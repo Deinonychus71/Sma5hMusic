@@ -185,7 +185,7 @@ namespace Sm5sh.GUI.ViewModels
         public void DragOver(object sender, DragEventArgs e)
         {
             e.DragEffects &= DragDropEffects.Move;
-            if (!e.Data.Contains(DATAOBJECT_FORMAT_BGM) && !e.Data.Contains(DATAOBJECT_FORMAT_PLAYLIST))
+            if (SelectedPlaylistEntry == null || !e.Data.Contains(DATAOBJECT_FORMAT_BGM) && !e.Data.Contains(DATAOBJECT_FORMAT_PLAYLIST))
                 e.DragEffects = DragDropEffects.None;
         }
 
@@ -199,7 +199,7 @@ namespace Sm5sh.GUI.ViewModels
                     ReorderPlaylist(sourcePlaylistObj, destinationObj);
                 }
             }
-            if (e.Data.Get(DATAOBJECT_FORMAT_BGM) is BgmEntryViewModel sourceBgmObj)
+            if (SelectedPlaylistEntry != null && e.Data.Get(DATAOBJECT_FORMAT_BGM) is BgmEntryViewModel sourceBgmObj)
             {
                 AddToPlaylist(sourceBgmObj, destinationObj);
             }

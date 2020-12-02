@@ -29,6 +29,7 @@
   </Style>
 
   <Style Selector="DataGridCell">
+    <Setter Property="Background" Value="Transparent" />
     <Setter Property="HorizontalContentAlignment" Value="Stretch" />
     <Setter Property="VerticalContentAlignment" Value="Stretch" />
     <Setter Property="FontSize" Value="15" />
@@ -36,7 +37,7 @@
     <Setter Property="Focusable" Value="False" />
     <Setter Property="Template">
       <ControlTemplate>
-        <Grid x:Name="PART_CellRoot" ColumnDefinitions="*">
+        <Grid x:Name="PART_CellRoot" ColumnDefinitions="*" Background="Transparent">
           <ContentPresenter ContentTemplate="{TemplateBinding ContentTemplate}"
                             Content="{TemplateBinding Content}"
                             Margin="{TemplateBinding Padding}"

@@ -430,6 +430,8 @@ namespace Sm5sh.GUI.ViewModels
                     vmBgmEntry.MusicMod.UpdateBgm(bgmNew);
                 else
                     _sm5shMusicOverride.UpdateCoreBgmEntry(bgmNew);
+                //Reorder
+                ReorderSongs();
             }
         }
 
