@@ -5,6 +5,7 @@
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         Width="500" Height="600" MinWidth="500"  MinHeight="600"
         x:Class="Sm5sh.GUI.Views.GamePropertiesModalWindow"
+        WindowStartupLocation="CenterScreen" ShowInTaskbar="False"
         xmlns:fields="clr-namespace:Sm5sh.GUI.Views.Fields"
         Title="Game Properties">
   <Window.Styles>

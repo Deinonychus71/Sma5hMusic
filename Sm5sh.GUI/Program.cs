@@ -33,7 +33,7 @@ namespace Sm5sh.GUI
         {
             return AppBuilder.Configure<App>()
                 .UsePlatformDetect()
-                .LogToTrace()
+                //.LogToTrace()
                 .UseReactiveUI();
         }
 

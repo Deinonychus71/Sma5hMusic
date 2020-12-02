@@ -5,6 +5,7 @@
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         Width="1200" Height="900" MinWidth="1200"  MinHeight="900"
         x:Class="Sm5sh.GUI.Views.BgmAdvancedPropertiesModalWindow"
+        WindowStartupLocation="CenterScreen" ShowInTaskbar="False"
         xmlns:fields="clr-namespace:Sm5sh.GUI.Views.Fields"
         Title="BGM Properties">
   <Window.Styles>
