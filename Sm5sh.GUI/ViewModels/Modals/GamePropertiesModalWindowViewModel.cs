@@ -100,7 +100,7 @@ namespace Sm5sh.GUI.ViewModels
                 $"The Game ID must start by '{Constants.GAME_TITLE_PREFIX}' and only contain lowercase letters, digits and underscore.");
 
             this.ValidationRule(p => p.UiGameTitleId,
-                p => !_games.Select(p => p.UiGameTitleId).Contains(p),
+                p => (IsEdit || !_games.Select(p => p.UiGameTitleId).Contains(p)),
                 $"The Game ID already exists.");
 
             this.ValidationRule(p => p.SelectedSeries,
@@ -122,23 +122,23 @@ namespace Sm5sh.GUI.ViewModels
         {
             if (gameEntryViewModel == null)
             {
+                IsEdit = false;
                 UiGameTitleId = string.Empty;
                 NameId = string.Empty;
                 SelectedSeries = null;
                 Unk1 = false;
                 Release = 0;
-                IsEdit = false;
                 MSBTTitleEditor.MSBTValues = new Dictionary<string, string>();
             }
             else
             {
+                IsEdit = true;
                 UiGameTitleId = gameEntryViewModel.UiGameTitleId;
                 NameId = gameEntryViewModel.NameId;
                 SelectedSeries = gameEntryViewModel.SeriesViewModel;
                 Unk1 = gameEntryViewModel.Unk1;
                 Release = gameEntryViewModel.Release;
                 MSBTTitleEditor.MSBTValues = gameEntryViewModel.MSBTTitle.ToDictionary(p => p.Key, p => p.Value); //Clone
-                IsEdit = true;
                 SelectedGameTitleEntry = gameEntryViewModel;
             }
         }
