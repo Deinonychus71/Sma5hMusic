@@ -55,7 +55,7 @@ namespace Sm5sh.GUI.ViewModels
             _whenNewRequestToReorderBgmEntries = new Subject<Unit>();
 
             observableBgmEntriesList
-                .AutoRefresh(p => p.DbRoot.TestDispOrder, TimeSpan.FromMilliseconds(1))
+                .AutoRefresh(p => p.DbRoot.TestDispOrder, TimeSpan.FromMilliseconds(50))
                 .Sort(SortExpressionComparer<BgmEntryViewModel>.Ascending(p => p.HiddenInSoundTest).ThenByAscending(p => p.DbRoot.TestDispOrder), SortOptimisations.ComparesImmutableValuesOnly, 8000)
                 .TreatMovesAsRemoveAdd()
                 .ObserveOn(RxApp.MainThreadScheduler)

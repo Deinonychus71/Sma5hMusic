@@ -26,7 +26,7 @@
       </fields:PropertyField>
       <fields:PropertyField IsVisible="{Binding SelectedModSongs, Mode=OneWay}" Label="Mods" ToolTip="Only display songs from a mod folder.">
         <fields:PropertyField.FieldContent>
-          <ComboBox SelectedItem="{Binding SelectedMod, Mode=TwoWay}" Items="{Binding Mods}">
+          <ComboBox VirtualizationMode="Simple" SelectedItem="{Binding SelectedMod, Mode=TwoWay}" Items="{Binding Mods}">
             <ComboBox.ItemTemplate>
               <DataTemplate>
                 <TextBlock Text="{Binding ModName}" />
@@ -37,7 +37,7 @@
       </fields:PropertyField>
       <fields:PropertyField Label="Series" ToolTip="Only display songs from a specific series.">
         <fields:PropertyField.FieldContent>
-          <ComboBox SelectedItem="{Binding SelectedSeries, Mode=TwoWay}" Items="{Binding Series}">
+          <ComboBox VirtualizationMode="Simple" SelectedItem="{Binding SelectedSeries, Mode=TwoWay}" Items="{Binding Series}">
             <ComboBox.ItemTemplate>
               <DataTemplate>
                 <TextBlock Text="{Binding Title}" />
@@ -48,7 +48,7 @@
       </fields:PropertyField>
       <fields:PropertyField Label="Game" ToolTip="Only display songs from a specific game.">
         <fields:PropertyField.FieldContent>
-          <ComboBox SelectedItem="{Binding SelectedGame, Mode=TwoWay}" Items="{Binding Games}">
+          <ComboBox VirtualizationMode="Simple" SelectedItem="{Binding SelectedGame, Mode=TwoWay}" Items="{Binding Games}">
             <ComboBox.ItemTemplate>
               <DataTemplate>
                 <TextBlock Text="{Binding Title}" />
@@ -59,7 +59,7 @@
       </fields:PropertyField>
       <fields:PropertyField Label="Record Type" ToolTip="Only display songs with a specific record type.">
         <fields:PropertyField.FieldContent>
-          <ComboBox SelectedItem="{Binding SelectedRecordType, Mode=TwoWay}" Items="{Binding RecordTypes}">
+          <ComboBox VirtualizationMode="Simple" SelectedItem="{Binding SelectedRecordType, Mode=TwoWay}" Items="{Binding RecordTypes}">
             <ComboBox.ItemTemplate>
               <DataTemplate>
                 <TextBlock Text="{Binding Label}" />

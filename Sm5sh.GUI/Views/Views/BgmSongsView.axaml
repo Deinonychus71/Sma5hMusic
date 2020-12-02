@@ -34,7 +34,7 @@
           </DataGridTemplateColumn>
           <DataGridTextColumn Header="Series" Width="*" Binding="{Binding GameTitleViewModel.SeriesViewModel.Title, Mode=OneWay}" />
           <DataGridTextColumn MaxWidth="300" Width="3*" Header="Game" Binding="{Binding GameTitleViewModel.Title, Mode=OneWay}" />
-          <DataGridTextColumn MaxWidth="400" Width="3*" Header="Title" Binding="{Binding Title, Mode=OneWay}" />
+          <DataGridTextColumn MaxWidth="400" Width="3*" Header="Title" Binding="{Binding Title, Mode=OneWay}"/>
           <DataGridTextColumn Header="Record" Width="*" Binding="{Binding DbRoot.RecordType, Mode=OneWay, Converter={StaticResource RecordTypeConverter}}" />
           <DataGridTextColumn Header="Source" Width="*" Binding="{Binding Source, Mode=OneWay}" />
           <DataGridTextColumn Header="Mod Name" Width="2*" Binding="{Binding ModName, Mode=OneWay}" />
@@ -43,7 +43,7 @@
               <DataTemplate>
                 <StackPanel Orientation="Horizontal">
                   <Button Width="40" HorizontalContentAlignment="Center" FontFamily="Segoe UI Symbol" Content="&#9998;" Command="{Binding $parent[DataGrid].DataContext.ActionEditBgm, Mode=OneWay}" CommandParameter="{Binding}"/>
-                  <Button Width="40" FontFamily="Segoe UI Symbol" HorizontalContentAlignment="Center" Content="&#x274C;" Command="{Binding $parent[DataGrid].DataContext.ActionDeleteBgm, Mode=OneWay}" CommandParameter="{Binding}"/>
+                  <Button Width="40" IsEnabled="{Binding IsMod}" FontFamily="Segoe UI Symbol" HorizontalContentAlignment="Center" Content="&#x274C;" Command="{Binding $parent[DataGrid].DataContext.ActionDeleteBgm, Mode=OneWay}" CommandParameter="{Binding}"/>
                 </StackPanel>
               </DataTemplate>
             </DataGridTemplateColumn.CellTemplate>
