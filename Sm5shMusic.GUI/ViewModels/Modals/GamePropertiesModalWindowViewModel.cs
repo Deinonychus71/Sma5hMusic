@@ -6,7 +6,7 @@ using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using ReactiveUI.Validation.Extensions;
 using ReactiveUI.Validation.Helpers;
-using Sm5sh.GUI.Helpers;
+using Sm5shMusic.GUI.Helpers;
 using Sm5sh.Mods.Music.Interfaces;
 using Sm5sh.Mods.Music.Models;
 using System;
@@ -18,7 +18,7 @@ using System.Reactive.Linq;
 using System.Text.RegularExpressions;
 using ILogger = Microsoft.Extensions.Logging.ILogger;
 
-namespace Sm5sh.GUI.ViewModels
+namespace Sm5shMusic.GUI.ViewModels
 {
     public class GamePropertiesModalWindowViewModel : ReactiveValidationObject
     {
@@ -164,7 +164,7 @@ namespace Sm5sh.GUI.ViewModels
         {
             if (!IsEdit)
             {
-                SelectedGameTitleEntry = new GameTitleEntryViewModel(new Mods.Music.Models.GameTitleEntry(UiGameTitleId, EntrySource.Mod));
+                SelectedGameTitleEntry = new GameTitleEntryViewModel(new GameTitleEntry(UiGameTitleId, EntrySource.Mod));
             }
 
             var refGame = SelectedGameTitleEntry.GetGameEntryReference();

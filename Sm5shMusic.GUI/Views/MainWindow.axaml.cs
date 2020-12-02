@@ -1,8 +1,8 @@
 ﻿using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
-using Sm5sh.GUI.Interfaces;
+using Sm5shMusic.GUI.Interfaces;
 
-namespace Sm5sh.GUI.Views
+namespace Sm5shMusic.GUI.Views
 {
     public class MainWindow : Window, IDialogWindow
     {

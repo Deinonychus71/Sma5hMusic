@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 using VGMMusic;
 
-namespace Sm5sh.GUI.ViewModels
+namespace Sm5shMusic.GUI.ViewModels
 {
     public class BgmEntryViewModel : BgmEntryEditableViewModel
     {

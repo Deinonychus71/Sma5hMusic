@@ -6,8 +6,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
-using Sm5sh.GUI.Interfaces;
-using Sm5sh.GUI.Models;
+using Sm5shMusic.GUI.Interfaces;
+using Sm5shMusic.GUI.Models;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -18,7 +18,7 @@ using System.Reactive.Subjects;
 using System.Threading.Tasks;
 using ILogger = Microsoft.Extensions.Logging.ILogger;
 
-namespace Sm5sh.GUI.ViewModels
+namespace Sm5shMusic.GUI.ViewModels
 {
     public class PlaylistViewModel : ViewModelBase
     {

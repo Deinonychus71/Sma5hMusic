@@ -1,6 +1,6 @@
 ﻿using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
-using Sm5sh.GUI.Helpers;
+using Sm5shMusic.GUI.Helpers;
 using Sm5sh.Mods.Music.Models;
 using Sm5sh.Mods.Music.Models.PlaylistEntryModels;
 using System;
@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 
-namespace Sm5sh.GUI.ViewModels
+namespace Sm5shMusic.GUI.ViewModels
 {
     public class PlaylistEntryViewModel : ReactiveObject
     {

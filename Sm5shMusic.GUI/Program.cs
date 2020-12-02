@@ -4,18 +4,18 @@ using Avalonia.ReactiveUI;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Sm5sh.GUI.Dialogs;
-using Sm5sh.GUI.Interfaces;
-using Sm5sh.GUI.ViewModels;
-using Sm5sh.GUI.Views;
-using Sm5sh.Mods.Music.Models.AutoMapper;
+using Sm5shMusic.GUI.Dialogs;
+using Sm5shMusic.GUI.Interfaces;
+using Sm5shMusic.GUI.ViewModels;
+using Sm5shMusic.GUI.Views;
 using Splat.Microsoft.Extensions.DependencyInjection;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using VGMMusic;
+using Sm5shMusic.GUI.Mods.Music.Models.AutoMapper;
 
-namespace Sm5sh.GUI
+namespace Sm5shMusic.GUI
 {
     class Program
     {

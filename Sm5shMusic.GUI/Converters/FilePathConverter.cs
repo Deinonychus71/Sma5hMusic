@@ -3,7 +3,7 @@ using System;
 using System.Globalization;
 using System.IO;
 
-namespace Sm5sh.GUI.Converters
+namespace Sm5shMusic.GUI.Converters
 {
     public class FilePathConverter : IValueConverter
     {

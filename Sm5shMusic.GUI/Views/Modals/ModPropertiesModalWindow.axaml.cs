@@ -3,11 +3,11 @@ using Avalonia.Markup.Xaml;
 using Avalonia.ReactiveUI;
 using ReactiveUI;
 using ReactiveUI.Validation.Extensions;
-using Sm5sh.GUI.ViewModels;
-using Sm5sh.GUI.Views.Fields;
+using Sm5shMusic.GUI.ViewModels;
+using Sm5shMusic.GUI.Views.Fields;
 using System.Reactive.Disposables;
 
-namespace Sm5sh.GUI.Views
+namespace Sm5shMusic.GUI.Views
 {
     public class ModPropertiesModalWindow : ReactiveWindow<ModPropertiesModalWindowViewModel>
     {

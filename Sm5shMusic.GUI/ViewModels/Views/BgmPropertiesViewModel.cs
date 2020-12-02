@@ -2,7 +2,7 @@
 using System;
 using System.Reactive.Linq;
 
-namespace Sm5sh.GUI.ViewModels
+namespace Sm5shMusic.GUI.ViewModels
 {
     public class BgmPropertiesViewModel : ViewModelBase
     {

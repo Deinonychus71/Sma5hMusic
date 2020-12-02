@@ -1,6 +1,6 @@
 ﻿using Avalonia.Controls;
 
-namespace Sm5sh.GUI.Interfaces
+namespace Sm5shMusic.GUI.Interfaces
 {
     public interface IDialogWindow
     {

@@ -2,7 +2,7 @@
 using ReactiveUI.Fody.Helpers;
 using System;
 
-namespace Sm5sh.GUI.ViewModels
+namespace Sm5shMusic.GUI.ViewModels
 {
     public class PlaylistEntryValueViewModel : ReactiveObject
     {

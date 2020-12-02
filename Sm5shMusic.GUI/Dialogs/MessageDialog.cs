@@ -3,11 +3,11 @@ using MessageBox.Avalonia.DTO;
 using MessageBox.Avalonia.Enums;
 using MessageBox.Avalonia.Models;
 using Microsoft.Extensions.Logging;
-using Sm5sh.GUI.Interfaces;
+using Sm5shMusic.GUI.Interfaces;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Sm5sh.GUI.Dialogs
+namespace Sm5shMusic.GUI.Dialogs
 {
     public class MessageDialog : IMessageDialog
     {

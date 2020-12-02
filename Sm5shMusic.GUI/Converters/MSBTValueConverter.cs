@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 
-namespace Sm5sh.GUI.Converters
+namespace Sm5shMusic.GUI.Converters
 {
     public class MSBTValueConverter : IMultiValueConverter
     {

@@ -1,12 +1,12 @@
 ﻿using Avalonia.Controls;
 using Microsoft.Extensions.Logging;
-using Sm5sh.GUI.Interfaces;
+using Sm5shMusic.GUI.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 
-namespace Sm5sh.GUI.Dialogs
+namespace Sm5shMusic.GUI.Dialogs
 {
     public class FileDialog : IFileDialog
     {

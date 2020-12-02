@@ -1,7 +1,7 @@
 ﻿using ReactiveUI.Fody.Helpers;
 using Sm5sh.Mods.Music.Models;
 
-namespace Sm5sh.GUI.ViewModels
+namespace Sm5shMusic.GUI.ViewModels
 {
     public class GameTitleEntryViewModel : GameTitleEditableEntryViewModel
     {

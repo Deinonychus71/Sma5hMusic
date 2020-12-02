@@ -3,7 +3,7 @@ using Avalonia.Threading;
 using System.IO;
 using System.Text;
 
-namespace Sm5sh.GUI.Helpers
+namespace Sm5shMusic.GUI.Helpers
 {
     public class ControlWriter : TextWriter
     {

@@ -5,8 +5,8 @@
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         Width="1200" Height="900" MinWidth="1200"  MinHeight="900"
         WindowStartupLocation="CenterOwner" ShowInTaskbar="False"
-        x:Class="Sm5sh.GUI.Views.BgmPropertiesModalWindow"
-        xmlns:fields="clr-namespace:Sm5sh.GUI.Views.Fields"
+        x:Class="Sm5shMusic.GUI.Views.BgmPropertiesModalWindow"
+        xmlns:fields="clr-namespace:Sm5shMusic.GUI.Views.Fields"
         Title="BGM Properties">
   <Window.Styles>
     <StyleInclude Source="/Assets/Styles/ContentStyles.xaml"/>

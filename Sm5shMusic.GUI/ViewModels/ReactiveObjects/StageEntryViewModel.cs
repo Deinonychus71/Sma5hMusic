@@ -1,9 +1,9 @@
 ﻿using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
-using Sm5sh.GUI.Helpers;
+using Sm5shMusic.GUI.Helpers;
 using Sm5sh.Mods.Music.Models;
 
-namespace Sm5sh.GUI.ViewModels
+namespace Sm5shMusic.GUI.ViewModels
 {
     public class StageEntryViewModel : ReactiveObject
     {

@@ -5,8 +5,8 @@
               xmlns:i="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
              xmlns:ia="clr-namespace:Avalonia.Xaml.Interactions.Core;assembly=Avalonia.Xaml.Interactions"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             xmlns:fields="clr-namespace:Sm5sh.GUI.Views.Fields"
-             x:Class="Sm5sh.GUI.Views.PlaylistView">
+             xmlns:fields="clr-namespace:Sm5shMusic.GUI.Views.Fields"
+             x:Class="Sm5shMusic.GUI.Views.PlaylistView">
   <UserControl.Styles>
     <StyleInclude Source="/Assets/Styles/ListsStyles.xaml" />
   </UserControl.Styles>

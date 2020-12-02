@@ -6,8 +6,8 @@ using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using ReactiveUI.Validation.Extensions;
 using ReactiveUI.Validation.Helpers;
-using Sm5sh.GUI.Helpers;
-using Sm5sh.GUI.Models;
+using Sm5shMusic.GUI.Helpers;
+using Sm5shMusic.GUI.Models;
 using Sm5sh.Mods.Music.Models;
 using System;
 using System.Collections.Generic;
@@ -20,7 +20,7 @@ using System.Threading.Tasks;
 using VGMMusic;
 using ILogger = Microsoft.Extensions.Logging.ILogger;
 
-namespace Sm5sh.GUI.ViewModels
+namespace Sm5shMusic.GUI.ViewModels
 {
     public class BgmPropertiesModalWindowViewModel : ReactiveValidationObject
     {
@@ -33,7 +33,7 @@ namespace Sm5sh.GUI.ViewModels
         private readonly ReadOnlyObservableCollection<SeriesEntryViewModel> _series;
         private readonly ReadOnlyObservableCollection<GameTitleEntryViewModel> _games;
         private readonly ReadOnlyObservableCollection<string> _songs;
-        private BgmEntryViewModel _fakeBgm = new BgmEntryViewModel(null, new Mods.Music.Models.BgmEntry("fake"));
+        private BgmEntryViewModel _fakeBgm = new BgmEntryViewModel(null, new BgmEntry("fake"));
         private BgmEntryViewModel _refSavedBgmEntryView;
         private readonly Subject<Window> _whenNewRequestToAddGameEntry;
         private bool _isUpdatingSpecialRule = false;

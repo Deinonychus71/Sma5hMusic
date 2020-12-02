@@ -1,4 +1,4 @@
-﻿namespace Sm5sh.GUI.Models
+﻿namespace Sm5shMusic.GUI.Models
 {
     public class ComboItem
     {

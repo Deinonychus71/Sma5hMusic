@@ -7,9 +7,9 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
-using Sm5sh.GUI.Helpers;
-using Sm5sh.GUI.Interfaces;
-using Sm5sh.GUI.Views;
+using Sm5shMusic.GUI.Helpers;
+using Sm5shMusic.GUI.Interfaces;
+using Sm5shMusic.GUI.Views;
 using Sm5sh.Mods.Music.Interfaces;
 using Sm5sh.Mods.Music.Models;
 using System;
@@ -22,8 +22,9 @@ using System.Reactive.Linq;
 using System.Threading.Tasks;
 using VGMMusic;
 using ILogger = Microsoft.Extensions.Logging.ILogger;
+using Sm5sh;
 
-namespace Sm5sh.GUI.ViewModels
+namespace Sm5shMusic.GUI.ViewModels
 {
     public class MainWindowViewModel : ViewModelBase
     {

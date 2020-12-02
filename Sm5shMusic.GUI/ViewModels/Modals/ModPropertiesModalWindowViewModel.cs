@@ -14,7 +14,7 @@ using System.Reactive.Linq;
 using System.Text.RegularExpressions;
 using ILogger = Microsoft.Extensions.Logging.ILogger;
 
-namespace Sm5sh.GUI.ViewModels
+namespace Sm5shMusic.GUI.ViewModels
 {
     public class ModPropertiesModalWindowViewModel : ReactiveValidationObject
     {

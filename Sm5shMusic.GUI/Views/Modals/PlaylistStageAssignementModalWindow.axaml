@@ -4,9 +4,9 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         Width="1000" Height="800" MinWidth="1000"  MinHeight="800"
-        x:Class="Sm5sh.GUI.Views.PlaylistStageAssignementModalWindow"
+        x:Class="Sm5shMusic.GUI.Views.PlaylistStageAssignementModalWindow"
         WindowStartupLocation="CenterScreen" ShowInTaskbar="False"
-        xmlns:fields="clr-namespace:Sm5sh.GUI.Views.Fields"
+        xmlns:fields="clr-namespace:Sm5shMusic.GUI.Views.Fields"
         Title="Playlist Stage Assignment">
   <Window.Styles>
     <StyleInclude Source="/Assets/Styles/ContentStyles.xaml" />

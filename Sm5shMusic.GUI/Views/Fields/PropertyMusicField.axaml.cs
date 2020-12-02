@@ -1,8 +1,8 @@
 ﻿using Avalonia;
 using Avalonia.Markup.Xaml;
-using Sm5sh.GUI.ViewModels;
+using Sm5shMusic.GUI.ViewModels;
 
-namespace Sm5sh.GUI.Views.Fields
+namespace Sm5shMusic.GUI.Views.Fields
 {
     public class PropertyMusicField : PropertyTextField
     {

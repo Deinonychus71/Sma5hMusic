@@ -1,7 +1,7 @@
 ﻿using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 
-namespace Sm5sh.GUI.Views
+namespace Sm5shMusic.GUI.Views
 {
     public class MSBTFieldView : UserControl
     {

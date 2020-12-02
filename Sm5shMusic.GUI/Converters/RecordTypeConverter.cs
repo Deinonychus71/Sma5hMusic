@@ -1,9 +1,9 @@
 ﻿using Avalonia.Data.Converters;
-using Sm5sh.GUI.Helpers;
+using Sm5shMusic.GUI.Helpers;
 using System;
 using System.Globalization;
 
-namespace Sm5sh.GUI.Converters
+namespace Sm5shMusic.GUI.Converters
 {
     public class RecordTypeConverter : IValueConverter
     {

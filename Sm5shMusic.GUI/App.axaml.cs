@@ -2,11 +2,11 @@
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
-using Sm5sh.GUI.Interfaces;
-using Sm5sh.GUI.ViewModels;
+using Sm5shMusic.GUI.Interfaces;
+using Sm5shMusic.GUI.ViewModels;
 using Splat;
 
-namespace Sm5sh.GUI
+namespace Sm5shMusic.GUI
 {
     public class App : Application
     {

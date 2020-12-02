@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Sm5sh.GUI.Helpers
+namespace Sm5shMusic.GUI.Helpers
 {
     public static class Constants
     {

@@ -1,9 +1,9 @@
 ﻿using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
-using Sm5sh.GUI.Helpers;
+using Sm5shMusic.GUI.Helpers;
 using System;
 
-namespace Sm5sh.GUI.Views
+namespace Sm5shMusic.GUI.Views
 {
     public class DebugConsole : UserControl
     {

@@ -6,7 +6,7 @@ using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using ReactiveUI.Validation.Extensions;
 using ReactiveUI.Validation.Helpers;
-using Sm5sh.GUI.Helpers;
+using Sm5shMusic.GUI.Helpers;
 using Sm5sh.Mods.Music;
 using System;
 using System.Collections.ObjectModel;
@@ -15,8 +15,9 @@ using System.Reactive;
 using System.Reactive.Linq;
 using System.Text.RegularExpressions;
 using ILogger = Microsoft.Extensions.Logging.ILogger;
+using Sm5sh.Mods.Music.Models;
 
-namespace Sm5sh.GUI.ViewModels
+namespace Sm5shMusic.GUI.ViewModels
 {
     public class PlaylistPropertiesModalWindowViewModel : ReactiveValidationObject
     {
@@ -110,7 +111,7 @@ namespace Sm5sh.GUI.ViewModels
         {
             if (!IsEdit)
             {
-                SelectedPlaylistEntry = new PlaylistEntryViewModel(new Mods.Music.Models.PlaylistEntry(PlaylistId, PlaylistTitle), null);
+                SelectedPlaylistEntry = new PlaylistEntryViewModel(new PlaylistEntry(PlaylistId, PlaylistTitle), null);
             }
             else
             {

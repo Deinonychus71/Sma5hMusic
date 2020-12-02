@@ -1,9 +1,9 @@
 using Avalonia.Controls;
 using Avalonia.Controls.Templates;
-using Sm5sh.GUI.ViewModels;
+using Sm5shMusic.GUI.ViewModels;
 using System;
 
-namespace Sm5sh.GUI
+namespace Sm5shMusic.GUI
 {
     public class ViewLocator : IDataTemplate
     {

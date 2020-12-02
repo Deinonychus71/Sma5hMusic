@@ -1,7 +1,7 @@
 ﻿using ReactiveUI;
 using Sm5sh.Mods.Music.Interfaces;
 
-namespace Sm5sh.GUI.ViewModels
+namespace Sm5shMusic.GUI.ViewModels
 {
     public class ModEntryViewModel : ReactiveObject
     {

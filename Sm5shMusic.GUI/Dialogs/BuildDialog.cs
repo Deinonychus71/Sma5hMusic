@@ -2,13 +2,14 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Sm5sh.GUI.Interfaces;
+using Sm5shMusic.GUI.Interfaces;
 using Sm5sh.Interfaces;
 using System;
 using System.IO;
 using System.Threading.Tasks;
+using Sm5sh;
 
-namespace Sm5sh.GUI.Dialogs
+namespace Sm5shMusic.GUI.Dialogs
 {
     public class BuildDialog : IBuildDialog
     {

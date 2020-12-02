@@ -4,7 +4,7 @@ using DynamicData.Binding;
 using Microsoft.Extensions.Logging;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
-using Sm5sh.GUI.Models;
+using Sm5shMusic.GUI.Models;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -12,7 +12,7 @@ using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
 
-namespace Sm5sh.GUI.ViewModels
+namespace Sm5shMusic.GUI.ViewModels
 {
     public class PlaylistStageAssignementModalWindowViewModel : ViewModelBase
     {

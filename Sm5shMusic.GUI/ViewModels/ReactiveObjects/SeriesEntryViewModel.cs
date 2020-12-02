@@ -1,7 +1,7 @@
 ﻿using ReactiveUI;
-using Sm5sh.GUI.Helpers;
+using Sm5shMusic.GUI.Helpers;
 
-namespace Sm5sh.GUI.ViewModels
+namespace Sm5shMusic.GUI.ViewModels
 {
     public class SeriesEntryViewModel : ReactiveObject
     {
