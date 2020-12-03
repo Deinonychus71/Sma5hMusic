@@ -1,4 +1,4 @@
-﻿namespace Sm5sh.Core.Helpers
+﻿namespace Sm5sh.Helpers
 {
     public static class StringExtensions
     {

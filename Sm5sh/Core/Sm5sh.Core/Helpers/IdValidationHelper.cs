@@ -1,6 +1,6 @@
 ﻿using System.Text.RegularExpressions;
 
-namespace Sm5sh.Core.Helpers
+namespace Sm5sh.Helpers
 {
     public static class IdValidationHelper
     {
