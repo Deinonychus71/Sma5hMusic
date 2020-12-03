@@ -7,8 +7,18 @@ namespace Sm5sh.Mods.Music.Interfaces
     {
         IEnumerable<BgmEntry> GetBgmEntries();
         IEnumerable<BgmEntry> GetModBgmEntries();
+        IEnumerable<GameTitleEntry> GetGameTitleEntries();
+        IEnumerable<string> GetSeriesEntries();
+        IEnumerable<StageEntry> GetStagesEntries();
+        IEnumerable<string> GetLocales();
+        IEnumerable<PlaylistEntry> GetPlaylists();
         BgmEntry GetBgmEntry(string toneId);
-        BgmEntry AddOrUpdateBgmEntry(BgmEntry bgmEntry);
-        void RemoveBgmEntry(string toneId);
+        bool DoesToneIdExist(string toneId);
+        bool AddBgmEntry(BgmEntry bgmEntry);
+        bool RemoveBgmEntry(string toneId);
+        bool AddPlaylistEntry(PlaylistEntry playlistEntry);
+        bool RemovePlaylistEntry(string playlistId);
+        void InitBgmEntriesFromStateManager();
+        bool SaveBgmEntriesToStateManager();
     }
 }

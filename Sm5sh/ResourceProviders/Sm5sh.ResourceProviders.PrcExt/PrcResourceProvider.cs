@@ -1,12 +1,12 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using CsvHelper;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using Sm5sh.Attributes;
+using Sm5sh.ResourceProviders.Prc.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
-using Microsoft.Extensions.Options;
-using Sm5sh.Attributes;
-using CsvHelper;
-using Sm5sh.ResourceProviders.Prc.Helpers;
 
 namespace Sm5sh.ResourceProviders
 {
@@ -46,7 +46,7 @@ namespace Sm5sh.ResourceProviders
                 _prc.WritePrcFile(outputFile, inputObj);
                 return true;
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 _logger.LogError(e, "Error while saving prc file {OutputFile}", outputFile);
                 return false;

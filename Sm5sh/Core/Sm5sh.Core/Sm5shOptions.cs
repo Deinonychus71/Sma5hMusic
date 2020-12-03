@@ -1,7 +1,4 @@
-﻿using System.IO;
-using System.Text.Json.Serialization;
-
-namespace Sm5sh
+﻿namespace Sm5sh
 {
     public class Sm5shOptions
     {

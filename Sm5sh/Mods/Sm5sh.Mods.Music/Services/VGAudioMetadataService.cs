@@ -1,14 +1,15 @@
 ﻿using Microsoft.Extensions.Logging;
 using Sm5sh.Mods.Music.Interfaces;
-using Sm5sh.Mods.Music.Models.BgmEntryModels;
+using Sm5sh.Mods.Music.Models;
 using System;
 using System.IO;
 using System.Text;
+using System.Threading.Tasks;
 using VGAudio.Cli;
 
 namespace Sm5sh.Mods.Music.Services
 {
-    public class VGAudioMetadataService: IAudioMetadataService
+    public class VGAudioMetadataService : IAudioMetadataService
     {
         private readonly ILogger _logger;
 
@@ -17,7 +18,7 @@ namespace Sm5sh.Mods.Music.Services
             _logger = logger;
         }
 
-        public AudioCuePoints GetCuePoints(string inputFile)
+        public Task<AudioCuePoints> GetCuePoints(string inputFile)
         {
             _logger.LogDebug("Retrieving audio metadata for {FilePath}...", inputFile);
 
@@ -33,10 +34,10 @@ namespace Sm5sh.Mods.Music.Services
 
             var output = builder.ToString();
 
-            var totalSamples = ReadValueUInt64Safe(output, "Sample count: ");
-            var loopStartSample = ReadValueUInt64Safe(output, "Loop start: ");
-            var loopEndSample = ReadValueUInt64Safe(output, "Loop end: ");
-            var frequency = ReadValueUInt64Safe(output, "Sample rate: ");
+            var totalSamples = ReadValueUInt32Safe(output, "Sample count: ");
+            var loopStartSample = ReadValueUInt32Safe(output, "Loop start: ");
+            var loopEndSample = ReadValueUInt32Safe(output, "Loop end: ");
+            var frequency = ReadValueUInt32Safe(output, "Sample rate: ");
 
             _logger.LogDebug("VGAudio Metadata for {FilePath}: TotalSamples: {TotalSamples}, LoopStartSample: {LoopStartSample}, LoopEndSample: {LoopEndSample}, Frequency: {Frequency}",
                 inputFile, totalSamples, loopStartSample, loopEndSample, frequency);
@@ -47,7 +48,7 @@ namespace Sm5sh.Mods.Music.Services
                 _logger.LogDebug("VGAudio Metadata for {FilePath}: {Data}", inputFile, output);
             }
 
-            return new AudioCuePoints()
+            return Task.FromResult(new AudioCuePoints()
             {
                 TotalSamples = totalSamples,
                 LoopStartSample = loopStartSample,
@@ -55,7 +56,7 @@ namespace Sm5sh.Mods.Music.Services
                 TotalTimeMs = frequency > 0 ? totalSamples * 1000 / frequency : 0,
                 LoopStartMs = frequency > 0 ? loopStartSample * 1000 / frequency : 0,
                 LoopEndMs = frequency > 0 ? loopEndSample * 1000 / frequency : 0
-            };
+            });
         }
 
         public bool ConvertAudio(string inputMediaFile, string outputMediaFile)
@@ -80,17 +81,25 @@ namespace Sm5sh.Mods.Music.Services
             using (var writer = new StringWriter(builder))
             {
                 Console.SetOut(writer);
-                Converter.RunConverterCli(new string[] { "-i", inputMediaFile, "-o", outputMediaFile });
+                if (outputMediaFile.EndsWith("lopus"))
+                {
+                    //Special tags for opus
+                    Converter.RunConverterCli(new string[] { "-i", inputMediaFile, "-o", outputMediaFile, "--opusheader", "Namco", "--cbr" });
+                }
+                else
+                {
+                    Converter.RunConverterCli(new string[] { "-i", inputMediaFile, "-o", outputMediaFile });
+                }
             }
             Console.SetOut(oldValue);
 
             var output = builder.ToString();
 
-            _logger.LogDebug("VGAudio Convert for {OutputMediaFile}: {Data}", outputMediaFile, output);
+            _logger.LogDebug("VGAudio Convert for {OutputMediaFile}: {Data}", outputMediaFile, output.Trim('\r', '\n'));
 
-            if (!File.Exists(outputMediaFile))
+            if (!File.Exists(outputMediaFile) || new FileInfo(outputMediaFile).Length == 0)
             {
-                _logger.LogError("VGAudio Error - The conversion from {InputMediaFile} to {OutputMediaFile} failed.", inputMediaFile, outputMediaFile);
+                _logger.LogError("VGAudio Error - The conversion from {InputMediaFile} to {OutputMediaFile} failed. Reason {Reason}", inputMediaFile, outputMediaFile, output.Trim('\r', '\n'));
                 return false;
             }
 
@@ -100,10 +109,10 @@ namespace Sm5sh.Mods.Music.Services
         private ulong ReadValueUInt64Safe(string searchString, string parsingStartIndex, string parsingEndIndex = " ")
         {
             var output = searchString.Split(parsingStartIndex);
-            if(output.Length > 1)
+            if (output.Length > 1)
             {
                 var foundValue = output[1].Split(parsingEndIndex)[0];
-                if(ulong.TryParse(foundValue, out ulong result))
+                if (ulong.TryParse(foundValue, out ulong result))
                 {
                     return result;
                 }

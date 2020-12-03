@@ -5,6 +5,6 @@
         string ModName { get; }
         bool Init();
 
-        bool Build();
+        bool Build(bool useCache = true);
     }
 }

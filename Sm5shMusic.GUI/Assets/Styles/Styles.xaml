@@ -1,0 +1,55 @@
+﻿<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <Styles.Resources>
+    <SolidColorBrush x:Key="BrushGrayDark">#202020</SolidColorBrush>
+    <SolidColorBrush x:Key="BrushGrayLight">#606060</SolidColorBrush>
+    <SolidColorBrush x:Key="BrushBackgroundDark">#191919</SolidColorBrush>
+  </Styles.Resources>
+
+  <Style Selector="TextBlock.title">
+    <Setter Property="FontSize" Value="32"/>
+    <Setter Property="FontWeight" Value="Bold"/>
+    <Setter Property="Margin" Value="13"/>
+    <Setter Property="HorizontalAlignment" Value="Center"/>
+  </Style>
+
+  <Style Selector="Image.logo">
+    <Setter Property="Margin" Value="13,5,0,0"/>
+  </Style>
+
+  <Style Selector="TextBox.jpnSupport">
+    <Setter Property="FontFamily" Value="Microsoft YaHei,Simsun,苹方-简,宋体-简"/>
+  </Style>
+  <Style Selector=".jpnSupport TextBox">
+    <Setter Property="FontFamily" Value="Microsoft YaHei,Simsun,苹方-简,宋体-简"/>
+  </Style>
+
+  <Style Selector="ContentControl.list">
+    <Setter Property="Background" Value="#202020"/>
+  </Style>
+
+  <Style Selector="DataGridCell">
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+    <Setter Property="VerticalContentAlignment" Value="Stretch" />
+    <Setter Property="FontSize" Value="15" />
+    <Setter Property="MinHeight" Value="32" />
+    <Setter Property="Focusable" Value="False" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Grid x:Name="PART_CellRoot" ColumnDefinitions="*" Background="Transparent">
+          <ContentPresenter ContentTemplate="{TemplateBinding ContentTemplate}"
+                            Content="{TemplateBinding Content}"
+                            Margin="{TemplateBinding Padding}"
+                            TextBlock.Foreground="{TemplateBinding Foreground}"
+                            HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+          <Rectangle Name="PART_RightGridLine"
+                     VerticalAlignment="Stretch"
+                     Width="1"
+                     Fill="{DynamicResource DataGridFillerColumnGridLinesBrush}" />
+        </Grid>
+      </ControlTemplate>
+    </Setter>
+  </Style>
+</Styles>

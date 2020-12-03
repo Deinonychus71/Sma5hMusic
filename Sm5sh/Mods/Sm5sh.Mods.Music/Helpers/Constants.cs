@@ -6,34 +6,32 @@
         {
             public const string MUSIC_MOD_METADATA_JSON_FILE = "metadata_mod.json";
             public const string MUSIC_MOD_METADATA_CSV_FILE = "metadata_mod.csv";
+            public const string MUSIC_OVERRIDE_ORDER_JSON_FILE = "order_override.json";
+            public const string MUSIC_OVERRIDE_PLAYLIST_JSON_FILE = "playlist_override.json";
+            public const string MUSIC_OVERRIDE_CORE_BGM_JSON_FILE = "core_bgm_override.json";
+            public const string MUSIC_OVERRIDE_CORE_GAME_JSON_FILE = "core_game_override.json";
+            public const string MUSIC_OVERRIDE_STAGE_JSON_FILE = "stage_override.json";
         }
 
         public class Resources
         {
-            public const string BGM_PROPERTY_EXE_FILE = "BgmProperty/bgm-property.exe";
-            public const string BGM_PROPERTY_HASH_FILE = "BgmProperty/bgm_hashes.txt";
-            public const string BGM_PROPERTY_TEMP_FILE = "temp.yml";
-
             public const string NUS3AUDIO_EXE_FILE = "Nus3Audio/nus3audio.exe";
             public const string NUS3BANK_TEMPLATE_FILE = "template.nus3bank";
             public const string NUS3BANK_IDS_FILE = "nusbank_ids.csv";
             public const string NUS3AUDIO_TEMP_FILE = "temp.{0}";
+            public const string AUDIO_FILE = "bgm_{0}{1}";
         }
 
         public class GameResources
         {
             public const string NUS3AUDIO_FILE = "bgm_{0}.nus3audio";
             public const string NUS3BANK_FILE = "bgm_{0}.nus3bank";
-
-            public const string PRC_UI_BGM_DB_PATH = "ui/param/database/ui_bgm_db.prc";
-            public const string PRC_UI_GAMETITLE_DB_PATH = "ui/param/database/ui_gametitle_db.prc";
-            public const string PRC_BGM_PROPERTY_PATH = "sound/config/bgm_property.bin";
-            public const string MSBT_BGM = "ui/message/msg_bgm+{0}.msbt";
-            public const string MSBT_TITLE = "ui/message/msg_title+{0}.msbt";
         }
 
         internal class InternalIds
         {
+            public const string NUS3AUDIO_FILE_PREFIX = "bgm_";
+
             public const string UI_BGM_ID_PREFIX = "ui_bgm_";
             public const string STREAM_SET_PREFIX = "set_";
             public const string INFO_ID_PREFIX = "info_";
@@ -56,9 +54,6 @@
             public const string RECORD_TYPE_DEFAULT = "record_none";
             public const string RARITY_DEFAULT = "bgm_rarity_0";
             public const string SOUND_CONDITION = "sound_condition_none";
-
-            public const ulong SPECIAL_CATEGORY_SF_PINCH = 0x105274ba4f;
-            public static readonly string[] SPECIAL_CATEGORY_PERSONA_VALUES = new string[] { "jack_mementoes_p3", "jack_mementoes_p4", "jack_mementoes_p4" };
         }
 
         public static string[] VALID_RECORD_TYPES = new string[]

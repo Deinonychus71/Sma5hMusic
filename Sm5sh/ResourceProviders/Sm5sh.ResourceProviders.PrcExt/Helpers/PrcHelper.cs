@@ -74,7 +74,7 @@ namespace Sm5sh.ResourceProviders.Prc.Helpers
 
                     var keyString = _paramHashes[node.Key];
 
-                    foreach(var filterRegex in filtersRegex) 
+                    foreach (var filterRegex in filtersRegex)
                     {
                         if (Regex.IsMatch(keyString, filterRegex.Value.Regex))
                         {
@@ -85,7 +85,7 @@ namespace Sm5sh.ResourceProviders.Prc.Helpers
                         }
                     }
 
-                    if(propertyInfo == null)
+                    if (propertyInfo == null)
                         throw new Exception($"Hex 0x{node.Key:X} was not mapped to any property.");
                 }
             }
@@ -151,9 +151,9 @@ namespace Sm5sh.ResourceProviders.Prc.Helpers
                     throw new Exception("Data error");
 
                 var nodeValue = node as ParamValue;
-                if(nodeValue.TypeKey == ParamType.hash40)
+                if (nodeValue.TypeKey == ParamType.hash40)
                 {
-                    propertyInfo.SetValue(objToMap, new PrcHash40((ulong)nodeValue.Value, _paramHashes));
+                    propertyInfo.SetValue(objToMap, GetStringFromHex((ulong)nodeValue.Value));
                 }
                 else
                 {
@@ -182,7 +182,7 @@ namespace Sm5sh.ResourceProviders.Prc.Helpers
             filterStructAddMethod.Invoke(filterStruct, new[] { newfilterStructObjInstance });
 
             //Set ID
-            filterStructObjType.GetProperty("Id").SetValue(newfilterStructObjInstance, new PrcHash40(hexKey, _paramHashes));
+            filterStructObjType.GetProperty("Id").SetValue(newfilterStructObjInstance, GetStringFromHex(hexKey));
 
             return newfilterStructObjInstance;
         }
@@ -228,11 +228,9 @@ namespace Sm5sh.ResourceProviders.Prc.Helpers
                 ParamValue newValue;
                 if (paramType == ParamType.hash40)
                 {
-                    if (!(propertyValue is PrcHash40 hash40Value))
-                        hash40Value = PrcHash40.EmptyValue;
-                    newValue = new ParamValue(paramType, hash40Value.HexValue);
+                    newValue = new ParamValue(paramType, GetHexFromString((string)propertyValue));
                 }
-                else if(propertyValue == null && paramType == ParamType.@string)
+                else if (propertyValue == null && paramType == ParamType.@string)
                 {
                     newValue = new ParamValue(paramType, string.Empty);
                 }
@@ -269,8 +267,8 @@ namespace Sm5sh.ResourceProviders.Prc.Helpers
                         var prcFilterValuesPropertyType = prcFilterInstanceType.GetProperty("Values");
                         foreach (var prcFilterInstance in prcFilterList)
                         {
-                            var hexKey = (PrcHash40)prcFilterInstanceType.GetProperty("Id").GetValue(prcFilterInstance);
-                            WritePrc(paramsStruct.Nodes, prcFilterInstance, hexKey.HexValue, prcFilterValuesPropertyType);
+                            var hexKeyString = (string)prcFilterInstanceType.GetProperty("Id").GetValue(prcFilterInstance);
+                            WritePrc(paramsStruct.Nodes, prcFilterInstance, GetHexFromString(hexKeyString), prcFilterValuesPropertyType);
                         }
                     }
                 }
@@ -279,6 +277,20 @@ namespace Sm5sh.ResourceProviders.Prc.Helpers
         #endregion
 
         #region Utils
+        private string GetStringFromHex(ulong hexValue)
+        {
+            return _paramHashes.ContainsKey(hexValue) ? _paramHashes[hexValue] : $"0x{hexValue:x}";
+        }
+
+        private ulong GetHexFromString(string stringValue)
+        {
+            if (string.IsNullOrEmpty(stringValue))
+                return 0;
+            if (stringValue.StartsWith("0x", System.StringComparison.OrdinalIgnoreCase))
+                return Convert.ToUInt64(stringValue, 16);
+            return Hash40Util.StringToHash40(stringValue);
+        }
+
         private Type GetListObjectType(Type type)
         {
             foreach (Type interfaceType in type.GetInterfaces())
@@ -317,6 +329,10 @@ namespace Sm5sh.ResourceProviders.Prc.Helpers
         private ulong MapHexKeyFromPropertyInfo(PropertyInfo propertyInfo)
         {
             return propertyInfo.GetCustomAttribute<PrcHexMapping>().Value;
+        }
+        private bool IsHash40FromPropertyInfo(PropertyInfo propertyInfo)
+        {
+            return propertyInfo.GetCustomAttribute<PrcHexMapping>().IsHash40;
         }
 
         private bool ShouldIgnore(PropertyInfo propertyInfo)
@@ -365,10 +381,6 @@ namespace Sm5sh.ResourceProviders.Prc.Helpers
             {
                 return ParamType.@float;
             }
-            if (typeProperty == typeof(PrcHash40))
-            {
-                return ParamType.hash40;
-            }
             if (typeProperty == typeof(int))
             {
                 return ParamType.@int;
@@ -381,10 +393,6 @@ namespace Sm5sh.ResourceProviders.Prc.Helpers
             {
                 return ParamType.@short;
             }
-            if (typeProperty == typeof(string))
-            {
-                return ParamType.@string;
-            }
             if (typeProperty == typeof(uint))
             {
                 return ParamType.@uint;
@@ -392,6 +400,14 @@ namespace Sm5sh.ResourceProviders.Prc.Helpers
             if (typeProperty == typeof(ushort))
             {
                 return ParamType.@ushort;
+            }
+            if (IsHash40FromPropertyInfo(propertyInfo)) //Has to be done before string!!
+            {
+                return ParamType.hash40;
+            }
+            if (typeProperty == typeof(string))
+            {
+                return ParamType.@string;
             }
 
             throw new Exception("Case non handled");

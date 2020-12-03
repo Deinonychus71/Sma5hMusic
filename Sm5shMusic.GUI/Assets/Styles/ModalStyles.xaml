@@ -1,0 +1,24 @@
+﻿<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <Style Selector="DockPanel.modal">
+    <Setter Property="LastChildFill" Value="False"/>
+  </Style>
+  <Style Selector="StackPanel.modal">
+  </Style>
+
+  <Style Selector=".modal StackPanel.content">
+    <Setter Property="Margin" Value="20"/>
+    <Setter Property="Spacing" Value="20"/>
+  </Style>
+
+  <Style Selector=".modal > StackPanel.modalActions">
+    <Setter Property="MaxHeight" Value="50"/>
+    <Setter Property="HorizontalAlignment" Value="Center"/>
+    <Setter Property="Margin" Value="20"/>
+    <Setter Property="Spacing" Value="20"/>
+    <Setter Property="Orientation" Value="Horizontal"/>
+  </Style>
+  <Style Selector=".modalActions > Button">
+    <Setter Property="Margin" Value="20,0,20,0"/>
+  </Style>  
+</Styles>

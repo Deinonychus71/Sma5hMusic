@@ -1,0 +1,70 @@
+﻿<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="clr-namespace:Sm5shMusic.GUI.ViewModels;assembly=Sm5shMusic.GUI"
+        xmlns:vw="clr-namespace:Sm5shMusic.GUI.Views;assembly=Sm5shMusic.GUI"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" MinWidth="1920" MinHeight="1080" d:DesignWidth="1280" d:DesignHeight="720"
+        x:Class="Sm5shMusic.GUI.Views.MainWindow"
+        Icon="/Assets/avalonia-logo.ico"
+        xmlns:fields="clr-namespace:Sm5shMusic.GUI.Views.Fields"
+        xmlns:i="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
+        xmlns:ia="clr-namespace:Avalonia.Xaml.Interactions.Core;assembly=Avalonia.Xaml.Interactions"
+        Title="Sm5sh Music">
+  <i:Interaction.Behaviors>
+    <ia:EventTriggerBehavior EventName="Opened">
+      <ia:InvokeCommandAction Command="{Binding OnInitData}"/>
+    </ia:EventTriggerBehavior>
+  </i:Interaction.Behaviors>
+  <Grid RowDefinitions="20,70,*,Auto" ColumnDefinitions="*">
+    <Menu Grid.Row="0">
+      <MenuItem Header="Project">
+        <!--<MenuItem Header="Choose Mod Workspace..."></MenuItem>
+        <Separator></Separator>-->
+        <MenuItem Header="Build" Command="{Binding ActionBuild}"/>
+        <MenuItem Header="Build [no cache]" Command="{Binding ActionBuildNoCache}"/>
+        <Separator></Separator>
+        <MenuItem Header="Refresh Data" Command="{Binding ActionRefreshData}"></MenuItem>
+        <Separator></Separator>
+        <MenuItem Header="Exit" Command="{Binding ActionExit}"></MenuItem>
+      </MenuItem>
+      <!--<MenuItem Header="Tools">
+        <MenuItem Header="Export to CSV"></MenuItem>
+      </MenuItem>-->
+      <MenuItem Header="Settings">
+        <MenuItem Header="Advanced">
+          <MenuItem.Icon>
+            <CheckBox IsChecked="{Binding IsAdvanced}"/>
+          </MenuItem.Icon>
+        </MenuItem>
+        <MenuItem Header="Show Console">
+          <MenuItem.Icon>
+            <CheckBox IsChecked="{Binding IsShowingDebug}"/>
+          </MenuItem.Icon>
+        </MenuItem>
+        <!--
+        <MenuItem Header="Global Settings"></MenuItem>-->
+        <Separator></Separator>
+        <MenuItem Header="About" Command="{Binding OnAboutOpen}"></MenuItem>
+      </MenuItem>
+    </Menu>
+    <DockPanel Grid.Row="1">
+      <Image Classes="logo" Source="/Assets/smash_logo.png"/>
+      <TextBlock DockPanel.Dock="Left" Classes="title">Sm5sh Music</TextBlock>
+      <TabStrip DockPanel.Dock="Right" Name="TabsMenu" HorizontalAlignment="Right" Margin="10">
+        <TabStripItem Content="Songs"/>
+        <TabStripItem Content="Playlists"/>
+      </TabStrip>
+    </DockPanel>
+    <Grid Grid.Row="2" ColumnDefinitions="*,5,6*" RowDefinitions="30,30,*">
+      <ContentControl Grid.Column="0" Grid.Row="2" Content="{Binding VMBgmFilters}"></ContentControl>
+      <GridSplitter Grid.Column="1" Grid.Row="2" ResizeDirection="Columns"/>
+      <Carousel Grid.Column="2" Grid.Row="1" Grid.RowSpan="2" SelectedIndex="{Binding #TabsMenu.SelectedIndex}">
+        <ContentControl Content="{Binding VMBgmSongs}"></ContentControl>
+        <ContentControl Content="{Binding VMPlaylists}"></ContentControl>
+      </Carousel>
+    </Grid>
+    <vw:DebugConsole IsVisible="{Binding IsShowingDebug}" Grid.Row="2" Grid.RowSpan="2"/>
+    <fields:LoadingView Grid.Row="0" Grid.RowSpan="5" IsVisible="{Binding IsLoading}" Background="Black" Opacity="0.8"/>
+  </Grid>
+</Window>

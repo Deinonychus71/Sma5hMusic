@@ -1,0 +1,117 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <PlatformTarget>x86</PlatformTarget>
+  </PropertyGroup>
+  <ItemGroup>
+    <AvaloniaResource Include="Assets\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="appsettings.json" />
+    <None Remove="Assets\FilterStyles.xaml" />
+    <None Remove="Assets\ListsStyles.xaml" />
+    <None Remove="Assets\ModalStyles.xaml" />
+    <None Remove="Assets\PropertiesStyles.xaml" />
+    <None Remove="Assets\Styles.xaml" />
+    <None Remove="Assets\Styles\ContentStyles.xaml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="appsettings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Avalonia" Version="0.10.0-preview6" />
+    <PackageReference Include="Avalonia.Controls.DataGrid" Version="0.10.0-preview6" />
+    <PackageReference Include="Avalonia.Desktop" Version="0.10.0-preview6" />
+    <PackageReference Include="Avalonia.ReactiveUI" Version="0.10.0-preview6" />
+    <PackageReference Include="Avalonia.Xaml.Behaviors" Version="0.10.0-preview6" />
+    <PackageReference Include="MessageBox.Avalonia" Version="0.10.0-prev2" />
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="5.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="5.0.0" />
+    <PackageReference Include="Nett" Version="0.15.0" />
+    <PackageReference Include="ReactiveUI.Fody" Version="12.1.5" />
+    <PackageReference Include="ReactiveUI.Validation" Version="1.8.6" />
+    <PackageReference Include="Serilog.Extensions.Logging.File" Version="2.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="5.0.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="5.0.0" />
+    <PackageReference Include="Splat.Microsoft.Extensions.DependencyInjection" Version="9.7.1" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Sm5sh\Core\Helpers\VGMMusic\VGMMusic.csproj" />
+    <ProjectReference Include="..\Sm5sh\Mods\Sm5sh.Mods.Music\Sm5sh.Mods.Music.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <AvaloniaResource Update="Assets\Styles\ContentStyles.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </AvaloniaResource>
+    <AvaloniaResource Update="Assets\Styles\ModalStyles.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </AvaloniaResource>
+    <AvaloniaResource Update="Assets\Styles\ListsStyles.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </AvaloniaResource>
+    <AvaloniaResource Update="Assets\Styles\Styles.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </AvaloniaResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Update="Views\Fields\PropertyByteField.axaml.cs">
+      <DependentUpon>PropertyByteField.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\Fields\PropertyULongField.axaml.cs">
+      <DependentUpon>PropertyULongField.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\Fields\PropertyUShortField.axaml.cs">
+      <DependentUpon>PropertyUShortField.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\Fields\PropertyUIntField.axaml.cs">
+      <DependentUpon>PropertyUIntField.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\Fields\PropertyIntField.axaml.cs">
+      <DependentUpon>PropertyIntField.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\Fields\PropertyShortField.axaml.cs">
+      <DependentUpon>PropertyShortField.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\Fields\PropertyMusicField.axaml.cs">
+      <DependentUpon>PropertyMusicField.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\Fields\PropertyField.axaml.cs">
+      <DependentUpon>PropertyField.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\Fields\PropertyBooleanField.axaml.cs">
+      <DependentUpon>PropertyBooleanField.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\Modals\BgmAdvancedPropertiesModalWindow.axaml.cs">
+      <DependentUpon>BgmAdvancedPropertiesModalWindow.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\Views\PlaylistView.axaml.cs">
+      <DependentUpon>PlaylistView.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\Views\MSBTFieldView.axaml.cs">
+      <DependentUpon>MSBTFieldView.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\Modals\BgmPropertiesModalWindow.axaml.cs">
+      <DependentUpon>BgmPropertiesModalWindow.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\Views\BgmFiltersView.axaml.cs">
+      <DependentUpon>BgmFiltersView.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\Views\BgmPropertiesView.axaml.cs">
+      <DependentUpon>BgmPropertiesView.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\Modals\ModPropertiesModalWindow.axaml.cs">
+      <DependentUpon>ModPropertiesModalWindow.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\Views\MusicPlayerView.axaml.cs">
+      <DependentUpon>MusicPlayerView.axaml</DependentUpon>
+    </Compile>
+  </ItemGroup>
+</Project>
