@@ -1,21 +1,20 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using AutoMapper;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Sm5sh.Data;
 using Sm5sh.Data.Ui.Param.Database;
 using Sm5sh.Data.Ui.Param.Database.PrcUiBgmDatabaseModels;
 using Sm5sh.Data.Ui.Param.Database.PrcUiGameTitleDatabaseModels;
+using Sm5sh.Data.Ui.Param.Database.PrcUiStageDatabaseModels;
 using Sm5sh.Helpers;
 using Sm5sh.Interfaces;
-using Sm5sh.Mods.Music.Data.Sound.Config;
-using Sm5sh.Mods.Music.Data.Sound.Config.BgmPropertyStructs;
 using Sm5sh.Mods.Music.Helpers;
 using Sm5sh.Mods.Music.Interfaces;
 using Sm5sh.Mods.Music.Models;
-using Sm5sh.Mods.Music.Models.BgmEntryModels;
-using Sm5sh.Mods.Music.Services.AudioStateServiceModels;
+using Sm5sh.ResourceProviders.Constants;
 using Sm5sh.ResourceProviders.Prc.Helpers;
-using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 
 namespace Sm5sh.Mods.Music.Services
@@ -23,346 +22,385 @@ namespace Sm5sh.Mods.Music.Services
     public class AudioStateService : IAudioStateService
     {
         private readonly ILogger _logger;
+        private readonly IMapper _mapper;
         private readonly IStateManager _state;
         private readonly IOptions<Sm5shMusicOptions> _config;
-        private readonly Dictionary<string, BgmToneKeyReferences> _toneIdKeyReferences;
+        private readonly HashSet<string> _seriesEntries;
+        private readonly HashSet<string> _localesEntries;
+        private readonly Dictionary<string, GameTitleEntry> _gameEntries;
+        private readonly Dictionary<string, BgmEntry> _bgmEntries;
+        private readonly Dictionary<string, BgmEntry> _deletedBgmEntries; //TODO
+        private readonly Dictionary<string, PlaylistEntry> _playlistsEntries;
+        private readonly Dictionary<string, StageEntry> _stageEntries;
 
-        public AudioStateService(IOptions<Sm5shMusicOptions> config, IStateManager state, ILogger<IAudioStateService> logger)
+        public AudioStateService(IOptions<Sm5shMusicOptions> config, IMapper mapper, IStateManager state, ILogger<IAudioStateService> logger)
         {
             _config = config;
+            _mapper = mapper;
             _logger = logger;
             _state = state;
-            _toneIdKeyReferences = new Dictionary<string, BgmToneKeyReferences>();
+            _deletedBgmEntries = new Dictionary<string, BgmEntry>();
+            _gameEntries = new Dictionary<string, GameTitleEntry>();
+            _seriesEntries = new HashSet<string>();
+            _localesEntries = new HashSet<string>();
+            _bgmEntries = new Dictionary<string, BgmEntry>();
+            _playlistsEntries = new Dictionary<string, PlaylistEntry>();
+            _stageEntries = new Dictionary<string, StageEntry>();
         }
 
         public IEnumerable<BgmEntry> GetBgmEntries()
         {
-            return GetBgmEntriesFromStateManager().Values;
+            return _bgmEntries.Values;
         }
 
         public IEnumerable<BgmEntry> GetModBgmEntries()
         {
-            return GetBgmEntries().Where(p => !string.IsNullOrEmpty(p.FileName));
+            return GetBgmEntries().Where(p => p.Source == EntrySource.Mod);
         }
 
         public BgmEntry GetBgmEntry(string toneId)
         {
-            return GetBgmEntries().FirstOrDefault(p => p.ToneId == toneId);
+            return _bgmEntries.ContainsKey(toneId) ? _bgmEntries[toneId] : null;
         }
 
-        public BgmEntry AddOrUpdateBgmEntry(BgmEntry bgmEntry)
+        public IEnumerable<GameTitleEntry> GetGameTitleEntries()
         {
-            var keyRefs = GetToneIdKeyReferences(bgmEntry.ToneId, bgmEntry.FileName);
-            var bgmEntries = GetBgmEntriesFromStateManager();
+            return _gameEntries.Values;
+        }
+
+        public IEnumerable<StageEntry> GetStagesEntries()
+        {
+            return _stageEntries.Values;
+        }
+
+        public IEnumerable<string> GetSeriesEntries()
+        {
+            return _seriesEntries;
+        }
+
+        public IEnumerable<string> GetLocales()
+        {
+            return _localesEntries;
+        }
+
+        public IEnumerable<PlaylistEntry> GetPlaylists()
+        {
+            return _playlistsEntries.Values;
+        }
+
+        public bool DoesToneIdExist(string toneId)
+        {
+            return _bgmEntries.ContainsKey(toneId);
+        }
+
+        public bool AddBgmEntry(BgmEntry bgmEntry)
+        {
+            //TODO: Figure out how MenuValue works - Incrementing for now
+            int menuIndex = _bgmEntries.Values.OrderByDescending(p => p.DbRoot.MenuValue).First().DbRoot.MenuValue + 1; //TODO: Treat separately
+            bgmEntry.DbRoot.MenuValue = _bgmEntries.Values.OrderByDescending(p => p.DbRoot.MenuValue).First().DbRoot.MenuValue + 1;
+
+            //Save GameTitle & Series
+            if (!_gameEntries.ContainsKey(bgmEntry.GameTitleId))
+                _gameEntries.Add(bgmEntry.GameTitleId, bgmEntry.GameTitle);
+            if (!_seriesEntries.Contains(bgmEntry.GameTitle.UiSeriesId))
+                _seriesEntries.Add(bgmEntry.GameTitle.UiSeriesId);
 
             //Create
-            if (!bgmEntries.ContainsKey(bgmEntry.ToneId))
-                CreateNewBgmEntryInStateManager(keyRefs);
+            if (!_bgmEntries.ContainsKey(bgmEntry.ToneId))
+                _bgmEntries.Add(bgmEntry.ToneId, bgmEntry);
+            else
+            {
+                _logger.LogError("Bgm with ToneId {ToneId} already exist in the database.", bgmEntry.ToneId);
+                return false;
+            }
 
-            //Update
-            UpdateBgmEntryInStateManager(keyRefs, bgmEntry);
-
-            //Return mapping BgmEntry
-            return GetBgmEntry(bgmEntry.ToneId);
+            return true;
         }
 
-        public void RemoveBgmEntry(string toneId)
+        public bool RemoveBgmEntry(string toneId)
         {
-            RemoveBgmEntryFromStateManager(toneId);
+            if (_bgmEntries.ContainsKey(toneId))
+            {
+                if (!_deletedBgmEntries.ContainsKey(toneId))
+                    _deletedBgmEntries.Add(toneId, _bgmEntries[toneId]);
+                _bgmEntries.Remove(toneId);
+            }
+            else
+            {
+                _logger.LogWarning("ToneId {ToneId} was not found. Cannot remove from list...", toneId);
+            }
+
+            return true;
         }
 
-        #region Private
-        private Dictionary<string, BgmEntry> GetBgmEntriesFromStateManager()
+        public bool AddPlaylistEntry(PlaylistEntry playlistEntry)
         {
-            //Load BGM_PROPERTY
-            var daoBinBgmProperty = _state.LoadResource<BinBgmProperty>(Constants.GameResources.PRC_BGM_PROPERTY_PATH);
-            var daoBinPropertyEntries = daoBinBgmProperty.Entries;
+            if (!_playlistsEntries.ContainsKey(playlistEntry.Id))
+            {
+                _playlistsEntries.Add(playlistEntry.Id, playlistEntry);
+            }
+            else
+            {
+                _logger.LogWarning("PlaylistId {PlaylistId} already exist... ", playlistEntry.Id);
+            }
 
-            //Load UI_BGM_DB / UI_GAMETITLE_DB
-            var paramBgmDatabase = _state.LoadResource<PrcUiBgmDatabase>(Constants.GameResources.PRC_UI_BGM_DB_PATH);
-            var paramGameTitleDbRoot = _state.LoadResource<PrcUiGameTitleDatabase>(Constants.GameResources.PRC_UI_GAMETITLE_DB_PATH).DbRootEntries;
-            var paramBgmDbRoot = paramBgmDatabase.DbRootEntries;
-            var paramBgmStreamSet = paramBgmDatabase.StreamSetEntries;
-            var paramBgmAssignedInfo = paramBgmDatabase.AssignedInfoEntries;
-            var paramBgmStreamProperty = paramBgmDatabase.StreamPropertyEntries;
-            var paramBgmPlaylists = paramBgmDatabase.PlaylistEntries.ToDictionary(p => p.Id.StringValue, p => p.Values);
+            return true;
+        }
 
-            //Load MSBT
+        public bool RemovePlaylistEntry(string playlistId)
+        {
+            if (_playlistsEntries.ContainsKey(playlistId))
+            {
+                _playlistsEntries.Remove(playlistId);
+            }
+            else
+            {
+                _logger.LogWarning("PlaylistId {PlaylistId} was not found. Cannot remove from list...", playlistId);
+            }
+
+            return true;
+        }
+
+        public bool SaveBgmEntriesToStateManager()
+        {
+            _logger.LogInformation("Saving Bgm Entries to State Service");
+
+            //Load Data
+            var paramBgmDatabase = _state.LoadResource<PrcUiBgmDatabase>(PrcExtConstants.PRC_UI_BGM_DB_PATH);
+            var paramGameTitleDatabaseRoot = _state.LoadResource<PrcUiGameTitleDatabase>(PrcExtConstants.PRC_UI_GAMETITLE_DB_PATH).DbRootEntries;
+            var paramStageDbRoot = _state.LoadResource<PrcUiStageDatabase>(PrcExtConstants.PRC_UI_STAGE_DB_PATH).DbRootEntries;
+            var binBgmPropertyEntries = _state.LoadResource<Data.Sound.Config.BinBgmProperty>(BgmPropertyFileConstants.BGM_PROPERTY_PATH).Entries;
             var daoMsbtBgms = GetBgmDatabases();
             var daoMsbtTitle = GetGameTitleDatabases();
 
-            var output = new Dictionary<string, BgmEntry>();
-            foreach (var daoBinPropertyKeyValue in daoBinPropertyEntries)
-            {
-                var toneId = daoBinPropertyKeyValue.Key;
-                var keyRef = GetToneIdKeyReferences(toneId);
-
-                //Very few songs are currently not in the db - therefore not supported for now.
-                if (!paramBgmDbRoot.ContainsKey(keyRef.DbRootKey))
-                    continue;
-
-                var dbRootEntry = paramBgmDbRoot[keyRef.DbRootKey];
-                var setStreamEntry = paramBgmStreamSet[keyRef.StreamSetKey];
-                var assignedInfoEntry = paramBgmAssignedInfo[keyRef.AssignedInfoKey];
-                var streamPropertyEntry = paramBgmStreamProperty[keyRef.StreamPropertyKey];
-                var gameTitleEntry = paramGameTitleDbRoot[dbRootEntry.UiGameTitleId.StringValue];
-                var bgmProperty = daoBinPropertyEntries[toneId];
-
-                var newBgmEntry = new BgmEntry()
-                {
-                    ToneId = toneId,
-                    GameTitle = new GameTitleEntry()
-                    {
-                        GameTitleId = dbRootEntry.UiGameTitleId.StringValue,
-                        NameId = dbRootEntry.NameId,
-                        SeriesId = gameTitleEntry.UiSeriesId.StringValue,
-                        Title = new Dictionary<string, string>()
-                    },
-                    RecordType = dbRootEntry.RecordType.StringValue,
-                    AudioCuePoints = new AudioCuePoints()
-                    {
-                        LoopEndMs = bgmProperty.LoopEndMs,
-                        LoopEndSample = bgmProperty.LoopEndSample,
-                        LoopStartMs = bgmProperty.LoopStartMs,
-                        LoopStartSample = bgmProperty.LoopStartSample,
-                        TotalSamples = bgmProperty.TotalSamples,
-                        TotalTimeMs = bgmProperty.TotalTimeMs
-                    },
-                    FileName = _toneIdKeyReferences.ContainsKey(toneId) ? _toneIdKeyReferences[toneId].FileName : null,
-                    Playlists = paramBgmPlaylists.Where(p => p.Value.Any(p => p.UiBgmId.HexValue == dbRootEntry.UiBgmId.HexValue)).Select(p => new PlaylistEntry() { Id = p.Key }).ToList(),
-                    IsDlc = dbRootEntry.IsDlc, 
-                    IsPatch = dbRootEntry.IsPatch,
-                    SpecialCategory = ToSpecialCategory(setStreamEntry),
-                    Title = new Dictionary<string, string>(),
-                    Author = new Dictionary<string, string>(),
-                    Copyright = new Dictionary<string, string>()
-                };
-
-                var nameId = dbRootEntry.NameId;
-                var gameTitleId = gameTitleEntry.NameId;
-                var gameTitleLabel = string.Format(Constants.InternalIds.MSBT_GAME_TITLE, gameTitleId);
-                var titleLabel = string.Format(Constants.InternalIds.MSBT_BGM_TITLE, nameId);
-                var authorLabel = string.Format(Constants.InternalIds.MSBT_BGM_AUTHOR, nameId);
-                var copyrightLabel = string.Format(Constants.InternalIds.MSBT_BGM_COPYRIGHT, nameId);
-                foreach (var msbtDb in daoMsbtBgms)
-                {
-                    var entries = msbtDb.Value.Entries;
-                    if (entries.ContainsKey(titleLabel))
-                        newBgmEntry.Title.Add(msbtDb.Key, entries[titleLabel]);
-                    if (entries.ContainsKey(authorLabel))
-                        newBgmEntry.Author.Add(msbtDb.Key, entries[authorLabel]);
-                    if (entries.ContainsKey(copyrightLabel))
-                        newBgmEntry.Copyright.Add(msbtDb.Key, entries[copyrightLabel]);
-                }
-                foreach (var msbtDb in daoMsbtTitle)
-                {
-                    var entries = msbtDb.Value.Entries;
-                    if (entries.ContainsKey(gameTitleLabel))
-                        newBgmEntry.GameTitle.Title.Add(msbtDb.Key, entries[gameTitleLabel]);
-                }
-
-                output.Add(toneId, newBgmEntry);
-            }
-
-            return output;
-        }
-
-        private void CreateNewBgmEntryInStateManager(BgmToneKeyReferences keyRefs)
-        {
-            _logger.LogInformation("Adding Bgm Entry to State Service: {ToneId}", keyRefs.ToneId);
-
-            var paramBgmDatabase = _state.LoadResource<PrcUiBgmDatabase>(Constants.GameResources.PRC_UI_BGM_DB_PATH);
-            var paramBgmDbRoot = paramBgmDatabase.DbRootEntries;
-            var daoBinBgmProperty = _state.LoadResource<BinBgmProperty>(Constants.GameResources.PRC_BGM_PROPERTY_PATH);
-
-            //var saveNoIndex = (short)(_daoUiBgmDbRootEntries.Values.OrderByDescending(p => p.SaveNo).First().SaveNo + 1); //Not working past top save_no id
-            var testDispOrderIndex = (short)(paramBgmDbRoot.Values.OrderByDescending(p => p.TestDispOrder).First().TestDispOrder + 1);
-            var menuValueIndex = paramBgmDbRoot.Values.OrderByDescending(p => p.MenuValue).First().MenuValue + 1;
-
-            //New entry - with default values
-            paramBgmDbRoot.Add(keyRefs.DbRootKey, new PrcBgmDbRootEntry()
-            {
-                UiBgmId = new PrcHash40(keyRefs.DbRootKey),
-                StreamSetId = new PrcHash40(keyRefs.StreamSetKey),
-                Rarity = new PrcHash40(Constants.InternalIds.RARITY_DEFAULT),
-                RecordType = new PrcHash40(Constants.InternalIds.RECORD_TYPE_DEFAULT),
-                UiGameTitleId = new PrcHash40(Constants.InternalIds.GAME_TITLE_ID_DEFAULT),
-                UiGameTitleId1 = new PrcHash40(Constants.InternalIds.GAME_TITLE_ID_DEFAULT),
-                UiGameTitleId2 = new PrcHash40(Constants.InternalIds.GAME_TITLE_ID_DEFAULT),
-                UiGameTitleId3 = new PrcHash40(Constants.InternalIds.GAME_TITLE_ID_DEFAULT),
-                UiGameTitleId4 = new PrcHash40(Constants.InternalIds.GAME_TITLE_ID_DEFAULT),
-                NameId = GetNewBgmId(),
-                SaveNo = 0,
-                TestDispOrder = testDispOrderIndex,
-                MenuValue = menuValueIndex,
-                JpRegion = true,
-                OtherRegion = true,
-                Possessed = true,
-                PrizeLottery = false,
-                ShopPrice = 0,
-                CountTarget = true,
-                MenuLoop = 1,
-                IsSelectableStageMake = true,
-                Unk1 = true,
-                Unk2 = true,
-                IsDlc = false,
-                IsPatch = false
-            });
-            paramBgmDatabase.StreamSetEntries.Add(keyRefs.StreamSetKey, new PrcBgmStreamSetEntry()
-            {
-                StreamSetId = new PrcHash40(keyRefs.StreamSetKey),
-                SpecialCategory = new PrcHash40(0),
-                Info0 = new PrcHash40(keyRefs.AssignedInfoKey)
-            });
-            paramBgmDatabase.AssignedInfoEntries.Add(keyRefs.AssignedInfoKey, new PrcBgmAssignedInfoEntry()
-            {
-                InfoId = new PrcHash40(keyRefs.AssignedInfoKey),
-                StreamId = new PrcHash40(keyRefs.StreamPropertyKey),
-                Condition = new PrcHash40(Constants.InternalIds.SOUND_CONDITION),
-                ConditionProcess = new PrcHash40(0x1b9fe75d3f),
-                ChangeFadoutFrame = 55,
-                MenuChangeFadeOutFrame = 55
-            });
-            paramBgmDatabase.StreamPropertyEntries.Add(keyRefs.StreamPropertyKey, new PrcBgmStreamPropertyEntry()
-            {
-                StreamId = new PrcHash40(keyRefs.StreamPropertyKey),
-                DateName0 = keyRefs.ToneId,
-                Loop = 1,
-                EndPoint = "00:00:15.000",
-                FadeOutFrame = 400,
-                StartPointTransition = "00:00:04.000"
-            });
-            daoBinBgmProperty.Entries.Add(keyRefs.ToneId, new BgmPropertyEntry());
-        }
-
-        private void UpdateBgmEntryInStateManager(BgmToneKeyReferences keyRefs, BgmEntry bgmEntry)
-        {
-            _logger.LogInformation("Updating Bgm Entry to State Service: {ToneId}", keyRefs.ToneId);
-
-            var paramBgmDatabase = _state.LoadResource<PrcUiBgmDatabase>(Constants.GameResources.PRC_UI_BGM_DB_PATH);
-            var paramGameTitleDatabaseRoot = _state.LoadResource<PrcUiGameTitleDatabase>(Constants.GameResources.PRC_UI_GAMETITLE_DB_PATH).DbRootEntries;
-            var binBgmPropertyEntries = _state.LoadResource<BinBgmProperty>(Constants.GameResources.PRC_BGM_PROPERTY_PATH).Entries;
-
             var defaultLocale = _config.Value.Sm5shMusic.DefaultLocale;
-            var coreSeriesGames = paramGameTitleDatabaseRoot.Values.Select(p => p.UiSeriesId.StringValue).Distinct(); //Not handling series addition right now.
+            var gameTitles = _bgmEntries.Values.GroupBy(p => p.GameTitleId).Select(p => p.First().GameTitle).Where(p => p != null && p.UiGameTitleId != Constants.InternalIds.GAME_TITLE_ID_DEFAULT);
+            var coreSeriesGames = paramGameTitleDatabaseRoot.Values.Select(p => p.UiSeriesId).Distinct(); //Not handling series addition right now.
 
-            var toneId = keyRefs.ToneId;
-
-            if (!paramBgmDatabase.DbRootEntries.ContainsKey(keyRefs.DbRootKey))
-                throw new Exception($"BGM ID {keyRefs.DbRootKey} does not exist in the DBRoot");
-
-            //BGM PRC
-            var dbRootEntry = paramBgmDatabase.DbRootEntries[keyRefs.DbRootKey];
-            var setStreamEntry = paramBgmDatabase.StreamSetEntries[keyRefs.StreamSetKey];
-            var assignedInfoEntry = paramBgmDatabase.AssignedInfoEntries[keyRefs.AssignedInfoKey];
-            var streamPropertyEntry = paramBgmDatabase.StreamPropertyEntries[keyRefs.StreamPropertyKey];
-            //DB Root
-            dbRootEntry.UiGameTitleId = new PrcHash40(bgmEntry.GameTitle.GameTitleId);
-            dbRootEntry.RecordType = new PrcHash40(bgmEntry.RecordType);
-            dbRootEntry.IsPatch = bgmEntry.IsPatch;
-            dbRootEntry.IsDlc = bgmEntry.IsDlc;
-            //Stream Set
-            setStreamEntry = FromSpecialCategory(setStreamEntry, bgmEntry?.SpecialCategory);
-
-            //GameTitle PRC
-            if (!paramGameTitleDatabaseRoot.ContainsKey(bgmEntry.GameTitle.GameTitleId))
+            //GameTitle PRC - We don't delete existing games... yet.
+            foreach (var gameTitle in gameTitles)
             {
-                string seriesId = bgmEntry.GameTitle.SeriesId;
-                if (!coreSeriesGames.Contains(seriesId))
-                    seriesId = Constants.InternalIds.GAME_SERIES_ID_DEFAULT;
-                paramGameTitleDatabaseRoot.Add(bgmEntry.GameTitle.GameTitleId, new PrcGameTitleDbRootEntry()
-                {
-                    NameId = bgmEntry.GameTitle.NameId,
-                    Release = paramGameTitleDatabaseRoot.Values.OrderByDescending(p => p.Release).First().Release + 1,
-                    UiGameTitleId = new PrcHash40(bgmEntry.GameTitle.GameTitleId),
-                    UiSeriesId = new PrcHash40(seriesId)
-                });
+                paramGameTitleDatabaseRoot[gameTitle.UiGameTitleId] = _mapper.Map<PrcGameTitleDbRootEntry>(gameTitle);
             }
 
-            //Bin Property
-            binBgmPropertyEntries[toneId].TotalSamples = bgmEntry.AudioCuePoints.TotalSamples;
-            binBgmPropertyEntries[toneId].LoopEndMs = bgmEntry.AudioCuePoints.LoopEndMs;
-            binBgmPropertyEntries[toneId].LoopEndSample = bgmEntry.AudioCuePoints.LoopEndSample;
-            binBgmPropertyEntries[toneId].LoopStartMs = bgmEntry.AudioCuePoints.LoopStartMs;
-            binBgmPropertyEntries[toneId].LoopStartSample = bgmEntry.AudioCuePoints.LoopStartSample;
-            binBgmPropertyEntries[toneId].TotalTimeMs = bgmEntry.AudioCuePoints.TotalTimeMs;
-            binBgmPropertyEntries[toneId].NameId = toneId;
+            //Reordering
+            short orderIndex = 0;
+            var listBgms = _bgmEntries.Values.Where(p => p.DbRoot.TestDispOrder >= 0).OrderBy(p => p.DbRoot.TestDispOrder);
+            foreach (var bgmEntry in listBgms)
+            {
+                bgmEntry.DbRoot.TestDispOrder = orderIndex;
+                orderIndex++;
+
+                //If the song needs to be display, SaveNo has to be between 0 and last SaveNo known value
+                if (bgmEntry.Source == EntrySource.Mod)
+                    bgmEntry.DbRoot.SaveNo = 0;
+               
+            }
+
+            //BGM Saving
+            foreach (var bgmEntry in _bgmEntries.Values)
+            {
+                var toneId = bgmEntry.ToneId;
+
+                //Generate NameId - If needed
+                if (bgmEntry.MSBTLabels.ContainsValidLabels)
+                    bgmEntry.DbRoot.NameId = GetNewBgmId();
+
+                //Save Bin & BGM PRC
+                binBgmPropertyEntries[toneId] = _mapper.Map<Data.Sound.Config.BgmPropertyStructs.BgmPropertyEntry>(bgmEntry.BgmProperties);
+                paramBgmDatabase.DbRootEntries[bgmEntry.DbRootKey] = _mapper.Map<PrcBgmDbRootEntry>(bgmEntry.DbRoot);
+                paramBgmDatabase.AssignedInfoEntries[bgmEntry.AssignedInfoKey] = _mapper.Map<PrcBgmAssignedInfoEntry>(bgmEntry.AssignedInfo);
+                paramBgmDatabase.StreamPropertyEntries[bgmEntry.StreamPropertyKey] = _mapper.Map<PrcBgmStreamPropertyEntry>(bgmEntry.StreamingProperty);
+                paramBgmDatabase.StreamSetEntries[bgmEntry.StreamSetKey] = _mapper.Map<PrcBgmStreamSetEntry>(bgmEntry.StreamSet);
+
+                //Save MSBT - If needed
+                #region
+                if (!string.IsNullOrEmpty(bgmEntry.DbRoot.NameId))
+                {
+                    var titleLabel = bgmEntry.MSBTLabels.TitleKey;
+                    var titleDict = bgmEntry.MSBTLabels.Title;
+                    var authorLabel = bgmEntry.MSBTLabels.AuthorKey;
+                    var authorDict = bgmEntry.MSBTLabels.Author;
+                    var copyrightLabel = bgmEntry.MSBTLabels.CopyrightKey;
+                    var copyrightDict = bgmEntry.MSBTLabels.Copyright;
+                    foreach (var msbtDb in daoMsbtBgms)
+                    {
+                        var entries = msbtDb.Value.Entries;
+
+                        //Title
+                        if (titleDict != null && titleDict.ContainsKey(msbtDb.Key) && !string.IsNullOrEmpty(titleDict[msbtDb.Key]))
+                            entries[titleLabel] = titleDict[msbtDb.Key];
+                        else if (titleDict != null && titleDict.ContainsKey(defaultLocale) && !string.IsNullOrEmpty(titleDict[msbtDb.Key]))
+                            entries[titleLabel] = titleDict[defaultLocale];
+
+                        //Author
+                        if (authorDict != null)
+                        {
+                            if (authorDict.ContainsKey(msbtDb.Key) && !string.IsNullOrEmpty(authorDict[msbtDb.Key]))
+                                entries[authorLabel] = authorDict[msbtDb.Key];
+                            else if (authorDict.ContainsKey(defaultLocale) && !string.IsNullOrEmpty(authorDict[msbtDb.Key]))
+                                entries[authorLabel] = authorDict[defaultLocale];
+                        }
+
+                        //Copyright
+                        if (copyrightDict != null)
+                        {
+                            if (copyrightDict.ContainsKey(msbtDb.Key) && !string.IsNullOrEmpty(copyrightDict[msbtDb.Key]))
+                                entries[copyrightLabel] = copyrightDict[msbtDb.Key];
+                            else if (copyrightDict.ContainsKey(defaultLocale) && !string.IsNullOrEmpty(copyrightDict[msbtDb.Key]))
+                                entries[copyrightLabel] = copyrightDict[defaultLocale];
+                        }
+                    }
+                }
+                //Game Title
+                if (!string.IsNullOrEmpty(bgmEntry.GameTitle?.NameId))
+                {
+                    var gameTitleLabel = bgmEntry.GameTitle.MSBTTitleKey;
+                    var titleDict = bgmEntry.GameTitle.MSBTTitle;
+                    foreach (var msbtDb in daoMsbtTitle)
+                    {
+                        var entries = msbtDb.Value.Entries;
+                        if (titleDict.ContainsKey(msbtDb.Key))
+                            entries[gameTitleLabel] = titleDict[msbtDb.Key];
+                        else if (titleDict.ContainsKey(defaultLocale))
+                            entries[gameTitleLabel] = titleDict[defaultLocale];
+                    }
+                }
+                #endregion 
+            }
 
             //Playlists
-            if (bgmEntry.Playlists != null)
+            paramBgmDatabase.PlaylistEntries.Clear(); //Wiping everything :)
+            foreach (var playlist in _playlistsEntries)
             {
-                foreach (var playlistId in bgmEntry.Playlists)
+                var tracks = new List<PrcBgmPlaylistEntry>();
+                paramBgmDatabase.PlaylistEntries.Add(new PcrFilterStruct<PrcBgmPlaylistEntry>()
                 {
-                    var paramBgmPlaylist = paramBgmDatabase.PlaylistEntries.FirstOrDefault(p => p.Id.StringValue == playlistId.Id)?.Values;
-                    if (paramBgmPlaylist == null)
+                    Id = playlist.Key,
+                    Values = tracks
+                });
+
+                foreach (var track in playlist.Value.Tracks)
+                {
+                    tracks.Add(_mapper.Map<PrcBgmPlaylistEntry>(track));
+                }
+            }
+
+            //Mapping stage
+            paramStageDbRoot.Clear();
+            foreach (var stage in _stageEntries)
+            {
+                paramStageDbRoot.Add(stage.Key, _mapper.Map<StageDbRootEntry>(stage.Value));
+            }
+
+            return true;
+        }
+
+        #region Private
+        public void InitBgmEntriesFromStateManager()
+        {
+            //Make sure resources are unloaded
+            _state.UnloadResources();
+            _bgmEntries.Clear();
+            _deletedBgmEntries.Clear();
+            _gameEntries.Clear();
+            _seriesEntries.Clear();
+            _localesEntries.Clear();
+            _playlistsEntries.Clear();
+            _stageEntries.Clear();
+
+            //Load Data
+            var daoBinBgmProperty = _state.LoadResource<Data.Sound.Config.BinBgmProperty>(BgmPropertyFileConstants.BGM_PROPERTY_PATH);
+            var paramBgmDatabase = _state.LoadResource<PrcUiBgmDatabase>(PrcExtConstants.PRC_UI_BGM_DB_PATH);
+            var paramGameTitleDbRoot = _state.LoadResource<PrcUiGameTitleDatabase>(PrcExtConstants.PRC_UI_GAMETITLE_DB_PATH).DbRootEntries;
+            var paramStageDbRoot = _state.LoadResource<PrcUiStageDatabase>(PrcExtConstants.PRC_UI_STAGE_DB_PATH).DbRootEntries;
+            var daoMsbtBgms = GetBgmDatabases();
+            var daoMsbtTitle = GetGameTitleDatabases();
+            daoMsbtBgms.Keys.ToList().ForEach(p => _localesEntries.Add(p));
+
+            foreach (var daoBinPropertyKeyValue in daoBinBgmProperty.Entries)
+            {
+                var toneId = daoBinPropertyKeyValue.Key;
+                var newBgmEntry = new BgmEntry(toneId);
+                newBgmEntry.Filename = Path.Combine(_config.Value.GameResourcesPath, "stream;", "sound", "bgm", string.Format(Constants.GameResources.NUS3AUDIO_FILE, newBgmEntry.ToneId));
+
+                //Very few songs are currently not in the db - therefore not supported for now.
+                if (!paramBgmDatabase.DbRootEntries.ContainsKey(newBgmEntry.DbRootKey))
+                    continue;
+
+                //Mapping PRC / Property Bin
+                var dbRootEntry = paramBgmDatabase.DbRootEntries[newBgmEntry.DbRoot.UiBgmId];
+                _mapper.Map(daoBinPropertyKeyValue.Value, newBgmEntry.BgmProperties);
+                _mapper.Map(dbRootEntry, newBgmEntry.DbRoot);
+                _mapper.Map(paramBgmDatabase.StreamSetEntries[newBgmEntry.StreamSetKey], newBgmEntry.StreamSet);
+                _mapper.Map(paramBgmDatabase.AssignedInfoEntries[newBgmEntry.AssignedInfoKey], newBgmEntry.AssignedInfo);
+                _mapper.Map(paramBgmDatabase.StreamPropertyEntries[newBgmEntry.StreamPropertyKey], newBgmEntry.StreamingProperty);
+
+                //Mapping Game Title PRC
+                var gameTitleId = dbRootEntry.UiGameTitleId;
+                if (!_gameEntries.ContainsKey(gameTitleId))
+                    _gameEntries.Add(gameTitleId, _mapper.Map(paramGameTitleDbRoot[gameTitleId], new GameTitleEntry(gameTitleId)));
+                newBgmEntry.GameTitle = _gameEntries[gameTitleId];
+                if (!_seriesEntries.Contains(newBgmEntry.GameTitle.UiSeriesId))
+                    _seriesEntries.Add(newBgmEntry.GameTitle.UiSeriesId);
+
+                //Mapping MSBT
+                if (!string.IsNullOrEmpty(newBgmEntry.DbRoot.NameId))
+                {
+                    var titleLabel = newBgmEntry.MSBTLabels.TitleKey;
+                    var authorLabel = newBgmEntry.MSBTLabels.AuthorKey;
+                    var copyrightLabel = newBgmEntry.MSBTLabels.CopyrightKey;
+                    foreach (var msbtDb in daoMsbtBgms)
                     {
-                        paramBgmPlaylist = new List<PrcBgmPlaylistEntry>();
-                        paramBgmDatabase.PlaylistEntries.Add(new PcrFilterStruct<PrcBgmPlaylistEntry>()
-                        {
-                            Id = new PrcHash40(playlistId.Id),
-                            Values = paramBgmPlaylist
-                        });
+                        var entries = msbtDb.Value.Entries;
+                        if (entries.ContainsKey(titleLabel))
+                            newBgmEntry.MSBTLabels.Title.Add(msbtDb.Key, entries[titleLabel]);
+                        if (entries.ContainsKey(authorLabel))
+                            newBgmEntry.MSBTLabels.Author.Add(msbtDb.Key, entries[authorLabel]);
+                        if (entries.ContainsKey(copyrightLabel))
+                            newBgmEntry.MSBTLabels.Copyright.Add(msbtDb.Key, entries[copyrightLabel]);
                     }
+                }
+                if (!string.IsNullOrEmpty(newBgmEntry.GameTitle?.NameId) && newBgmEntry.GameTitle.MSBTTitle.Count == 0) //Test for cache
+                {
+                    var gameTitleLabel = newBgmEntry.GameTitle.MSBTTitleKey;
+                    foreach (var msbtDb in daoMsbtTitle)
+                    {
+                        var entries = msbtDb.Value.Entries;
+                        if (entries.ContainsKey(gameTitleLabel))
+                            newBgmEntry.GameTitle.MSBTTitle.Add(msbtDb.Key, entries[gameTitleLabel]);
+                    }
+                }
 
-                    var newPlaylistEntry = new PrcBgmPlaylistEntry() { UiBgmId = new PrcHash40(dbRootEntry.UiBgmId.StringValue) };
-                    newPlaylistEntry.SetOrder((short)paramBgmPlaylist.Count);
-                    newPlaylistEntry.SetIncidence(500);
-                    paramBgmPlaylist.Add(newPlaylistEntry);
+                _bgmEntries.Add(toneId, newBgmEntry);
+            }
+
+            //Mapping playlists
+            foreach (var paramPlaylist in paramBgmDatabase.PlaylistEntries)
+            {
+                var newPlaylist = new PlaylistEntry(paramPlaylist.Id);
+                _playlistsEntries.Add(paramPlaylist.Id, newPlaylist);
+
+                foreach (var track in paramPlaylist.Values)
+                {
+                    newPlaylist.Tracks.Add(_mapper.Map<Models.PlaylistEntryModels.PlaylistValueEntry>(track));
                 }
             }
 
-            //MSBT
-            var nameId = dbRootEntry.NameId;
-            var gameTitleEntry = paramGameTitleDatabaseRoot[dbRootEntry.UiGameTitleId.StringValue];
-            var gameTitleId = gameTitleEntry.NameId;
-            var gameTitleLabel = string.Format(Constants.InternalIds.MSBT_GAME_TITLE, gameTitleId);
-            var titleLabel = string.Format(Constants.InternalIds.MSBT_BGM_TITLE, nameId);
-            var authorLabel = string.Format(Constants.InternalIds.MSBT_BGM_AUTHOR, nameId);
-            var copyrightLabel = string.Format(Constants.InternalIds.MSBT_BGM_COPYRIGHT, nameId);
-            foreach (var msbtDb in GetBgmDatabases())
+            //Mapping stage
+            foreach (var stage in paramStageDbRoot)
             {
-                var entries = msbtDb.Value.Entries;
-
-                if (bgmEntry.Title != null && bgmEntry.Title.ContainsKey(msbtDb.Key) && !string.IsNullOrEmpty(bgmEntry.Title[msbtDb.Key]))
-                    entries[titleLabel] = bgmEntry.Title[msbtDb.Key];
-                else if (bgmEntry.Title != null && bgmEntry.Title.ContainsKey(defaultLocale) && !string.IsNullOrEmpty(bgmEntry.Title[msbtDb.Key]))
-                    entries[titleLabel] = bgmEntry.Title[defaultLocale];
-                else
-                    entries[titleLabel] = "MISSING";
-
-                if (bgmEntry.Author != null)
-                {
-                    if (bgmEntry.Author.ContainsKey(msbtDb.Key) && !string.IsNullOrEmpty(bgmEntry.Author[msbtDb.Key]))
-                        entries[authorLabel] = bgmEntry.Author[msbtDb.Key];
-                    else if (bgmEntry.Author.ContainsKey(defaultLocale) && !string.IsNullOrEmpty(bgmEntry.Author[msbtDb.Key]))
-                        entries[authorLabel] = bgmEntry.Author[defaultLocale];
-                }
-
-                if (bgmEntry.Copyright != null)
-                {
-                    if (bgmEntry.Copyright.ContainsKey(msbtDb.Key) && !string.IsNullOrEmpty(bgmEntry.Copyright[msbtDb.Key]))
-                        entries[copyrightLabel] = bgmEntry.Copyright[msbtDb.Key];
-                    else if (bgmEntry.Copyright.ContainsKey(defaultLocale) && !string.IsNullOrEmpty(bgmEntry.Copyright[msbtDb.Key]))
-                        entries[copyrightLabel] = bgmEntry.Copyright[defaultLocale];
-                }
-            }
-            foreach (var msbtDb in GetGameTitleDatabases())
-            {
-                var entries = msbtDb.Value.Entries;
-                if (bgmEntry.GameTitle.Title.ContainsKey(msbtDb.Key))
-                    entries[gameTitleLabel] = bgmEntry.GameTitle.Title[msbtDb.Key];
-                else if (bgmEntry.GameTitle.Title.ContainsKey(defaultLocale))
-                    entries[gameTitleLabel] = bgmEntry.GameTitle.Title[defaultLocale];
-                else
-                    entries[gameTitleLabel] = "MISSING";
+                _stageEntries.Add(stage.Key, _mapper.Map<StageEntry>(stage.Value));
             }
         }
 
         private void RemoveBgmEntryFromStateManager(string toneId)
         {
-            var keyRefs = GetToneIdKeyReferences(toneId);
+            //TODO LATER
 
-            var binBgmProperty = _state.LoadResource<BinBgmProperty>(Constants.GameResources.PRC_BGM_PROPERTY_PATH);
+            /*var keyRefs = GetToneIdKeyReferences(toneId);
+
+            var binBgmProperty = _state.LoadResource<Data.Sound.Config.BinBgmProperty>(Constants.GameResources.PRC_BGM_PROPERTY_PATH);
             var paramBgmDatabase = _state.LoadResource<PrcUiBgmDatabase>(Constants.GameResources.PRC_UI_BGM_DB_PATH);
 
             //If not in DBROOT, skip but no error
@@ -385,7 +423,7 @@ namespace Sm5sh.Mods.Music.Services
 
             //PLAYLISTS
             foreach (var playlist in paramBgmDatabase.PlaylistEntries)
-                playlist.Values.RemoveAll(p => p.UiBgmId.StringValue == keyRefs.DbRootKey);
+                playlist.Values.RemoveAll(p => p.UiBgmId == keyRefs.DbRootKey);
 
             //MSBT
             if (dbRootRef != null)
@@ -400,118 +438,17 @@ namespace Sm5sh.Mods.Music.Services
                     msbtBgm.Entries.Remove(authorLabel);
                     msbtBgm.Entries.Remove(copyrightLabel);
                 }
-            }
-        }
-
-        private SpecialCategoryEntry ToSpecialCategory(PrcBgmStreamSetEntry setStreamEntry)
-        {
-            if (setStreamEntry.SpecialCategory?.HexValue == 0)
-                return null;
-
-            var output = new SpecialCategoryEntry()
-            {
-                Id = setStreamEntry.SpecialCategory.HexValue,
-                Parameters = new List<string>()
-            };
-
-            //TODO: Yeah yeah it's not great. Will need to think about that.
-            if (setStreamEntry.Info1 != null && setStreamEntry.Info1.HexValue != 0)
-                output.Parameters.Add(setStreamEntry.Info1.StringValue);
-            if (setStreamEntry.Info2 != null && setStreamEntry.Info2.HexValue != 0)
-                output.Parameters.Add(setStreamEntry.Info2.StringValue);
-            if (setStreamEntry.Info3 != null && setStreamEntry.Info3.HexValue != 0)
-                output.Parameters.Add(setStreamEntry.Info3.StringValue);
-            if (setStreamEntry.Info4 != null && setStreamEntry.Info4.HexValue != 0)
-                output.Parameters.Add(setStreamEntry.Info4.StringValue);
-            if (setStreamEntry.Info5 != null && setStreamEntry.Info5.HexValue != 0)
-                output.Parameters.Add(setStreamEntry.Info5.StringValue);
-            if (setStreamEntry.Info6 != null && setStreamEntry.Info6.HexValue != 0)
-                output.Parameters.Add(setStreamEntry.Info6.StringValue);
-            if (setStreamEntry.Info7 != null && setStreamEntry.Info7.HexValue != 0)
-                output.Parameters.Add(setStreamEntry.Info7.StringValue);
-            if (setStreamEntry.Info8 != null && setStreamEntry.Info8.HexValue != 0)
-                output.Parameters.Add(setStreamEntry.Info8.StringValue);
-            if (setStreamEntry.Info9 != null && setStreamEntry.Info9.HexValue != 0)
-                output.Parameters.Add(setStreamEntry.Info9.StringValue);
-            if (setStreamEntry.Info10 != null && setStreamEntry.Info10.HexValue != 0)
-                output.Parameters.Add(setStreamEntry.Info10.StringValue);
-            if (setStreamEntry.Info11 != null && setStreamEntry.Info11.HexValue != 0)
-                output.Parameters.Add(setStreamEntry.Info11.StringValue);
-            if (setStreamEntry.Info12 != null && setStreamEntry.Info12.HexValue != 0)
-                output.Parameters.Add(setStreamEntry.Info12.StringValue);
-            if (setStreamEntry.Info13 != null && setStreamEntry.Info13.HexValue != 0)
-                output.Parameters.Add(setStreamEntry.Info13.StringValue);
-            if (setStreamEntry.Info14 != null && setStreamEntry.Info14.HexValue != 0)
-                output.Parameters.Add(setStreamEntry.Info14.StringValue);
-            if (setStreamEntry.Info15 != null && setStreamEntry.Info15.HexValue != 0)
-                output.Parameters.Add(setStreamEntry.Info15.StringValue);
-
-            return output;
-        }
-
-        public PrcBgmStreamSetEntry FromSpecialCategory(PrcBgmStreamSetEntry setStreamEntry, SpecialCategoryEntry specialEntry)
-        {
-            if (specialEntry == null)
-                return setStreamEntry;
-
-            setStreamEntry.SpecialCategory = new PrcHash40(specialEntry.Id);
-
-            if (specialEntry.Parameters == null)
-                return setStreamEntry;
-
-            //TODO: Yeah yeah it's not great. Will need to think about that.
-            if (specialEntry.Parameters.Count > 0)
-                setStreamEntry.Info1 = new PrcHash40(specialEntry.Parameters[0]);
-            if (specialEntry.Parameters.Count > 1)
-                setStreamEntry.Info2 = new PrcHash40(specialEntry.Parameters[1]);
-            if (specialEntry.Parameters.Count > 2)
-                setStreamEntry.Info3 = new PrcHash40(specialEntry.Parameters[2]);
-            if (specialEntry.Parameters.Count > 3)
-                setStreamEntry.Info4 = new PrcHash40(specialEntry.Parameters[3]);
-            if (specialEntry.Parameters.Count > 4)
-                setStreamEntry.Info5 = new PrcHash40(specialEntry.Parameters[4]);
-            if (specialEntry.Parameters.Count > 5)
-                setStreamEntry.Info6 = new PrcHash40(specialEntry.Parameters[5]);
-            if (specialEntry.Parameters.Count > 6)
-                setStreamEntry.Info7 = new PrcHash40(specialEntry.Parameters[6]);
-            if (specialEntry.Parameters.Count > 7)
-                setStreamEntry.Info8 = new PrcHash40(specialEntry.Parameters[7]);
-            if (specialEntry.Parameters.Count > 8)
-                setStreamEntry.Info9 = new PrcHash40(specialEntry.Parameters[8]);
-            if (specialEntry.Parameters.Count > 9)
-                setStreamEntry.Info10 = new PrcHash40(specialEntry.Parameters[9]);
-            if (specialEntry.Parameters.Count > 10)
-                setStreamEntry.Info11 = new PrcHash40(specialEntry.Parameters[10]);
-            if (specialEntry.Parameters.Count > 11)
-                setStreamEntry.Info12 = new PrcHash40(specialEntry.Parameters[11]);
-            if (specialEntry.Parameters.Count > 12)
-                setStreamEntry.Info13 = new PrcHash40(specialEntry.Parameters[12]);
-            if (specialEntry.Parameters.Count > 13)
-                setStreamEntry.Info14 = new PrcHash40(specialEntry.Parameters[13]);
-            if (specialEntry.Parameters.Count > 14)
-                setStreamEntry.Info15 = new PrcHash40(specialEntry.Parameters[14]);
-
-            return setStreamEntry;
+            }*/
         }
 
         #region Utils
         private string GetNewBgmId()
         {
-            var paramBgmDatabase = _state.LoadResource<PrcUiBgmDatabase>(Constants.GameResources.PRC_UI_BGM_DB_PATH);
-            var lastNameId = paramBgmDatabase.DbRootEntries.Values.Where(p => p.NameId != "random" && !string.IsNullOrEmpty(p.NameId)).OrderByDescending(p => Base36IncrementHelper.ToInt(p.NameId)).FirstOrDefault()?.NameId;
+            var lastNameId = _bgmEntries.Values.Where(p => p.DbRoot.NameId != "random" && !string.IsNullOrEmpty(p.DbRoot.NameId)).OrderByDescending(p => Base36IncrementHelper.ToInt(p.DbRoot.NameId)).FirstOrDefault()?.DbRoot.NameId;
             lastNameId = Base36IncrementHelper.ToString(Base36IncrementHelper.ToInt(lastNameId) + 1);
             if (lastNameId == "random")
                 return GetNewBgmId();
             return lastNameId;
-        }
-
-        private BgmToneKeyReferences GetToneIdKeyReferences(string toneId, string filename = null)
-        {
-            if (_toneIdKeyReferences.ContainsKey(toneId))
-                return _toneIdKeyReferences[toneId];
-            var output = new BgmToneKeyReferences(toneId, filename);
-            _toneIdKeyReferences.Add(toneId, output);
-            return output;
         }
 
         private Dictionary<string, MsbtDatabase> GetBgmDatabases()
@@ -519,7 +456,7 @@ namespace Sm5sh.Mods.Music.Services
             var output = new Dictionary<string, MsbtDatabase>();
             foreach (var locale in LocaleHelper.ValidLocales)
             {
-                var msbt = _state.LoadResource<MsbtDatabase>(string.Format(Constants.GameResources.MSBT_BGM, locale), true);
+                var msbt = _state.LoadResource<MsbtDatabase>(string.Format(MsbtExtConstants.MSBT_BGM, locale), true);
                 if (msbt != null)
                     output.Add(locale, msbt);
             }
@@ -531,7 +468,7 @@ namespace Sm5sh.Mods.Music.Services
             var output = new Dictionary<string, MsbtDatabase>();
             foreach (var locale in LocaleHelper.ValidLocales)
             {
-                var msbt = _state.LoadResource<MsbtDatabase>(string.Format(Constants.GameResources.MSBT_TITLE, locale), true);
+                var msbt = _state.LoadResource<MsbtDatabase>(string.Format(MsbtExtConstants.MSBT_TITLE, locale), true);
                 if (msbt != null)
                     output.Add(locale, msbt);
             }
@@ -539,34 +476,5 @@ namespace Sm5sh.Mods.Music.Services
         }
         #endregion
         #endregion
-    }
-
-    namespace AudioStateServiceModels
-    {
-        public enum BgmDbOperation
-        {
-            Added,
-            Removed
-        }
-
-        public class BgmToneKeyReferences
-        {
-            public string ToneId { get; }
-            public string FileName { get; }
-            public string DbRootKey { get; }
-            public string StreamSetKey { get; }
-            public string AssignedInfoKey { get; }
-            public string StreamPropertyKey { get; }
-
-            public BgmToneKeyReferences(string toneId, string fileName = null)
-            {
-                ToneId = toneId;
-                DbRootKey = $"{Constants.InternalIds.UI_BGM_ID_PREFIX}{toneId}";
-                StreamSetKey = $"{Constants.InternalIds.STREAM_SET_PREFIX}{toneId}";
-                AssignedInfoKey = $"{Constants.InternalIds.INFO_ID_PREFIX}{toneId}";
-                StreamPropertyKey = $"{Constants.InternalIds.STREAM_PREFIX}{toneId}";
-                FileName = fileName;
-            }
-        }
     }
 }

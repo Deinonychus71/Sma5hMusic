@@ -4,7 +4,7 @@ namespace Sm5sh.ResourceProviders.Prc.Helpers
 {
     public class PcrFilterStruct<T>
     {
-        public PrcHash40 Id { get; set; }
+        public string Id { get; set; }
 
         public List<T> Values { get; set; }
 

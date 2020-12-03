@@ -5,17 +5,23 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="10.1.1" />
+    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.1.0" />
     <PackageReference Include="Microsoft.Extensions.Options" Version="5.0.0" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
-    <PackageReference Include="YamlDotNet" Version="8.1.2" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Core\Helpers\VGMMusic\VGMMusic.csproj" />
+    <ProjectReference Include="..\..\ResourceProviders\Sm5sh.ResourceProviders.BgmPropertyFile\Sm5sh.ResourceProviders.BgmPropertyFile.csproj" />
     <ProjectReference Include="..\..\ResourceProviders\Sm5sh.ResourceProviders.MsbtExt\Sm5sh.ResourceProviders.MsbtExt.csproj" />
     <ProjectReference Include="..\..\ResourceProviders\Sm5sh.ResourceProviders.PrcExt\Sm5sh.ResourceProviders.PrcExt.csproj" />
   </ItemGroup>
 
   <ItemGroup>
+    <Reference Include="paracobNET">
+      <HintPath>..\..\..\Sm5sh.CLI\bin\Debug\netcoreapp3.1\Tools\paracobNET.dll</HintPath>
+    </Reference>
     <Reference Include="VGAudioCli">
       <HintPath>..\..\..\Tools\VGAudioCli.exe</HintPath>
     </Reference>
