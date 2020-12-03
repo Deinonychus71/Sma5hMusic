@@ -30,16 +30,12 @@ namespace Sm5sh.ResourceProviders
             _processService = processService;
             _bgmPropertyExeFile = Path.Combine(config.Value.ToolsPath, BgmPropertyFileConstants.BGM_PROPERTY_EXE_FILE);
             _bgmPropertyHashFile = Path.Combine(config.Value.ToolsPath, BgmPropertyFileConstants.BGM_PROPERTY_HASH_FILE);
-
-            if (!File.Exists(_bgmPropertyExeFile))
-                throw new Exception($"bgm-property.exe: {_bgmPropertyExeFile} could not be found.");
-
-            if (!File.Exists(_bgmPropertyHashFile))
-                throw new Exception($"bgm_hashes.txt: {_bgmPropertyHashFile} could not be found.");
         }
 
         public override T ReadFile<T>(string inputFile)
         {
+            EnsureRequiredFilesAreFound();
+
             if (!typeof(T).IsAssignableFrom(typeof(BinBgmProperty)))
                 throw new Exception($"Tried to use BgmPropertyProvider with wrong mapping type '{nameof(BinBgmProperty)}'");
 
@@ -83,6 +79,8 @@ namespace Sm5sh.ResourceProviders
 
         public override bool WriteFile<T>(string inputFile, string outputFile, T inputObj)
         {
+            EnsureRequiredFilesAreFound();
+
             if (!typeof(T).IsAssignableFrom(typeof(BinBgmProperty)))
                 throw new Exception($"Tried to use BgmPropertyProvider with wrong mapping type '{nameof(BinBgmProperty)}'");
 
@@ -109,6 +107,15 @@ namespace Sm5sh.ResourceProviders
             }
 
             return true;
+        }
+
+        private void EnsureRequiredFilesAreFound()
+        {
+            if (!File.Exists(_bgmPropertyExeFile))
+                throw new Exception($"bgm-property.exe: {_bgmPropertyExeFile} could not be found.");
+
+            if (!File.Exists(_bgmPropertyHashFile))
+                throw new Exception($"bgm_hashes.txt: {_bgmPropertyHashFile} could not be found.");
         }
     }
 }

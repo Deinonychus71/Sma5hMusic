@@ -8,6 +8,7 @@ using System;
 using System.IO;
 using System.Threading.Tasks;
 using Sm5sh;
+using System.Collections.Generic;
 
 namespace Sm5shMusic.GUI.Dialogs
 {
@@ -31,31 +32,71 @@ namespace Sm5shMusic.GUI.Dialogs
             _messageDialog = messageDialog;
         }
 
-        public void Init(Action<bool> callbackSuccess = null, Action<Exception> callbackError = null)
+        public async Task Init(Action<bool> callbackSuccess = null, Action<Exception> callbackError = null)
         {
-            _ = Task.Run(() =>
+            try
             {
-                try
+                //Check required files
+                foreach (var fileCheck in GetRequiredFiles())
                 {
-                    //Init/Reload StateManager
-                    _stateManager.UnloadResources();
-                    _stateManager.Init();
-
-                    //Load
-                    var mods = _serviceProvider.GetServices<ISm5shMod>();
-                    foreach (var mod in mods)
+                    if (!File.Exists(fileCheck))
                     {
-                        mod.Init();
+                        await Dispatcher.UIThread.InvokeAsync(async() =>
+                        {
+                            await _messageDialog.ShowError("File Check", $"The file {fileCheck} is required and was not found.\r\nPlease check your setup.");
+                            callbackError?.Invoke(new Exception("File Check Exception"));
+                        }, DispatcherPriority.Background);
+                        return;
                     }
+                }
 
-                    callbackSuccess?.Invoke(true);
-                }
-                catch (Exception e)
+                //Check locale
+                var messagePath = Path.Combine(_config.Value.GameResourcesPath, "ui", "message");
+                Directory.CreateDirectory(messagePath);
+                var localeCheckMsgBgm = Directory.GetFiles(Path.Combine(_config.Value.GameResourcesPath, "ui", "message"), "msg_bgm*.msbt", SearchOption.TopDirectoryOnly);
+                var localeCheckMsgTitle = Directory.GetFiles(Path.Combine(_config.Value.GameResourcesPath, "ui", "message"), "msg_title*.msbt", SearchOption.TopDirectoryOnly);
+                if (localeCheckMsgBgm.Length == 0 || localeCheckMsgTitle.Length == 0)
                 {
-                    _logger.LogError(e.Message);
-                    callbackError?.Invoke(e);
+                    await Dispatcher.UIThread.InvokeAsync(async () =>
+                    {
+                        await _messageDialog.ShowError("File Check", $"There should be at least one localized msg_bgm.msbt and one msg_title.msbt\r\nresource in {Path.Combine(_config.Value.GameResourcesPath, "ui", "message")}.");
+                        callbackError?.Invoke(new Exception("File Check Exception"));
+                    }, DispatcherPriority.Background);
+                    return;
                 }
-            });
+
+                _ = Task.Run(() =>
+                {
+                    try
+                    {
+                        //Init/Reload StateManager
+                        _stateManager.UnloadResources();
+                        _stateManager.Init();
+
+                        //Load
+                        var mods = _serviceProvider.GetServices<ISm5shMod>();
+                        foreach (var mod in mods)
+                        {
+                            mod.Init();
+                        }
+
+                        callbackSuccess?.Invoke(true);
+                    }
+                    catch (Exception e)
+                    {
+                        _logger.LogError(e.Message);
+                        callbackError?.Invoke(e);
+                    }
+                });
+            }
+            catch (Exception e)
+            {
+                await Dispatcher.UIThread.InvokeAsync(async() =>
+                {
+                    await _messageDialog.ShowError("Initialization failure", $"There was a general exception during Init.\r\n{e.Message}");
+                    callbackError?.Invoke(new Exception("Initialization failure"));
+                }, DispatcherPriority.Background);
+            }
         }
 
         public async Task Build(bool useCache, Action<bool> callbackSuccess = null, Action<Exception> callbackError = null)
@@ -66,13 +107,13 @@ namespace Sm5shMusic.GUI.Dialogs
                 return;
             }
 
-            Init(async (o) =>
+            _ = Init(async (o) =>
             {
                 if (!o)
                 {
-                    await Dispatcher.UIThread.InvokeAsync(() =>
+                    await Dispatcher.UIThread.InvokeAsync(async() =>
                     {
-                        _messageDialog.ShowError("Build", "Could not initialize the build.");
+                        await _messageDialog.ShowError("Build", "Could not initialize the build.");
                         callbackError?.Invoke(new Exception("Mod Init Exception"));
                     }, DispatcherPriority.Background);
                 }
@@ -108,9 +149,9 @@ namespace Sm5shMusic.GUI.Dialogs
                         callbackError?.Invoke(e);
                     }
 
-                    await Dispatcher.UIThread.InvokeAsync(() =>
+                    await Dispatcher.UIThread.InvokeAsync(async() =>
                     {
-                        _messageDialog.ShowInformation("Complete", "Build complete. If something goes wrong, please check the logs for error.");
+                        await _messageDialog.ShowInformation("Complete", "Build complete. If something goes wrong, please check the logs for error.");
 
                         callbackSuccess?.Invoke(true);
 
@@ -121,33 +162,44 @@ namespace Sm5shMusic.GUI.Dialogs
 
         public async Task<bool> EnsureArcOutputIsClean()
         {
-            //Create workspace
-            if (!Directory.Exists(_config.Value.OutputPath))
+            try
             {
-                _logger.LogDebug("Creating Working folder...");
-                Directory.CreateDirectory(_config.Value.OutputPath);
-            }
-
-            //Reset
-            var existingFiles = Directory.GetFiles(_config.Value.OutputPath, "*", SearchOption.AllDirectories);
-            if (existingFiles.Length > 0)
-            {
-                if (!_config.Value.SkipOutputPathCleanupConfirmation)
+                //Create workspace
+                if (!Directory.Exists(_config.Value.OutputPath))
                 {
-                    _logger.LogWarning("Files found in the workspace folder.");
-                    if (await _messageDialog.ShowWarningConfirm("Clean Output folder?", $"Your folder {_config.Value.OutputPath} must be empty before building the mod.\r\nProceed?"))
+                    _logger.LogDebug("Creating Working folder...");
+                    Directory.CreateDirectory(_config.Value.OutputPath);
+                }
+
+                //Reset
+                var existingFiles = Directory.GetFiles(_config.Value.OutputPath, "*", SearchOption.AllDirectories);
+                if (existingFiles.Length > 0)
+                {
+                    if (!_config.Value.SkipOutputPathCleanupConfirmation)
                     {
-                        CleaningWorkspaceFolder(existingFiles);
+                        _logger.LogWarning("Files found in the workspace folder.");
+                        if (await _messageDialog.ShowWarningConfirm("Clean Output folder?", $"Your folder {_config.Value.OutputPath} must be empty before building the mod.\r\nProceed?"))
+                        {
+                            CleaningWorkspaceFolder(existingFiles);
+                        }
+                        else
+                        {
+                            return false;
+                        }
                     }
                     else
                     {
-                        return false;
+                        CleaningWorkspaceFolder(existingFiles);
                     }
                 }
-                else
+            }
+            catch(Exception e)
+            {
+                await Dispatcher.UIThread.InvokeAsync(async () =>
                 {
-                    CleaningWorkspaceFolder(existingFiles);
-                }
+                    await _messageDialog.ShowInformation("Cleanup Error", $"Error while cleaning the output folder\r\n{e.Message}.");
+                }, DispatcherPriority.Background);
+                return false;
             }
             return true;
         }
@@ -163,11 +215,35 @@ namespace Sm5shMusic.GUI.Dialogs
 
         private async Task ShowBuildFailedError()
         {
-            await Dispatcher.UIThread.InvokeAsync(() =>
+            await Dispatcher.UIThread.InvokeAsync(async() =>
             {
-                _messageDialog.ShowError("Failed", "Build failed. Errors happened while writing the resource files. Please check the logs.");
+                await _messageDialog.ShowError("Failed", "Build failed. Errors happened while writing the resource files. Please check the logs.");
 
             }, DispatcherPriority.Background);
+        }
+
+        private List<string> GetRequiredFiles()
+        {
+            var config = _config.Value;
+
+            var requiredFiles = new List<string>()
+            {
+                Path.Combine(config.ResourcesPath, "template.nus3bank"),
+                Path.Combine(config.ResourcesPath, "param_labels.csv"),
+                Path.Combine(config.ResourcesPath, "nusbank_ids.csv"),
+                Path.Combine(config.GameResourcesPath, "sound", "config", "bgm_property.bin"),
+                Path.Combine(config.GameResourcesPath, "ui", "param", "database", "ui_bgm_db.prc"),
+                Path.Combine(config.GameResourcesPath, "ui", "param", "database", "ui_gametitle_db.prc"),
+                Path.Combine(config.GameResourcesPath, "ui", "param", "database", "ui_stage_db.prc"),
+                Path.Combine(config.ToolsPath, "VGAudioCli.exe"),
+                Path.Combine(config.ToolsPath, "paracobNET.dll"),
+                Path.Combine(config.ToolsPath, "MsbtEditor.dll"),
+                Path.Combine(config.ToolsPath, "BgmProperty", "bgm_hashes.txt"),
+                Path.Combine(config.ToolsPath, "BgmProperty", "bgm-property.exe"),
+                Path.Combine(config.ToolsPath, "Nus3Audio", "nus3audio.exe"),
+            };
+
+            return requiredFiles;
         }
     }
 }

@@ -33,12 +33,6 @@ namespace Sm5sh.Mods.Music.Services
             _nus3AudioExeFile = Path.Combine(config.Value.ToolsPath, Constants.Resources.NUS3AUDIO_EXE_FILE);
             _nus3BankTemplateFile = Path.Combine(config.Value.ResourcesPath, Constants.Resources.NUS3BANK_TEMPLATE_FILE);
 
-            if (!File.Exists(_nus3AudioExeFile))
-                throw new Exception($"nus3audio.exe: {_nus3AudioExeFile} could not be found.");
-
-            if (!File.Exists(_nus3BankTemplateFile))
-                throw new Exception($"template.nus3bank: {_nus3BankTemplateFile} could not be found.");
-
             var nus3BankIds = GetCoreNus3BankIds();
             _lastBankId = (ushort)(nus3BankIds.Count > 0 ? GetCoreNus3BankIds().Values.OrderByDescending(p => p).First() : 0);
         }
@@ -46,6 +40,8 @@ namespace Sm5sh.Mods.Music.Services
         public bool GenerateNus3Audio(string toneId, string inputMediaFile, string outputMediaFile)
         {
             _logger.LogDebug("Generate nus3audio {InternalToneName} from {AudioInputFile} to {Nus3AudioOutputFile}", toneId, inputMediaFile, outputMediaFile);
+
+            EnsureRequiredFilesAreFound();
 
             if (!File.Exists(inputMediaFile))
             {
@@ -124,6 +120,8 @@ namespace Sm5sh.Mods.Music.Services
         {
             _logger.LogDebug("Generate nus3bank {InternalToneName} from {Nus3BankInputFile} to {Nus3BankOutputFile}", toneId, _nus3BankTemplateFile, outputMediaFile);
 
+            EnsureRequiredFilesAreFound();
+
             using (var memoryStream = new MemoryStream())
             {
                 using (var fileStream = File.Open(_nus3BankTemplateFile, FileMode.Open, FileAccess.Read))
@@ -157,6 +155,15 @@ namespace Sm5sh.Mods.Music.Services
         {
             _lastBankId++;
             return _lastBankId;
+        }
+
+        private void EnsureRequiredFilesAreFound()
+        {
+            if (!File.Exists(_nus3AudioExeFile))
+                throw new Exception($"nus3audio.exe: {_nus3AudioExeFile} could not be found.");
+
+            if (!File.Exists(_nus3BankTemplateFile))
+                throw new Exception($"template.nus3bank: {_nus3BankTemplateFile} could not be found.");
         }
 
         private bool ConvertIncompatibleFormat(string toneId, ref string inputMediaFile, string outputMediaFile, bool isFallback = false)

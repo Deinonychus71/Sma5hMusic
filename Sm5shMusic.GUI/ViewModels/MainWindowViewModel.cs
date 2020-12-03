@@ -165,7 +165,7 @@ namespace Sm5shMusic.GUI.ViewModels
             ActionExit = ReactiveCommand.Create(OnExit);
             ActionBuild = ReactiveCommand.CreateFromTask(OnBuild);
             ActionBuildNoCache = ReactiveCommand.CreateFromTask(OnBuildNoCache);
-            ActionRefreshData = ReactiveCommand.Create(OnInitData);
+            ActionRefreshData = ReactiveCommand.CreateFromTask(OnInitData);
         }
 
 
@@ -209,13 +209,16 @@ namespace Sm5shMusic.GUI.ViewModels
             });
         }
 
-        public void OnInitData()
+        public async Task OnInitData()
         {
             IsLoading = true;
-            _buildDialog.Init((o) =>
+            await _buildDialog.Init((o) =>
             {
                 InitAllDataAsync();
                 IsLoading = false;
+            }, (o) =>
+            {
+                OnExit();
             });
         }
 
