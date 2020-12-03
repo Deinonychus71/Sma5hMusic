@@ -33,6 +33,7 @@ namespace Sm5sh.Mods.Music.Services
         {
             _musicMods.Clear();
 
+            Directory.CreateDirectory(_config.Value.Sm5shMusic.ModPath);
             foreach (var musicModPath in Directory.GetDirectories(_config.Value.Sm5shMusic.ModPath, "*", SearchOption.TopDirectoryOnly))
             {
                 //Check if disabled

@@ -65,7 +65,8 @@ namespace Sm5shMusic.GUI.ViewModels
         public ModPickerModalWindowViewModel VMModPicker { get; }
         public PlaylistPropertiesModalWindowViewModel VMPlaylistEditor { get; }
         public PlaylistPickerModalWindowViewModel VMPlaylistPicker { get; }
-        public PlaylistStageAssignementModalWindowViewModel VMStageAssignemnt { get; }
+        public PlaylistStageAssignementModalWindowViewModel VMStageAssignement { get; }
+        public ToneIdCreationModalWindowModel VMToneIdCreation { get; }
         public BgmSongsViewModel VMBgmSongs { get; }
         public PlaylistViewModel VMPlaylists { get; }
         public BgmFiltersViewModel VMBgmFilters { get; }
@@ -143,8 +144,10 @@ namespace Sm5shMusic.GUI.ViewModels
                observablePlaylistEntriesList);
             VMPlaylistPicker = ActivatorUtilities.CreateInstance<PlaylistPickerModalWindowViewModel>(serviceProvider,
                 observablePlaylistEntriesList);
-            VMStageAssignemnt = ActivatorUtilities.CreateInstance<PlaylistStageAssignementModalWindowViewModel>(serviceProvider,
+            VMStageAssignement = ActivatorUtilities.CreateInstance<PlaylistStageAssignementModalWindowViewModel>(serviceProvider,
                 observablePlaylistEntriesList, _stagesEntries);
+            VMToneIdCreation = ActivatorUtilities.CreateInstance<ToneIdCreationModalWindowModel>(serviceProvider,
+                observableBgmEntriesList);
 
             //Listen to requests from children
             this.VMContextMenu.WhenNewRequestToAddBgmEntry.Subscribe(async (o) => await AddNewBgmEntry(o));
@@ -364,51 +367,42 @@ namespace Sm5shMusic.GUI.ViewModels
                 if (Path.GetExtension(inputFile).ToLower() == ".nus3audio")
                 {
                     toneId = _nus3AudioService.GetToneIdFromNus3Audio(inputFile);
-                    if (!await _messageDialog.ShowWarningConfirm("ToneId", $"The ToneId found in the Nus3Audio was '{toneId}'. Do you wish to use that?"))
-                        toneId = null;
                 }
-
-                //Other file - Attempt to retrieve Tone Id from filename, otherwise ask user to type it
-                if (string.IsNullOrEmpty(toneId))
+                //Open ToneIdWindow
+                VMToneIdCreation.Filename = inputFile;
+                VMToneIdCreation.ToneId = toneId;
+                var modalToneIdCreation = new ToneIdCreationModalWindow() { DataContext = VMToneIdCreation };
+                var result = await modalToneIdCreation.ShowDialog<ToneIdCreationModalWindow>(_rootDialog.Window);
+                if (result != null)
                 {
-                    toneId = Path.GetFileNameWithoutExtension(inputFile);
-                    if (!System.Text.RegularExpressions.Regex.IsMatch(Path.GetFileNameWithoutExtension(inputFile), @"^[a-z0-9_]+$"))
+                    toneId = VMToneIdCreation.ToneId;
+
+                    //Check if exists
+                    if (_audioState.DoesToneIdExist(toneId))
                     {
-                        toneId = await _messageDialog.PromptInput("Tone ID?", "Could not extract a Tone ID from the filename.\r\nPlease enter a valid Tone ID.");
-                        if (!System.Text.RegularExpressions.Regex.IsMatch(toneId, @"^[a-z0-9_]+$"))
-                        {
-                            //TODO: Fix later, and let user change id
-                            await _messageDialog.ShowError("Error", $"The song {inputFile} could not be added to the mod.\r\nThe Tone ID should only contain lowercase characters, digits or underscore.");
-                            continue;
-                        }
+                        await _messageDialog.ShowError("Error", $"The Tone Id {toneId} already exists in the database. Make sure to pick a unique ID.");
+                        continue;
                     }
-                }
 
-                //Check if exists
-                if (_audioState.DoesToneIdExist(toneId))
-                {
-                    await _messageDialog.ShowError("Error", $"The Tone Id {toneId} already exists in the database. Make sure to pick a unique ID.");
-                    continue;
+                    //Create
+                    var newBgm = managerMod.MusicMod.AddBgm(toneId, inputFile);
+                    if (newBgm == null)
+                    {
+                        await _messageDialog.ShowError("Error", $"The song {inputFile} could not be added to the mod.\r\nPlease check the logs.");
+                        continue;
+                    }
+                    if (!_audioState.AddBgmEntry(newBgm))
+                    {
+                        newBgm.MusicMod.RemoveBgm(newBgm.ToneId);
+                        await _messageDialog.ShowError("Error", $"The song {inputFile} could not be added to the DB.\r\nPlease check the logs.");
+                        continue;
+                    }
+                    var vmBgmEntry = _mapper.Map(newBgm, new BgmEntryViewModel(_musicPlayer, newBgm));
+                    //Edit metadata
+                    await EditBgmEntry(vmBgmEntry);
+                    //Add to UI
+                    _bgmEntries.Add(vmBgmEntry);
                 }
-
-                //Create
-                var newBgm = managerMod.MusicMod.AddBgm(toneId, inputFile);
-                if (newBgm == null)
-                {
-                    await _messageDialog.ShowError("Error", $"The song {inputFile} could not be added to the mod.\r\nPlease check the logs.");
-                    continue;
-                }
-                if (!_audioState.AddBgmEntry(newBgm))
-                {
-                    newBgm.MusicMod.RemoveBgm(newBgm.ToneId);
-                    await _messageDialog.ShowError("Error", $"The song {inputFile} could not be added to the DB.\r\nPlease check the logs.");
-                    continue;
-                }
-                var vmBgmEntry = _mapper.Map(newBgm, new BgmEntryViewModel(_musicPlayer, newBgm));
-                //Edit metadata
-                await EditBgmEntry(vmBgmEntry);
-                //Add to UI
-                _bgmEntries.Add(vmBgmEntry);
             }
         }
 
@@ -572,12 +566,12 @@ namespace Sm5shMusic.GUI.ViewModels
 
         public async Task AssignPlaylistToStage()
         {
-            VMStageAssignemnt.LoadControl();
-            var modalPickerAssignStagePlaylist = new PlaylistStageAssignementModalWindow() { DataContext = VMStageAssignemnt };
+            VMStageAssignement.LoadControl();
+            var modalPickerAssignStagePlaylist = new PlaylistStageAssignementModalWindow() { DataContext = VMStageAssignement };
             var results = await modalPickerAssignStagePlaylist.ShowDialog<PlaylistStageAssignementModalWindow>(_rootDialog.Window);
             if (results != null)
             {
-                foreach (var vmStage in VMStageAssignemnt.Stages)
+                foreach (var vmStage in VMStageAssignement.Stages)
                     _mapper.Map(vmStage, vmStage.GetStageEntryReference());
 
                 //TODO - Handle anything saving in a specific service

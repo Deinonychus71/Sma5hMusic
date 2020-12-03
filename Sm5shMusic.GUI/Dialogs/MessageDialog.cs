@@ -80,7 +80,7 @@ namespace Sm5shMusic.GUI.Dialogs
                 Style = Style.DarkMode
             });
             var result = await msBoxStandardWindow.ShowDialog(_rootDialogWindow.Window);
-            return result.Button == "OK" ? result.Message : string.Empty;
+            return result.Message == "OK" ? result.Button : string.Empty;
         }
     }
 }
