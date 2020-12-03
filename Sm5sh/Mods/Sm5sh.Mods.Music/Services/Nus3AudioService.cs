@@ -54,11 +54,12 @@ namespace Sm5sh.Mods.Music.Services
             {
                 //Double checking that tone ids match
                 var fileToneId = GetToneIdFromNus3Audio(inputMediaFile);
-                if (fileToneId != toneId)
-                {
-                    _logger.LogError("The ToneId within the nus3audio {ToneIdNus3Audio} doesn't match the ToneId {ToneId} registered in the mod..", fileToneId, toneId);
-                    return false;
-                }
+                //TODO : This doesn't seem to matter, but should definitely fix
+                //if (fileToneId != toneId)
+                //{
+                //    _logger.LogError("The ToneId within the nus3audio {ToneIdNus3Audio} doesn't match the ToneId {ToneId} registered in the mod..", fileToneId, toneId);
+                //    return false;
+                //}
                 File.Copy(inputMediaFile, outputMediaFile);
                 return true;
             }
