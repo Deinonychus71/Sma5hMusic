@@ -125,7 +125,7 @@
               </fields:PropertyField>
               <fields:PropertyField IsVisible="{Binding IsSpecialCategoryPinch}" Label="Pinch Song" ToolTip="The song will play during last stock or last minute. Make sure you pick an existing song!">
                 <fields:PropertyField.FieldContent>
-                  <AutoCompleteBox Items="{Binding Bgms}" ValueMemberBinding="{Binding}" IsTextCompletionEnabled="True" MinimumPrefixLength="2"
+                  <AutoCompleteBox Items="{Binding StreamSetIds}" ValueMemberBinding="{Binding}" IsTextCompletionEnabled="True" MinimumPrefixLength="2"
                                    MinimumPopulateDelay="0.5" SelectedItem="{Binding SelectedBgmEntry.StreamSet.Info1, Mode=TwoWay}" FilterMode="Contains"/>
                 </fields:PropertyField.FieldContent>
               </fields:PropertyField>

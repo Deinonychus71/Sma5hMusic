@@ -17,10 +17,8 @@ namespace Sm5shMusic.GUI.ViewModels
     public class ToneIdCreationModalWindowModel : ReactiveValidationObject
     {
         private readonly ILogger _logger;
-        private readonly ReadOnlyObservableCollection<BgmEntryViewModel> _bgmEntries;
+        private readonly ReadOnlyObservableCollection<BgmDbRootEntryViewModel> _bgmDbRootEntries;
         private const string REGEX_VALIDATION = @"^[a-z0-9_]+$";
-
-        public ReadOnlyObservableCollection<BgmEntryViewModel> Mods { get { return _bgmEntries; } }
 
         public ReactiveCommand<Window, Unit> ActionCancel { get; }
         public ReactiveCommand<Window, Unit> ActionCreate { get; }
@@ -29,26 +27,26 @@ namespace Sm5shMusic.GUI.ViewModels
         public string Filename { get; set; }
 
         [Reactive]
-        public string ToneId { get; set; }
+        public string UiBgmId { get; set; }
 
 
-        public ToneIdCreationModalWindowModel(ILogger<ToneIdCreationModalWindowModel> logger, IObservable<IChangeSet<BgmEntryViewModel, string>> observableBgmEntries)
+        public ToneIdCreationModalWindowModel(ILogger<ToneIdCreationModalWindowModel> logger, IObservable<IChangeSet<BgmDbRootEntryViewModel, string>> observableBgmDbRootEntries)
         {
             _logger = logger;
 
             //Bind observables
-            observableBgmEntries
+            observableBgmDbRootEntries
                .ObserveOn(RxApp.MainThreadScheduler)
-               .Bind(out _bgmEntries)
+               .Bind(out _bgmDbRootEntries)
                .DisposeMany()
                .Subscribe();
 
-            this.ValidationRule(p => p.ToneId,
+            this.ValidationRule(p => p.UiBgmId,
                 p => !string.IsNullOrEmpty(p) && Regex.IsMatch(p, REGEX_VALIDATION),
                 $"The ToneId can only contain lowercase letters, digits and underscore.");
 
-            this.ValidationRule(p => p.ToneId,
-               p => !string.IsNullOrEmpty(p) && !_bgmEntries.Select(p2 => p2.ToneId).Contains(p),
+            this.ValidationRule(p => p.UiBgmId,
+               p => !string.IsNullOrEmpty(p) && !_bgmDbRootEntries.Select(p2 => p2.UiBgmId).Contains(p),
                $"The ToneId already exists in the database");
 
             var canExecute = this.WhenAnyValue(x => x.ValidationContext.IsValid);

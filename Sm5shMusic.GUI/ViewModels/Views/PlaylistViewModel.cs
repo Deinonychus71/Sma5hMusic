@@ -25,7 +25,7 @@ namespace Sm5shMusic.GUI.ViewModels
         private readonly ILogger _logging;
         private readonly IMessageDialog _messageDialog;
         private readonly IDialogWindow _rootDialog;
-        private readonly ReadOnlyObservableCollection<BgmEntryViewModel> _bgms;
+        private readonly ReadOnlyObservableCollection<BgmDbRootEntryViewModel> _bgms;
         private readonly ReadOnlyObservableCollection<PlaylistEntryViewModel> _playlists;
         private readonly ReadOnlyObservableCollection<PlaylistEntryValueViewModel> _selectedPlaylistOrderedEntry;
         private readonly BehaviorSubject<PlaylistEntryViewModel> _whenPlaylistSelected;
@@ -53,7 +53,7 @@ namespace Sm5shMusic.GUI.ViewModels
         public IObservable<Unit> WhenNewRequestToEditPlaylist { get { return _whenNewRequestToEditPlaylist; } }
         public IObservable<Unit> WhenNewRequestToDeletePlaylist { get { return _whenNewRequestToDeletePlaylist; } }
         public IObservable<Unit> WhenNewRequestToAssignPlaylistToStage { get { return _whenNewRequestToAssignPlaylistToStage; } }
-        public ReadOnlyObservableCollection<BgmEntryViewModel> Bgms { get { return _bgms; } }
+        public ReadOnlyObservableCollection<BgmDbRootEntryViewModel> Bgms { get { return _bgms; } }
         public ReadOnlyObservableCollection<PlaylistEntryViewModel> Playlists { get { return _playlists; } }
         public ReadOnlyObservableCollection<PlaylistEntryValueViewModel> SelectedPlaylistOrderedEntry { get { return _selectedPlaylistOrderedEntry; } }
 
@@ -76,7 +76,7 @@ namespace Sm5shMusic.GUI.ViewModels
         public ReactiveCommand<Unit, Unit> ActionDeletePlaylist { get; }
         public ReactiveCommand<Unit, Unit> ActionAssignPlaylistToStage { get; }
 
-        public PlaylistViewModel(ILogger<PlaylistViewModel> logging, IDialogWindow rootDialog, IMessageDialog messageDialog, IObservable<IChangeSet<BgmEntryViewModel, string>> observableBgmEntries,
+        public PlaylistViewModel(ILogger<PlaylistViewModel> logging, IDialogWindow rootDialog, IMessageDialog messageDialog, IObservable<IChangeSet<BgmDbRootEntryViewModel, string>> observableBgmEntries,
             IObservable<IChangeSet<PlaylistEntryViewModel, string>> observablePlaylistEntries, ContextMenuViewModel vmContextMenu)
         {
             _logging = logging;
@@ -93,7 +93,7 @@ namespace Sm5shMusic.GUI.ViewModels
 
             //Bgms
             observableBgmEntries
-                .Sort(SortExpressionComparer<BgmEntryViewModel>.Ascending(p => p.HiddenInSoundTest).ThenByAscending(p => p.DbRoot.TestDispOrder), SortOptimisations.ComparesImmutableValuesOnly, 8000)
+                .Sort(SortExpressionComparer<BgmDbRootEntryViewModel>.Ascending(p => p.HiddenInSoundTest).ThenByAscending(p => p.TestDispOrder), SortOptimisations.ComparesImmutableValuesOnly, 8000)
                 .TreatMovesAsRemoveAdd()
                 .ObserveOn(RxApp.MainThreadScheduler)
                 .Bind(out _bgms)
@@ -174,7 +174,7 @@ namespace Sm5shMusic.GUI.ViewModels
         {
             var dragData = new DataObject();
 
-            if (e.Cell.DataContext is BgmEntryViewModel vmBgmEntry)
+            if (e.Cell.DataContext is BgmDbRootEntryViewModel vmBgmEntry)
             {
                 dragData.Set(DATAOBJECT_FORMAT_BGM, vmBgmEntry);
                 await DragDrop.DoDragDrop(e.PointerPressedEventArgs, dragData, DragDropEffects.Move);
@@ -198,7 +198,7 @@ namespace Sm5shMusic.GUI.ViewModels
                     ReorderPlaylist(sourcePlaylistObj, destinationObj);
                 }
             }
-            if (SelectedPlaylistEntry != null && e.Data.Get(DATAOBJECT_FORMAT_BGM) is BgmEntryViewModel sourceBgmObj)
+            if (SelectedPlaylistEntry != null && e.Data.Get(DATAOBJECT_FORMAT_BGM) is BgmDbRootEntryViewModel sourceBgmObj)
             {
                 AddToPlaylist(sourceBgmObj, destinationObj);
             }
@@ -226,7 +226,7 @@ namespace Sm5shMusic.GUI.ViewModels
             _whenNewRequestToDeletePlaylist.OnNext(Unit.Default);
         }
 
-        public void AddToPlaylist(BgmEntryViewModel sourceObj, PlaylistEntryValueViewModel destinationObj)
+        public void AddToPlaylist(BgmDbRootEntryViewModel sourceObj, PlaylistEntryValueViewModel destinationObj)
         {
             var order = destinationObj != null ? (short)(destinationObj.Order + 1) : (short)999;
             var newEntry = SelectedPlaylistEntry.AddSong(sourceObj, SelectedPlaylistOrder, order);

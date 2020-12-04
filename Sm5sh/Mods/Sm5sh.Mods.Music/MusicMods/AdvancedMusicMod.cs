@@ -79,12 +79,15 @@ namespace Sm5sh.Mods.Music.MusicMods
 
                     _logger.LogInformation("Mod {MusicMod}: Adding song {Song} ({ToneId})", _musicModConfig.Name, filename, bgm.ToneId);
                     var bgmDbRootEntry = _mapper.Map(bgm.DbRoot, new BgmDbRootEntry(bgm.DbRoot.UiBgmId, this));
+                    bgmDbRootEntry.Title = bgm.MSBTLabels.Title;
+                    bgmDbRootEntry.Author = bgm.MSBTLabels.Author;
+                    bgmDbRootEntry.Copyright = bgm.MSBTLabels.Copyright;
                     bgmDbRootEntry.UiGameTitleId = game.UiGameTitleId; //Enforce
                     output.BgmDbRootEntries.Add(bgmDbRootEntry);
                     output.BgmStreamSetEntries.Add(_mapper.Map(bgm.StreamSet, new BgmStreamSetEntry(bgm.StreamSet.StreamSetId, this)));
                     output.BgmAssignedInfoEntries.Add(_mapper.Map(bgm.AssignedInfo, new BgmAssignedInfoEntry(bgm.AssignedInfo.InfoId, this)));
                     output.BgmStreamPropertyEntries.Add(_mapper.Map(bgm.StreamProperty, new BgmStreamPropertyEntry(bgm.StreamProperty.StreamId, this)));
-                    output.BgmPropertyEntries.Add(_mapper.Map(bgm.BgmProperties, new BgmPropertyEntry(bgm.BgmProperties.NameId, filename, this)));
+                    output.BgmPropertyEntries.Add(_mapper.Map(bgm.BgmProperties, new BgmPropertyEntry(bgm.BgmProperties.NameId, filename, this) { AudioVolume = bgm.NUS3BankConfig.AudioVolume }));
                 }
             }
 
@@ -386,6 +389,10 @@ namespace Sm5sh.Mods.Music.MusicMods
             public string ToneId { get; set; }
             [JsonProperty("filename")]
             public string Filename { get; set; }
+            [JsonProperty("nus3bank_config")]
+            public NUS3BankConfig NUS3BankConfig { get; set; }
+            [JsonProperty("msbt_labels")]
+            public MSBTLabelsConfig MSBTLabels { get; set; }
             [JsonProperty("bgm_properties")]
             public BgmPropertyEntryConfig BgmProperties { get; set; }
             [JsonProperty("db_root")]
@@ -396,6 +403,22 @@ namespace Sm5sh.Mods.Music.MusicMods
             public BgmStreamSetConfig StreamSet { get; set; }
             [JsonProperty("stream_property")]
             public BgmStreamPropertyConfig StreamProperty { get; set; }
+        }
+
+        public class MSBTLabelsConfig
+        {
+            [JsonProperty("title")]
+            public Dictionary<string, string> Title { get; set; }
+            [JsonProperty("copyright")]
+            public Dictionary<string, string> Copyright { get; set; }
+            [JsonProperty("author")]
+            public Dictionary<string, string> Author { get; set; }
+        }
+
+        public class NUS3BankConfig
+        {
+            [JsonProperty("volume")]
+            public float AudioVolume { get; set; }
         }
 
         public class BgmDbRootConfig
@@ -645,9 +668,6 @@ namespace Sm5sh.Mods.Music.MusicMods
         {
             [JsonProperty("name_id")]
             public string NameId { get; set; }
-
-            [JsonProperty("volume")]
-            public float AudioVolume { get; set; }
 
             [JsonProperty("loop_start_ms")]
             public uint LoopStartMs { get; set; }

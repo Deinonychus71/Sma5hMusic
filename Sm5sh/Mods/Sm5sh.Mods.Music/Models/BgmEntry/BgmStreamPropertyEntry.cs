@@ -26,6 +26,10 @@ namespace Sm5sh.Mods.Music.Models
             : base(musicMod)
         {
             StreamId = streamId;
+            Loop = 1;
+            EndPoint = "00:00:00.000";
+            FadeOutFrame = 400;
+            StartPointTransition = "00:00:00.000";
         }
 
 

@@ -581,6 +581,13 @@ namespace Sm5sh.Mods.Music.Services
                 _bgmStreamPropertyEntries.Add(paramStreamPropertyEntry.StreamId, _mapper.Map(paramStreamPropertyEntry, new BgmStreamPropertyEntry(paramStreamPropertyEntry.StreamId)));
             }
 
+            //Map BinProperty
+            foreach (var binBgnProperty in daoBinBgmProperty.Entries.Values)
+            {
+                var filename = Path.Combine(_config.Value.GameResourcesPath, "stream;", "sound", "bgm", string.Format(Constants.GameResources.NUS3AUDIO_FILE, binBgnProperty.NameId)); 
+                _bgmPropertyEntries.Add(binBgnProperty.NameId, _mapper.Map(binBgnProperty, new BgmPropertyEntry(binBgnProperty.NameId, filename)));
+            }
+
             //Mapping games
             foreach (var dbRootGameEntry in paramGameTitleDbRoot.Values)
             {

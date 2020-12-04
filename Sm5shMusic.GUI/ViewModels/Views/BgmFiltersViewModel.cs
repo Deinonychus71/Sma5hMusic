@@ -50,10 +50,10 @@ namespace Sm5shMusic.GUI.ViewModels
         [Reactive]
         public bool SelectedModSongs { get; set; }
 
-        public IObservable<IChangeSet<BgmEntryViewModel, string>> WhenFiltersAreApplied { get; }
+        public IObservable<IChangeSet<BgmDbRootEntryViewModel, string>> WhenFiltersAreApplied { get; }
 
 
-        public BgmFiltersViewModel(IObservable<IChangeSet<BgmEntryViewModel, string>> observableBgmEntries)
+        public BgmFiltersViewModel(IObservable<IChangeSet<BgmDbRootEntryViewModel, string>> observableBgmEntries)
         {
             _allModsChangeSet = GetAllModsChangeSet();
             _allSeriesChangeSet = GetAllSeriesChangeSet();
@@ -64,7 +64,7 @@ namespace Sm5shMusic.GUI.ViewModels
                 "SelectedRecordType", "SelectedMod", "SelectedShowInSoundTest", "SelectedShowHiddenSongs",
                 "SelectedCharacterVictorySongs", "SelectedPinchSongs", "SelectedCoreSongs", "SelectedModSongs");
             WhenFiltersAreApplied = observableBgmEntries
-                .AutoRefresh(p => p.DbRoot.TestDispOrder, TimeSpan.FromMilliseconds(50))
+                .AutoRefresh(p => p.TestDispOrder, TimeSpan.FromMilliseconds(50))
                 .AutoRefreshOnObservable(p => whenAnyPropertyChanged, changeSetBuffer: TimeSpan.FromMilliseconds(50), scheduler: RxApp.TaskpoolScheduler)
                 .Filter(p =>
                     (SelectedShowHiddenSongs || (!SelectedShowHiddenSongs && !p.HiddenInSoundTest)) &&

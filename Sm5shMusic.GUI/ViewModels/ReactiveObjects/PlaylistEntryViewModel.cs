@@ -26,7 +26,7 @@ namespace Sm5shMusic.GUI.ViewModels
 
         public List<string> AllTracks { get { return GetAllTracks(); } }
 
-        public PlaylistEntryViewModel(PlaylistEntry playlistEntry, Dictionary<string, BgmEntryViewModel> refBgms = null)
+        public PlaylistEntryViewModel(PlaylistEntry playlistEntry, Dictionary<string, BgmDbRootEntryViewModel> refBgms = null)
         {
             _refPlaylistEntry = playlistEntry;
             if (string.IsNullOrEmpty(playlistEntry.Title))
@@ -65,13 +65,13 @@ namespace Sm5shMusic.GUI.ViewModels
             }
         }
 
-        public PlaylistEntryValueViewModel AddSong(BgmEntryViewModel sourceObj, short orderId, short destinationIndex)
+        public PlaylistEntryValueViewModel AddSong(BgmDbRootEntryViewModel sourceObj, short orderId, short destinationIndex)
         {
             PlaylistEntryValueViewModel output = null;
 
             for (short i = 0; i < 16; i++)
             {
-                var newValue = new PlaylistEntryValueViewModel(this, i, sourceObj.DbRoot.UiBgmId, destinationIndex, 5000, sourceObj);
+                var newValue = new PlaylistEntryValueViewModel(this, i, sourceObj.UiBgmId, destinationIndex, 5000, sourceObj);
                 Tracks[i].Add(newValue);
                 if (i == orderId)
                     output = newValue;
@@ -139,7 +139,7 @@ namespace Sm5shMusic.GUI.ViewModels
             return output;
         }
 
-        public Dictionary<short, ObservableCollection<PlaylistEntryValueViewModel>> ToPlaylistValueViewModelsByOrder(Dictionary<string, BgmEntryViewModel> refBgms)
+        public Dictionary<short, ObservableCollection<PlaylistEntryValueViewModel>> ToPlaylistValueViewModelsByOrder(Dictionary<string, BgmDbRootEntryViewModel> refBgms)
         {
             var output = new Dictionary<short, List<PlaylistEntryValueViewModel>>();
             for (short i = 0; i < 16; i++)
@@ -147,7 +147,7 @@ namespace Sm5shMusic.GUI.ViewModels
 
             foreach (var track in _refPlaylistEntry.Tracks)
             {
-                BgmEntryViewModel vmBgmEntry = null;
+                BgmDbRootEntryViewModel vmBgmEntry = null;
                 if (refBgms != null && refBgms.ContainsKey(track.UiBgmId))
                     vmBgmEntry = refBgms[track.UiBgmId];
 

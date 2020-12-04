@@ -42,7 +42,6 @@ namespace Sm5sh.Mods.Music.Models.AutoMapper
                 .ForMember(i => i.Unk1, me => me.MapFrom(p => p.Unk1));
 
             CreateMap<BgmPropertyEntry, MusicMods.AdvancedMusicModModels.BgmPropertyEntryConfig>()
-                .ForMember(i => i.AudioVolume, me => me.MapFrom(p => p.AudioVolume))
                 .ForMember(i => i.LoopEndMs, me => me.MapFrom(p => p.LoopEndMs))
                 .ForMember(i => i.LoopEndSample, me => me.MapFrom(p => p.LoopEndSample))
                 .ForMember(i => i.LoopStartMs, me => me.MapFrom(p => p.LoopStartMs))
@@ -51,7 +50,6 @@ namespace Sm5sh.Mods.Music.Models.AutoMapper
                 .ForMember(i => i.TotalSamples, me => me.MapFrom(p => p.TotalSamples))
                 .ForMember(i => i.TotalTimeMs, me => me.MapFrom(p => p.TotalTimeMs));
             CreateMap<MusicMods.AdvancedMusicModModels.BgmPropertyEntryConfig, BgmPropertyEntry>()
-                .ForMember(i => i.AudioVolume, me => me.MapFrom(p => p.AudioVolume))
                 .ForMember(i => i.LoopEndMs, me => me.MapFrom(p => p.LoopEndMs))
                 .ForMember(i => i.LoopEndSample, me => me.MapFrom(p => p.LoopEndSample))
                 .ForMember(i => i.LoopStartMs, me => me.MapFrom(p => p.LoopStartMs))
@@ -94,9 +92,9 @@ namespace Sm5sh.Mods.Music.Models.AutoMapper
                 .ForMember(i => i.Copyright, me => me.MapFrom(p => p.Copyright));
             CreateMap<MusicMods.AdvancedMusicModModels.BgmDbRootConfig, BgmDbRootEntry>()
                 .ForMember(i => i.UiBgmId, me => me.Ignore())
-                .ForMember(i => i.StreamSetId, me => me.Ignore())
+                .ForMember(i => i.StreamSetId, me => me.MapFrom(p => p.StreamSetId))
                 .ForMember(i => i.Rarity, me => me.MapFrom(p => p.Rarity))
-                .ForMember(i => i.UiGameTitleId, me => me.Ignore())
+                .ForMember(i => i.UiGameTitleId, me => me.MapFrom(p => p.UiGameTitleId))
                 .ForMember(i => i.UiGameTitleId1, me => me.MapFrom(p => p.UiGameTitleId1))
                 .ForMember(i => i.UiGameTitleId2, me => me.MapFrom(p => p.UiGameTitleId2))
                 .ForMember(i => i.UiGameTitleId3, me => me.MapFrom(p => p.UiGameTitleId3))

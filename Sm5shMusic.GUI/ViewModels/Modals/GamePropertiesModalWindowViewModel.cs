@@ -164,17 +164,16 @@ namespace Sm5shMusic.GUI.ViewModels
         {
             if (!IsEdit)
             {
-                SelectedGameTitleEntry = new GameTitleEntryViewModel(new GameTitleEntry(UiGameTitleId, EntrySource.Mod));
+                //SelectedGameTitleEntry = new GameTitleEntryViewModel(new GameTitleEntry(UiGameTitleId, EntrySource.Mod));
             }
 
-            var refGame = SelectedGameTitleEntry.GetGameEntryReference();
-            refGame.MSBTTitle = MSBTTitleEditor.MSBTValues.ToDictionary(p => p.Key, p => p.Value); //Clone
+            var refGame = SelectedGameTitleEntry.GetReferenceEntity();
+            refGame.MSBTTitle = MSBTTitleEditor.MSBTValues; //Clone
             refGame.NameId = NameId;
             refGame.Release = Release;
             refGame.Unk1 = Unk1;
             refGame.UiSeriesId = SelectedSeries.SeriesId;
             _mapper.Map(refGame, SelectedGameTitleEntry);
-            SelectedGameTitleEntry.SeriesViewModel = SelectedSeries;
             window.Close(window);
         }
 

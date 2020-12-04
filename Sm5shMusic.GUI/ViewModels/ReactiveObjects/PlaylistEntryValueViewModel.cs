@@ -14,7 +14,7 @@ namespace Sm5shMusic.GUI.ViewModels
         public PlaylistEntryViewModel Parent { get; }
 
         [Reactive]
-        public BgmEntryViewModel BgmReference { get; set; }
+        public BgmDbRootEntryViewModel BgmReference { get; set; }
 
         [Reactive]
         public ushort Incidence { get; set; }
@@ -24,7 +24,7 @@ namespace Sm5shMusic.GUI.ViewModels
         [Reactive]
         public short Order { get; set; }
 
-        public PlaylistEntryValueViewModel(PlaylistEntryViewModel parent, short orderId, string bgmId, short order, ushort incidence, BgmEntryViewModel vmBgmEntry = null)
+        public PlaylistEntryValueViewModel(PlaylistEntryViewModel parent, short orderId, string bgmId, short order, ushort incidence, BgmDbRootEntryViewModel vmBgmEntry = null)
         {
             Parent = parent;
             UniqueId = Guid.NewGuid().ToString(); // $"{bgmId}{orderId}";
@@ -32,7 +32,7 @@ namespace Sm5shMusic.GUI.ViewModels
             Order = order;
             Incidence = incidence;
             //In case not found :)
-            BgmReference = vmBgmEntry != null ? vmBgmEntry : new BgmEntryViewModel(null, null)
+            BgmReference = vmBgmEntry != null ? vmBgmEntry : new BgmDbRootEntryViewModel(null, null, null)
             {
                 Title = bgmId
             };

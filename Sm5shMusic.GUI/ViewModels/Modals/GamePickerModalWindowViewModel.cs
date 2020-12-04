@@ -35,7 +35,7 @@ namespace Sm5shMusic.GUI.ViewModels
                .DisposeMany()
                .Subscribe();
 
-            var canExecute = this.WhenAnyValue(x => x.SelectedGameTitleEntry, x => x != null && !string.IsNullOrEmpty(x.SeriesId));
+            var canExecute = this.WhenAnyValue(x => x.SelectedGameTitleEntry, x => x != null && !string.IsNullOrEmpty(x.UiSeriesId));
             ActionCancel = ReactiveCommand.Create<Window>(Cancel);
             ActionSelect = ReactiveCommand.Create<Window>(Select, canExecute);
         }

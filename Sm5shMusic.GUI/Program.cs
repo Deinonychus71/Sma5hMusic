@@ -14,6 +14,7 @@ using System.Diagnostics;
 using System.IO;
 using VGMMusic;
 using Sm5shMusic.GUI.Mods.Music.Models.AutoMapper;
+using Sm5shMusic.GUI.Services;
 
 namespace Sm5shMusic.GUI
 {
@@ -73,6 +74,7 @@ namespace Sm5shMusic.GUI
             services.AddSingleton<IFileDialog, FileDialog>();
             services.AddSingleton<IMessageDialog, MessageDialog>();
             services.AddSingleton<IBuildDialog, BuildDialog>();
+            services.AddSingleton<IAudioStateViewModelManager, AudioStateViewModelManager>();
             services.AddAutoMapper(typeof(MappingViewModels));
 
             //Add to Splat

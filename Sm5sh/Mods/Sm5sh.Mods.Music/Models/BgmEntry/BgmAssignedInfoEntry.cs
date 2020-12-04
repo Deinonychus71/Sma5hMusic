@@ -1,4 +1,5 @@
-﻿using Sm5sh.Mods.Music.Interfaces;
+﻿using Sm5sh.Mods.Music.Helpers;
+using Sm5sh.Mods.Music.Interfaces;
 
 namespace Sm5sh.Mods.Music.Models
 {
@@ -23,6 +24,10 @@ namespace Sm5sh.Mods.Music.Models
             : base(musicMod)
         {
             InfoId = infoId;
+            Condition = Constants.InternalIds.SOUND_CONDITION;
+            ConditionProcess = "0x1b9fe75d3f";
+            ChangeFadoutFrame = 55;
+            MenuChangeFadeOutFrame = 55;
         }
 
 
