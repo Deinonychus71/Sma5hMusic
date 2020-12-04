@@ -48,11 +48,19 @@ namespace Sm5sh.Mods.Music
             foreach (var musicMod in musicMods)
             {
                 //Add to Audio State Service
-                var newBgmEntries = musicMod.GetBgms();
-                foreach (var newBgmEntry in newBgmEntries)
-                {
-                    _audioStateService.AddBgmEntry(newBgmEntry);
-                }
+                var musicModEntries = musicMod.GetMusicModEntries();
+                foreach (var bgmDbRootEntry in musicModEntries.BgmDbRootEntries)
+                    _audioStateService.AddBgmDbRootEntry(bgmDbRootEntry);
+                foreach (var bgmAssignedInfoEntry in musicModEntries.BgmAssignedInfoEntries)
+                    _audioStateService.AddBgmAssignedInfoEntry(bgmAssignedInfoEntry);
+                foreach (var bgmStreamSetEntry in musicModEntries.BgmStreamSetEntries)
+                    _audioStateService.AddBgmStreamSetEntry(bgmStreamSetEntry);
+                foreach (var bgmStreamPropertyEntry in musicModEntries.BgmStreamPropertyEntries)
+                    _audioStateService.AddBgmStreamPropertyEntry(bgmStreamPropertyEntry);
+                foreach (var gameTitleEntry in musicModEntries.GameTitleEntries)
+                    _audioStateService.AddGameTitleEntry(gameTitleEntry);
+                foreach (var bgmPropertiesEntry in musicModEntries.BgmPropertyEntries)
+                    _audioStateService.AddBgmPropertyEntry(bgmPropertiesEntry);
             }
 
             return true;
@@ -66,50 +74,50 @@ namespace Sm5sh.Mods.Music
             _audioStateService.SaveBgmEntriesToStateManager();
 
             //Save NUS3Audio/Nus3Bank
-            foreach (var bgmEntry in _audioStateService.GetModBgmEntries())
+            foreach (var bgmPropertyEntry in _audioStateService.GetModBgmPropertyEntries())
             {
-                var nusBankOutputFile = Path.Combine(_config.Value.OutputPath, "stream;", "sound", "bgm", string.Format(Constants.GameResources.NUS3BANK_FILE, bgmEntry.ToneId));
-                var nusAudioOutputFile = Path.Combine(_config.Value.OutputPath, "stream;", "sound", "bgm", string.Format(Constants.GameResources.NUS3AUDIO_FILE, bgmEntry.ToneId));
+                var nusBankOutputFile = Path.Combine(_config.Value.OutputPath, "stream;", "sound", "bgm", string.Format(Constants.GameResources.NUS3BANK_FILE, bgmPropertyEntry.NameId));
+                var nusAudioOutputFile = Path.Combine(_config.Value.OutputPath, "stream;", "sound", "bgm", string.Format(Constants.GameResources.NUS3AUDIO_FILE, bgmPropertyEntry.NameId));
 
                 //We always generate a new Nus3Bank as the internal ID might change
-                _logger.LogInformation("Generating Nus3Bank for {ToneId}", bgmEntry.ToneId);
-                _nus3AudioService.GenerateNus3Bank(bgmEntry.ToneId, bgmEntry.NUS3BankConfig.AudioVolume, nusBankOutputFile);
+                _logger.LogInformation("Generating Nus3Bank for {NameId}", bgmPropertyEntry.NameId);
+                _nus3AudioService.GenerateNus3Bank(bgmPropertyEntry.NameId, bgmPropertyEntry.AudioVolume, nusBankOutputFile);
 
                 //Test for audio cache
-                _logger.LogInformation("Generating or Copying Nus3Audio for {ToneId}", bgmEntry.ToneId);
-                if (!ConvertNus3Audio(useCache, bgmEntry, nusAudioOutputFile))
-                    _logger.LogError("Error! The song with ToneId {ToneId}, File {Filename} could not be processed.", bgmEntry.ToneId, bgmEntry.Filename);
+                _logger.LogInformation("Generating or Copying Nus3Audio for {NameId}", bgmPropertyEntry.NameId);
+                if (!ConvertNus3Audio(useCache, bgmPropertyEntry, nusAudioOutputFile))
+                    _logger.LogError("Error! The song with ToneId {NameId}, File {Filename} could not be processed.", bgmPropertyEntry.NameId, bgmPropertyEntry.Filename);
             }
 
             return true;
         }
 
-        private bool ConvertNus3Audio(bool useCache, BgmEntry bgmEntry, string nusAudioOutputFile)
+        private bool ConvertNus3Audio(bool useCache, BgmPropertyEntry bgmPropertyEntry, string nusAudioOutputFile)
         {
             bool result = false;
 
             //Test for audio cache
             if (useCache)
             {
-                var cachedAudioFile = Path.Combine(_config.Value.Sm5shMusic.CachePath, string.Format(Constants.GameResources.NUS3AUDIO_FILE, bgmEntry.ToneId));
+                var cachedAudioFile = Path.Combine(_config.Value.Sm5shMusic.CachePath, string.Format(Constants.GameResources.NUS3AUDIO_FILE, bgmPropertyEntry.NameId));
                 if (!File.Exists(cachedAudioFile))
                 {
-                    result = _nus3AudioService.GenerateNus3Audio(bgmEntry.ToneId, bgmEntry.Filename, cachedAudioFile);
+                    result = _nus3AudioService.GenerateNus3Audio(bgmPropertyEntry.NameId, bgmPropertyEntry.Filename, cachedAudioFile);
                 }
                 else
                 {
-                    _logger.LogDebug("Retrieving nus3audio {InternalToneName} from cache {CacheFile}", bgmEntry.ToneId, cachedAudioFile);
+                    _logger.LogDebug("Retrieving nus3audio {InternalToneName} from cache {CacheFile}", bgmPropertyEntry.NameId, cachedAudioFile);
                 }
                 if (File.Exists(cachedAudioFile))
                 {
-                    _logger.LogDebug("Copy nus3audio {InternalToneName} from cache {CacheFile} to {Nus3AudioOutputFile}", bgmEntry.ToneId, cachedAudioFile, nusAudioOutputFile);
+                    _logger.LogDebug("Copy nus3audio {InternalToneName} from cache {CacheFile} to {Nus3AudioOutputFile}", bgmPropertyEntry.NameId, cachedAudioFile, nusAudioOutputFile);
                     File.Copy(cachedAudioFile, nusAudioOutputFile);
                     return true;
                 }
             }
             else
             {
-                result = _nus3AudioService.GenerateNus3Audio(bgmEntry.ToneId, bgmEntry.Filename, nusAudioOutputFile);
+                result = _nus3AudioService.GenerateNus3Audio(bgmPropertyEntry.NameId, bgmPropertyEntry.Filename, nusAudioOutputFile);
             }
 
             return result;

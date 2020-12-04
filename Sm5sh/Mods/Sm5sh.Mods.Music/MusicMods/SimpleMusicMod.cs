@@ -34,20 +34,21 @@ namespace Sm5sh.Mods.Music.MusicMods
             _musicModConfig = LoadMusicModConfig();
         }
 
-        public List<BgmEntry> GetBgms()
+        public MusicModEntries GetMusicModEntries()
         {
+            var output = new MusicModEntries();
+
             if (_musicModConfig == null || !ValidateAndSanitizeModConfig())
             {
-                return new List<BgmEntry>();
+                return output;
             }
 
             //Process audio mods
             _logger.LogInformation("Mod {MusicMod} by '{Author}' - {NbrSongs} song(s)", _musicModConfig.Name, _musicModConfig.Author, _musicModConfig.Games.Sum(p => p.Songs.Count));
 
-            var output = new List<BgmEntry>();
             foreach (var game in _musicModConfig.Games)
             {
-                var gameEntry = new GameTitleEntry(game.Id)
+                var gameTitleEntry = new GameTitleEntry(game.Id)
                 {
                     UiSeriesId = game.SeriesId,
                     NameId = game.Id.TrimStart(Constants.InternalIds.GAME_TITLE_ID_PREFIX),
@@ -61,52 +62,59 @@ namespace Sm5sh.Mods.Music.MusicMods
 
                     var toneId = song.Id;
                     var hasDlcPlaylistId = song.Playlists != null && song.Playlists.Any(p => CoreConstants.DLC_STAGES.Contains(p.Id));
-                    var newSong = new BgmEntry(toneId, this);
-                    newSong.GameTitle = gameEntry;
-                    newSong.DbRoot.RecordType = song.RecordType;
-                    newSong.DbRoot.TestDispOrder = -1;
-                    newSong.DbRoot.IsDlc = hasDlcPlaylistId;
-                    newSong.DbRoot.IsPatch = hasDlcPlaylistId;
-                    newSong.StreamSet.SpecialCategory = song.SpecialCategory?.Category;
-                    newSong.StreamSet.Info1 = song.SpecialCategory?.Parameters?[0];
-                    newSong.MSBTLabels.Title = song.Title;
-                    newSong.MSBTLabels.Author = song.Author;
-                    newSong.MSBTLabels.Copyright = song.Copyright;
-                    newSong.Filename = audioFilePath;
-                    newSong.BgmProperties.LoopEndMs = audioCuePoints.LoopEndMs;
-                    newSong.BgmProperties.LoopEndSample = audioCuePoints.LoopEndSample;
-                    newSong.BgmProperties.LoopStartMs = audioCuePoints.LoopStartMs;
-                    newSong.BgmProperties.LoopStartSample = audioCuePoints.LoopStartSample;
-                    newSong.BgmProperties.TotalSamples = audioCuePoints.TotalSamples;
-                    newSong.BgmProperties.TotalTimeMs = audioCuePoints.TotalTimeMs;
 
-                    //No longer in mod
-                    /*if (song.Playlists != null)
+                    var bgmDbRootEntry = new BgmDbRootEntry($"{Constants.InternalIds.UI_BGM_ID_PREFIX}{toneId}", this)
                     {
-                        foreach (var playlist in song.Playlists)
-                        {
-                            if (!newSong.Playlists.ContainsKey(playlist.Id))
-                                newSong.Playlists.Add(playlist.Id, new List<Models.BgmEntryModels.BgmPlaylistEntry>());
-                            newSong.Playlists[playlist.Id].Add(new Models.BgmEntryModels.BgmPlaylistEntry(newSong));
-                        }
-                    }*/
-                    output.Add(newSong);
+                        StreamSetId = $"{Constants.InternalIds.STREAM_SET_PREFIX}{toneId}",
+                        RecordType = song.RecordType,
+                        TestDispOrder = -1,
+                        IsDlc = hasDlcPlaylistId,
+                        IsPatch = hasDlcPlaylistId,
+                        UiGameTitleId = gameTitleEntry.UiGameTitleId,
+                        Title = song.Title,
+                        Author = song.Author,
+                        Copyright = song.Copyright
+                    };
+
+                    var bgmStreamSetEntry = new BgmStreamSetEntry($"{Constants.InternalIds.STREAM_SET_PREFIX}{toneId}", this)
+                    {
+                        SpecialCategory = song.SpecialCategory?.Category,
+                        Info0 = $"{Constants.InternalIds.INFO_ID_PREFIX}{toneId}",
+                        Info1 = song.SpecialCategory?.Parameters?[0]
+                    };
+
+                    var bgmAssignedInfoEntry = new BgmAssignedInfoEntry($"{Constants.InternalIds.INFO_ID_PREFIX}{toneId}", this)
+                    {
+                        StreamId = $"{Constants.InternalIds.STREAM_PREFIX}{toneId}",
+                    };
+
+                    var bgmStreamPropertyEntry = new BgmStreamPropertyEntry($"{Constants.InternalIds.STREAM_PREFIX}{toneId}", this)
+                    {
+                        DataName0 = toneId
+                    };
+
+                    var bgmPropertyEntry = new BgmPropertyEntry(toneId, audioFilePath, this)
+                    {
+                        LoopEndMs = audioCuePoints.LoopEndMs,
+                        LoopEndSample = audioCuePoints.LoopEndSample,
+                        LoopStartMs = audioCuePoints.LoopStartMs,
+                        LoopStartSample = audioCuePoints.LoopStartSample,
+                        TotalSamples = audioCuePoints.TotalSamples,
+                        TotalTimeMs = audioCuePoints.TotalTimeMs
+                    };
+
+                    output.GameTitleEntries.Add(gameTitleEntry);
+                    output.BgmDbRootEntries.Add(bgmDbRootEntry);
+                    output.BgmStreamSetEntries.Add(bgmStreamSetEntry);
+                    output.BgmAssignedInfoEntries.Add(bgmAssignedInfoEntry);
+                    output.BgmStreamPropertyEntries.Add(bgmStreamPropertyEntry);
+                    output.BgmPropertyEntries.Add(bgmPropertyEntry);
 
                     _logger.LogInformation("Mod {MusicMod}: Adding song {Song} ({ToneName})", _musicModConfig.Name, song.Id, toneId);
                 }
             }
 
             return output;
-        }
-
-        public BgmEntry AddBgm(string toneId, string filename)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool UpdateBgm(BgmEntry bgmEntry)
-        {
-            throw new NotImplementedException();
         }
 
         public bool RemoveBgm(string toneId)
@@ -311,6 +319,11 @@ namespace Sm5sh.Mods.Music.MusicMods
             }
 
             return true;
+        }
+
+        public void AddOrUpdateMusicModEntries(MusicModEntries musicModEntries)
+        {
+            throw new NotImplementedException();
         }
     }
 

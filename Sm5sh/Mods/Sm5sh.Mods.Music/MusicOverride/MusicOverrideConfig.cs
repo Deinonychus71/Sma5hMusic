@@ -8,14 +8,41 @@ namespace Sm5sh.Mods.Music.MusicOverride
     public class MusicOverrideConfig
     {
         public Dictionary<string, short> SoundTestOrder { get; set; }
-        public Dictionary<string, PlaylistConfig> Playlists { get; set; }
-        public Dictionary<string, BgmConfig> CoreBgmOverrides { get; set; }
+        public Dictionary<string, PlaylistConfig> PlaylistsOverrides { get; set; }
         public Dictionary<string, StageConfig> StageOverrides { get; set; }
         public Dictionary<string, GameConfig> CoreGameOverrides { get; set; }
+        public CoreBgmOverrides CoreBgmOverrides { get; set; }
+
+        public MusicOverrideConfig()
+        {
+            SoundTestOrder = new Dictionary<string, short>();
+            PlaylistsOverrides = new Dictionary<string, PlaylistConfig>();
+            StageOverrides = new Dictionary<string, StageConfig>();
+            CoreGameOverrides = new Dictionary<string, GameConfig>();
+            CoreBgmOverrides = new CoreBgmOverrides();
+        }
     }
 
     namespace MusicOverrideConfigModels
     {
+        public class CoreBgmOverrides
+        {
+            public Dictionary<string, BgmDbRootConfig> CoreBgmDbRootOverrides { get; set; }
+            public Dictionary<string, BgmStreamSetConfig> CoreBgmStreamSetOverrides { get; set; }
+            public Dictionary<string, BgmAssignedInfoConfig> CoreBgmAssignedInfoOverrides { get; set; }
+            public Dictionary<string, BgmStreamPropertyConfig> CoreBgmStreamPropertyOverrides { get; set; }
+            public Dictionary<string, BgmPropertyEntryConfig> CoreBgmPropertyOverrides { get; set; }
+
+            public CoreBgmOverrides()
+            {
+                CoreBgmDbRootOverrides = new Dictionary<string, BgmDbRootConfig>();
+                CoreBgmStreamSetOverrides = new Dictionary<string, BgmStreamSetConfig>();
+                CoreBgmAssignedInfoOverrides = new Dictionary<string, BgmAssignedInfoConfig>();
+                CoreBgmStreamPropertyOverrides = new Dictionary<string, BgmStreamPropertyConfig>();
+                CoreBgmPropertyOverrides = new Dictionary<string, BgmPropertyEntryConfig>();
+            }
+        }
+
         public class PlaylistConfig
         {
             [JsonProperty("id")]

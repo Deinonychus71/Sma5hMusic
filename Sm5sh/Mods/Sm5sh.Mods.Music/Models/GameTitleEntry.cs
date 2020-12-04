@@ -1,11 +1,11 @@
 ﻿using Sm5sh.Mods.Music.Helpers;
+using Sm5sh.Mods.Music.Interfaces;
 using System.Collections.Generic;
 
 namespace Sm5sh.Mods.Music.Models
 {
-    public class GameTitleEntry
+    public class GameTitleEntry : BgmBase
     {
-        public EntrySource Source { get; }
         public string UiGameTitleId { get; }
         public string NameId { get; set; }
         public string UiSeriesId { get; set; }
@@ -20,9 +20,9 @@ namespace Sm5sh.Mods.Music.Models
             return UiGameTitleId;
         }
 
-        public GameTitleEntry(string uiGameTitleId, EntrySource source = EntrySource.Core)
+        public GameTitleEntry(string uiGameTitleId, IMusicMod musicMod = null)
+            :base(musicMod)
         {
-            Source = source;
             UiGameTitleId = uiGameTitleId;
             MSBTTitle = new Dictionary<string, string>();
         }

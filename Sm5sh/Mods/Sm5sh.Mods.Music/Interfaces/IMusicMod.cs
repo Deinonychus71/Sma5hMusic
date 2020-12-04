@@ -1,5 +1,4 @@
 ﻿using Sm5sh.Mods.Music.Models;
-using System.Collections.Generic;
 
 namespace Sm5sh.Mods.Music.Interfaces
 {
@@ -12,9 +11,10 @@ namespace Sm5sh.Mods.Music.Interfaces
         MusicModInformation Mod { get; }
 
         void UpdateModInformation(MusicModInformation configBase);
-        List<BgmEntry> GetBgms();
-        BgmEntry AddBgm(string toneId, string filename);
-        bool UpdateBgm(BgmEntry bgmEntry);
+        MusicModEntries GetMusicModEntries();
+        //BgmEntry AddBgm(string toneId, string filename);
+        //bool UpdateBgm(BgmEntry bgmEntry);
+        void AddOrUpdateMusicModEntries(MusicModEntries musicModEntries);
         bool RemoveBgm(string toneId);
     }
 }
