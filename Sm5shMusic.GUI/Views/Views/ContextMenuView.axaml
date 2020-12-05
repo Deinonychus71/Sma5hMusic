@@ -8,7 +8,7 @@
     <MenuItem Header="Import Songs to..." Items="{Binding Mods}" IsEnabled="True">
       <MenuItem.Styles>
         <Style Selector="MenuItem > MenuItem">
-          <Setter Property="Header" Value="{Binding ModName}"/>
+          <Setter Property="Header" Value="{Binding Name}"/>
           <Setter Property="Command" Value="{Binding $parent[Menu].DataContext.ActionAddNewBgm}"/>
           <Setter Property="CommandParameter" Value="{Binding .}"/>
         </Style>

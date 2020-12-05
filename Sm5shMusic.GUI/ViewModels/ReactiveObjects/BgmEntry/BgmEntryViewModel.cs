@@ -1,9 +1,5 @@
-﻿using AutoMapper;
-using ReactiveUI;
-using ReactiveUI.Fody.Helpers;
+﻿using Sm5sh.Mods.Music.Interfaces;
 using Sm5sh.Mods.Music.Models;
-using Sm5shMusic.GUI.Interfaces;
-using System.Collections.Generic;
 
 namespace Sm5shMusic.GUI.ViewModels
 {
@@ -11,6 +7,7 @@ namespace Sm5shMusic.GUI.ViewModels
     {
         public EntrySource Source { get { return DbRootViewModel.Source; } }
 
+        public IMusicMod MusicMod { get; private set; }
         public BgmDbRootEntryViewModel DbRootViewModel { get; private set; }
         public BgmStreamSetEntryViewModel StreamSetViewModel { get; private set; }
         public BgmAssignedInfoEntryViewModel AssignedInfoViewModel { get; private set; }
@@ -24,6 +21,7 @@ namespace Sm5shMusic.GUI.ViewModels
 
         public BgmEntryViewModel(BgmDbRootEntryViewModel bgmDbRootEntryView)
         {
+            MusicMod = bgmDbRootEntryView.MusicMod;
             DbRootViewModel = bgmDbRootEntryView;
             StreamSetViewModel = bgmDbRootEntryView.StreamSetViewModel;
             AssignedInfoViewModel = StreamSetViewModel.Info0ViewModel;
@@ -35,6 +33,7 @@ namespace Sm5shMusic.GUI.ViewModels
         {
             return new BgmEntryViewModel()
             {
+                MusicMod = MusicMod,
                 DbRootViewModel = (BgmDbRootEntryViewModel)DbRootViewModel.GetCopy(),
                 StreamSetViewModel = (BgmStreamSetEntryViewModel)StreamSetViewModel.GetCopy(),
                 AssignedInfoViewModel = (BgmAssignedInfoEntryViewModel)AssignedInfoViewModel.GetCopy(),
@@ -47,6 +46,7 @@ namespace Sm5shMusic.GUI.ViewModels
         {
             return new BgmEntryViewModel()
             {
+                MusicMod = MusicMod,
                 DbRootViewModel = (BgmDbRootEntryViewModel)DbRootViewModel.SaveChanges(),
                 StreamSetViewModel = (BgmStreamSetEntryViewModel)StreamSetViewModel.SaveChanges(),
                 AssignedInfoViewModel = (BgmAssignedInfoEntryViewModel)AssignedInfoViewModel.SaveChanges(),

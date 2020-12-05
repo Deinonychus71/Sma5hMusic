@@ -7,6 +7,7 @@ using ReactiveUI.Fody.Helpers;
 using ReactiveUI.Validation.Extensions;
 using Sm5sh.Mods.Music.Helpers;
 using Sm5shMusic.GUI.Helpers;
+using Sm5shMusic.GUI.Interfaces;
 using Sm5shMusic.GUI.Models;
 using System;
 using System.Collections.Generic;
@@ -15,7 +16,7 @@ using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
-using VGMMusic;
+using System.Threading.Tasks;
 using ILogger = Microsoft.Extensions.Logging.ILogger;
 
 namespace Sm5shMusic.GUI.ViewModels
@@ -183,7 +184,7 @@ namespace Sm5shMusic.GUI.ViewModels
             }
         }
 
-        protected override void SaveChanges()
+        protected override async Task SaveChanges()
         {
             DbRootViewModel.TestDispOrder = (short)(IsInSoundTest ? DbRootViewModel.TestDispOrder > -1 ? DbRootViewModel.TestDispOrder : short.MaxValue : -1);
             if (SelectedRecordType != null)
@@ -193,13 +194,13 @@ namespace Sm5shMusic.GUI.ViewModels
             DbRootViewModel.MSBTCopyright = MSBTCopyrightEditor.MSBTValues;
         }
 
-        protected override void LoadItem()
+        protected override void LoadItem(BgmEntryViewModel item)
         {
-            DbRootViewModel = _refSelectedItem?.DbRootViewModel;
-            StreamSetViewModel = _refSelectedItem?.StreamSetViewModel;
-            AssignedInfoViewModel = _refSelectedItem?.AssignedInfoViewModel;
-            StreamPropertyViewModel = _refSelectedItem?.StreamPropertyViewModel;
-            BgmPropertyViewModel = _refSelectedItem?.BgmPropertyViewModel;
+            DbRootViewModel = item?.DbRootViewModel;
+            StreamSetViewModel = item?.StreamSetViewModel;
+            AssignedInfoViewModel = item?.AssignedInfoViewModel;
+            StreamPropertyViewModel = item?.StreamPropertyViewModel;
+            BgmPropertyViewModel = item?.BgmPropertyViewModel;
 
             MSBTTitleEditor.MSBTValues = DbRootViewModel.MSBTTitle;
             MSBTAuthorEditor.MSBTValues = DbRootViewModel.MSBTAuthor;

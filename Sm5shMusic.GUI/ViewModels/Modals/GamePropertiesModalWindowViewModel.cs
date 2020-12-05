@@ -16,7 +16,7 @@ using System.Text.RegularExpressions;
 using ILogger = Microsoft.Extensions.Logging.ILogger;
 using Sm5sh.Mods.Music.Helpers;
 using Sm5shMusic.GUI.Interfaces;
-using AutoMapper;
+using System.Threading.Tasks;
 
 namespace Sm5shMusic.GUI.ViewModels
 {
@@ -26,7 +26,7 @@ namespace Sm5shMusic.GUI.ViewModels
         private readonly ReadOnlyObservableCollection<SeriesEntryViewModel> _series;
         private readonly ReadOnlyObservableCollection<GameTitleEntryViewModel> _games;
         private const string REGEX_REPLACE = @"[^a-zA-Z0-9_]";
-        private string REGEX_VALIDATION = $"^{MusicConstants.InternalIds.GAME_TITLE_ID_PREFIX}[a-z0-9_]+$";
+        private readonly string REGEX_VALIDATION = $"^{MusicConstants.InternalIds.GAME_TITLE_ID_PREFIX}[a-z0-9_]+$";
         private readonly ILogger _logger;
         private readonly IGUIStateManager _guiStateManager;
         private readonly IViewModelManager _viewModelManager;
@@ -128,12 +128,12 @@ namespace Sm5shMusic.GUI.ViewModels
             }
         }
 
-        protected override void SaveChanges()
+        protected override async Task SaveChanges()
         {
             if (!IsEdit)
             {
                 var newGameEntry = new GameTitleEntry(UiGameTitleId, EntrySource.Mod);
-                _guiStateManager.CreateNewGameTitleEntry(newGameEntry);
+                await _guiStateManager.CreateNewGameTitleEntry(newGameEntry);
                 _refSelectedItem = _viewModelManager.GetGameTitleViewModel(UiGameTitleId);
             }
 
@@ -144,9 +144,9 @@ namespace Sm5shMusic.GUI.ViewModels
             _refSelectedItem.UiSeriesId = SelectedSeries.SeriesId;
         }
 
-        protected override void LoadItem()
+        protected override void LoadItem(GameTitleEntryViewModel item)
         {
-            if (_refSelectedItem == null)
+            if (item == null)
             {
                 IsEdit = false;
                 UiGameTitleId = string.Empty;
@@ -159,12 +159,12 @@ namespace Sm5shMusic.GUI.ViewModels
             else
             {
                 IsEdit = true;
-                UiGameTitleId = _refSelectedItem.UiGameTitleId;
-                NameId = _refSelectedItem.NameId;
-                SelectedSeries = _refSelectedItem.SeriesViewModel;
-                Unk1 = _refSelectedItem.Unk1;
-                Release = _refSelectedItem.Release;
-                MSBTTitleEditor.MSBTValues = _refSelectedItem.MSBTTitle;
+                UiGameTitleId = item.UiGameTitleId;
+                NameId = item.NameId;
+                SelectedSeries = item.SeriesViewModel;
+                Unk1 = item.Unk1;
+                Release = item.Release;
+                MSBTTitleEditor.MSBTValues = item.MSBTTitle;
             }
         }
     }

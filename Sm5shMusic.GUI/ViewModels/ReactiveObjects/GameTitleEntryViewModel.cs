@@ -64,7 +64,7 @@ namespace Sm5shMusic.GUI.ViewModels
 
         public override ReactiveObjectBaseViewModel GetCopy()
         {
-            return _mapper.Map(this, new GameTitleEntryViewModel(_viewModelManager, _mapper, new GameTitleEntry(UiGameTitleId, MusicMod != null ? EntrySource.Mod : EntrySource.Core)));
+            return _mapper.Map(this, new GameTitleEntryViewModel(_viewModelManager, _mapper, GetReferenceEntity()));
         }
 
         public override ReactiveObjectBaseViewModel SaveChanges()

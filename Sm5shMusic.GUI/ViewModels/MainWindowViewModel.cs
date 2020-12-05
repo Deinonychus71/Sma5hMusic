@@ -48,6 +48,9 @@ namespace Sm5shMusic.GUI.ViewModels
         private ModalDialog<BgmPropertiesModalWindow, BgmPropertiesModalWindowViewModel, BgmEntryViewModel> _dialogSimpleBgmEditor;
         private ModalDialog<BgmAdvancedPropertiesModalWindow, BgmPropertiesModalWindowViewModel, BgmEntryViewModel> _dialogAdvancedBgmEditor;
         private ModalDialog<GamePropertiesModalWindow, GamePropertiesModalWindowViewModel, GameTitleEntryViewModel> _dialogGameEditor;
+        private ModalDialog<GamePickerModalWindow, GamePickerModalWindowViewModel, GameTitleEntryViewModel> _dialogGamePicker;
+        private ModalDialog<ModPropertiesModalWindow, ModPropertiesModalWindowViewModel, ModEntryViewModel> _dialogModEditor;
+        private ModalDialog<ModPickerModalWindow, ModPickerModalWindowViewModel, ModEntryViewModel> _dialogModPicker;
 
         [Reactive]
         public bool IsAdvanced { get; set; }
@@ -58,9 +61,6 @@ namespace Sm5shMusic.GUI.ViewModels
         [Reactive]
         public bool IsShowingDebug { get; set; }
 
-        public GamePickerModalWindowViewModel VMGamePicker { get; }
-        public ModPropertiesModalWindowViewModel VMModEditor { get; }
-        public ModPickerModalWindowViewModel VMModPicker { get; }
         public PlaylistPropertiesModalWindowViewModel VMPlaylistEditor { get; }
         public PlaylistPickerModalWindowViewModel VMPlaylistPicker { get; }
         public PlaylistStageAssignementModalWindowViewModel VMStageAssignement { get; }
@@ -116,13 +116,6 @@ namespace Sm5shMusic.GUI.ViewModels
             VMPlaylists = ActivatorUtilities.CreateInstance<PlaylistViewModel>(serviceProvider, VMBgmFilters.WhenFiltersAreApplied, viewModelManager.ObservablePlaylistsEntries, VMContextMenu);
 
             //Initialize Editors
-
-            VMGamePicker = ActivatorUtilities.CreateInstance<GamePickerModalWindowViewModel>(serviceProvider,
-                observableGameEntriesList);
-            VMModEditor = ActivatorUtilities.CreateInstance<ModPropertiesModalWindowViewModel>(serviceProvider);
-            VMModPicker = ActivatorUtilities.CreateInstance<ModPickerModalWindowViewModel>(serviceProvider,
-                viewModelManager.ObservableModsEntries);
-            
             VMPlaylistEditor = ActivatorUtilities.CreateInstance<PlaylistPropertiesModalWindowViewModel>(serviceProvider,
                viewModelManager.ObservablePlaylistsEntries);
             VMPlaylistPicker = ActivatorUtilities.CreateInstance<PlaylistPickerModalWindowViewModel>(serviceProvider,
@@ -132,10 +125,20 @@ namespace Sm5shMusic.GUI.ViewModels
             VMToneIdCreation = ActivatorUtilities.CreateInstance<ToneIdCreationModalWindowModel>(serviceProvider,
                 observableBgmDbRootEntriesList);
 
+            //Setup ModEditor
+            var vmModEditor = ActivatorUtilities.CreateInstance<ModPropertiesModalWindowViewModel>(serviceProvider);
+            var vmModPicker = ActivatorUtilities.CreateInstance<ModPickerModalWindowViewModel>(serviceProvider,
+               viewModelManager.ObservableModsEntries);
+            _dialogModEditor = new ModalDialog<ModPropertiesModalWindow, ModPropertiesModalWindowViewModel, ModEntryViewModel>(vmModEditor);
+            _dialogModPicker = new ModalDialog<ModPickerModalWindow, ModPickerModalWindowViewModel, ModEntryViewModel>(vmModPicker);
+
             //Setup GameEditor
             var vmGameEditor = ActivatorUtilities.CreateInstance<GamePropertiesModalWindowViewModel>(serviceProvider,
                 viewModelManager.ObservableLocales, viewModelManager.ObservableSeries, observableGameEntriesList);
+            var vmGamePicker = ActivatorUtilities.CreateInstance<GamePickerModalWindowViewModel>(serviceProvider,
+                observableGameEntriesList);
             _dialogGameEditor = new ModalDialog<GamePropertiesModalWindow, GamePropertiesModalWindowViewModel, GameTitleEntryViewModel>(vmGameEditor);
+            _dialogGamePicker = new ModalDialog<GamePickerModalWindow, GamePickerModalWindowViewModel, GameTitleEntryViewModel>(vmGamePicker);
 
             //Setup BgmEditor
             var vmBgmEditor = ActivatorUtilities.CreateInstance<BgmPropertiesModalWindowViewModel>(serviceProvider,
@@ -311,8 +314,8 @@ namespace Sm5shMusic.GUI.ViewModels
                 else
                     result = await _dialogSimpleBgmEditor.ShowDialog(_rootDialog.Window, new BgmEntryViewModel(vmBgmEntry));
 
-                if (result != null)
-                    await _guiStateManager.UpdateMusicModEntries(result.GetMusicModEntries(), vmBgmEntry.MusicMod);
+                if(result != null)
+                    await _guiStateManager.UpdateMusicModEntries(result.GetMusicModEntries(), result.MusicMod);
             }
         }
 
@@ -346,57 +349,32 @@ namespace Sm5shMusic.GUI.ViewModels
         #region Game Operations
         public async Task AddNewOrEditGame(Window parent = null, GameTitleEntryViewModel vmGameTitleEntry = null)
         {
-            var result = await _dialogGameEditor.ShowDialog(_rootDialog.Window, vmGameTitleEntry);
+            var result = await _dialogGameEditor.ShowDialog(parent ?? _rootDialog.Window, vmGameTitleEntry);
             if (result != null)
                 await _guiStateManager.UpdateGameTitleEntry(result.GetReferenceEntity());
         }
 
         public async Task EditGame(Window parent = null)
         {
-            var modalPickerGame = new GamePickerModalWindow() { DataContext = VMGamePicker };
-            var results = await modalPickerGame.ShowDialog<GamePickerModalWindow>(parent ?? _rootDialog.Window);
-            if (results != null)
-            {
-                await AddNewOrEditGame(parent, VMGamePicker.SelectedGameTitleEntry);
-            }
+            var result = await _dialogGamePicker.ShowPickerDialog(parent ?? _rootDialog.Window);
+            if (result != null)
+                await AddNewOrEditGame(parent, result);
         }
         #endregion
 
         #region Mod Operations
         public async Task AddNewOrEditMod(Window parent = null, ModEntryViewModel vmModEntry = null)
         {
-            /*VMModEditor.LoadMusicMod(vmModEntry?.MusicMod);
-            var modalCreateMod = new ModPropertiesModalWindow() { DataContext = VMModEditor };
-            var results = await modalCreateMod.ShowDialog<ModPropertiesModalWindow>(parent ?? _rootDialog.Window);
-
-            if (results != null)
-            {
-                if (!VMModEditor.IsEdit)
-                {
-                    var newManagerMod = _musicModManagerService.AddMusicMod(new MusicModInformation()
-                    {
-                        Name = VMModEditor.ModName,
-                        Author = VMModEditor.ModAuthor,
-                        Website = VMModEditor.ModWebsite,
-                        Description = VMModEditor.ModDescription
-                    }, VMModEditor.ModPath);
-
-                    //TODO - Handle anything saving in a specific service
-                    var newVmMusicMod = new ModEntryViewModel(newManagerMod.Id, newManagerMod);
-                    _musicMods.Add(newVmMusicMod);
-                    await AddNewBgmEntry(newVmMusicMod);
-                }
-            }*/
+            var result = await _dialogModEditor.ShowDialog(parent ?? _rootDialog.Window, vmModEntry);
+            if (result != null)
+                await _guiStateManager.UpdateModEntry(result.MusicMod, result.GetMusicModInformation());
         }
 
         public async Task EditMod(Window parent = null)
         {
-            var modalPickerMod = new ModPickerModalWindow() { DataContext = VMModPicker };
-            var results = await modalPickerMod.ShowDialog<ModPickerModalWindow>(parent ?? _rootDialog.Window);
-            if (results != null)
-            {
-                await AddNewOrEditMod(parent, VMModPicker.SelectedModEntry);
-            }
+            var result = await _dialogModPicker.ShowPickerDialog(parent ?? _rootDialog.Window);
+            if (result != null)
+                await AddNewOrEditMod(parent, result);
         }
         #endregion
 

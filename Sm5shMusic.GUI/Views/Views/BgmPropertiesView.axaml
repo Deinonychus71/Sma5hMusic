@@ -26,10 +26,10 @@
       </TabItem>
       <TabItem IsVisible="{Binding SelectedBgmEntry.IsMod}" Header="Mod" FontSize="14">
         <StackPanel Classes="content" IsVisible="{Binding SelectedBgmEntry.IsMod}" HorizontalAlignment="Stretch">
-          <fields:PropertyTextField Label="Mod" Text="{Binding SelectedBgmEntry.ModName, Mode=OneWay}" ToolTip="Name of the associated Mod" IsReadOnly="True" />
+          <fields:PropertyTextField Label="Mod" Text="{Binding SelectedBgmEntry.MusicModViewModel.Name, Mode=OneWay}" ToolTip="Name of the associated Mod" IsReadOnly="True" />
           <fields:PropertyMusicField Label="Filename" MusicPlayer="{Binding SelectedBgmEntry.MusicPlayer, Mode=OneWay}" Text="{Binding SelectedBgmEntry.Filename, Mode=OneWay, Converter={StaticResource FilePathConverter}}}" ToolTip="Filename of the associated Song" IsReadOnly="True" />
-          <fields:PropertyTextField Label="Author" Text="{Binding SelectedBgmEntry.ModAuthor, Mode=OneWay}" ToolTip="Author of the associated Mod" IsReadOnly="True" />
-          <fields:PropertyTextField Label="Website" Text="{Binding SelectedBgmEntry.ModWebsite, Mode=OneWay}" ToolTip="Website of the associated Mod" IsReadOnly="True" />
+          <fields:PropertyTextField Label="Author" Text="{Binding SelectedBgmEntry.MusicModViewModel.Author, Mode=OneWay}" ToolTip="Author of the associated Mod" IsReadOnly="True" />
+          <fields:PropertyTextField Label="Website" Text="{Binding SelectedBgmEntry.MusicModViewModel.Website, Mode=OneWay}" ToolTip="Website of the associated Mod" IsReadOnly="True" />
         </StackPanel>
       </TabItem>
     </TabControl>

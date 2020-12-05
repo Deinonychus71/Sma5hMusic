@@ -29,7 +29,7 @@
           <ComboBox VirtualizationMode="Simple" SelectedItem="{Binding SelectedMod, Mode=TwoWay}" Items="{Binding Mods}">
             <ComboBox.ItemTemplate>
               <DataTemplate>
-                <TextBlock Text="{Binding ModName}" />
+                <TextBlock Text="{Binding Name}" />
               </DataTemplate>
             </ComboBox.ItemTemplate>
           </ComboBox>

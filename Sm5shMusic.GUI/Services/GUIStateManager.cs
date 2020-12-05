@@ -13,14 +13,17 @@ namespace Sm5shMusic.GUI.Services
         private readonly IMessageDialog _messageDialog;
         private readonly IAudioStateService _audioState;
         private readonly ISm5shMusicOverride _sm5shMusicOverride;
+        private readonly IMusicModManagerService _musicModManagerService;
         private readonly IViewModelManager _viewModelManager;
 
-        public GUIStateManager(ISm5shMusicOverride sm5shMusicOverride, IViewModelManager viewModelManager, IAudioStateService audioStateService, IMessageDialog messageDialog, ILogger<IGUIStateManager> logger)
+        public GUIStateManager(ISm5shMusicOverride sm5shMusicOverride, IViewModelManager viewModelManager, IAudioStateService audioStateService,
+            IMusicModManagerService musicModManagerService, IMessageDialog messageDialog, ILogger<IGUIStateManager> logger)
         {
             _logger = logger;
             _messageDialog = messageDialog;
             _sm5shMusicOverride = sm5shMusicOverride;
             _audioState = audioStateService;
+            _musicModManagerService = musicModManagerService;
             _viewModelManager = viewModelManager;
         }
 
@@ -111,7 +114,7 @@ namespace Sm5shMusic.GUI.Services
             }
         }
 
-        public async Task CreateNewGameTitleEntry(GameTitleEntry gameTitleEntry)
+        public async Task<string> CreateNewGameTitleEntry(GameTitleEntry gameTitleEntry)
         {
             bool result = false;
             if (_audioState.AddGameTitleEntry(gameTitleEntry))
@@ -123,6 +126,8 @@ namespace Sm5shMusic.GUI.Services
             {
                 await _messageDialog.ShowError("Create Game Title Entry Error", "There was an error while creating a game entry. Please check the logs.");
             }
+
+            return gameTitleEntry.UiGameTitleId;
         }
 
         public async Task UpdateGameTitleEntry(GameTitleEntry gameTitleEntry)
@@ -141,6 +146,33 @@ namespace Sm5shMusic.GUI.Services
             if (!result)
             {
                 await _messageDialog.ShowError("Update Game Title Entry Error", "There was an error while persisting a game entry. Please check the logs.");
+            }
+        }
+
+        public async Task<string> CreateNewModEntry(MusicModInformation musicModInformation, string modPath)
+        {
+            bool result = false;
+
+            var newManagerMod = _musicModManagerService.AddMusicMod(new MusicModInformation(), modPath);
+
+            if (newManagerMod != null)
+            {
+                result = _viewModelManager.AddNewModEntryViewModel(newManagerMod);
+            }
+
+            if (!result)
+            {
+                await _messageDialog.ShowError("Create Mod Entry Error", "There was an error while creating a mod entry. Please check the logs.");
+            }
+
+            return newManagerMod.Id;
+        }
+
+        public async Task UpdateModEntry(IMusicMod musicMod, MusicModInformation musicModInformation)
+        {
+            if (!musicMod.UpdateModInformation(musicModInformation))
+            {
+                await _messageDialog.ShowError("Update Mod Entry Error", "There was an error while persisting mod information. Please check the logs.");
             }
         }
     }

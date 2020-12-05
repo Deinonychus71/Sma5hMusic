@@ -101,7 +101,7 @@ namespace Sm5shMusic.GUI.Services
             _vmChangeSetBgmPropertyEntries = _vmObsvBgmPropertyEntries.ToObservableChangeSet(p => p.NameId);
             _vmChangeSetPlaylistsEntries = _vmObsvPlaylistsEntries.ToObservableChangeSet(p => p.Id);
             _vmChangeSetStagesEntries = _vmObsvStagesEntries.ToObservableChangeSet(p => p.UiStageId);
-            _vmChangeSetModsEntries = _vmObsvModsEntries.ToObservableChangeSet(p => p.ModId);
+            _vmChangeSetModsEntries = _vmObsvModsEntries.ToObservableChangeSet(p => p.Id);
         }
 
         public void Init()
@@ -130,9 +130,9 @@ namespace Sm5shMusic.GUI.Services
             _vmObsvPlaylistsEntries.Clear();
             _vmObsvStagesEntries.Clear();
 
-            var modsList = _musicModManager.MusicMods.Select(p => new ModEntryViewModel(p.Id, p)).ToList();
+            var modsList = _musicModManager.MusicMods.Select(p => new ModEntryViewModel(this, _mapper, p)).ToList();
             foreach (var vmMod in modsList)
-                _vmDictModsEntries.Add(vmMod.ModId, vmMod);
+                _vmDictModsEntries.Add(vmMod.Id, vmMod);
 
             var vmLocalesList = _audioState.GetLocales().Select(p => new LocaleViewModel(p, Constants.GetLocaleDisplayName(p))).ToList();
             foreach (var vmLocale in vmLocalesList)
@@ -266,6 +266,13 @@ namespace Sm5shMusic.GUI.Services
         #endregion
 
         #region GET
+        public ModEntryViewModel GetModEntryViewModel(string modId)
+        {
+            if (string.IsNullOrEmpty(modId))
+                return null;
+            return _vmDictModsEntries.ContainsKey(modId) ? _vmDictModsEntries[modId] : null;
+        }
+
         public GameTitleEntryViewModel GetGameTitleViewModel(string uiGameTitleId)
         {
             if (string.IsNullOrEmpty(uiGameTitleId))
@@ -381,6 +388,14 @@ namespace Sm5shMusic.GUI.Services
         #endregion
 
         #region CREATE
+        public bool AddNewModEntryViewModel(IMusicMod musicMod)
+        {
+            var newVM = new ModEntryViewModel(this, _mapper, musicMod);
+            _vmDictModsEntries.Add(newVM.Id, newVM);
+            _vmObsvModsEntries.Add(newVM);
+            return true;
+        }
+
         public bool AddNewGameTitleEntryViewModel(GameTitleEntry gameTitleEntry)
         {
             var newVM = new GameTitleEntryViewModel(this, _mapper, gameTitleEntry);

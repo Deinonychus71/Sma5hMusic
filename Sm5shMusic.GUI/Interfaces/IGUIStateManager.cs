@@ -9,7 +9,10 @@ namespace Sm5shMusic.GUI.Interfaces
         Task UpdateMusicModEntries(MusicModEntries musicModEntries, IMusicMod musicMod = null);
         Task RemoveMusicModEntries(MusicModDeleteEntries musicModDeleteEntries, IMusicMod musicMod = null);
 
-        Task CreateNewGameTitleEntry(GameTitleEntry gameTitleEntry);
+        Task<string> CreateNewGameTitleEntry(GameTitleEntry gameTitleEntry);
         Task UpdateGameTitleEntry(GameTitleEntry gameTitleEntry);
+
+        Task<string> CreateNewModEntry(MusicModInformation musicModInformation, string modPath);
+        Task UpdateModEntry(IMusicMod musicMod, MusicModInformation musicModInformation);
     }
 }

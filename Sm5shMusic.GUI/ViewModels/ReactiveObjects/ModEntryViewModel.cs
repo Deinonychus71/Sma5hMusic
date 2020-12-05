@@ -1,41 +1,60 @@
-﻿using ReactiveUI;
+﻿using AutoMapper;
+using ReactiveUI.Fody.Helpers;
 using Sm5sh.Mods.Music.Interfaces;
+using Sm5sh.Mods.Music.Models;
+using Sm5shMusic.GUI.Interfaces;
 
 namespace Sm5shMusic.GUI.ViewModels
 {
-    public class ModEntryViewModel : ReactiveObject
+    public class ModEntryViewModel : ReactiveObjectBaseViewModel
     {
-        public bool AllFlag { get; set; }
-        public bool CreateFlag { get; set; }
+        private readonly IViewModelManager _viewModelManager;
+        private readonly IMapper _mapper;
+        public bool DefaultFlag { get; set; }
         public IMusicMod MusicMod { get; }
-        public string ModId { get; }
-        public string ModName { get; set; }
+
+        public string Id { get; }
+        [Reactive]
+        public string Name { get; set; }
+        public string Description { get; set; }
+        public string Author { get; set; }
+        public string Website { get; set; }
         public string ModPath { get { return MusicMod.ModPath; } }
 
         public ModEntryViewModel() { }
 
-        public ModEntryViewModel(string modId, IMusicMod musicMod)
+        public ModEntryViewModel(IViewModelManager viewModelManager, IMapper mapper, IMusicMod musicMod)
         {
-            ModId = modId;
+            _viewModelManager = viewModelManager;
+            _mapper = mapper;
+
+            Id = musicMod.Mod.Id;
             MusicMod = musicMod;
-            ModName = musicMod?.Name;
+            Name = musicMod?.Name;
         }
 
-        public override bool Equals(object obj)
+        public override ReactiveObjectBaseViewModel GetCopy()
         {
-            if (obj == null)
-                return false;
-
-            ModEntryViewModel p = obj as ModEntryViewModel;
-            if (p == null)
-                return false;
-
-            return p.ModId == this.ModId;
+            return _mapper.Map(this, new ModEntryViewModel(_viewModelManager, _mapper, MusicMod));
         }
 
-        public override int GetHashCode()
+        public override ReactiveObjectBaseViewModel SaveChanges()
         {
-            return base.GetHashCode();
+            var original = _viewModelManager.GetModEntryViewModel(Id);
+            _mapper.Map(this, original);
+            return original;
+        }
+
+        public MusicModInformation GetMusicModInformation()
+        {
+            return new MusicModInformation()
+            {
+                Version = MusicMod.Mod.Version,
+                Name = Name,
+                Description = Description,
+                Author = Author,
+                Website = Website
+            };
         }
     }
 }

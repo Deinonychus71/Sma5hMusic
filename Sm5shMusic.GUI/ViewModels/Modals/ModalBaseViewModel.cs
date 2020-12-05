@@ -1,7 +1,9 @@
 ﻿using Avalonia.Controls;
 using ReactiveUI;
 using ReactiveUI.Validation.Helpers;
+using System;
 using System.Reactive;
+using System.Threading.Tasks;
 
 namespace Sm5shMusic.GUI.ViewModels
 {
@@ -9,37 +11,43 @@ namespace Sm5shMusic.GUI.ViewModels
     {
         protected T _refSelectedItem;
         public ReactiveCommand<Window, Unit> ActionCancel { get; }
-        public ReactiveCommand<Window, Unit> ActionSave { get; }
+        public ReactiveCommand<Window, Unit> ActionOK { get; }
 
         public T SelectedItem
         {
             get => _refSelectedItem;
             set
             {
-                _refSelectedItem = value;
-                LoadItem();
+                LoadItem(value);
                 this.RaiseAndSetIfChanged(ref _refSelectedItem, value);
             }
         }
 
         public ModalBaseViewModel()
         {
-            var canExecute = this.WhenAnyValue(x => x.ValidationContext.IsValid);
-            ActionCancel = ReactiveCommand.Create<Window>(CancelChanges);
-            ActionSave = ReactiveCommand.Create<Window>(SaveChanges, canExecute);
+            var canExecute = GetValidationRule();
+            ActionCancel = ReactiveCommand.CreateFromTask<Window>(CancelChanges);
+            ActionOK = ReactiveCommand.CreateFromTask<Window>(SaveChanges, canExecute);
         }
 
-        protected virtual void LoadItem() { }
-        protected virtual void SaveChanges() { }
-
-        private void CancelChanges(Window w)
+        protected virtual IObservable<bool> GetValidationRule()
         {
+            return this.WhenAnyValue(x => x.ValidationContext.IsValid);
+        }
+
+        protected virtual void LoadItem(T item) { }
+        protected virtual Task SaveChanges() { return Task.CompletedTask; }
+        protected virtual Task CancelChanges() { return Task.CompletedTask; }
+
+        private async Task CancelChanges(Window w)
+        {
+            await CancelChanges();
             w.Close();
         }
 
-        private void SaveChanges(Window window)
+        private async Task SaveChanges(Window window)
         {
-            SaveChanges();
+            await SaveChanges();
             window.Close(window);
         }
     }

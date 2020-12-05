@@ -10,7 +10,7 @@ namespace Sm5sh.Mods.Music.Interfaces
 
         MusicModInformation Mod { get; }
 
-        void UpdateModInformation(MusicModInformation configBase);
+        bool UpdateModInformation(MusicModInformation configBase);
         MusicModEntries GetMusicModEntries();
         bool AddOrUpdateMusicModEntries(MusicModEntries musicModEntries);
         bool RemoveMusicModEntries(MusicModDeleteEntries musicModDeleteEntries);

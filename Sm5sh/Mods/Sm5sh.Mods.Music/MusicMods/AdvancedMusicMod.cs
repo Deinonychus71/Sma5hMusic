@@ -51,6 +51,8 @@ namespace Sm5sh.Mods.Music.MusicMods
             _logger = logger;
             _mapper = mapper;
             _musicModConfig = ConvertOldMod(oldMod);
+            var bgms = oldMod.GetMusicModEntries();
+            AddOrUpdateMusicModEntries(bgms);
             SaveMusicModConfig();
         }
 
@@ -144,7 +146,9 @@ namespace Sm5sh.Mods.Music.MusicMods
                 _logger.LogDebug("New filename for {OldFilename}: {NewFilename}", filenameWithoutPath, newFilename);
 
                 //Copy song
-                File.Copy(filename, GetMusicModAudioFile(newFilename));
+                var outputFile = GetMusicModAudioFile(newFilename);
+                if (!File.Exists(outputFile))
+                    File.Copy(filename, outputFile);
             }
 
             //Attempt to retrieve, create none if needed
@@ -242,12 +246,13 @@ namespace Sm5sh.Mods.Music.MusicMods
             return true;
         }
 
-        public void UpdateModInformation(MusicModInformation configBase)
+        public bool UpdateModInformation(MusicModInformation configBase)
         {
             _musicModConfig.Author = configBase.Author;
             _musicModConfig.Name = configBase.Name;
             _musicModConfig.Website = configBase.Website;
-            SaveMusicModConfig();
+            _musicModConfig.Description = configBase.Description;
+            return SaveMusicModConfig();
         }
 
         protected virtual MusicModConfig InitializeNewMod(string newModPath, MusicModInformation newMod)
@@ -309,7 +314,7 @@ namespace Sm5sh.Mods.Music.MusicMods
 
         protected MusicModConfig ConvertOldMod(IMusicMod oldModConfig)
         {
-            /*_logger.LogWarning("Convert Old Mod {ModName} to version 2. A backup file will be created...", oldModConfig.Name);
+            _logger.LogWarning("Convert Old Mod {ModName} to version 2. A backup file will be created...", oldModConfig.Name);
 
             var newMod = new MusicModConfig(Guid.NewGuid().ToString())
             {
@@ -320,30 +325,7 @@ namespace Sm5sh.Mods.Music.MusicMods
                 Version = 2,
                 Games = new List<GameConfig>()
             };
-            var bgms = oldModConfig.GetBgms();
-            var games = bgms.GroupBy(p => p.GameTitle);
-
-            if (games != null)
-            {
-                foreach (var gameEntry in games)
-                {
-                    var newGame = _mapper.Map<GameConfig>(gameEntry.Key);
-                    if (newGame.Bgms == null)
-                        newGame.Bgms = new List<BgmConfig>();
-                    newMod.Games.Add(newGame);
-
-                    if (gameEntry != null)
-                    {
-                        foreach (var bgmEntry in gameEntry)
-                        {
-                            var mappedSong = _mapper.Map<BgmConfig>(bgmEntry);
-                            newGame.Bgms.Add(mappedSong);
-                        }
-                    }
-                }
-            }
-            return newMod;*/
-            return null;
+            return newMod;
         }
     }
 

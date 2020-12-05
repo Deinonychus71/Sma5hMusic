@@ -15,7 +15,6 @@ namespace Sm5shMusic.GUI.Dialogs
 
         public async Task<T> ShowDialog(Window rootWindow, T reactiveVM)
         {
-            bool isEdit = reactiveVM != null;
             await Task.Delay(100); //Tends to prevent memory corruption?!
 
             var copy = reactiveVM?.GetCopy();
@@ -26,6 +25,21 @@ namespace Sm5shMusic.GUI.Dialogs
             if(result != null)
             {
                 return (T)_refVM.SelectedItem.SaveChanges();
+            }
+            return null;
+        }
+
+        public async Task<T> ShowPickerDialog(Window rootWindow)
+        {
+            await Task.Delay(100); //Tends to prevent memory corruption?!
+
+            _refVM.SelectedItem = null;
+            var window = new W() { DataContext = _refVM };
+            var result = await window.ShowDialog<W>(rootWindow);
+
+            if (result != null)
+            {
+                return (T)_refVM.SelectedItem;
             }
             return null;
         }

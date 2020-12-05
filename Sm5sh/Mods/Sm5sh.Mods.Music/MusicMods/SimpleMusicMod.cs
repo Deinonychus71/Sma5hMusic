@@ -122,7 +122,7 @@ namespace Sm5sh.Mods.Music.MusicMods
             return Path.Combine(ModPath, songFileName);
         }
 
-        public void UpdateModInformation(MusicModInformation configBase)
+        public bool UpdateModInformation(MusicModInformation configBase)
         {
             throw new NotImplementedException();
         }
@@ -139,7 +139,8 @@ namespace Sm5sh.Mods.Music.MusicMods
                 _logger.LogDebug("Parsed {MusicModFile} Json File", metadataJsonFile);
 
                 //File backup, as it's an old version of mod
-                File.Copy(metadataJsonFile, $"{metadataJsonFile}.bak");
+                if(!File.Exists($"{metadataJsonFile}.bak"))
+                    File.Copy(metadataJsonFile, $"{metadataJsonFile}.bak");
 
                 return output;
             }

@@ -20,11 +20,9 @@ namespace Sm5shMusic.GUI.ViewModels
         protected IViewModelManager _viewModelManager;
 
         //Helper Getters
+        public ModEntryViewModel MusicModViewModel { get { return _viewModelManager.GetModEntryViewModel(ModId); } }
         public IMusicMod MusicMod { get; }
         public EntrySource Source { get { return MusicMod != null ? EntrySource.Mod : EntrySource.Core; } }
-        public string ModName { get { return MusicMod?.Name; } }
-        public string ModAuthor { get { return MusicMod?.Mod.Author; } }
-        public string ModWebsite { get { return MusicMod?.Mod.Website; } }
         public string ModId { get { return MusicMod?.Id; } }
         public string ModPath { get { return MusicMod?.ModPath; } }
         public bool IsMod { get { return Source == EntrySource.Mod; } }

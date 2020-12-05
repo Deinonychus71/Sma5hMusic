@@ -1,4 +1,5 @@
 ﻿using DynamicData;
+using Sm5sh.Mods.Music.Interfaces;
 using Sm5sh.Mods.Music.Models;
 using Sm5shMusic.GUI.ViewModels;
 using System;
@@ -34,6 +35,7 @@ namespace Sm5shMusic.GUI.Interfaces
         IEnumerable<PlaylistEntryViewModel> GetPlaylistsEntriesViewModels();
         IEnumerable<StageEntryViewModel> GetStagesEntriesViewModels();
 
+        ModEntryViewModel GetModEntryViewModel(string modId);
         GameTitleEntryViewModel GetGameTitleViewModel(string uiGameTitleId);
         SeriesEntryViewModel GetSeriesViewModel(string uiSeriesId);
         BgmDbRootEntryViewModel GetBgmDbRootViewModel(string uiBgmId);
@@ -51,5 +53,6 @@ namespace Sm5shMusic.GUI.Interfaces
         void RemoveBgmInAllPlaylists(string uiBgmId);
 
         bool AddNewGameTitleEntryViewModel(GameTitleEntry gameTitleEntry);
+        bool AddNewModEntryViewModel(IMusicMod musicMod);
     }
 }

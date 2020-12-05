@@ -124,7 +124,7 @@ namespace Sm5shMusic.GUI.ViewModels
 
         public override ReactiveObjectBaseViewModel GetCopy()
         {
-            return _mapper.Map(this, new BgmDbRootEntryViewModel(_viewModelManager, _mapper, new BgmDbRootEntry(UiBgmId, MusicMod)));
+            return _mapper.Map(this, new BgmDbRootEntryViewModel(_viewModelManager, _mapper, GetReferenceEntity()));
         }
 
         public override ReactiveObjectBaseViewModel SaveChanges()
