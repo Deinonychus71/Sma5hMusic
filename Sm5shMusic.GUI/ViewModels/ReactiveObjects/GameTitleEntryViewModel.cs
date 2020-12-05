@@ -8,6 +8,8 @@ namespace Sm5shMusic.GUI.ViewModels
 {
     public class GameTitleEntryViewModel : BgmBaseViewModel<GameTitleEntry>
     {
+        private string _currentLocale;
+
         //Getters/Private Setters - For This View Only
         public bool AllFlag { get; set; }
         public string UiGameTitleId { get; set; }
@@ -41,8 +43,19 @@ namespace Sm5shMusic.GUI.ViewModels
             return _mapper.Map(this, new GameTitleEntryViewModel(_audioStateManager, _mapper, new GameTitleEntry(UiGameTitleId, MusicMod)));
         }
 
+        public override BgmBaseViewModel<GameTitleEntry> SaveChanges()
+        {
+            var original = _audioStateManager.GetGameTitleViewModel(UiGameTitleId);
+            _mapper.Map(this, original.GetReferenceEntity());
+            _mapper.Map(this, original);
+            LoadLocalized(_currentLocale);
+            return original;
+        }
+
         public void LoadLocalized(string locale)
         {
+            _currentLocale = locale;
+
             if (string.IsNullOrEmpty(locale))
                 return;
 

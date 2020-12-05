@@ -34,5 +34,13 @@ namespace Sm5shMusic.GUI.ViewModels
         {
             return _mapper.Map(this, new BgmAssignedInfoEntryViewModel(_audioStateManager, _mapper, new BgmAssignedInfoEntry(InfoId, MusicMod)));
         }
+
+        public override BgmBaseViewModel<BgmAssignedInfoEntry> SaveChanges()
+        {
+            var original = _audioStateManager.GetBgmAssignedInfoViewModel(InfoId);
+            _mapper.Map(this, original.GetReferenceEntity());
+            _mapper.Map(this, original);
+            return original;
+        }
     }
 }

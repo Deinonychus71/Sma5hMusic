@@ -1,16 +1,15 @@
 ﻿using AutoMapper;
 using ReactiveUI.Fody.Helpers;
-using Sm5sh.Mods.Music.Interfaces;
 using Sm5sh.Mods.Music.Models;
 using Sm5shMusic.GUI.Interfaces;
 using System.Collections.Generic;
-using System.IO;
-using VGMMusic;
 
 namespace Sm5shMusic.GUI.ViewModels
 {
     public class BgmDbRootEntryViewModel : BgmBaseViewModel<BgmDbRootEntry>
     {
+        private string _currentLocale;
+
         //Getters/Setters
         public string UiBgmId { get; }
         public string StreamSetId { get; set; }
@@ -93,6 +92,8 @@ namespace Sm5shMusic.GUI.ViewModels
 
         public void LoadLocalized(string locale)
         {
+            _currentLocale = locale;
+
             if (string.IsNullOrEmpty(locale))
                 return;
 
@@ -115,6 +116,15 @@ namespace Sm5shMusic.GUI.ViewModels
         public override BgmBaseViewModel<BgmDbRootEntry> GetCopy()
         {
             return _mapper.Map(this, new BgmDbRootEntryViewModel(_audioStateManager, _mapper, new BgmDbRootEntry(UiBgmId, MusicMod)));
+        }
+
+        public override BgmBaseViewModel<BgmDbRootEntry> SaveChanges()
+        {
+            var original = _audioStateManager.GetBgmDbRootViewModel(UiBgmId);
+            _mapper.Map(this, original.GetReferenceEntity());
+            _mapper.Map(this, original);
+            LoadLocalized(_currentLocale);
+            return original;
         }
     }
 }

@@ -58,5 +58,13 @@ namespace Sm5shMusic.GUI.ViewModels
         {
             return _mapper.Map(this, new BgmStreamSetEntryViewModel(_audioStateManager, _mapper, new BgmStreamSetEntry(StreamSetId, MusicMod)));
         }
+
+        public override BgmBaseViewModel<BgmStreamSetEntry> SaveChanges()
+        {
+            var original = _audioStateManager.GetBgmStreamSetViewModel(StreamSetId);
+            _mapper.Map(this, original.GetReferenceEntity());
+            _mapper.Map(this, original);
+            return original;
+        }
     }
 }

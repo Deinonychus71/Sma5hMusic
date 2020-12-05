@@ -32,7 +32,9 @@ namespace Sm5shMusic.GUI.ViewModels
 
         public abstract BgmBaseViewModel<T> GetCopy();
 
-        public T GetReferenceEntity()
+        public abstract BgmBaseViewModel<T> SaveChanges();
+
+        protected T GetReferenceEntity()
         {
             return _refBgmBaseEntity;
         }
