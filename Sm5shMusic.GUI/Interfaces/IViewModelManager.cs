@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Sm5shMusic.GUI.Interfaces
 {
-    public interface IAudioStateViewModelManager
+    public interface IViewModelManager
     {
         void Init();
         void ReorderSongs();

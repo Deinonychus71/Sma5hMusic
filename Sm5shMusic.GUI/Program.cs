@@ -74,7 +74,7 @@ namespace Sm5shMusic.GUI
             services.AddSingleton<IFileDialog, FileDialog>();
             services.AddSingleton<IMessageDialog, MessageDialog>();
             services.AddSingleton<IBuildDialog, BuildDialog>();
-            services.AddSingleton<IAudioStateViewModelManager, AudioStateViewModelManager>();
+            services.AddSingleton<IViewModelManager, ViewModelManager>();
             services.AddAutoMapper(typeof(MappingViewModels));
 
             //Add to Splat

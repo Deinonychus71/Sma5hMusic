@@ -180,7 +180,7 @@ namespace Sm5sh.Mods.Music
             Directory.CreateDirectory(_config.Value.Sm5shMusicOverride.ModPath);
 
             //Override order
-            var overrideOrderJsonFile = Path.Combine(_config.Value.Sm5shMusicOverride.ModPath, Constants.MusicModFiles.MUSIC_OVERRIDE_ORDER_JSON_FILE);
+            var overrideOrderJsonFile = Path.Combine(_config.Value.Sm5shMusicOverride.ModPath, MusicConstants.MusicModFiles.MUSIC_OVERRIDE_ORDER_JSON_FILE);
             if (File.Exists(overrideOrderJsonFile))
             {
                 var file = File.ReadAllText(overrideOrderJsonFile);
@@ -193,7 +193,7 @@ namespace Sm5sh.Mods.Music
                 _logger.LogInformation("File {MusicOverrideFile} does not exist.", overrideOrderJsonFile);
 
             //Override Playlist
-            var overridePlaylistJsonFile = Path.Combine(_config.Value.Sm5shMusicOverride.ModPath, Constants.MusicModFiles.MUSIC_OVERRIDE_PLAYLIST_JSON_FILE);
+            var overridePlaylistJsonFile = Path.Combine(_config.Value.Sm5shMusicOverride.ModPath, MusicConstants.MusicModFiles.MUSIC_OVERRIDE_PLAYLIST_JSON_FILE);
             if (File.Exists(overridePlaylistJsonFile))
             {
                 var file = File.ReadAllText(overridePlaylistJsonFile);
@@ -206,7 +206,7 @@ namespace Sm5sh.Mods.Music
                 _logger.LogInformation("File {MusicOverrideFile} does not exist.", overridePlaylistJsonFile);
 
             //Override Stage
-            var overrideStageJsonFile = Path.Combine(_config.Value.Sm5shMusicOverride.ModPath, Constants.MusicModFiles.MUSIC_OVERRIDE_STAGE_JSON_FILE);
+            var overrideStageJsonFile = Path.Combine(_config.Value.Sm5shMusicOverride.ModPath, MusicConstants.MusicModFiles.MUSIC_OVERRIDE_STAGE_JSON_FILE);
             if (File.Exists(overrideStageJsonFile))
             {
                 var file = File.ReadAllText(overrideStageJsonFile);
@@ -219,7 +219,7 @@ namespace Sm5sh.Mods.Music
                 _logger.LogInformation("File {MusicOverrideFile} does not exist.", overrideStageJsonFile);
 
             //Override Core Bgm
-            var overrideCoreJsonFile = Path.Combine(_config.Value.Sm5shMusicOverride.ModPath, Constants.MusicModFiles.MUSIC_OVERRIDE_CORE_BGM_JSON_FILE);
+            var overrideCoreJsonFile = Path.Combine(_config.Value.Sm5shMusicOverride.ModPath, MusicConstants.MusicModFiles.MUSIC_OVERRIDE_CORE_BGM_JSON_FILE);
             if (File.Exists(overrideCoreJsonFile))
             {
                 var file = File.ReadAllText(overrideCoreJsonFile);
@@ -232,7 +232,7 @@ namespace Sm5sh.Mods.Music
                 _logger.LogInformation("File {MusicOverrideFile} does not exist.", overrideCoreJsonFile);
 
             //Override Core Game
-            var overrideCoreGameJsonFile = Path.Combine(_config.Value.Sm5shMusicOverride.ModPath, Constants.MusicModFiles.MUSIC_OVERRIDE_CORE_GAME_JSON_FILE);
+            var overrideCoreGameJsonFile = Path.Combine(_config.Value.Sm5shMusicOverride.ModPath, MusicConstants.MusicModFiles.MUSIC_OVERRIDE_CORE_GAME_JSON_FILE);
             if (File.Exists(overrideCoreGameJsonFile))
             {
                 var file = File.ReadAllText(overrideCoreGameJsonFile);
@@ -250,7 +250,7 @@ namespace Sm5sh.Mods.Music
         {
             _musicOverrideConfig.SoundTestOrder = orderEntries;
 
-            var overrideJsonFile = Path.Combine(_config.Value.Sm5shMusicOverride.ModPath, Constants.MusicModFiles.MUSIC_OVERRIDE_ORDER_JSON_FILE);
+            var overrideJsonFile = Path.Combine(_config.Value.Sm5shMusicOverride.ModPath, MusicConstants.MusicModFiles.MUSIC_OVERRIDE_ORDER_JSON_FILE);
             File.WriteAllText(overrideJsonFile, JsonConvert.SerializeObject(_musicOverrideConfig.SoundTestOrder, _defaultFormatting));
             return true;
         }
@@ -276,7 +276,7 @@ namespace Sm5sh.Mods.Music
                 foreach (var bgmPropertyEntry in musicModEntries.BgmPropertyEntries)
                     _musicOverrideConfig.CoreBgmOverrides.CoreBgmPropertyOverrides[bgmPropertyEntry.NameId] = _mapper.Map<BgmPropertyEntryConfig>(bgmPropertyEntry);
 
-            var overrideJsonFile = Path.Combine(_config.Value.Sm5shMusicOverride.ModPath, Constants.MusicModFiles.MUSIC_OVERRIDE_CORE_BGM_JSON_FILE);
+            var overrideJsonFile = Path.Combine(_config.Value.Sm5shMusicOverride.ModPath, MusicConstants.MusicModFiles.MUSIC_OVERRIDE_CORE_BGM_JSON_FILE);
             File.WriteAllText(overrideJsonFile, JsonConvert.SerializeObject(_musicOverrideConfig.CoreBgmOverrides, _defaultFormatting));
             return true;
         }
@@ -284,7 +284,7 @@ namespace Sm5sh.Mods.Music
         public bool UpdateCoreGameTitleEntry(Models.GameTitleEntry gameTitleEntry)
         {
             _musicOverrideConfig.CoreGameOverrides[gameTitleEntry.UiGameTitleId] = _mapper.Map<GameConfig>(gameTitleEntry);
-            var overrideJsonFile = Path.Combine(_config.Value.Sm5shMusicOverride.ModPath, Constants.MusicModFiles.MUSIC_OVERRIDE_CORE_GAME_JSON_FILE);
+            var overrideJsonFile = Path.Combine(_config.Value.Sm5shMusicOverride.ModPath, MusicConstants.MusicModFiles.MUSIC_OVERRIDE_CORE_GAME_JSON_FILE);
             File.WriteAllText(overrideJsonFile, JsonConvert.SerializeObject(_musicOverrideConfig.CoreGameOverrides, _defaultFormatting));
             return true;
         }
@@ -292,7 +292,7 @@ namespace Sm5sh.Mods.Music
         public bool UpdatePlaylistConfig(Dictionary<string, PlaylistEntry> playlistEntries)
         {
             _musicOverrideConfig.PlaylistsOverrides = _mapper.Map<Dictionary<string, PlaylistConfig>>(playlistEntries);
-            var overrideJsonFile = Path.Combine(_config.Value.Sm5shMusicOverride.ModPath, Constants.MusicModFiles.MUSIC_OVERRIDE_PLAYLIST_JSON_FILE);
+            var overrideJsonFile = Path.Combine(_config.Value.Sm5shMusicOverride.ModPath, MusicConstants.MusicModFiles.MUSIC_OVERRIDE_PLAYLIST_JSON_FILE);
             File.WriteAllText(overrideJsonFile, JsonConvert.SerializeObject(_musicOverrideConfig.PlaylistsOverrides, _defaultFormatting));
             return true;
         }
@@ -300,7 +300,7 @@ namespace Sm5sh.Mods.Music
         public bool UpdateMusicStageOverride(List<StageEntry> stageEntries)
         {
             _musicOverrideConfig.StageOverrides = _mapper.Map<Dictionary<string, StageConfig>>(stageEntries.ToDictionary(p => p.UiStageId, p => p));
-            var overrideJsonFile = Path.Combine(_config.Value.Sm5shMusicOverride.ModPath, Constants.MusicModFiles.MUSIC_OVERRIDE_STAGE_JSON_FILE);
+            var overrideJsonFile = Path.Combine(_config.Value.Sm5shMusicOverride.ModPath, MusicConstants.MusicModFiles.MUSIC_OVERRIDE_STAGE_JSON_FILE);
             File.WriteAllText(overrideJsonFile, JsonConvert.SerializeObject(_musicOverrideConfig.StageOverrides, _defaultFormatting));
             return true;
         }

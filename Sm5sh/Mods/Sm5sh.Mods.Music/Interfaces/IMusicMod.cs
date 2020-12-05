@@ -12,9 +12,7 @@ namespace Sm5sh.Mods.Music.Interfaces
 
         void UpdateModInformation(MusicModInformation configBase);
         MusicModEntries GetMusicModEntries();
-        //BgmEntry AddBgm(string toneId, string filename);
-        //bool UpdateBgm(BgmEntry bgmEntry);
-        void AddOrUpdateMusicModEntries(MusicModEntries musicModEntries);
+        bool AddOrUpdateMusicModEntries(MusicModEntries musicModEntries);
         bool RemoveBgm(string toneId);
     }
 }

@@ -24,7 +24,7 @@ namespace Sm5sh.Mods.Music.Models
             : base(musicMod)
         {
             InfoId = infoId;
-            Condition = Constants.InternalIds.SOUND_CONDITION;
+            Condition = MusicConstants.InternalIds.SOUND_CONDITION;
             ConditionProcess = "0x1b9fe75d3f";
             ChangeFadoutFrame = 55;
             MenuChangeFadeOutFrame = 55;

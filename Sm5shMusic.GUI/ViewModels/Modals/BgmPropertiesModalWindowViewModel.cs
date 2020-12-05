@@ -5,10 +5,9 @@ using Microsoft.Extensions.Logging;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using ReactiveUI.Validation.Extensions;
-using ReactiveUI.Validation.Helpers;
+using Sm5sh.Mods.Music.Helpers;
 using Sm5shMusic.GUI.Helpers;
 using Sm5shMusic.GUI.Models;
-using Sm5sh.Mods.Music.Models;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -16,42 +15,41 @@ using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
-using System.Threading.Tasks;
 using VGMMusic;
 using ILogger = Microsoft.Extensions.Logging.ILogger;
 
 namespace Sm5shMusic.GUI.ViewModels
 {
-    public class BgmPropertiesModalWindowViewModel : ReactiveValidationObject
+    public class BgmPropertiesModalWindowViewModel : ModalBaseViewModel<BgmEntryViewModel> 
     {
         private readonly ILogger _logger;
-        private readonly IMapper _mapper;
-        private readonly IVGMMusicPlayer _musicPlayer;
         private readonly List<ComboItem> _recordTypes;
         private readonly List<ComboItem> _specialCategories;
         private readonly ReadOnlyObservableCollection<LocaleViewModel> _locales;
         private readonly ReadOnlyObservableCollection<SeriesEntryViewModel> _series;
         private readonly ReadOnlyObservableCollection<GameTitleEntryViewModel> _games;
         private readonly ReadOnlyObservableCollection<string> _streamSetIds;
-        private BgmDbRootEntryViewModel _refSavedBgmEntryView;
         private readonly Subject<Window> _whenNewRequestToAddGameEntry;
         private bool _isUpdatingSpecialRule = false;
 
         public IObservable<Window> WhenNewRequestToAddGameEntry { get { return _whenNewRequestToAddGameEntry; } }
         public GamePropertiesModalWindowViewModel VMGamePropertiesModal { get; set; }
 
-        [Reactive]
-        public BgmDbRootEntryViewModel SelectedBgmEntry { get; private set; }
+        public BgmDbRootEntryViewModel DbRootViewModel { get; private set; }
+        public BgmStreamSetEntryViewModel StreamSetViewModel { get; private set; }
+        public BgmAssignedInfoEntryViewModel AssignedInfoViewModel { get; private set; }
+        public BgmStreamPropertyEntryViewModel StreamPropertyViewModel { get; private set; }
+        public BgmPropertyEntryViewModel BgmPropertyViewModel { get; private set; }
 
         public MSBTFieldViewModel MSBTTitleEditor { get; set; }
         public MSBTFieldViewModel MSBTAuthorEditor { get; set; }
         public MSBTFieldViewModel MSBTCopyrightEditor { get; set; }
-
         public IEnumerable<ComboItem> RecordTypes { get { return _recordTypes; } }
         public IEnumerable<ComboItem> SpecialCategories { get { return _specialCategories; } }
         [Reactive]
         public ComboItem SelectedRecordType { get; set; }
-
+        [Reactive]
+        public GameTitleEntryViewModel SelectedGameTitleViewModel { get; set; }
         [Reactive]
         public ComboItem SelectedSpecialCategory { get; set; }
         [Reactive]
@@ -64,17 +62,13 @@ namespace Sm5shMusic.GUI.ViewModels
         public ReadOnlyObservableCollection<string> StreamSetIds { get { return _streamSetIds; } }
         public ReadOnlyObservableCollection<LocaleViewModel> Locales { get { return _locales; } }
 
-        public ReactiveCommand<Window, Unit> ActionCancel { get; }
-        public ReactiveCommand<Window, Unit> ActionSave { get; }
         public ReactiveCommand<Window, Unit> ActionNewGame { get; }
 
-        public BgmPropertiesModalWindowViewModel(ILogger<BgmPropertiesModalWindowViewModel> logger, IVGMMusicPlayer musicPlayer, IMapper mapper, IObservable<IChangeSet<LocaleViewModel, string>> observableLocales,
+        public BgmPropertiesModalWindowViewModel(ILogger<BgmPropertiesModalWindowViewModel> logger, IObservable<IChangeSet<LocaleViewModel, string>> observableLocales,
             IObservable<IChangeSet<SeriesEntryViewModel, string>> observableSeries, IObservable<IChangeSet<GameTitleEntryViewModel, string>> observableGames,
             IObservable<IChangeSet<BgmStreamSetEntryViewModel, string>> observableBgmStreamSetEntries)
         {
             _logger = logger;
-            _mapper = mapper;
-            _musicPlayer = musicPlayer;
             _recordTypes = GetRecordTypes();
             _specialCategories = GetSpecialCategories();
             _whenNewRequestToAddGameEntry = new Subject<Window>();
@@ -123,36 +117,15 @@ namespace Sm5shMusic.GUI.ViewModels
 
             //Set up subscriber on special category
             this.WhenAnyValue(p => p.SelectedSpecialCategory).Subscribe(o => SetSpecialCategoryRules(o?.Id));
-            this.WhenAnyValue(p => p.SelectedBgmEntry.StreamSetViewModel.SpecialCategory).Subscribe(o => SetSpecialCategoryRules(o));
+            this.WhenAnyValue(p => p.SelectedItem.StreamSetViewModel.SpecialCategory).Subscribe(o => SetSpecialCategoryRules(o));
+            this.WhenAnyValue(p => p.SelectedGameTitleViewModel).Subscribe((o) => SetGameTitleId(o));
 
             //Validation
-            this.ValidationRule(p => p.SelectedBgmEntry.GameTitleViewModel,
+            this.ValidationRule(p => p.SelectedGameTitleViewModel,
                 p => p != null && !string.IsNullOrWhiteSpace(p.UiGameTitleId),
                 "Please select a game.");
-            var canExecute = this.WhenAnyValue(x => x.ValidationContext.IsValid);
 
-            ActionCancel = ReactiveCommand.Create<Window>(CancelChanges);
-            ActionSave = ReactiveCommand.Create<Window>(SaveChanges, canExecute);
             ActionNewGame = ReactiveCommand.Create<Window>(AddNewGame);
-        }
-
-        private void CancelChanges(Window w)
-        {
-            w.Close();
-        }
-
-        private void SaveChanges(Window window)
-        {
-            var previousTestOrder = _refSavedBgmEntryView.TestDispOrder;
-            _refSavedBgmEntryView = _mapper.Map(SelectedBgmEntry, _refSavedBgmEntryView);
-            _refSavedBgmEntryView.TestDispOrder = (short)(IsInSoundTest ? previousTestOrder > -1 ? previousTestOrder : short.MaxValue : -1);
-            if (SelectedRecordType != null)
-                _refSavedBgmEntryView.RecordType = SelectedRecordType.Id;
-            _refSavedBgmEntryView.MSBTTitle = MSBTTitleEditor.MSBTValues;
-            _refSavedBgmEntryView.MSBTAuthor = MSBTAuthorEditor.MSBTValues;
-            _refSavedBgmEntryView.MSBTCopyright = MSBTCopyrightEditor.MSBTValues;
-
-            window.Close(window);
         }
 
         private void AddNewGame(Window window)
@@ -174,24 +147,6 @@ namespace Sm5shMusic.GUI.ViewModels
             return recordTypes;
         }
 
-        public async Task LoadBgmEntry(BgmDbRootEntryViewModel vmBgmEntry)
-        {
-            //Prevent random crash...?
-            await Task.Delay(100);
-
-            _refSavedBgmEntryView = vmBgmEntry;
-
-            //TODO: Cleanup
-            //Manually setting fields to breaks references
-            SelectedBgmEntry = (BgmDbRootEntryViewModel)vmBgmEntry.Clone();
-            MSBTTitleEditor.MSBTValues = SelectedBgmEntry.MSBTTitle;
-            MSBTAuthorEditor.MSBTValues = SelectedBgmEntry.MSBTAuthor;
-            MSBTCopyrightEditor.MSBTValues = SelectedBgmEntry.MSBTCopyright;
-            IsInSoundTest = SelectedBgmEntry.TestDispOrder > -1;
-            SelectedRecordType = _recordTypes.FirstOrDefault(p => p.Id == vmBgmEntry.RecordType);
-            SetSpecialCategoryRules(SelectedBgmEntry.StreamSetViewModel.SpecialCategory);
-        }
-
         private void SetSpecialCategoryRules(string specialRule)
         {
             if (!_isUpdatingSpecialRule)
@@ -199,12 +154,12 @@ namespace Sm5shMusic.GUI.ViewModels
                 _isUpdatingSpecialRule = true;
                 IsSpecialCategoryPinch = false;
 
-                if (SelectedBgmEntry != null)
+                if (_refSelectedItem != null)
                 {
                     SelectedSpecialCategory = _specialCategories.FirstOrDefault(p => p.Id == specialRule);
                     if (SelectedSpecialCategory == null)
                         SelectedSpecialCategory = _specialCategories[0];
-                    SelectedBgmEntry.StreamSetViewModel.SpecialCategory = specialRule;
+                    _refSelectedItem.StreamSetViewModel.SpecialCategory = specialRule;
 
                     switch (specialRule)
                     {
@@ -215,6 +170,44 @@ namespace Sm5shMusic.GUI.ViewModels
                 }
                 _isUpdatingSpecialRule = false;
             }
+        }
+
+        private void SetGameTitleId(GameTitleEntryViewModel gameTitle)
+        {
+            if (DbRootViewModel != null)
+            {
+                if (gameTitle != null)
+                    DbRootViewModel.UiGameTitleId = gameTitle.UiGameTitleId;
+                else
+                    DbRootViewModel.UiGameTitleId = MusicConstants.InternalIds.GAME_TITLE_ID_DEFAULT;
+            }
+        }
+
+        protected override void SaveChanges()
+        {
+            DbRootViewModel.TestDispOrder = (short)(IsInSoundTest ? DbRootViewModel.TestDispOrder > -1 ? DbRootViewModel.TestDispOrder : short.MaxValue : -1);
+            if (SelectedRecordType != null)
+                DbRootViewModel.RecordType = SelectedRecordType.Id;
+            DbRootViewModel.MSBTTitle = MSBTTitleEditor.MSBTValues;
+            DbRootViewModel.MSBTAuthor = MSBTAuthorEditor.MSBTValues;
+            DbRootViewModel.MSBTCopyright = MSBTCopyrightEditor.MSBTValues;
+        }
+
+        protected override void LoadItem()
+        {
+            DbRootViewModel = _refSelectedItem?.DbRootViewModel;
+            StreamSetViewModel = _refSelectedItem?.StreamSetViewModel;
+            AssignedInfoViewModel = _refSelectedItem?.AssignedInfoViewModel;
+            StreamPropertyViewModel = _refSelectedItem?.StreamPropertyViewModel;
+            BgmPropertyViewModel = _refSelectedItem?.BgmPropertyViewModel;
+
+            MSBTTitleEditor.MSBTValues = DbRootViewModel.MSBTTitle;
+            MSBTAuthorEditor.MSBTValues = DbRootViewModel.MSBTAuthor;
+            MSBTCopyrightEditor.MSBTValues = DbRootViewModel.MSBTCopyright;
+            IsInSoundTest = DbRootViewModel.TestDispOrder > -1;
+            SelectedRecordType = _recordTypes.FirstOrDefault(p => p.Id == DbRootViewModel.RecordType);
+            SelectedGameTitleViewModel = _games.FirstOrDefault(p => p.UiGameTitleId == DbRootViewModel.UiGameTitleId);
+            SetSpecialCategoryRules(StreamSetViewModel.SpecialCategory);
         }
     }
 }

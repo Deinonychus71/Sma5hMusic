@@ -38,27 +38,27 @@
               <Border Classes="contentTitle" DockPanel.Dock="Top">
                 <TextBlock>File Properties</TextBlock>
               </Border>
-              <fields:PropertyMusicField Label="File" Text="{Binding SelectedBgmEntry.Filename, Mode=OneWay}" MusicPlayer="{Binding SelectedBgmEntry.MusicPlayer, Mode=OneWay}" ToolTip="Path to the song in the File System" IsReadOnly="True" />
+              <fields:PropertyMusicField Label="File" Text="{Binding BgmPropertyViewModel.Filename, Mode=OneWay}" MusicPlayer="{Binding BgmPropertyViewModel.MusicPlayer, Mode=OneWay}" ToolTip="Path to the song in the File System" IsReadOnly="True" />
             </StackPanel>
             <!-- Song Information -->
             <StackPanel Classes="content" Grid.Column="0" Grid.Row="1" HorizontalAlignment="Stretch">
               <Border Classes="contentTitle" DockPanel.Dock="Top">
                 <TextBlock>Song Information</TextBlock>
               </Border>
-              <fields:PropertyTextField Label="Tone ID" Text="{Binding SelectedBgmEntry.ToneId, Mode=OneWay}" ToolTip="Unique ID of the song" IsReadOnly="True" />
+              <fields:PropertyTextField Label="Tone ID" Text="{Binding DbRootViewModel.ToneId, Mode=OneWay}" ToolTip="Unique ID of the song" IsReadOnly="True" />
               <fields:PropertyField x:Name="GameId" IsRequired="True" Label="Game" ToolTip="Game representing the song. If the game you want isn't in the database, click 'Add New Game Entry'">
                 <fields:PropertyField.FieldContent>
                   <StackPanel>
                     <Button Content="Create New Game" Command="{Binding ActionNewGame}" CommandParameter="{Binding $parent[Window]}"/>
                     <AutoCompleteBox Items="{Binding Games}" ValueMemberBinding="{Binding Title}" IsTextCompletionEnabled="True" MinimumPrefixLength="2"
-                                   MinimumPopulateDelay="0.5" SelectedItem="{Binding SelectedBgmEntry.GameTitleViewModel, Mode=TwoWay}" FilterMode="Contains"/>
+                                   MinimumPopulateDelay="0.5" SelectedItem="{Binding SelectedGameTitleViewModel, Mode=TwoWay}" FilterMode="Contains"/>
                   </StackPanel>
                 </fields:PropertyField.FieldContent>
               </fields:PropertyField>
-              <fields:PropertyTextField IsRequired="True" IsVisible="{Binding SelectedBgmEntry.GameTitleViewModel, Converter={x:Static ObjectConverters.IsNotNull}}"
-                                        Label="Series" Text="{Binding SelectedBgmEntry.GameTitleViewModel.SeriesViewModel.Title, Mode=OneWay}"
+              <fields:PropertyTextField IsRequired="True" IsVisible="{Binding DbRootViewModel.GameTitleViewModel, Converter={x:Static ObjectConverters.IsNotNull}}"
+                                        Label="Series" Text="{Binding DbRootViewModel.SeriesViewModel.Title, Mode=OneWay}"
                                         ToolTip="Series associated with the game selected. This cannot be changed here." IsReadOnly="True" />
-              <fields:PropertyTextField IsRequired="True" IsVisible="{Binding SelectedBgmEntry.GameTitleViewModel, Converter={x:Static ObjectConverters.IsNull}}"
+              <fields:PropertyTextField IsRequired="True" IsVisible="{Binding DbRootViewModel.GameTitleViewModel, Converter={x:Static ObjectConverters.IsNull}}"
                                         Label="Series" Text="Select a game"
                                         ToolTip="Series associated with the game selected. This cannot be changed here." IsReadOnly="True" />
               <fields:PropertyField IsRequired="True" Label="Record Type" ToolTip="Select a Record Type. Valid values are 'Original', 'Remix' and 'New Remix'">
@@ -102,8 +102,8 @@
               <fields:PropertyField Label="Volume" ToolTip="Change the volume of the song in game.">
                 <fields:PropertyField.FieldContent>
                   <Grid ColumnDefinitions="*,60">
-                    <Slider TickFrequency="0.1" TickPlacement="Outside" IsSnapToTickEnabled="True" Minimum="-20" Maximum="20" Orientation="Horizontal" Value="{Binding Path=SelectedBgmEntry.NUS3BankConfig.AudioVolume, Mode=TwoWay}"/>
-                    <Label Grid.Column="1" VerticalContentAlignment="Center" VerticalAlignment="Center" Content="{Binding Path=SelectedBgmEntry.NUS3BankConfig.AudioVolume, Mode=TwoWay}"/>
+                    <Slider TickFrequency="0.1" TickPlacement="Outside" IsSnapToTickEnabled="True" Minimum="-20" Maximum="20" Orientation="Horizontal" Value="{Binding Path=BgmPropertyViewModel.AudioVolume, Mode=TwoWay}"/>
+                    <Label Grid.Column="1" VerticalContentAlignment="Center" VerticalAlignment="Center" Content="{Binding Path=BgmPropertyViewModel.AudioVolume, Mode=TwoWay}"/>
                   </Grid>
                 </fields:PropertyField.FieldContent>
               </fields:PropertyField>
@@ -126,7 +126,7 @@
               <fields:PropertyField IsVisible="{Binding IsSpecialCategoryPinch}" Label="Pinch Song" ToolTip="The song will play during last stock or last minute. Make sure you pick an existing song!">
                 <fields:PropertyField.FieldContent>
                   <AutoCompleteBox Items="{Binding StreamSetIds}" ValueMemberBinding="{Binding}" IsTextCompletionEnabled="True" MinimumPrefixLength="2"
-                                   MinimumPopulateDelay="0.5" SelectedItem="{Binding SelectedBgmEntry.StreamSet.Info1, Mode=TwoWay}" FilterMode="Contains"/>
+                                   MinimumPopulateDelay="0.5" SelectedItem="{Binding StreamSetViewModel.Info1, Mode=TwoWay}" FilterMode="Contains"/>
                 </fields:PropertyField.FieldContent>
               </fields:PropertyField>
             </StackPanel>

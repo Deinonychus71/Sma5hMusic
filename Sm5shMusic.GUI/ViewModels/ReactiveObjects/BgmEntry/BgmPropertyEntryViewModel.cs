@@ -20,13 +20,14 @@ namespace Sm5shMusic.GUI.ViewModels
         public uint TotalSamples { get; set; }
         public uint Frequency { get { return TotalTimeMs == 0 ? 0 : (uint)((double)TotalSamples / (double)TotalTimeMs * 1000.0); } }
         public string Filename { get; }
+        [Reactive]
         public string AudioVolume { get; set; }
 
         //Music player
         public bool DoesFileExist { get; set; }
         public MusicPlayerViewModel MusicPlayer { get; set; }
 
-        public BgmPropertyEntryViewModel(IVGMMusicPlayer vgmPlayer, IAudioStateViewModelManager audioStateManager, IMapper mapper, BgmPropertyEntry bgmPropertyEntry)
+        public BgmPropertyEntryViewModel(IVGMMusicPlayer vgmPlayer, IViewModelManager audioStateManager, IMapper mapper, BgmPropertyEntry bgmPropertyEntry)
             : base(audioStateManager, mapper, bgmPropertyEntry)
         {
             _vgmPlayer = vgmPlayer;
@@ -38,12 +39,12 @@ namespace Sm5shMusic.GUI.ViewModels
                 MusicPlayer = new MusicPlayerViewModel(vgmPlayer, Filename);
         }
 
-        public override BgmBaseViewModel<BgmPropertyEntry> GetCopy()
+        public override ReactiveObjectBaseViewModel GetCopy()
         {
             return _mapper.Map(this, new BgmPropertyEntryViewModel(_vgmPlayer, _audioStateManager, _mapper, new BgmPropertyEntry(NameId, Filename, MusicMod)));
         }
 
-        public override BgmBaseViewModel<BgmPropertyEntry> SaveChanges()
+        public override ReactiveObjectBaseViewModel SaveChanges()
         {
             var original = _audioStateManager.GetBgmPropertyViewModel(NameId);
             _mapper.Map(this, original.GetReferenceEntity());

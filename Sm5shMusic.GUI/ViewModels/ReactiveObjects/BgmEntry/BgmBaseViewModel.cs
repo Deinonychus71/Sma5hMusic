@@ -6,11 +6,18 @@ using Sm5shMusic.GUI.Interfaces;
 
 namespace Sm5shMusic.GUI.ViewModels
 {
-    public abstract class BgmBaseViewModel<T> : ReactiveObject where T : BgmBase
+    public abstract class ReactiveObjectBaseViewModel : ReactiveObject
+    {
+        public abstract ReactiveObjectBaseViewModel GetCopy();
+
+        public abstract ReactiveObjectBaseViewModel SaveChanges();
+    }
+
+    public abstract class BgmBaseViewModel<T> : ReactiveObjectBaseViewModel where T : BgmBase
     {
         private T _refBgmBaseEntity;
         protected IMapper _mapper;
-        protected IAudioStateViewModelManager _audioStateManager;
+        protected IViewModelManager _audioStateManager;
 
         //Helper Getters
         public IMusicMod MusicMod { get; }
@@ -22,7 +29,7 @@ namespace Sm5shMusic.GUI.ViewModels
         public string ModPath { get { return MusicMod?.ModPath; } }
         public bool IsMod { get { return Source == EntrySource.Mod; } }
 
-        public BgmBaseViewModel(IAudioStateViewModelManager audioStateManager, IMapper mapper, T bgmBaseEntity)
+        public BgmBaseViewModel(IViewModelManager audioStateManager, IMapper mapper, T bgmBaseEntity)
         {
             _audioStateManager = audioStateManager;
             _refBgmBaseEntity = bgmBaseEntity;
@@ -30,11 +37,7 @@ namespace Sm5shMusic.GUI.ViewModels
             MusicMod = bgmBaseEntity?.MusicMod;
         }
 
-        public abstract BgmBaseViewModel<T> GetCopy();
-
-        public abstract BgmBaseViewModel<T> SaveChanges();
-
-        protected T GetReferenceEntity()
+        public T GetReferenceEntity()
         {
             return _refBgmBaseEntity;
         }

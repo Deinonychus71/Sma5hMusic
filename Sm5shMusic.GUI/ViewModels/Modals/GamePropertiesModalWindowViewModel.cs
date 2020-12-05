@@ -17,6 +17,7 @@ using System.Reactive;
 using System.Reactive.Linq;
 using System.Text.RegularExpressions;
 using ILogger = Microsoft.Extensions.Logging.ILogger;
+using Sm5sh.Mods.Music.Helpers;
 
 namespace Sm5shMusic.GUI.ViewModels
 {
@@ -26,7 +27,7 @@ namespace Sm5shMusic.GUI.ViewModels
         private readonly ReadOnlyObservableCollection<SeriesEntryViewModel> _series;
         private readonly ReadOnlyObservableCollection<GameTitleEntryViewModel> _games;
         private const string REGEX_REPLACE = @"[^a-zA-Z0-9_]";
-        private string REGEX_VALIDATION = $"^{Constants.GAME_TITLE_PREFIX}[a-z0-9_]+$";
+        private string REGEX_VALIDATION = $"^{MusicConstants.InternalIds.GAME_TITLE_ID_PREFIX}[a-z0-9_]+$";
         private readonly ILogger _logger;
         private readonly AutoMapper.IMapper _mapper;
 
@@ -97,7 +98,7 @@ namespace Sm5shMusic.GUI.ViewModels
             //Validation
             this.ValidationRule(p => p.UiGameTitleId,
                 p => !string.IsNullOrEmpty(p) && Regex.IsMatch(p, REGEX_VALIDATION),
-                $"The Game ID must start by '{Constants.GAME_TITLE_PREFIX}' and only contain lowercase letters, digits and underscore.");
+                $"The Game ID must start by '{MusicConstants.InternalIds.GAME_TITLE_ID_PREFIX}' and only contain lowercase letters, digits and underscore.");
 
             this.ValidationRule(p => p.UiGameTitleId,
                 p => (IsEdit || !_games.Select(p => p.UiGameTitleId).Contains(p)),
@@ -149,13 +150,13 @@ namespace Sm5shMusic.GUI.ViewModels
             {
                 if (string.IsNullOrEmpty(gameId))
                 {
-                    UiGameTitleId = Constants.GAME_TITLE_PREFIX;
+                    UiGameTitleId = MusicConstants.InternalIds.GAME_TITLE_ID_PREFIX;
                     NameId = string.Empty;
                 }
                 else
                 {
                     NameId = Regex.Replace(gameId.Replace(" ", "_"), REGEX_REPLACE, string.Empty).ToLower();
-                    UiGameTitleId = $"{Constants.GAME_TITLE_PREFIX}{NameId}";
+                    UiGameTitleId = $"{MusicConstants.InternalIds.GAME_TITLE_ID_PREFIX}{NameId}";
                 }
             }
         }
@@ -167,13 +168,13 @@ namespace Sm5shMusic.GUI.ViewModels
                 //SelectedGameTitleEntry = new GameTitleEntryViewModel(new GameTitleEntry(UiGameTitleId, EntrySource.Mod));
             }
 
-            var refGame = SelectedGameTitleEntry.GetReferenceEntity();
+            /*var refGame = SelectedGameTitleEntry.GetReferenceEntity();
             refGame.MSBTTitle = MSBTTitleEditor.MSBTValues; //Clone
             refGame.NameId = NameId;
             refGame.Release = Release;
             refGame.Unk1 = Unk1;
             refGame.UiSeriesId = SelectedSeries.SeriesId;
-            _mapper.Map(refGame, SelectedGameTitleEntry);
+            _mapper.Map(refGame, SelectedGameTitleEntry);*/
             window.Close(window);
         }
 

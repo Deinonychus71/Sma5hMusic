@@ -72,7 +72,7 @@ namespace Sm5sh.Mods.Music.Services
         private IMusicMod GetMusicModManager(string musicModFolder)
         {
             IMusicMod musicMod = null;
-            var jsonBaseFilename = Path.Combine(musicModFolder, Constants.MusicModFiles.MUSIC_MOD_METADATA_JSON_FILE);
+            var jsonBaseFilename = Path.Combine(musicModFolder, MusicConstants.MusicModFiles.MUSIC_MOD_METADATA_JSON_FILE);
             if (File.Exists(jsonBaseFilename))
             {
                 var modBase = LoadJsonBaseMod(jsonBaseFilename);
@@ -85,7 +85,7 @@ namespace Sm5sh.Mods.Music.Services
                     musicMod = ActivatorUtilities.CreateInstance<SimpleMusicMod>(_serviceProvider, musicModFolder);
                 }
             }
-            else if (File.Exists(Path.Combine(musicModFolder, Constants.MusicModFiles.MUSIC_MOD_METADATA_CSV_FILE)))
+            else if (File.Exists(Path.Combine(musicModFolder, MusicConstants.MusicModFiles.MUSIC_MOD_METADATA_CSV_FILE)))
             {
                 musicMod = ActivatorUtilities.CreateInstance<SimpleCSVMusicMod>(_serviceProvider, musicModFolder);
             }

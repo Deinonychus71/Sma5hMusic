@@ -32,35 +32,36 @@ namespace Sm5shMusic.GUI.ViewModels
 
         }
 
-        public GameTitleEntryViewModel(IAudioStateViewModelManager audioStateManager, IMapper mapper, GameTitleEntry gameTitleEntry)
+        public GameTitleEntryViewModel(IViewModelManager audioStateManager, IMapper mapper, GameTitleEntry gameTitleEntry)
             : base(audioStateManager, mapper, gameTitleEntry)
         {
             UiGameTitleId = gameTitleEntry.UiGameTitleId;
         }
 
-        public override BgmBaseViewModel<GameTitleEntry> GetCopy()
+        public override ReactiveObjectBaseViewModel GetCopy()
         {
             return _mapper.Map(this, new GameTitleEntryViewModel(_audioStateManager, _mapper, new GameTitleEntry(UiGameTitleId, MusicMod)));
         }
 
-        public override BgmBaseViewModel<GameTitleEntry> SaveChanges()
+        public override ReactiveObjectBaseViewModel SaveChanges()
         {
             var original = _audioStateManager.GetGameTitleViewModel(UiGameTitleId);
             _mapper.Map(this, original.GetReferenceEntity());
             _mapper.Map(this, original);
-            LoadLocalized(_currentLocale);
+            original.LoadLocalized(_currentLocale);
             return original;
         }
 
         public void LoadLocalized(string locale)
         {
-            _currentLocale = locale;
+            if (!string.IsNullOrEmpty(locale))
+                _currentLocale = locale;
 
-            if (string.IsNullOrEmpty(locale))
+            if (string.IsNullOrEmpty(_currentLocale))
                 return;
 
-            if (MSBTTitle != null && MSBTTitle.ContainsKey(locale))
-                Title = MSBTTitle[locale];
+            if (MSBTTitle != null && MSBTTitle.ContainsKey(_currentLocale))
+                Title = MSBTTitle[_currentLocale];
             else
                 Title = UiGameTitleId;
         }

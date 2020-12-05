@@ -23,7 +23,7 @@ namespace Sm5shMusic.GUI.Views
             AvaloniaXamlLoader.Load(this);
             this.WhenActivated(disposables =>
             {
-                this.BindValidation(ViewModel, vm => vm.SelectedBgmEntry.GameTitleViewModel, view => view.GameIdValidation.ValidationError)
+                this.BindValidation(ViewModel, vm => vm.SelectedGameTitleViewModel, view => view.GameIdValidation.ValidationError)
                 .DisposeWith(disposables);
             });
         }

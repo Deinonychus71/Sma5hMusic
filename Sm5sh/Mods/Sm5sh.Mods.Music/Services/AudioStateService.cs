@@ -584,7 +584,7 @@ namespace Sm5sh.Mods.Music.Services
             //Map BinProperty
             foreach (var binBgnProperty in daoBinBgmProperty.Entries.Values)
             {
-                var filename = Path.Combine(_config.Value.GameResourcesPath, "stream;", "sound", "bgm", string.Format(Constants.GameResources.NUS3AUDIO_FILE, binBgnProperty.NameId)); 
+                var filename = Path.Combine(_config.Value.GameResourcesPath, "stream;", "sound", "bgm", string.Format(MusicConstants.GameResources.NUS3AUDIO_FILE, binBgnProperty.NameId)); 
                 _bgmPropertyEntries.Add(binBgnProperty.NameId, _mapper.Map(binBgnProperty, new BgmPropertyEntry(binBgnProperty.NameId, filename)));
             }
 

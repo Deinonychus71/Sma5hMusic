@@ -76,8 +76,8 @@ namespace Sm5sh.Mods.Music
             //Save NUS3Audio/Nus3Bank
             foreach (var bgmPropertyEntry in _audioStateService.GetModBgmPropertyEntries())
             {
-                var nusBankOutputFile = Path.Combine(_config.Value.OutputPath, "stream;", "sound", "bgm", string.Format(Constants.GameResources.NUS3BANK_FILE, bgmPropertyEntry.NameId));
-                var nusAudioOutputFile = Path.Combine(_config.Value.OutputPath, "stream;", "sound", "bgm", string.Format(Constants.GameResources.NUS3AUDIO_FILE, bgmPropertyEntry.NameId));
+                var nusBankOutputFile = Path.Combine(_config.Value.OutputPath, "stream;", "sound", "bgm", string.Format(MusicConstants.GameResources.NUS3BANK_FILE, bgmPropertyEntry.NameId));
+                var nusAudioOutputFile = Path.Combine(_config.Value.OutputPath, "stream;", "sound", "bgm", string.Format(MusicConstants.GameResources.NUS3AUDIO_FILE, bgmPropertyEntry.NameId));
 
                 //We always generate a new Nus3Bank as the internal ID might change
                 _logger.LogInformation("Generating Nus3Bank for {NameId}", bgmPropertyEntry.NameId);
@@ -99,7 +99,7 @@ namespace Sm5sh.Mods.Music
             //Test for audio cache
             if (useCache)
             {
-                var cachedAudioFile = Path.Combine(_config.Value.Sm5shMusic.CachePath, string.Format(Constants.GameResources.NUS3AUDIO_FILE, bgmPropertyEntry.NameId));
+                var cachedAudioFile = Path.Combine(_config.Value.Sm5shMusic.CachePath, string.Format(MusicConstants.GameResources.NUS3AUDIO_FILE, bgmPropertyEntry.NameId));
                 if (!File.Exists(cachedAudioFile))
                 {
                     result = _nus3AudioService.GenerateNus3Audio(bgmPropertyEntry.NameId, bgmPropertyEntry.Filename, cachedAudioFile);

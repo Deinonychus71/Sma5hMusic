@@ -11,7 +11,7 @@ using VGMMusic;
 
 namespace Sm5shMusic.GUI.Services
 {
-    public class AudioStateViewModelManager : IAudioStateViewModelManager
+    public class ViewModelManager : IViewModelManager
     {
         private readonly ILogger _logger;
         private readonly IMapper _mapper;
@@ -29,7 +29,7 @@ namespace Sm5shMusic.GUI.Services
         private readonly Dictionary<string, PlaylistEntryViewModel> _vmPlaylistsEntries;
         private readonly Dictionary<string, StageEntryViewModel> _vmStagesEntries;
 
-        public AudioStateViewModelManager(IAudioStateService audioStateService, IVGMMusicPlayer vgmMusicPlayer, ISm5shMusicOverride sm5shMusicOverride, IMapper mapper, ILogger<IAudioStateViewModelManager> logger)
+        public ViewModelManager(IAudioStateService audioStateService, IVGMMusicPlayer vgmMusicPlayer, ISm5shMusicOverride sm5shMusicOverride, IMapper mapper, ILogger<IViewModelManager> logger)
         {
             _mapper = mapper;
             _logger = logger;

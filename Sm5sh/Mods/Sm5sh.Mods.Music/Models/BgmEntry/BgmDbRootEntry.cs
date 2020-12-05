@@ -39,21 +39,21 @@ namespace Sm5sh.Mods.Music.Models
         public Dictionary<string, string> Title { get; set; }
         public Dictionary<string, string> Copyright { get; set; }
         public Dictionary<string, string> Author { get; set; }
-        public string TitleKey { get { return !string.IsNullOrEmpty(NameId) ? string.Format(Constants.InternalIds.MSBT_BGM_TITLE, NameId) : null; } }
-        public string AuthorKey { get { return !string.IsNullOrEmpty(NameId) ? string.Format(Constants.InternalIds.MSBT_BGM_AUTHOR, NameId) : null; } }
-        public string CopyrightKey { get { return !string.IsNullOrEmpty(NameId) ? string.Format(Constants.InternalIds.MSBT_BGM_COPYRIGHT, NameId) : null; } }
+        public string TitleKey { get { return !string.IsNullOrEmpty(NameId) ? string.Format(MusicConstants.InternalIds.MSBT_BGM_TITLE, NameId) : null; } }
+        public string AuthorKey { get { return !string.IsNullOrEmpty(NameId) ? string.Format(MusicConstants.InternalIds.MSBT_BGM_AUTHOR, NameId) : null; } }
+        public string CopyrightKey { get { return !string.IsNullOrEmpty(NameId) ? string.Format(MusicConstants.InternalIds.MSBT_BGM_COPYRIGHT, NameId) : null; } }
 
 
         public BgmDbRootEntry(string bgmId, IMusicMod musicMod = null)
             : base(musicMod)
         {
             UiBgmId = bgmId;
-            Rarity = Constants.InternalIds.RARITY_DEFAULT;
-            RecordType = Constants.InternalIds.RECORD_TYPE_DEFAULT;
-            UiGameTitleId1 = Constants.InternalIds.GAME_TITLE_ID_DEFAULT;
-            UiGameTitleId2 = Constants.InternalIds.GAME_TITLE_ID_DEFAULT;
-            UiGameTitleId3 = Constants.InternalIds.GAME_TITLE_ID_DEFAULT;
-            UiGameTitleId4 = Constants.InternalIds.GAME_TITLE_ID_DEFAULT;
+            Rarity = MusicConstants.InternalIds.RARITY_DEFAULT;
+            RecordType = MusicConstants.InternalIds.RECORD_TYPE_DEFAULT;
+            UiGameTitleId1 = MusicConstants.InternalIds.GAME_TITLE_ID_DEFAULT;
+            UiGameTitleId2 = MusicConstants.InternalIds.GAME_TITLE_ID_DEFAULT;
+            UiGameTitleId3 = MusicConstants.InternalIds.GAME_TITLE_ID_DEFAULT;
+            UiGameTitleId4 = MusicConstants.InternalIds.GAME_TITLE_ID_DEFAULT;
             SaveNo = -1;
             TestDispOrder = short.MaxValue;
             JpRegion = true;

@@ -48,18 +48,18 @@ namespace Sm5shMusic.GUI.ViewModels
         public BgmAssignedInfoEntryViewModel Info15ViewModel { get { return _audioStateManager.GetBgmAssignedInfoViewModel(Info15); } }
 
 
-        public BgmStreamSetEntryViewModel(IAudioStateViewModelManager audioStateManager, IMapper mapper, BgmStreamSetEntry bgmStreamSetEntry)
+        public BgmStreamSetEntryViewModel(IViewModelManager audioStateManager, IMapper mapper, BgmStreamSetEntry bgmStreamSetEntry)
             : base(audioStateManager, mapper, bgmStreamSetEntry)
         {
             StreamSetId = bgmStreamSetEntry.StreamSetId;
         }
 
-        public override BgmBaseViewModel<BgmStreamSetEntry> GetCopy()
+        public override ReactiveObjectBaseViewModel GetCopy()
         {
             return _mapper.Map(this, new BgmStreamSetEntryViewModel(_audioStateManager, _mapper, new BgmStreamSetEntry(StreamSetId, MusicMod)));
         }
 
-        public override BgmBaseViewModel<BgmStreamSetEntry> SaveChanges()
+        public override ReactiveObjectBaseViewModel SaveChanges()
         {
             var original = _audioStateManager.GetBgmStreamSetViewModel(StreamSetId);
             _mapper.Map(this, original.GetReferenceEntity());
