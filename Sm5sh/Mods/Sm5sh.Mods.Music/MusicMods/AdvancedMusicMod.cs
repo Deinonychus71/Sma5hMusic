@@ -174,7 +174,7 @@ namespace Sm5sh.Mods.Music.MusicMods
                 StreamProperty = _mapper.Map<BgmStreamPropertyConfig>(streamProperty),
                 AssignedInfo = _mapper.Map<BgmAssignedInfoConfig>(assignedInfo),
                 BgmProperties = _mapper.Map<BgmPropertyEntryConfig>(bgmProperty),
-                Filename = bgmProperty.Filename,
+                Filename = filenameWithoutPath,
                 ToneId = bgmProperty.NameId,
                 MSBTLabels = new MSBTLabelsConfig()
                 {
@@ -187,6 +187,9 @@ namespace Sm5sh.Mods.Music.MusicMods
                     AudioVolume = bgmProperty.AudioVolume
                 }
             };
+
+            //Remove previous version
+            _musicModConfig.Games.ForEach(g => g.Bgms.RemoveAll(p => p.ToneId == bgmConfig.ToneId));
 
             game.Bgms.Add(bgmConfig);
 

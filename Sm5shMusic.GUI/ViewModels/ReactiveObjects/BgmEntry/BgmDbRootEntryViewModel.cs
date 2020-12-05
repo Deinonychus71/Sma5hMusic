@@ -16,6 +16,7 @@ namespace Sm5shMusic.GUI.ViewModels
         public string UiBgmId { get; }
         public string StreamSetId { get; set; }
         public string Rarity { get; set; }
+        [Reactive]
         public string RecordType { get; set; }
         public string UiGameTitleId
         {
