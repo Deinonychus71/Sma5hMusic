@@ -51,16 +51,18 @@ namespace Sm5shMusic.GUI.ViewModels
         public string Copyright { get; set; }
         [Reactive]
         public string Author { get; set; }
-        
-
-        //Helper Getters
-        public bool HiddenInSoundTest { get { return TestDispOrder == -1; } }
 
 
         //Helper Getters
-        public GameTitleEntryViewModel GameTitleViewModel { get{ return _audioStateManager.GetGameTitleViewModel(UiGameTitleId); ;} }
-        public SeriesEntryViewModel SeriesViewModel { get { return GameTitleViewModel?.SeriesViewModel; } }
         public BgmStreamSetEntryViewModel StreamSetViewModel { get { return _audioStateManager.GetBgmStreamSetViewModel(StreamSetId); } }
+        public GameTitleEntryViewModel GameTitleViewModel { get { return _audioStateManager.GetGameTitleViewModel(UiGameTitleId); ; } }
+        public GameTitleEntryViewModel GameTitle1ViewModel { get { return _audioStateManager.GetGameTitleViewModel(UiGameTitleId1); ; } }
+        public GameTitleEntryViewModel GameTitle2ViewModel { get { return _audioStateManager.GetGameTitleViewModel(UiGameTitleId2); ; } }
+        public GameTitleEntryViewModel GameTitle3ViewModel { get { return _audioStateManager.GetGameTitleViewModel(UiGameTitleId3); ; } }
+        public GameTitleEntryViewModel GameTitle4ViewModel { get { return _audioStateManager.GetGameTitleViewModel(UiGameTitleId4); ; } }
+
+        public bool HiddenInSoundTest { get { return TestDispOrder == -1; } }
+        public SeriesEntryViewModel SeriesViewModel { get { return GameTitleViewModel?.SeriesViewModel; } }
         public BgmAssignedInfoEntryViewModel AssignedInfoViewModel { get { return StreamSetViewModel?.Info0ViewModel; } }
         public BgmStreamPropertyEntryViewModel StreamPropertyViewModel { get { return AssignedInfoViewModel?.StreamPropertyViewModel; } }
         public BgmPropertyEntryViewModel BgmPropertyViewModel { get { return StreamPropertyViewModel?.DataName0ViewModel; } }
@@ -110,7 +112,7 @@ namespace Sm5shMusic.GUI.ViewModels
                 Author = string.Empty;
         }
 
-        public override BgmBaseViewModel<BgmDbRootEntry> Clone()
+        public override BgmBaseViewModel<BgmDbRootEntry> GetCopy()
         {
             return _mapper.Map(this, new BgmDbRootEntryViewModel(_audioStateManager, _mapper, new BgmDbRootEntry(UiBgmId, MusicMod)));
         }

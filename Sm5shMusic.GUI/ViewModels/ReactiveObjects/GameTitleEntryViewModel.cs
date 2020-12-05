@@ -36,7 +36,7 @@ namespace Sm5shMusic.GUI.ViewModels
             UiGameTitleId = gameTitleEntry.UiGameTitleId;
         }
 
-        public override BgmBaseViewModel<GameTitleEntry> Clone()
+        public override BgmBaseViewModel<GameTitleEntry> GetCopy()
         {
             return _mapper.Map(this, new GameTitleEntryViewModel(_audioStateManager, _mapper, new GameTitleEntry(UiGameTitleId, MusicMod)));
         }

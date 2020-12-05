@@ -9,15 +9,10 @@ namespace Sm5shMusic.GUI.ViewModels
     {
         public string StreamId { get; }
         public string DataName0 { get; set; }
-        public BgmPropertyEntryViewModel DataName0ViewModel { get { return _audioStateManager.GetBgmPropertyViewModel(DataName0); } }
         public string DataName1 { get; set; }
-        public BgmPropertyEntryViewModel DataName1ViewModel { get { return _audioStateManager.GetBgmPropertyViewModel(DataName1); } }
         public string DataName2 { get; set; }
-        public BgmPropertyEntryViewModel DataName2ViewModel { get { return _audioStateManager.GetBgmPropertyViewModel(DataName2); } }
         public string DataName3 { get; set; }
-        public BgmPropertyEntryViewModel DataName3ViewModel { get { return _audioStateManager.GetBgmPropertyViewModel(DataName3); } }
         public string DataName4 { get; set; }
-        public BgmPropertyEntryViewModel DataName4ViewModel { get { return _audioStateManager.GetBgmPropertyViewModel(DataName4); } }
         public byte Loop { get; set; }
         public string EndPoint { get; set; }
         public ushort FadeOutFrame { get; set; }
@@ -29,13 +24,21 @@ namespace Sm5shMusic.GUI.ViewModels
         public string StartPoint3 { get; set; }
         public string StartPoint4 { get; set; }
 
+        //Getter Helpers
+        public BgmPropertyEntryViewModel DataName0ViewModel { get { return _audioStateManager.GetBgmPropertyViewModel(DataName0); } }
+        public BgmPropertyEntryViewModel DataName1ViewModel { get { return _audioStateManager.GetBgmPropertyViewModel(DataName1); } }
+        public BgmPropertyEntryViewModel DataName2ViewModel { get { return _audioStateManager.GetBgmPropertyViewModel(DataName2); } }
+        public BgmPropertyEntryViewModel DataName3ViewModel { get { return _audioStateManager.GetBgmPropertyViewModel(DataName3); } }
+        public BgmPropertyEntryViewModel DataName4ViewModel { get { return _audioStateManager.GetBgmPropertyViewModel(DataName4); } }
+
+
         public BgmStreamPropertyEntryViewModel(IAudioStateViewModelManager audioStateManager, IMapper mapper, BgmStreamPropertyEntry bgmStreamPropertyEntry)
             : base(audioStateManager, mapper, bgmStreamPropertyEntry)
         {
             StreamId = bgmStreamPropertyEntry.StreamId;
         }
 
-        public override BgmBaseViewModel<BgmStreamPropertyEntry> Clone()
+        public override BgmBaseViewModel<BgmStreamPropertyEntry> GetCopy()
         {
             return _mapper.Map(this, new BgmStreamPropertyEntryViewModel(_audioStateManager, _mapper, new BgmStreamPropertyEntry(StreamId, MusicMod)));
         }

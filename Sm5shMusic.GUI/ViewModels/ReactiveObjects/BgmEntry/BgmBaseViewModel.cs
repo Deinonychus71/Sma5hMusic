@@ -30,7 +30,7 @@ namespace Sm5shMusic.GUI.ViewModels
             MusicMod = bgmBaseEntity?.MusicMod;
         }
 
-        public abstract BgmBaseViewModel<T> Clone();
+        public abstract BgmBaseViewModel<T> GetCopy();
 
         public T GetReferenceEntity()
         {

@@ -38,7 +38,7 @@ namespace Sm5shMusic.GUI.ViewModels
                 MusicPlayer = new MusicPlayerViewModel(vgmPlayer, Filename);
         }
 
-        public override BgmBaseViewModel<BgmPropertyEntry> Clone()
+        public override BgmBaseViewModel<BgmPropertyEntry> GetCopy()
         {
             return _mapper.Map(this, new BgmPropertyEntryViewModel(_vgmPlayer, _audioStateManager, _mapper, new BgmPropertyEntry(NameId, Filename, MusicMod)));
         }
