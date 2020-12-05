@@ -30,38 +30,38 @@ namespace Sm5shMusic.GUI.ViewModels
         
 
         //Getter Helpers
-        public BgmAssignedInfoEntryViewModel Info0ViewModel { get { return _audioStateManager.GetBgmAssignedInfoViewModel(Info0); } }
-        public BgmAssignedInfoEntryViewModel Info1ViewModel { get { return _audioStateManager.GetBgmAssignedInfoViewModel(Info1); } }
-        public BgmAssignedInfoEntryViewModel Info2ViewModel { get { return _audioStateManager.GetBgmAssignedInfoViewModel(Info2); } }
-        public BgmAssignedInfoEntryViewModel Info3ViewModel { get { return _audioStateManager.GetBgmAssignedInfoViewModel(Info3); } }
-        public BgmAssignedInfoEntryViewModel Info4ViewModel { get { return _audioStateManager.GetBgmAssignedInfoViewModel(Info4); } }
-        public BgmAssignedInfoEntryViewModel Info5ViewModel { get { return _audioStateManager.GetBgmAssignedInfoViewModel(Info5); } }
-        public BgmAssignedInfoEntryViewModel Info6ViewModel { get { return _audioStateManager.GetBgmAssignedInfoViewModel(Info6); } }
-        public BgmAssignedInfoEntryViewModel Info7ViewModel { get { return _audioStateManager.GetBgmAssignedInfoViewModel(Info7); } }
-        public BgmAssignedInfoEntryViewModel Info8ViewModel { get { return _audioStateManager.GetBgmAssignedInfoViewModel(Info8); } }
-        public BgmAssignedInfoEntryViewModel Info9ViewModel { get { return _audioStateManager.GetBgmAssignedInfoViewModel(Info9); } }
-        public BgmAssignedInfoEntryViewModel Info10ViewModel { get { return _audioStateManager.GetBgmAssignedInfoViewModel(Info10); } }
-        public BgmAssignedInfoEntryViewModel Info11ViewModel { get { return _audioStateManager.GetBgmAssignedInfoViewModel(Info11); } }
-        public BgmAssignedInfoEntryViewModel Info12ViewModel { get { return _audioStateManager.GetBgmAssignedInfoViewModel(Info12); } }
-        public BgmAssignedInfoEntryViewModel Info13ViewModel { get { return _audioStateManager.GetBgmAssignedInfoViewModel(Info13); } }
-        public BgmAssignedInfoEntryViewModel Info14ViewModel { get { return _audioStateManager.GetBgmAssignedInfoViewModel(Info14); } }
-        public BgmAssignedInfoEntryViewModel Info15ViewModel { get { return _audioStateManager.GetBgmAssignedInfoViewModel(Info15); } }
+        public BgmAssignedInfoEntryViewModel Info0ViewModel { get { return _viewModelManager.GetBgmAssignedInfoViewModel(Info0); } }
+        public BgmAssignedInfoEntryViewModel Info1ViewModel { get { return _viewModelManager.GetBgmAssignedInfoViewModel(Info1); } }
+        public BgmAssignedInfoEntryViewModel Info2ViewModel { get { return _viewModelManager.GetBgmAssignedInfoViewModel(Info2); } }
+        public BgmAssignedInfoEntryViewModel Info3ViewModel { get { return _viewModelManager.GetBgmAssignedInfoViewModel(Info3); } }
+        public BgmAssignedInfoEntryViewModel Info4ViewModel { get { return _viewModelManager.GetBgmAssignedInfoViewModel(Info4); } }
+        public BgmAssignedInfoEntryViewModel Info5ViewModel { get { return _viewModelManager.GetBgmAssignedInfoViewModel(Info5); } }
+        public BgmAssignedInfoEntryViewModel Info6ViewModel { get { return _viewModelManager.GetBgmAssignedInfoViewModel(Info6); } }
+        public BgmAssignedInfoEntryViewModel Info7ViewModel { get { return _viewModelManager.GetBgmAssignedInfoViewModel(Info7); } }
+        public BgmAssignedInfoEntryViewModel Info8ViewModel { get { return _viewModelManager.GetBgmAssignedInfoViewModel(Info8); } }
+        public BgmAssignedInfoEntryViewModel Info9ViewModel { get { return _viewModelManager.GetBgmAssignedInfoViewModel(Info9); } }
+        public BgmAssignedInfoEntryViewModel Info10ViewModel { get { return _viewModelManager.GetBgmAssignedInfoViewModel(Info10); } }
+        public BgmAssignedInfoEntryViewModel Info11ViewModel { get { return _viewModelManager.GetBgmAssignedInfoViewModel(Info11); } }
+        public BgmAssignedInfoEntryViewModel Info12ViewModel { get { return _viewModelManager.GetBgmAssignedInfoViewModel(Info12); } }
+        public BgmAssignedInfoEntryViewModel Info13ViewModel { get { return _viewModelManager.GetBgmAssignedInfoViewModel(Info13); } }
+        public BgmAssignedInfoEntryViewModel Info14ViewModel { get { return _viewModelManager.GetBgmAssignedInfoViewModel(Info14); } }
+        public BgmAssignedInfoEntryViewModel Info15ViewModel { get { return _viewModelManager.GetBgmAssignedInfoViewModel(Info15); } }
 
 
-        public BgmStreamSetEntryViewModel(IViewModelManager audioStateManager, IMapper mapper, BgmStreamSetEntry bgmStreamSetEntry)
-            : base(audioStateManager, mapper, bgmStreamSetEntry)
+        public BgmStreamSetEntryViewModel(IViewModelManager viewModelManager, IMapper mapper, BgmStreamSetEntry bgmStreamSetEntry)
+            : base(viewModelManager, mapper, bgmStreamSetEntry)
         {
             StreamSetId = bgmStreamSetEntry.StreamSetId;
         }
 
         public override ReactiveObjectBaseViewModel GetCopy()
         {
-            return _mapper.Map(this, new BgmStreamSetEntryViewModel(_audioStateManager, _mapper, new BgmStreamSetEntry(StreamSetId, MusicMod)));
+            return _mapper.Map(this, new BgmStreamSetEntryViewModel(_viewModelManager, _mapper, new BgmStreamSetEntry(StreamSetId, MusicMod)));
         }
 
         public override ReactiveObjectBaseViewModel SaveChanges()
         {
-            var original = _audioStateManager.GetBgmStreamSetViewModel(StreamSetId);
+            var original = _viewModelManager.GetBgmStreamSetViewModel(StreamSetId);
             _mapper.Map(this, original.GetReferenceEntity());
             _mapper.Map(this, original);
             return original;

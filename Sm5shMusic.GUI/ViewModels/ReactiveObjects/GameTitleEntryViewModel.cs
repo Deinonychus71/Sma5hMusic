@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using Sm5sh.Mods.Music.Models;
 using Sm5shMusic.GUI.Interfaces;
@@ -9,12 +10,21 @@ namespace Sm5shMusic.GUI.ViewModels
     public class GameTitleEntryViewModel : BgmBaseViewModel<GameTitleEntry>
     {
         private string _currentLocale;
+        private string _uiSeriesId;
 
         //Getters/Private Setters - For This View Only
         public bool AllFlag { get; set; }
-        public string UiGameTitleId { get; set; }
+        public string UiGameTitleId { get; }
         public string NameId { get; set; }
-        public string UiSeriesId { get; set; }
+        public string UiSeriesId
+        {
+            get => _uiSeriesId;
+            set
+            {
+                this.RaiseAndSetIfChanged(ref _uiSeriesId, value);
+                this.RaisePropertyChanged(nameof(SeriesViewModel));
+            }
+        }
         public bool Unk1 { get; set; }
         public int Release { get; set; }
         public Dictionary<string, string> MSBTTitle { get; set; }
@@ -24,7 +34,7 @@ namespace Sm5shMusic.GUI.ViewModels
         public string Title { get; set; }
 
         //[Reactive]
-        public SeriesEntryViewModel SeriesViewModel { get { return _audioStateManager.GetSeriesViewModel(UiSeriesId); } }
+        public SeriesEntryViewModel SeriesViewModel { get { return _viewModelManager.GetSeriesViewModel(UiSeriesId); } }
 
         public GameTitleEntryViewModel()
             : base(null, null, null)
@@ -32,24 +42,10 @@ namespace Sm5shMusic.GUI.ViewModels
 
         }
 
-        public GameTitleEntryViewModel(IViewModelManager audioStateManager, IMapper mapper, GameTitleEntry gameTitleEntry)
-            : base(audioStateManager, mapper, gameTitleEntry)
+        public GameTitleEntryViewModel(IViewModelManager viewModelManager, IMapper mapper, GameTitleEntry gameTitleEntry)
+            : base(viewModelManager, mapper, gameTitleEntry)
         {
             UiGameTitleId = gameTitleEntry.UiGameTitleId;
-        }
-
-        public override ReactiveObjectBaseViewModel GetCopy()
-        {
-            return _mapper.Map(this, new GameTitleEntryViewModel(_audioStateManager, _mapper, new GameTitleEntry(UiGameTitleId, MusicMod)));
-        }
-
-        public override ReactiveObjectBaseViewModel SaveChanges()
-        {
-            var original = _audioStateManager.GetGameTitleViewModel(UiGameTitleId);
-            _mapper.Map(this, original.GetReferenceEntity());
-            _mapper.Map(this, original);
-            original.LoadLocalized(_currentLocale);
-            return original;
         }
 
         public void LoadLocalized(string locale)
@@ -64,6 +60,20 @@ namespace Sm5shMusic.GUI.ViewModels
                 Title = MSBTTitle[_currentLocale];
             else
                 Title = UiGameTitleId;
+        }
+
+        public override ReactiveObjectBaseViewModel GetCopy()
+        {
+            return _mapper.Map(this, new GameTitleEntryViewModel(_viewModelManager, _mapper, new GameTitleEntry(UiGameTitleId, MusicMod != null ? EntrySource.Mod : EntrySource.Core)));
+        }
+
+        public override ReactiveObjectBaseViewModel SaveChanges()
+        {
+            var original = _viewModelManager.GetGameTitleViewModel(UiGameTitleId);
+            _mapper.Map(this, original.GetReferenceEntity());
+            _mapper.Map(this, original);
+            original.LoadLocalized(_currentLocale);
+            return original;
         }
     }
 }

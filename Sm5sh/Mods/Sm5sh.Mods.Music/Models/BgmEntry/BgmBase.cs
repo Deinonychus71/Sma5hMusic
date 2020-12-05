@@ -4,7 +4,7 @@ namespace Sm5sh.Mods.Music.Models
 {
     public abstract class BgmBase
     {
-        public EntrySource Source { get { return MusicMod == null ? EntrySource.Core : EntrySource.Mod; } }
+        public EntrySource Source { get; }
         public IMusicMod MusicMod { get; set; }
         public string ModId { get { return MusicMod?.Mod.Id; } }
 
@@ -12,6 +12,12 @@ namespace Sm5sh.Mods.Music.Models
         public BgmBase(IMusicMod musicMod = null)
         {
             MusicMod = musicMod;
+            Source = musicMod != null ? EntrySource.Mod : EntrySource.Core;
+        }
+
+        public BgmBase(EntrySource source)
+        {
+            Source = source;
         }
     }
 

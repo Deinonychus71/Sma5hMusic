@@ -66,7 +66,7 @@ namespace Sm5sh.Mods.Music.MusicMods
 
             foreach (var game in _musicModConfig.Games)
             {
-                output.GameTitleEntries.Add(_mapper.Map(game, new GameTitleEntry(game.UiGameTitleId, this)));
+                output.GameTitleEntries.Add(_mapper.Map(game, new GameTitleEntry(game.UiGameTitleId, EntrySource.Mod)));
 
                 foreach (var bgm in game.Bgms)
                 {
@@ -204,8 +204,27 @@ namespace Sm5sh.Mods.Music.MusicMods
             return true;
         }
 
-        public bool RemoveBgm(string toneId)
+        public bool RemoveMusicModEntries(MusicModDeleteEntries musicModDeleteEntries)
         {
+            if (musicModDeleteEntries == null)
+            {
+                return false;
+            }
+
+            //For this specific mod, we want 1 entry of everything
+            if (musicModDeleteEntries.BgmDbRootEntries.Count != 1 ||
+               musicModDeleteEntries.BgmAssignedInfoEntries.Count != 1 ||
+               musicModDeleteEntries.BgmStreamSetEntries.Count != 1 ||
+               musicModDeleteEntries.BgmStreamPropertyEntries.Count != 1 ||
+               musicModDeleteEntries.BgmPropertyEntries.Count != 1 ||
+               musicModDeleteEntries.GameTitleEntries.Count != 1)
+            {
+                _logger.LogError("This update is not compatible with {MusicMod}", nameof(AdvancedMusicMod));
+                return false;
+            }
+
+            var toneId = musicModDeleteEntries.BgmPropertyEntries.FirstOrDefault();
+
             _logger.LogInformation("Remove ToneId {ToneId} from Mod {ModName}", toneId, Mod.Name);
             var bgms = _musicModConfig.Games.SelectMany(g => g.Bgms.Where(s => s.ToneId == toneId)).ToList();
             _musicModConfig.Games.ForEach(g => g.Bgms.RemoveAll(p => p.ToneId == toneId));

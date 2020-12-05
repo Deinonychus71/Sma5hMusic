@@ -117,11 +117,6 @@ namespace Sm5sh.Mods.Music.MusicMods
             return output;
         }
 
-        public bool RemoveBgm(string toneId)
-        {
-            throw new NotImplementedException();
-        }
-
         private string GetMusicModAudioFile(string songFileName)
         {
             return Path.Combine(ModPath, songFileName);
@@ -322,6 +317,11 @@ namespace Sm5sh.Mods.Music.MusicMods
         }
 
         public bool AddOrUpdateMusicModEntries(MusicModEntries musicModEntries)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool RemoveMusicModEntries(MusicModDeleteEntries musicModDeleteEntries)
         {
             throw new NotImplementedException();
         }

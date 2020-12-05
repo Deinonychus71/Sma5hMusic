@@ -66,12 +66,12 @@ namespace Sm5shMusic.GUI.ViewModels
 
 
         //Helper Getters
-        public BgmStreamSetEntryViewModel StreamSetViewModel { get { return _audioStateManager.GetBgmStreamSetViewModel(StreamSetId); } }
-        public GameTitleEntryViewModel GameTitleViewModel { get { return _audioStateManager.GetGameTitleViewModel(UiGameTitleId); } }
-        public GameTitleEntryViewModel GameTitle1ViewModel { get { return _audioStateManager.GetGameTitleViewModel(UiGameTitleId1); } }
-        public GameTitleEntryViewModel GameTitle2ViewModel { get { return _audioStateManager.GetGameTitleViewModel(UiGameTitleId2); } }
-        public GameTitleEntryViewModel GameTitle3ViewModel { get { return _audioStateManager.GetGameTitleViewModel(UiGameTitleId3); } }
-        public GameTitleEntryViewModel GameTitle4ViewModel { get { return _audioStateManager.GetGameTitleViewModel(UiGameTitleId4); } }
+        public BgmStreamSetEntryViewModel StreamSetViewModel { get { return _viewModelManager.GetBgmStreamSetViewModel(StreamSetId); } }
+        public GameTitleEntryViewModel GameTitleViewModel { get { return _viewModelManager.GetGameTitleViewModel(UiGameTitleId); } }
+        public GameTitleEntryViewModel GameTitle1ViewModel { get { return _viewModelManager.GetGameTitleViewModel(UiGameTitleId1); } }
+        public GameTitleEntryViewModel GameTitle2ViewModel { get { return _viewModelManager.GetGameTitleViewModel(UiGameTitleId2); } }
+        public GameTitleEntryViewModel GameTitle3ViewModel { get { return _viewModelManager.GetGameTitleViewModel(UiGameTitleId3); } }
+        public GameTitleEntryViewModel GameTitle4ViewModel { get { return _viewModelManager.GetGameTitleViewModel(UiGameTitleId4); } }
 
         public bool HiddenInSoundTest { get { return TestDispOrder == -1; } }
         public SeriesEntryViewModel SeriesViewModel { get { return GameTitleViewModel?.SeriesViewModel; } }
@@ -84,8 +84,8 @@ namespace Sm5shMusic.GUI.ViewModels
         public bool DoesFileExist { get {  return BgmPropertyViewModel != null && BgmPropertyViewModel.DoesFileExist; } }
         public MusicPlayerViewModel MusicPlayer { get { return BgmPropertyViewModel?.MusicPlayer; } }
 
-        public BgmDbRootEntryViewModel(IViewModelManager audioStateManager, IMapper mapper, BgmDbRootEntry bgmDbRootEntry)
-            : base(audioStateManager, mapper, bgmDbRootEntry)
+        public BgmDbRootEntryViewModel(IViewModelManager viewModelManager, IMapper mapper, BgmDbRootEntry bgmDbRootEntry)
+            : base(viewModelManager, mapper, bgmDbRootEntry)
         {
             UiBgmId = bgmDbRootEntry.UiBgmId;
         }
@@ -124,12 +124,12 @@ namespace Sm5shMusic.GUI.ViewModels
 
         public override ReactiveObjectBaseViewModel GetCopy()
         {
-            return _mapper.Map(this, new BgmDbRootEntryViewModel(_audioStateManager, _mapper, new BgmDbRootEntry(UiBgmId, MusicMod)));
+            return _mapper.Map(this, new BgmDbRootEntryViewModel(_viewModelManager, _mapper, new BgmDbRootEntry(UiBgmId, MusicMod)));
         }
 
         public override ReactiveObjectBaseViewModel SaveChanges()
         {
-            var original = _audioStateManager.GetBgmDbRootViewModel(UiBgmId);
+            var original = _viewModelManager.GetBgmDbRootViewModel(UiBgmId);
             _mapper.Map(this, original.GetReferenceEntity());
             _mapper.Map(this, original);
             original.LoadLocalized(_currentLocale);

@@ -236,7 +236,7 @@ namespace Sm5shMusic.GUI.Mods.Music.Models.AutoMapper
                 .ForMember(i => i.StartPointTransition, me => me.MapFrom(p => p.StartPointTransition))
                 .ForMember(i => i.StreamId, me => me.MapFrom(p => p.StreamId));
 
-
+            //CreateMap<ViewModels.GameTitleEntryViewModel, ViewModels.GameTitleEntryViewModel>();
             CreateMap<ViewModels.BgmDbRootEntryViewModel, ViewModels.BgmDbRootEntryViewModel>();
             CreateMap<ViewModels.BgmAssignedInfoEntryViewModel, ViewModels.BgmAssignedInfoEntryViewModel>();
             CreateMap<ViewModels.BgmStreamPropertyEntryViewModel, ViewModels.BgmStreamPropertyEntryViewModel>();

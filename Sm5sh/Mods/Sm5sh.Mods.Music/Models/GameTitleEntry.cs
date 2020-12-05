@@ -20,8 +20,8 @@ namespace Sm5sh.Mods.Music.Models
             return UiGameTitleId;
         }
 
-        public GameTitleEntry(string uiGameTitleId, IMusicMod musicMod = null)
-            :base(musicMod)
+        public GameTitleEntry(string uiGameTitleId, EntrySource source = EntrySource.Core)
+            :base(source)
         {
             UiGameTitleId = uiGameTitleId;
             MSBTTitle = new Dictionary<string, string>();

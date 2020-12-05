@@ -23,6 +23,7 @@ using VGMMusic;
 using ILogger = Microsoft.Extensions.Logging.ILogger;
 using Sm5sh;
 using Sm5shMusic.GUI.Dialogs;
+using System.IO;
 
 namespace Sm5shMusic.GUI.ViewModels
 {
@@ -30,6 +31,7 @@ namespace Sm5shMusic.GUI.ViewModels
     {
         private readonly IAudioStateService _audioState;
         private readonly IMusicModManagerService _musicModManagerService;
+        private readonly IGUIStateManager _guiStateManager;
         private readonly IViewModelManager _viewModelManager;
         private readonly INus3AudioService _nus3AudioService;
         private readonly IVGMMusicPlayer _musicPlayer;
@@ -41,18 +43,11 @@ namespace Sm5shMusic.GUI.ViewModels
         private readonly ILogger _logger;
         private readonly IMapper _mapper;
         private readonly IOptions<Sm5shOptions> _config;
-        private readonly ObservableCollection<LocaleViewModel> _locales;
-        private readonly ObservableCollection<SeriesEntryViewModel> _seriesEntries;
-        private readonly ObservableCollection<GameTitleEntryViewModel> _gameTitleEntries;
-        private readonly ObservableCollection<BgmDbRootEntryViewModel> _bgmDbRootEntries;
-        private readonly ObservableCollection<BgmStreamSetEntryViewModel> _bgmStreamSetEntries;
-        private readonly ObservableCollection<PlaylistEntryViewModel> _playlistsEntries;
-        private readonly ObservableCollection<ModEntryViewModel> _musicMods;
-        private readonly List<StageEntryViewModel> _stagesEntries; //Don't need obs yet
         private string _currentLocale;
 
         private ModalDialog<BgmPropertiesModalWindow, BgmPropertiesModalWindowViewModel, BgmEntryViewModel> _dialogSimpleBgmEditor;
         private ModalDialog<BgmAdvancedPropertiesModalWindow, BgmPropertiesModalWindowViewModel, BgmEntryViewModel> _dialogAdvancedBgmEditor;
+        private ModalDialog<GamePropertiesModalWindow, GamePropertiesModalWindowViewModel, GameTitleEntryViewModel> _dialogGameEditor;
 
         [Reactive]
         public bool IsAdvanced { get; set; }
@@ -63,8 +58,6 @@ namespace Sm5shMusic.GUI.ViewModels
         [Reactive]
         public bool IsShowingDebug { get; set; }
 
-        public BgmPropertiesModalWindowViewModel VMBgmEditor { get; }
-        public GamePropertiesModalWindowViewModel VMGameEditor { get; }
         public GamePickerModalWindowViewModel VMGamePicker { get; }
         public ModPropertiesModalWindowViewModel VMModEditor { get; }
         public ModPickerModalWindowViewModel VMModPicker { get; }
@@ -82,11 +75,12 @@ namespace Sm5shMusic.GUI.ViewModels
         public ReactiveCommand<Unit, Unit> ActionBuildNoCache { get; }
         public ReactiveCommand<Unit, Unit> ActionRefreshData { get; }
 
-        public MainWindowViewModel(IServiceProvider serviceProvider, IOptions<Sm5shOptions> config, IViewModelManager viewModelManager, IMapper mapper, IAudioStateService audioState, INus3AudioService nus3AudioService, IVGMMusicPlayer musicPlayer,
+        public MainWindowViewModel(IServiceProvider serviceProvider, IOptions<Sm5shOptions> config, IViewModelManager viewModelManager, IGUIStateManager guiStateManager, IMapper mapper, IAudioStateService audioState, INus3AudioService nus3AudioService, IVGMMusicPlayer musicPlayer,
             IMusicModManagerService musicModManagerService, ISm5shMusicOverride sm5shMusicOverride, IDialogWindow rootDialog, IMessageDialog messageDialog, IFileDialog fileDialog, IBuildDialog buildDialog, ILogger<MainWindowViewModel> logger)
         {
             _viewModelManager = viewModelManager;
             _musicModManagerService = musicModManagerService;
+            _guiStateManager = guiStateManager;
             _nus3AudioService = nus3AudioService;
             _musicPlayer = musicPlayer;
             _sm5shMusicOverride = sm5shMusicOverride;
@@ -102,62 +96,54 @@ namespace Sm5shMusic.GUI.ViewModels
             //DI
             _audioState = audioState;
 
-            //Initialize observables mods & locale
-            _locales = new ObservableCollection<LocaleViewModel>();
-            var observableLocaleList = _locales.ToObservableChangeSet(p => p.Id);
-            _musicMods = new ObservableCollection<ModEntryViewModel>();
-            var observableMusicModsList = _musicMods.ToObservableChangeSet(p => p.ModId);
-
             //Initialize Contextual Menu view
-            VMContextMenu = ActivatorUtilities.CreateInstance<ContextMenuViewModel>(serviceProvider, observableMusicModsList, observableLocaleList);
-
-            //Initialize Content Observables - Games & BGM are automatically localized
+            VMContextMenu = ActivatorUtilities.CreateInstance<ContextMenuViewModel>(serviceProvider, viewModelManager.ObservableModsEntries, viewModelManager.ObservableLocales);
             VMContextMenu.WhenLocaleChanged.Subscribe((locale) => _currentLocale = locale);
-            _seriesEntries = new ObservableCollection<SeriesEntryViewModel>();
-            var observableSeriesEntriesList = _seriesEntries.ToObservableChangeSet(p => p.SeriesId);
-            _bgmDbRootEntries = new ObservableCollection<BgmDbRootEntryViewModel>();
-            var observableBgmDbRootEntriesList = _bgmDbRootEntries.ToObservableChangeSet(p => p.UiBgmId)
+            var observableBgmDbRootEntriesList = viewModelManager.ObservableDbRootEntries
                 .DeferUntilLoaded()
                 .AutoRefreshOnObservable(p => VMContextMenu.WhenLocaleChanged)
                 .ForEachChange(o => o.Current.LoadLocalized(_currentLocale));
-            _bgmStreamSetEntries = new ObservableCollection<BgmStreamSetEntryViewModel>();
-            var observableBgmStreamSetEntriesList = _bgmStreamSetEntries.ToObservableChangeSet(p => p.StreamSetId);
-            _gameTitleEntries = new ObservableCollection<GameTitleEntryViewModel>();
-            var observableGameEntriesList = _gameTitleEntries.ToObservableChangeSet(p => p.UiGameTitleId)
+            var observableGameEntriesList = viewModelManager.ObservableGameTitles
+                .DeferUntilLoaded()
                 .AutoRefreshOnObservable(p => VMContextMenu.WhenLocaleChanged)
                 .ForEachChange(o => o.Current.LoadLocalized(_currentLocale));
-            _playlistsEntries = new ObservableCollection<PlaylistEntryViewModel>();
-            var observablePlaylistEntriesList = _playlistsEntries.ToObservableChangeSet(p => p.Id);
-            _stagesEntries = new List<StageEntryViewModel>();
 
             //Initialize filters
             VMBgmFilters = ActivatorUtilities.CreateInstance<BgmFiltersViewModel>(serviceProvider, observableBgmDbRootEntriesList);
 
             //Initialize main views
             VMBgmSongs = ActivatorUtilities.CreateInstance<BgmSongsViewModel>(serviceProvider, VMBgmFilters.WhenFiltersAreApplied, VMContextMenu);
-            VMPlaylists = ActivatorUtilities.CreateInstance<PlaylistViewModel>(serviceProvider, VMBgmFilters.WhenFiltersAreApplied, observablePlaylistEntriesList, VMContextMenu);
+            VMPlaylists = ActivatorUtilities.CreateInstance<PlaylistViewModel>(serviceProvider, VMBgmFilters.WhenFiltersAreApplied, viewModelManager.ObservablePlaylistsEntries, VMContextMenu);
 
             //Initialize Editors
-            VMGameEditor = ActivatorUtilities.CreateInstance<GamePropertiesModalWindowViewModel>(serviceProvider,
-                observableLocaleList, observableSeriesEntriesList, observableGameEntriesList);
+
             VMGamePicker = ActivatorUtilities.CreateInstance<GamePickerModalWindowViewModel>(serviceProvider,
                 observableGameEntriesList);
             VMModEditor = ActivatorUtilities.CreateInstance<ModPropertiesModalWindowViewModel>(serviceProvider);
             VMModPicker = ActivatorUtilities.CreateInstance<ModPickerModalWindowViewModel>(serviceProvider,
-                observableMusicModsList);
-            VMBgmEditor = ActivatorUtilities.CreateInstance<BgmPropertiesModalWindowViewModel>(serviceProvider,
-                observableLocaleList, observableSeriesEntriesList, observableGameEntriesList, observableBgmStreamSetEntriesList);
-            VMBgmEditor.VMGamePropertiesModal = VMGameEditor;
+                viewModelManager.ObservableModsEntries);
+            
             VMPlaylistEditor = ActivatorUtilities.CreateInstance<PlaylistPropertiesModalWindowViewModel>(serviceProvider,
-               observablePlaylistEntriesList);
+               viewModelManager.ObservablePlaylistsEntries);
             VMPlaylistPicker = ActivatorUtilities.CreateInstance<PlaylistPickerModalWindowViewModel>(serviceProvider,
-                observablePlaylistEntriesList);
+                viewModelManager.ObservablePlaylistsEntries);
             VMStageAssignement = ActivatorUtilities.CreateInstance<PlaylistStageAssignementModalWindowViewModel>(serviceProvider,
-                observablePlaylistEntriesList, _stagesEntries);
+                viewModelManager.ObservablePlaylistsEntries, viewModelManager.ObservableStagesEntries);
             VMToneIdCreation = ActivatorUtilities.CreateInstance<ToneIdCreationModalWindowModel>(serviceProvider,
                 observableBgmDbRootEntriesList);
-            _dialogSimpleBgmEditor = new ModalDialog<BgmPropertiesModalWindow, BgmPropertiesModalWindowViewModel, BgmEntryViewModel>(VMBgmEditor);
-            _dialogAdvancedBgmEditor = new ModalDialog<BgmAdvancedPropertiesModalWindow, BgmPropertiesModalWindowViewModel, BgmEntryViewModel>(VMBgmEditor);
+
+            //Setup GameEditor
+            var vmGameEditor = ActivatorUtilities.CreateInstance<GamePropertiesModalWindowViewModel>(serviceProvider,
+                viewModelManager.ObservableLocales, viewModelManager.ObservableSeries, observableGameEntriesList);
+            _dialogGameEditor = new ModalDialog<GamePropertiesModalWindow, GamePropertiesModalWindowViewModel, GameTitleEntryViewModel>(vmGameEditor);
+
+            //Setup BgmEditor
+            var vmBgmEditor = ActivatorUtilities.CreateInstance<BgmPropertiesModalWindowViewModel>(serviceProvider,
+                viewModelManager.ObservableLocales, viewModelManager.ObservableSeries, observableGameEntriesList, viewModelManager.ObservableStreamSetEntries);
+            vmBgmEditor.VMGamePropertiesModal = vmGameEditor;
+            vmBgmEditor.WhenNewRequestToAddGameEntry.Subscribe(async (o) => await AddNewOrEditGame(o));
+            _dialogSimpleBgmEditor = new ModalDialog<BgmPropertiesModalWindow, BgmPropertiesModalWindowViewModel, BgmEntryViewModel>(vmBgmEditor);
+            _dialogAdvancedBgmEditor = new ModalDialog<BgmAdvancedPropertiesModalWindow, BgmPropertiesModalWindowViewModel, BgmEntryViewModel>(vmBgmEditor);
 
             //Listen to requests from children
             this.VMContextMenu.WhenNewRequestToAddBgmEntry.Subscribe(async (o) => await AddNewBgmEntry(o));
@@ -165,7 +151,7 @@ namespace Sm5shMusic.GUI.ViewModels
             this.VMContextMenu.WhenNewRequestToAddGameEntry.Subscribe(async (o) => await AddNewOrEditGame());
             this.VMContextMenu.WhenNewRequestToEditGameEntry.Subscribe(async (o) => await EditGame());
             this.VMContextMenu.WhenNewRequestToEditModEntry.Subscribe(async (o) => await EditMod());
-            this.VMBgmEditor.WhenNewRequestToAddGameEntry.Subscribe(async (o) => await AddNewOrEditGame(o));
+            
             this.VMBgmSongs.WhenNewRequestToEditBgmEntry.Subscribe(async (o) => await EditBgmEntry(o));
             this.VMBgmSongs.WhenNewRequestToDeleteBgmEntry.Subscribe(async (o) => await DeleteBgmEntry(o));
             this.VMBgmSongs.WhenNewRequestToReorderBgmEntries.Subscribe((o) => _viewModelManager.ReorderSongs());
@@ -227,7 +213,7 @@ namespace Sm5shMusic.GUI.ViewModels
             IsLoading = true;
             await _buildDialog.Init((o) =>
             {
-                InitAllDataAsync();
+                _viewModelManager.Init();
                 IsLoading = false;
             }, (o) =>
             {
@@ -253,39 +239,6 @@ namespace Sm5shMusic.GUI.ViewModels
         #endregion
 
         #region Data Operations
-        public Task InitAllDataAsync()
-        {
-            _logger.LogInformation("Initialize data");
-
-            //Reset everything
-            _seriesEntries.Clear();
-            _bgmDbRootEntries.Clear();
-            _gameTitleEntries.Clear();
-            _bgmStreamSetEntries.Clear();
-            _locales.Clear();
-            _musicMods.Clear();
-            _playlistsEntries.Clear();
-            _stagesEntries.Clear();
-
-            //Init view models
-            _viewModelManager.Init();
-
-            //Bind
-            var modsList = _musicModManagerService.MusicMods.Select(p => new ModEntryViewModel(p.Id, p));
-            _musicMods.AddRange(modsList);
-            _logger.LogInformation("Music Mods List Loaded.");
-
-            _locales.AddRange(_viewModelManager.GetLocalesViewModels());
-            _seriesEntries.AddRange(_viewModelManager.GetSeriesViewModels());
-            _gameTitleEntries.AddRange(_viewModelManager.GetGameTitlesViewModels());
-            _bgmDbRootEntries.AddRange(_viewModelManager.GetBgmDbRootEntriesViewModels());
-            _bgmStreamSetEntries.AddRange(_viewModelManager.GetBgmStreamSetEntriesViewModels());
-            _playlistsEntries.AddRange(_viewModelManager.GetPlaylistsEntriesViewModels());
-            _stagesEntries.AddRange(_viewModelManager.GetStagesEntriesViewModels());
-
-            return Task.CompletedTask;
-        }
-
         #region BGM Operations
         public async Task AddNewBgmEntry(ModEntryViewModel managerMod)
         {
@@ -350,25 +303,22 @@ namespace Sm5shMusic.GUI.ViewModels
 
         public async Task EditBgmEntry(BgmDbRootEntryViewModel vmBgmEntry)
         {
-            BgmEntryViewModel result;
-            if (IsAdvanced)
-                result = await _dialogAdvancedBgmEditor.ShowDialog(_rootDialog.Window, new BgmEntryViewModel(vmBgmEntry));
-            else
-                result = await _dialogSimpleBgmEditor.ShowDialog(_rootDialog.Window, new BgmEntryViewModel(vmBgmEntry));
-
-            if (result != null)
+            if (vmBgmEntry != null)
             {
-                if (vmBgmEntry.Source == EntrySource.Mod)
-                    vmBgmEntry.MusicMod.AddOrUpdateMusicModEntries(result.GetMusicModEntries());
+                BgmEntryViewModel result;
+                if (IsAdvanced)
+                    result = await _dialogAdvancedBgmEditor.ShowDialog(_rootDialog.Window, new BgmEntryViewModel(vmBgmEntry));
                 else
-                    _sm5shMusicOverride.UpdateCoreBgmEntries(result.GetMusicModEntries());
-                _viewModelManager.ReorderSongs();
+                    result = await _dialogSimpleBgmEditor.ShowDialog(_rootDialog.Window, new BgmEntryViewModel(vmBgmEntry));
+
+                if (result != null)
+                    await _guiStateManager.UpdateMusicModEntries(result.GetMusicModEntries(), vmBgmEntry.MusicMod);
             }
         }
 
         public async Task DeleteBgmEntry(BgmDbRootEntryViewModel vmBgmEntry)
         {
-            /*if (vmBgmEntry != null)
+            if (vmBgmEntry != null)
             {
                 var result = await _messageDialog.ShowWarningConfirm($"Delete '{vmBgmEntry.Title}'?", "Do you really want to remove this song?\r\nIf it's a Core song, this could cause unknown issues. Prefer hiding the song instead.");
 
@@ -376,54 +326,29 @@ namespace Sm5shMusic.GUI.ViewModels
                 {
                     if (vmBgmEntry != null)
                     {
-                        //TODO - Handle anything saving in a specific service
                         vmBgmEntry.StopPlay();
                         await Task.Delay(500);
 
                         _logger.LogInformation("Deleting {ToneId}...", vmBgmEntry.ToneId);
-                        var bgmDelete = vmBgmEntry.GetReferenceEntity();
-                        if (bgmDelete.Source == EntrySource.Mod)
-                            vmBgmEntry.MusicMod.RemoveBgm(bgmDelete.ToneId);
-                        else
-                            _sm5shMusicOverride.RemoveCoreBgmEntry(bgmDelete.ToneId);
 
-                        _audioState.RemoveBgmEntry(bgmDelete.ToneId);
-                        _bgmEntries.Remove(vmBgmEntry);
+                        //TODO - When supported more complex mods this needs to be updated 
+                        //Right now, it is tied to v2 mods
+                        var deleteMusicModEntries = new BgmEntryViewModel(vmBgmEntry).GetMusicModDeleteEntries();
+                        await _guiStateManager.RemoveMusicModEntries(deleteMusicModEntries);
+                        
                         _logger.LogInformation("{ToneId} deleted.", vmBgmEntry.ToneId);
-
-                        //Delete from playlist
-                        foreach (var playlist in _playlistsEntries)
-                            playlist.RemoveSong(vmBgmEntry.UiBgmId);
                     }
                 }
-            }*/
+            }
         }
         #endregion
 
         #region Game Operations
         public async Task AddNewOrEditGame(Window parent = null, GameTitleEntryViewModel vmGameTitleEntry = null)
         {
-            var isEdit = vmGameTitleEntry != null;
-            VMGameEditor.LoadGame(vmGameTitleEntry);
-            var modalCreateGame = new GamePropertiesModalWindow() { DataContext = VMGameEditor };
-            var results = await modalCreateGame.ShowDialog<GamePropertiesModalWindow>(parent ?? _rootDialog.Window);
-
-            if (results != null)
-            {
-                if (VMGameEditor.SelectedGameTitleEntry != null)
-                    VMGameEditor.SelectedGameTitleEntry.LoadLocalized(_currentLocale);
-
-                //TODO - Handle anything saving in a specific service
-                if (!isEdit)
-                {
-                    _gameTitleEntries.Add(VMGameEditor.SelectedGameTitleEntry);
-                }
-                //No need to handle mod, it is saved with the song
-                else if (VMGameEditor.SelectedGameTitleEntry.Source == EntrySource.Core)
-                {
-                    //_sm5shMusicOverride.UpdateCoreGameTitleEntry(VMGameEditor.SelectedGameTitleEntry.GetReferenceEntity());
-                }
-            }
+            var result = await _dialogGameEditor.ShowDialog(_rootDialog.Window, vmGameTitleEntry);
+            if (result != null)
+                await _guiStateManager.UpdateGameTitleEntry(result.GetReferenceEntity());
         }
 
         public async Task EditGame(Window parent = null)
@@ -440,7 +365,7 @@ namespace Sm5shMusic.GUI.ViewModels
         #region Mod Operations
         public async Task AddNewOrEditMod(Window parent = null, ModEntryViewModel vmModEntry = null)
         {
-            VMModEditor.LoadMusicMod(vmModEntry?.MusicMod);
+            /*VMModEditor.LoadMusicMod(vmModEntry?.MusicMod);
             var modalCreateMod = new ModPropertiesModalWindow() { DataContext = VMModEditor };
             var results = await modalCreateMod.ShowDialog<ModPropertiesModalWindow>(parent ?? _rootDialog.Window);
 
@@ -461,7 +386,7 @@ namespace Sm5shMusic.GUI.ViewModels
                     _musicMods.Add(newVmMusicMod);
                     await AddNewBgmEntry(newVmMusicMod);
                 }
-            }
+            }*/
         }
 
         public async Task EditMod(Window parent = null)
@@ -478,7 +403,7 @@ namespace Sm5shMusic.GUI.ViewModels
         #region Playlists Operations
         public void UpdatePlaylists()
         {
-            try
+            /*try
             {
                 //TODO - The data should be first persisted in the Playlists - currently not mapped back to the original PlaylistEntry
                 //TODO - Handle anything saving in a specific service
@@ -488,12 +413,12 @@ namespace Sm5shMusic.GUI.ViewModels
             catch (Exception e)
             {
                 _logger.LogError("Error while saying playlists. Most likely a concurrency issue.", e.Message);
-            }
+            }*/
         }
 
         public async Task AddNewOrEditPlaylist(Window parent = null, PlaylistEntryViewModel vmPlaylist = null)
         {
-            VMPlaylistEditor.LoadPlaylist(vmPlaylist);
+            /*VMPlaylistEditor.LoadPlaylist(vmPlaylist);
             var modalPickerGame = new PlaylistPropertiesModalWindow() { DataContext = VMPlaylistEditor };
             var results = await modalPickerGame.ShowDialog<PlaylistPropertiesModalWindow>(parent ?? _rootDialog.Window);
 
@@ -504,7 +429,7 @@ namespace Sm5shMusic.GUI.ViewModels
                     //TODO - Handle anything saving in a specific service
                     _playlistsEntries.Add(VMPlaylistEditor.SelectedPlaylistEntry);
                 }
-            }
+            }*/
         }
 
         public async Task EditPlaylist(Window parent = null)
@@ -530,17 +455,17 @@ namespace Sm5shMusic.GUI.ViewModels
 
         public async Task DeletePlaylist(PlaylistEntryViewModel vmPlaylistEntry)
         {
-            var result = await _messageDialog.ShowWarningConfirm($"Delete Playlist '{vmPlaylistEntry.Title}'?", "Do you really want to remove this playlist?\r\nIf it's a Core playlist, this could cause unknown issues.");
+            /*var result = await _messageDialog.ShowWarningConfirm($"Delete Playlist '{vmPlaylistEntry.Title}'?", "Do you really want to remove this playlist?\r\nIf it's a Core playlist, this could cause unknown issues.");
             if (result)
             {
                 _playlistsEntries.Remove(vmPlaylistEntry);
                 UpdatePlaylists();
-            }
+            }*/
         }
 
         public async Task AssignPlaylistToStage()
         {
-            VMStageAssignement.LoadControl();
+            /*VMStageAssignement.LoadControl();
             var modalPickerAssignStagePlaylist = new PlaylistStageAssignementModalWindow() { DataContext = VMStageAssignement };
             var results = await modalPickerAssignStagePlaylist.ShowDialog<PlaylistStageAssignementModalWindow>(_rootDialog.Window);
             if (results != null)
@@ -550,7 +475,7 @@ namespace Sm5shMusic.GUI.ViewModels
 
                 //TODO - Handle anything saving in a specific service
                 _sm5shMusicOverride.UpdateMusicStageOverride(_stagesEntries.Select(p => p.GetStageEntryReference()).ToList());
-            }
+            }*/
         }
         #endregion
         #endregion

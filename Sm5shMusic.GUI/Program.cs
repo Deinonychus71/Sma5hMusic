@@ -68,6 +68,8 @@ namespace Sm5shMusic.GUI
             services.AddSingleton<MainWindowViewModel>();
             services.AddSingleton<ModPropertiesModalWindowViewModel>();
             services.AddSingleton<BgmPropertiesModalWindowViewModel>();
+            services.AddSingleton<ContextMenuViewModel>();
+            services.AddSingleton<BgmFiltersViewModel>();
 
             //Add UI Services
             services.AddSingleton<IVGMMusicPlayer, VGMMusicPlayer>();
@@ -75,6 +77,7 @@ namespace Sm5shMusic.GUI
             services.AddSingleton<IMessageDialog, MessageDialog>();
             services.AddSingleton<IBuildDialog, BuildDialog>();
             services.AddSingleton<IViewModelManager, ViewModelManager>();
+            services.AddSingleton<IGUIStateManager, GUIStateManager>();
             services.AddAutoMapper(typeof(MappingViewModels));
 
             //Add to Splat

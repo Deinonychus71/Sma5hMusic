@@ -1,11 +1,9 @@
-﻿using Avalonia.Controls;
-using DynamicData;
+﻿using DynamicData;
 using DynamicData.Binding;
 using Microsoft.Extensions.Logging;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using ReactiveUI.Validation.Extensions;
-using ReactiveUI.Validation.Helpers;
 using Sm5shMusic.GUI.Helpers;
 using Sm5sh.Mods.Music.Interfaces;
 using Sm5sh.Mods.Music.Models;
@@ -13,15 +11,16 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Reactive;
 using System.Reactive.Linq;
 using System.Text.RegularExpressions;
 using ILogger = Microsoft.Extensions.Logging.ILogger;
 using Sm5sh.Mods.Music.Helpers;
+using Sm5shMusic.GUI.Interfaces;
+using AutoMapper;
 
 namespace Sm5shMusic.GUI.ViewModels
 {
-    public class GamePropertiesModalWindowViewModel : ReactiveValidationObject
+    public class GamePropertiesModalWindowViewModel : ModalBaseViewModel<GameTitleEntryViewModel>
     {
         private readonly ReadOnlyObservableCollection<LocaleViewModel> _locales;
         private readonly ReadOnlyObservableCollection<SeriesEntryViewModel> _series;
@@ -29,7 +28,8 @@ namespace Sm5shMusic.GUI.ViewModels
         private const string REGEX_REPLACE = @"[^a-zA-Z0-9_]";
         private string REGEX_VALIDATION = $"^{MusicConstants.InternalIds.GAME_TITLE_ID_PREFIX}[a-z0-9_]+$";
         private readonly ILogger _logger;
-        private readonly AutoMapper.IMapper _mapper;
+        private readonly IGUIStateManager _guiStateManager;
+        private readonly IViewModelManager _viewModelManager;
 
         public IMusicMod ModManager { get; }
 
@@ -39,18 +39,16 @@ namespace Sm5shMusic.GUI.ViewModels
         public string UiGameTitleId { get; set; }
 
         [Reactive]
-        public string NameId { get; set; }
+        public SeriesEntryViewModel SelectedSeries { get; set; }
 
         [Reactive]
-        public SeriesEntryViewModel SelectedSeries { get; set; }
+        public string NameId { get; set; }
 
         [Reactive]
         public bool Unk1 { get; set; }
 
         [Reactive]
         public int Release { get; set; }
-
-        public GameTitleEntryViewModel SelectedGameTitleEntry { get; private set; }
 
         [Reactive]
         public bool IsEdit { get; set; }
@@ -59,14 +57,12 @@ namespace Sm5shMusic.GUI.ViewModels
         public ReadOnlyObservableCollection<GameTitleEntryViewModel> Games { get { return _games; } }
         public ReadOnlyObservableCollection<LocaleViewModel> Locales { get { return _locales; } }
 
-        public ReactiveCommand<Window, Unit> ActionOK { get; }
-        public ReactiveCommand<Window, Unit> ActionCancel { get; }
-
-        public GamePropertiesModalWindowViewModel(ILogger<GamePropertiesModalWindowViewModel> logger, AutoMapper.IMapper mapper, IObservable<IChangeSet<LocaleViewModel, string>> observableLocales,
+        public GamePropertiesModalWindowViewModel(ILogger<GamePropertiesModalWindowViewModel> logger, IViewModelManager viewModelManager, IGUIStateManager guiStateManager, IObservable<IChangeSet<LocaleViewModel, string>> observableLocales,
             IObservable<IChangeSet<SeriesEntryViewModel, string>> observableSeries, IObservable<IChangeSet<GameTitleEntryViewModel, string>> observableGames)
         {
             _logger = logger;
-            _mapper = mapper;
+            _guiStateManager = guiStateManager;
+            _viewModelManager = viewModelManager;
 
             //Bind observables
             observableLocales
@@ -112,36 +108,7 @@ namespace Sm5shMusic.GUI.ViewModels
                 p => !string.IsNullOrEmpty(p),
                 $"Please give a title to your game (in at least one language).");
 
-            var canExecute = this.WhenAnyValue(x => x.ValidationContext.IsValid);
             this.WhenAnyValue(p => p.MSBTTitleEditor.CurrentLocalizedValue).Subscribe((o) => { FormatGameId(o); });
-
-            ActionOK = ReactiveCommand.Create<Window>(SubmitDialogOK, canExecute);
-            ActionCancel = ReactiveCommand.Create<Window>(SubmitDialogCancel);
-        }
-
-        public void LoadGame(GameTitleEntryViewModel gameEntryViewModel)
-        {
-            if (gameEntryViewModel == null)
-            {
-                IsEdit = false;
-                UiGameTitleId = string.Empty;
-                NameId = string.Empty;
-                SelectedSeries = null;
-                Unk1 = false;
-                Release = 0;
-                MSBTTitleEditor.MSBTValues = new Dictionary<string, string>();
-            }
-            else
-            {
-                IsEdit = true;
-                UiGameTitleId = gameEntryViewModel.UiGameTitleId;
-                NameId = gameEntryViewModel.NameId;
-                SelectedSeries = gameEntryViewModel.SeriesViewModel;
-                Unk1 = gameEntryViewModel.Unk1;
-                Release = gameEntryViewModel.Release;
-                MSBTTitleEditor.MSBTValues = gameEntryViewModel.MSBTTitle.ToDictionary(p => p.Key, p => p.Value); //Clone
-                SelectedGameTitleEntry = gameEntryViewModel;
-            }
         }
 
         private void FormatGameId(string gameId)
@@ -161,26 +128,44 @@ namespace Sm5shMusic.GUI.ViewModels
             }
         }
 
-        public void SubmitDialogOK(Window window)
+        protected override void SaveChanges()
         {
             if (!IsEdit)
             {
-                //SelectedGameTitleEntry = new GameTitleEntryViewModel(new GameTitleEntry(UiGameTitleId, EntrySource.Mod));
+                var newGameEntry = new GameTitleEntry(UiGameTitleId, EntrySource.Mod);
+                _guiStateManager.CreateNewGameTitleEntry(newGameEntry);
+                _refSelectedItem = _viewModelManager.GetGameTitleViewModel(UiGameTitleId);
             }
 
-            /*var refGame = SelectedGameTitleEntry.GetReferenceEntity();
-            refGame.MSBTTitle = MSBTTitleEditor.MSBTValues; //Clone
-            refGame.NameId = NameId;
-            refGame.Release = Release;
-            refGame.Unk1 = Unk1;
-            refGame.UiSeriesId = SelectedSeries.SeriesId;
-            _mapper.Map(refGame, SelectedGameTitleEntry);*/
-            window.Close(window);
+            _refSelectedItem.MSBTTitle = MSBTTitleEditor.MSBTValues;
+            _refSelectedItem.NameId = NameId;
+            _refSelectedItem.Release = Release;
+            _refSelectedItem.Unk1 = Unk1;
+            _refSelectedItem.UiSeriesId = SelectedSeries.SeriesId;
         }
 
-        public void SubmitDialogCancel(Window window)
+        protected override void LoadItem()
         {
-            window.Close();
+            if (_refSelectedItem == null)
+            {
+                IsEdit = false;
+                UiGameTitleId = string.Empty;
+                NameId = string.Empty;
+                SelectedSeries = null;
+                Unk1 = false;
+                Release = 0;
+                MSBTTitleEditor.MSBTValues = new Dictionary<string, string>();
+            }
+            else
+            {
+                IsEdit = true;
+                UiGameTitleId = _refSelectedItem.UiGameTitleId;
+                NameId = _refSelectedItem.NameId;
+                SelectedSeries = _refSelectedItem.SeriesViewModel;
+                Unk1 = _refSelectedItem.Unk1;
+                Release = _refSelectedItem.Release;
+                MSBTTitleEditor.MSBTValues = _refSelectedItem.MSBTTitle;
+            }
         }
     }
 }

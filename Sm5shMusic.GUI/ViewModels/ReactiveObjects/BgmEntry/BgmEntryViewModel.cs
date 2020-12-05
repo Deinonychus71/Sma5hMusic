@@ -65,5 +65,16 @@ namespace Sm5shMusic.GUI.ViewModels
             output.GameTitleEntries.Add(DbRootViewModel.GameTitleViewModel.GetReferenceEntity());
             return output;
         }
+
+        public MusicModDeleteEntries GetMusicModDeleteEntries()
+        {
+            var output = new MusicModDeleteEntries();
+            output.BgmDbRootEntries.Add(DbRootViewModel.GetReferenceEntity().UiBgmId);
+            output.BgmStreamSetEntries.Add(StreamSetViewModel.GetReferenceEntity().StreamSetId);
+            output.BgmAssignedInfoEntries.Add(AssignedInfoViewModel.GetReferenceEntity().InfoId);
+            output.BgmStreamPropertyEntries.Add(StreamPropertyViewModel.GetReferenceEntity().StreamId);
+            output.BgmPropertyEntries.Add(BgmPropertyViewModel.GetReferenceEntity().NameId);
+            return output;
+        }
     }
 }

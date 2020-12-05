@@ -17,7 +17,7 @@ namespace Sm5shMusic.GUI.ViewModels
     {
         private T _refBgmBaseEntity;
         protected IMapper _mapper;
-        protected IViewModelManager _audioStateManager;
+        protected IViewModelManager _viewModelManager;
 
         //Helper Getters
         public IMusicMod MusicMod { get; }
@@ -29,9 +29,9 @@ namespace Sm5shMusic.GUI.ViewModels
         public string ModPath { get { return MusicMod?.ModPath; } }
         public bool IsMod { get { return Source == EntrySource.Mod; } }
 
-        public BgmBaseViewModel(IViewModelManager audioStateManager, IMapper mapper, T bgmBaseEntity)
+        public BgmBaseViewModel(IViewModelManager viewModeManager, IMapper mapper, T bgmBaseEntity)
         {
-            _audioStateManager = audioStateManager;
+            _viewModelManager = viewModeManager;
             _refBgmBaseEntity = bgmBaseEntity;
             _mapper = mapper;
             MusicMod = bgmBaseEntity?.MusicMod;

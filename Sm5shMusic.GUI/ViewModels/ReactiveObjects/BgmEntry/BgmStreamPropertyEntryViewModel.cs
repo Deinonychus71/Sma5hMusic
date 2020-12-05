@@ -25,27 +25,27 @@ namespace Sm5shMusic.GUI.ViewModels
         public string StartPoint4 { get; set; }
 
         //Getter Helpers
-        public BgmPropertyEntryViewModel DataName0ViewModel { get { return _audioStateManager.GetBgmPropertyViewModel(DataName0); } }
-        public BgmPropertyEntryViewModel DataName1ViewModel { get { return _audioStateManager.GetBgmPropertyViewModel(DataName1); } }
-        public BgmPropertyEntryViewModel DataName2ViewModel { get { return _audioStateManager.GetBgmPropertyViewModel(DataName2); } }
-        public BgmPropertyEntryViewModel DataName3ViewModel { get { return _audioStateManager.GetBgmPropertyViewModel(DataName3); } }
-        public BgmPropertyEntryViewModel DataName4ViewModel { get { return _audioStateManager.GetBgmPropertyViewModel(DataName4); } }
+        public BgmPropertyEntryViewModel DataName0ViewModel { get { return _viewModelManager.GetBgmPropertyViewModel(DataName0); } }
+        public BgmPropertyEntryViewModel DataName1ViewModel { get { return _viewModelManager.GetBgmPropertyViewModel(DataName1); } }
+        public BgmPropertyEntryViewModel DataName2ViewModel { get { return _viewModelManager.GetBgmPropertyViewModel(DataName2); } }
+        public BgmPropertyEntryViewModel DataName3ViewModel { get { return _viewModelManager.GetBgmPropertyViewModel(DataName3); } }
+        public BgmPropertyEntryViewModel DataName4ViewModel { get { return _viewModelManager.GetBgmPropertyViewModel(DataName4); } }
 
 
-        public BgmStreamPropertyEntryViewModel(IViewModelManager audioStateManager, IMapper mapper, BgmStreamPropertyEntry bgmStreamPropertyEntry)
-            : base(audioStateManager, mapper, bgmStreamPropertyEntry)
+        public BgmStreamPropertyEntryViewModel(IViewModelManager viewModelManager, IMapper mapper, BgmStreamPropertyEntry bgmStreamPropertyEntry)
+            : base(viewModelManager, mapper, bgmStreamPropertyEntry)
         {
             StreamId = bgmStreamPropertyEntry.StreamId;
         }
 
         public override ReactiveObjectBaseViewModel GetCopy()
         {
-            return _mapper.Map(this, new BgmStreamPropertyEntryViewModel(_audioStateManager, _mapper, new BgmStreamPropertyEntry(StreamId, MusicMod)));
+            return _mapper.Map(this, new BgmStreamPropertyEntryViewModel(_viewModelManager, _mapper, new BgmStreamPropertyEntry(StreamId, MusicMod)));
         }
 
         public override ReactiveObjectBaseViewModel SaveChanges()
         {
-            var original = _audioStateManager.GetBgmStreamPropertyViewModel(StreamId);
+            var original = _viewModelManager.GetBgmStreamPropertyViewModel(StreamId);
             _mapper.Map(this, original.GetReferenceEntity());
             _mapper.Map(this, original);
             return original;
