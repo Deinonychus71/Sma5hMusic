@@ -84,6 +84,7 @@ namespace Sm5shMusic.GUI.ViewModels
             VMContextMenu.WhenLocaleChanged.Subscribe((locale) => _currentLocale = locale);
             var observableBgmDbRootEntriesList = viewModelManager.ObservableDbRootEntries
                 .DeferUntilLoaded()
+                .Filter(p => p.UiBgmId != "ui_bgm_random")
                 .AutoRefreshOnObservable(p => VMContextMenu.WhenLocaleChanged)
                 .ForEachChange(o => o.Current.LoadLocalized(_currentLocale));
             var observableGameEntriesList = viewModelManager.ObservableGameTitles
