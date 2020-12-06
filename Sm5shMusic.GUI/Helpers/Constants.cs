@@ -4,6 +4,8 @@ namespace Sm5shMusic.GUI.Helpers
 {
     public static class Constants
     {
+        public const double GUIVersion = 0.5;
+
         public class SpecialCategories
         {
             public const string SPECIAL_CATEGORY_PERSONA_STAGE_3_VALUE = "jack_mementoes_p3";

@@ -7,6 +7,7 @@ using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using Sm5sh.Mods.Music.Interfaces;
 using Sm5shMusic.GUI.Dialogs;
+using Sm5shMusic.GUI.Helpers;
 using Sm5shMusic.GUI.Interfaces;
 using Sm5shMusic.GUI.Views;
 using System;
@@ -75,6 +76,8 @@ namespace Sm5shMusic.GUI.ViewModels
             _logger = logger;
             _mapper = mapper;
             IsLoading = true;
+
+            _logger.LogInformation($"GUI Version: {Constants.GUIVersion}");
 
             //Initialize Contextual Menu view
             VMContextMenu = ActivatorUtilities.CreateInstance<ContextMenuViewModel>(serviceProvider, viewModelManager.ObservableModsEntries, viewModelManager.ObservableLocales);
