@@ -30,7 +30,7 @@ namespace Sm5sh.Mods.Music.MusicMods
                 return null;
             }
 
-            var metadataCsvFile = Path.Combine(ModPath, Constants.MusicModFiles.MUSIC_MOD_METADATA_CSV_FILE);
+            var metadataCsvFile = Path.Combine(ModPath, MusicConstants.MusicModFiles.MUSIC_MOD_METADATA_CSV_FILE);
             if (File.Exists(metadataCsvFile))
             {
                 _logger.LogDebug("Parsing {MusicModFile} CSV File", metadataCsvFile);

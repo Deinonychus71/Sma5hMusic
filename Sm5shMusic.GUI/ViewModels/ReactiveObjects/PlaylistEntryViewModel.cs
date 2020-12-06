@@ -1,8 +1,7 @@
-﻿using ReactiveUI;
-using ReactiveUI.Fody.Helpers;
-using Sm5shMusic.GUI.Helpers;
+﻿using ReactiveUI.Fody.Helpers;
 using Sm5sh.Mods.Music.Models;
 using Sm5sh.Mods.Music.Models.PlaylistEntryModels;
+using Sm5shMusic.GUI.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -10,7 +9,7 @@ using System.Linq;
 
 namespace Sm5shMusic.GUI.ViewModels
 {
-    public class PlaylistEntryViewModel : ReactiveObject
+    public class PlaylistEntryViewModel : ReactiveObjectBaseViewModel
     {
         protected readonly PlaylistEntry _refPlaylistEntry;
         private List<string> _allTracks;
@@ -26,7 +25,7 @@ namespace Sm5shMusic.GUI.ViewModels
 
         public List<string> AllTracks { get { return GetAllTracks(); } }
 
-        public PlaylistEntryViewModel(PlaylistEntry playlistEntry, Dictionary<string, BgmEntryViewModel> refBgms = null)
+        public PlaylistEntryViewModel(PlaylistEntry playlistEntry, Dictionary<string, BgmDbRootEntryViewModel> refBgms = null)
         {
             _refPlaylistEntry = playlistEntry;
             if (string.IsNullOrEmpty(playlistEntry.Title))
@@ -65,16 +64,17 @@ namespace Sm5shMusic.GUI.ViewModels
             }
         }
 
-        public PlaylistEntryValueViewModel AddSong(BgmEntryViewModel sourceObj, short orderId, short destinationIndex)
+        public PlaylistEntryValueViewModel AddSong(BgmDbRootEntryViewModel sourceObj, short orderId, short destinationIndex)
         {
             PlaylistEntryValueViewModel output = null;
 
             for (short i = 0; i < 16; i++)
             {
-                var newValue = new PlaylistEntryValueViewModel(this, i, sourceObj.DbRoot.UiBgmId, destinationIndex, 5000, sourceObj);
+                var newValue = new PlaylistEntryValueViewModel(this, sourceObj.UiBgmId, destinationIndex, 5000, sourceObj);
                 Tracks[i].Add(newValue);
                 if (i == orderId)
                     output = newValue;
+                ReorderSongs(i);
             }
 
             _cachedTracks = false;
@@ -139,7 +139,7 @@ namespace Sm5shMusic.GUI.ViewModels
             return output;
         }
 
-        public Dictionary<short, ObservableCollection<PlaylistEntryValueViewModel>> ToPlaylistValueViewModelsByOrder(Dictionary<string, BgmEntryViewModel> refBgms)
+        public Dictionary<short, ObservableCollection<PlaylistEntryValueViewModel>> ToPlaylistValueViewModelsByOrder(Dictionary<string, BgmDbRootEntryViewModel> refBgms)
         {
             var output = new Dictionary<short, List<PlaylistEntryValueViewModel>>();
             for (short i = 0; i < 16; i++)
@@ -147,7 +147,7 @@ namespace Sm5shMusic.GUI.ViewModels
 
             foreach (var track in _refPlaylistEntry.Tracks)
             {
-                BgmEntryViewModel vmBgmEntry = null;
+                BgmDbRootEntryViewModel vmBgmEntry = null;
                 if (refBgms != null && refBgms.ContainsKey(track.UiBgmId))
                     vmBgmEntry = refBgms[track.UiBgmId];
 
@@ -156,52 +156,52 @@ namespace Sm5shMusic.GUI.ViewModels
                     switch (i)
                     {
                         case 0:
-                            output[i].Add(new PlaylistEntryValueViewModel(this, i, track.UiBgmId, track.Order0, track.Incidence0, vmBgmEntry));
+                            output[i].Add(new PlaylistEntryValueViewModel(this, track.UiBgmId, track.Order0, track.Incidence0, vmBgmEntry));
                             break;
                         case 1:
-                            output[i].Add(new PlaylistEntryValueViewModel(this, i, track.UiBgmId, track.Order1, track.Incidence1, vmBgmEntry));
+                            output[i].Add(new PlaylistEntryValueViewModel(this, track.UiBgmId, track.Order1, track.Incidence1, vmBgmEntry));
                             break;
                         case 2:
-                            output[i].Add(new PlaylistEntryValueViewModel(this, i, track.UiBgmId, track.Order2, track.Incidence2, vmBgmEntry));
+                            output[i].Add(new PlaylistEntryValueViewModel(this, track.UiBgmId, track.Order2, track.Incidence2, vmBgmEntry));
                             break;
                         case 3:
-                            output[i].Add(new PlaylistEntryValueViewModel(this, i, track.UiBgmId, track.Order3, track.Incidence3, vmBgmEntry));
+                            output[i].Add(new PlaylistEntryValueViewModel(this, track.UiBgmId, track.Order3, track.Incidence3, vmBgmEntry));
                             break;
                         case 4:
-                            output[i].Add(new PlaylistEntryValueViewModel(this, i, track.UiBgmId, track.Order4, track.Incidence4, vmBgmEntry));
+                            output[i].Add(new PlaylistEntryValueViewModel(this, track.UiBgmId, track.Order4, track.Incidence4, vmBgmEntry));
                             break;
                         case 5:
-                            output[i].Add(new PlaylistEntryValueViewModel(this, i, track.UiBgmId, track.Order5, track.Incidence5, vmBgmEntry));
+                            output[i].Add(new PlaylistEntryValueViewModel(this, track.UiBgmId, track.Order5, track.Incidence5, vmBgmEntry));
                             break;
                         case 6:
-                            output[i].Add(new PlaylistEntryValueViewModel(this, i, track.UiBgmId, track.Order6, track.Incidence6, vmBgmEntry));
+                            output[i].Add(new PlaylistEntryValueViewModel(this, track.UiBgmId, track.Order6, track.Incidence6, vmBgmEntry));
                             break;
                         case 7:
-                            output[i].Add(new PlaylistEntryValueViewModel(this, i, track.UiBgmId, track.Order7, track.Incidence7, vmBgmEntry));
+                            output[i].Add(new PlaylistEntryValueViewModel(this, track.UiBgmId, track.Order7, track.Incidence7, vmBgmEntry));
                             break;
                         case 8:
-                            output[i].Add(new PlaylistEntryValueViewModel(this, i, track.UiBgmId, track.Order8, track.Incidence8, vmBgmEntry));
+                            output[i].Add(new PlaylistEntryValueViewModel(this, track.UiBgmId, track.Order8, track.Incidence8, vmBgmEntry));
                             break;
                         case 9:
-                            output[i].Add(new PlaylistEntryValueViewModel(this, i, track.UiBgmId, track.Order9, track.Incidence9, vmBgmEntry));
+                            output[i].Add(new PlaylistEntryValueViewModel(this, track.UiBgmId, track.Order9, track.Incidence9, vmBgmEntry));
                             break;
                         case 10:
-                            output[i].Add(new PlaylistEntryValueViewModel(this, i, track.UiBgmId, track.Order10, track.Incidence10, vmBgmEntry));
+                            output[i].Add(new PlaylistEntryValueViewModel(this, track.UiBgmId, track.Order10, track.Incidence10, vmBgmEntry));
                             break;
                         case 11:
-                            output[i].Add(new PlaylistEntryValueViewModel(this, i, track.UiBgmId, track.Order11, track.Incidence11, vmBgmEntry));
+                            output[i].Add(new PlaylistEntryValueViewModel(this, track.UiBgmId, track.Order11, track.Incidence11, vmBgmEntry));
                             break;
                         case 12:
-                            output[i].Add(new PlaylistEntryValueViewModel(this, i, track.UiBgmId, track.Order12, track.Incidence12, vmBgmEntry));
+                            output[i].Add(new PlaylistEntryValueViewModel(this, track.UiBgmId, track.Order12, track.Incidence12, vmBgmEntry));
                             break;
                         case 13:
-                            output[i].Add(new PlaylistEntryValueViewModel(this, i, track.UiBgmId, track.Order13, track.Incidence13, vmBgmEntry));
+                            output[i].Add(new PlaylistEntryValueViewModel(this, track.UiBgmId, track.Order13, track.Incidence13, vmBgmEntry));
                             break;
                         case 14:
-                            output[i].Add(new PlaylistEntryValueViewModel(this, i, track.UiBgmId, track.Order14, track.Incidence14, vmBgmEntry));
+                            output[i].Add(new PlaylistEntryValueViewModel(this, track.UiBgmId, track.Order14, track.Incidence14, vmBgmEntry));
                             break;
                         case 15:
-                            output[i].Add(new PlaylistEntryValueViewModel(this, i, track.UiBgmId, track.Order15, track.Incidence15, vmBgmEntry));
+                            output[i].Add(new PlaylistEntryValueViewModel(this, track.UiBgmId, track.Order15, track.Incidence15, vmBgmEntry));
                             break;
                         default:
                             throw new Exception("Wrong Order Id");
@@ -216,8 +216,7 @@ namespace Sm5shMusic.GUI.ViewModels
             if (obj == null)
                 return false;
 
-            PlaylistEntryViewModel p = obj as PlaylistEntryViewModel;
-            if (p == null)
+            if (!(obj is PlaylistEntryViewModel p))
                 return false;
 
             return p.Id == this.Id;
@@ -226,6 +225,16 @@ namespace Sm5shMusic.GUI.ViewModels
         public override int GetHashCode()
         {
             return base.GetHashCode();
+        }
+
+        public override ReactiveObjectBaseViewModel GetCopy()
+        {
+            return this; //Not needed for this object
+        }
+
+        public override ReactiveObjectBaseViewModel SaveChanges()
+        {
+            return this; //Not needed for this object
         }
     }
 }

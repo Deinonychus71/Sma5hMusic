@@ -7,9 +7,9 @@ namespace Sm5shMusic.GUI.ViewModels
     public class BgmPropertiesViewModel : ViewModelBase
     {
         [Reactive]
-        public BgmEntryViewModel SelectedBgmEntry { get; set; }
+        public BgmDbRootEntryViewModel SelectedBgmEntry { get; set; }
 
-        public BgmPropertiesViewModel(IObservable<BgmEntryViewModel> observableBgmEntry)
+        public BgmPropertiesViewModel(IObservable<BgmDbRootEntryViewModel> observableBgmEntry)
         {
             observableBgmEntry.Subscribe(o =>
             {

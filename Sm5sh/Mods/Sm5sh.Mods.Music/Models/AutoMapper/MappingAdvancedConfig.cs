@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using System.IO;
 
 namespace Sm5sh.Mods.Music.Models.AutoMapper
 {
@@ -41,34 +40,7 @@ namespace Sm5sh.Mods.Music.Models.AutoMapper
                 .ForMember(i => i.UiSeriesId, me => me.MapFrom(p => p.UiSeriesId))
                 .ForMember(i => i.Unk1, me => me.MapFrom(p => p.Unk1));
 
-            CreateMap<BgmEntry, MusicMods.AdvancedMusicModModels.BgmConfig>()
-                .ForMember(i => i.ToneId, me => me.MapFrom(p => p.ToneId))
-                .ForMember(i => i.Filename, me => me.MapFrom(p => Path.GetFileName(p.Filename)))
-                .ForMember(i => i.DbRoot, me => me.MapFrom(p => p.DbRoot))
-                .ForMember(i => i.StreamSet, me => me.MapFrom(p => p.StreamSet))
-                .ForMember(i => i.StreamingProperty, me => me.MapFrom(p => p.StreamingProperty))
-                .ForMember(i => i.AssignedInfo, me => me.MapFrom(p => p.AssignedInfo))
-                .ForMember(i => i.BgmProperties, me => me.MapFrom(p => p.BgmProperties))
-                .ForMember(i => i.MSBTLabels, me => me.MapFrom(p => p.MSBTLabels))
-                .ForMember(i => i.NUS3BankConfig, me => me.MapFrom(p => p.NUS3BankConfig));
-            CreateMap<MusicMods.AdvancedMusicModModels.BgmConfig, BgmEntry>()
-                .ForMember(i => i.ToneId, me => me.MapFrom(p => p.ToneId))
-                .ForMember(i => i.Filename, me => me.MapFrom(p => p.Filename))
-                .ForMember(i => i.DbRoot, me => me.MapFrom(p => p.DbRoot))
-                .ForMember(i => i.StreamSet, me => me.MapFrom(p => p.StreamSet))
-                .ForMember(i => i.StreamingProperty, me => me.MapFrom(p => p.StreamingProperty))
-                .ForMember(i => i.AssignedInfo, me => me.MapFrom(p => p.AssignedInfo))
-                .ForMember(i => i.BgmProperties, me => me.MapFrom(p => p.BgmProperties))
-                .ForMember(i => i.MSBTLabels, me => me.MapFrom(p => p.MSBTLabels))
-                .ForMember(i => i.NUS3BankConfig, me => me.MapFrom(p => p.NUS3BankConfig));
-
-            CreateMap<BgmEntryModels.NUS3BankConfigEntry, MusicMods.AdvancedMusicModModels.NUS3BankConfig>()
-                .ForMember(i => i.AudioVolume, me => me.MapFrom(p => p.AudioVolume));
-            CreateMap<MusicMods.AdvancedMusicModModels.NUS3BankConfig, BgmEntryModels.NUS3BankConfigEntry>()
-                .ForMember(i => i.Parent, me => me.Ignore())
-                .ForMember(i => i.AudioVolume, me => me.MapFrom(p => p.AudioVolume));
-
-            CreateMap<BgmEntryModels.BgmPropertyEntry, MusicMods.AdvancedMusicModModels.BgmPropertyEntryConfig>()
+            CreateMap<BgmPropertyEntry, MusicMods.AdvancedMusicModModels.BgmPropertyEntryConfig>()
                 .ForMember(i => i.LoopEndMs, me => me.MapFrom(p => p.LoopEndMs))
                 .ForMember(i => i.LoopEndSample, me => me.MapFrom(p => p.LoopEndSample))
                 .ForMember(i => i.LoopStartMs, me => me.MapFrom(p => p.LoopStartMs))
@@ -76,8 +48,7 @@ namespace Sm5sh.Mods.Music.Models.AutoMapper
                 .ForMember(i => i.NameId, me => me.MapFrom(p => p.NameId))
                 .ForMember(i => i.TotalSamples, me => me.MapFrom(p => p.TotalSamples))
                 .ForMember(i => i.TotalTimeMs, me => me.MapFrom(p => p.TotalTimeMs));
-            CreateMap<MusicMods.AdvancedMusicModModels.BgmPropertyEntryConfig, BgmEntryModels.BgmPropertyEntry>()
-                .ForMember(i => i.Parent, me => me.Ignore())
+            CreateMap<MusicMods.AdvancedMusicModModels.BgmPropertyEntryConfig, BgmPropertyEntry>()
                 .ForMember(i => i.LoopEndMs, me => me.MapFrom(p => p.LoopEndMs))
                 .ForMember(i => i.LoopEndSample, me => me.MapFrom(p => p.LoopEndSample))
                 .ForMember(i => i.LoopStartMs, me => me.MapFrom(p => p.LoopStartMs))
@@ -87,20 +58,7 @@ namespace Sm5sh.Mods.Music.Models.AutoMapper
                 .ForMember(i => i.TotalTimeMs, me => me.MapFrom(p => p.TotalTimeMs))
                 .ForMember(i => i.Frequency, me => me.Ignore());
 
-            CreateMap<BgmEntryModels.MSBTLabelsEntry, MusicMods.AdvancedMusicModModels.MSBTLabelsConfig>()
-                .ForMember(i => i.Author, me => me.MapFrom(p => p.Author))
-                .ForMember(i => i.Copyright, me => me.MapFrom(p => p.Copyright))
-                .ForMember(i => i.Title, me => me.MapFrom(p => p.Title));
-            CreateMap<MusicMods.AdvancedMusicModModels.MSBTLabelsConfig, BgmEntryModels.MSBTLabelsEntry>()
-                 .ForMember(i => i.Parent, me => me.Ignore())
-                .ForMember(i => i.Author, me => me.MapFrom(p => p.Author))
-                .ForMember(i => i.Copyright, me => me.MapFrom(p => p.Copyright))
-                .ForMember(i => i.Title, me => me.MapFrom(p => p.Title))
-                .ForMember(i => i.AuthorKey, me => me.Ignore())
-                .ForMember(i => i.CopyrightKey, me => me.Ignore())
-                .ForMember(i => i.TitleKey, me => me.Ignore());
-
-            CreateMap<BgmEntryModels.BgmDbRootEntry, MusicMods.AdvancedMusicModModels.BgmDbRootConfig>()
+            CreateMap<BgmDbRootEntry, MusicMods.AdvancedMusicModModels.BgmDbRootConfig>()
                 .ForMember(i => i.UiBgmId, me => me.MapFrom(p => p.UiBgmId))
                 .ForMember(i => i.StreamSetId, me => me.MapFrom(p => p.StreamSetId))
                 .ForMember(i => i.Rarity, me => me.MapFrom(p => p.Rarity))
@@ -127,12 +85,15 @@ namespace Sm5sh.Mods.Music.Models.AutoMapper
                 .ForMember(i => i.IsPatch, me => me.MapFrom(p => p.IsPatch))
                 .ForMember(i => i.Unk3, me => me.MapFrom(p => p.Unk3))
                 .ForMember(i => i.Unk4, me => me.MapFrom(p => p.Unk4))
-                .ForMember(i => i.Unk5, me => me.MapFrom(p => p.Unk5));
-            CreateMap<MusicMods.AdvancedMusicModModels.BgmDbRootConfig, BgmEntryModels.BgmDbRootEntry>()
+                .ForMember(i => i.Unk5, me => me.MapFrom(p => p.Unk5))
+                .ForMember(i => i.Title, me => me.MapFrom(p => p.Title))
+                .ForMember(i => i.Author, me => me.MapFrom(p => p.Author))
+                .ForMember(i => i.Copyright, me => me.MapFrom(p => p.Copyright));
+            CreateMap<MusicMods.AdvancedMusicModModels.BgmDbRootConfig, BgmDbRootEntry>()
                 .ForMember(i => i.UiBgmId, me => me.Ignore())
-                .ForMember(i => i.StreamSetId, me => me.Ignore())
+                .ForMember(i => i.StreamSetId, me => me.MapFrom(p => p.StreamSetId))
                 .ForMember(i => i.Rarity, me => me.MapFrom(p => p.Rarity))
-                .ForMember(i => i.UiGameTitleId, me => me.Ignore())
+                .ForMember(i => i.UiGameTitleId, me => me.MapFrom(p => p.UiGameTitleId))
                 .ForMember(i => i.UiGameTitleId1, me => me.MapFrom(p => p.UiGameTitleId1))
                 .ForMember(i => i.UiGameTitleId2, me => me.MapFrom(p => p.UiGameTitleId2))
                 .ForMember(i => i.UiGameTitleId3, me => me.MapFrom(p => p.UiGameTitleId3))
@@ -155,9 +116,12 @@ namespace Sm5sh.Mods.Music.Models.AutoMapper
                 .ForMember(i => i.IsPatch, me => me.MapFrom(p => p.IsPatch))
                 .ForMember(i => i.Unk3, me => me.MapFrom(p => p.Unk3))
                 .ForMember(i => i.Unk4, me => me.MapFrom(p => p.Unk4))
-                .ForMember(i => i.Unk5, me => me.MapFrom(p => p.Unk5));
+                .ForMember(i => i.Unk5, me => me.MapFrom(p => p.Unk5))
+                .ForMember(i => i.Title, me => me.MapFrom(p => p.Title))
+                .ForMember(i => i.Author, me => me.MapFrom(p => p.Author))
+                .ForMember(i => i.Copyright, me => me.MapFrom(p => p.Copyright));
 
-            CreateMap<BgmEntryModels.BgmStreamSetEntry, MusicMods.AdvancedMusicModModels.BgmStreamSetConfig>()
+            CreateMap<BgmStreamSetEntry, MusicMods.AdvancedMusicModModels.BgmStreamSetConfig>()
                 .ForMember(i => i.StreamSetId, me => me.MapFrom(p => p.StreamSetId))
                 .ForMember(i => i.SpecialCategory, me => me.MapFrom(p => p.SpecialCategory))
                 .ForMember(i => i.Info0, me => me.MapFrom(p => p.Info0))
@@ -176,11 +140,10 @@ namespace Sm5sh.Mods.Music.Models.AutoMapper
                 .ForMember(i => i.Info13, me => me.MapFrom(p => p.Info13))
                 .ForMember(i => i.Info14, me => me.MapFrom(p => p.Info14))
                 .ForMember(i => i.Info15, me => me.MapFrom(p => p.Info15));
-            CreateMap<MusicMods.AdvancedMusicModModels.BgmStreamSetConfig, BgmEntryModels.BgmStreamSetEntry>()
-                .ForMember(i => i.Parent, me => me.Ignore())
+            CreateMap<MusicMods.AdvancedMusicModModels.BgmStreamSetConfig, BgmStreamSetEntry>()
                 .ForMember(i => i.StreamSetId, me => me.Ignore())
                 .ForMember(i => i.SpecialCategory, me => me.MapFrom(p => p.SpecialCategory))
-                .ForMember(i => i.Info0, me => me.Ignore())
+                .ForMember(i => i.Info0, me => me.MapFrom(p => p.Info0))
                 .ForMember(i => i.Info1, me => me.MapFrom(p => p.Info1))
                 .ForMember(i => i.Info2, me => me.MapFrom(p => p.Info2))
                 .ForMember(i => i.Info3, me => me.MapFrom(p => p.Info3))
@@ -197,7 +160,7 @@ namespace Sm5sh.Mods.Music.Models.AutoMapper
                 .ForMember(i => i.Info14, me => me.MapFrom(p => p.Info14))
                 .ForMember(i => i.Info15, me => me.MapFrom(p => p.Info15));
 
-            CreateMap<BgmEntryModels.BgmAssignedInfoEntry, MusicMods.AdvancedMusicModModels.BgmAssignedInfoConfig>()
+            CreateMap<BgmAssignedInfoEntry, MusicMods.AdvancedMusicModModels.BgmAssignedInfoConfig>()
                 .ForMember(i => i.InfoId, me => me.MapFrom(p => p.InfoId))
                 .ForMember(i => i.StreamId, me => me.MapFrom(p => p.StreamId))
                 .ForMember(i => i.Condition, me => me.MapFrom(p => p.Condition))
@@ -211,10 +174,9 @@ namespace Sm5sh.Mods.Music.Models.AutoMapper
                 .ForMember(i => i.MenuChangeStartDelayFrame, me => me.MapFrom(p => p.MenuChangeStartDelayFrame))
                 .ForMember(i => i.MenuChangeFadeOutFrame, me => me.MapFrom(p => p.MenuChangeFadeOutFrame))
                 .ForMember(i => i.Unk1, me => me.MapFrom(p => p.Unk1));
-            CreateMap<MusicMods.AdvancedMusicModModels.BgmAssignedInfoConfig, BgmEntryModels.BgmAssignedInfoEntry>()
-                .ForMember(i => i.Parent, me => me.Ignore())
+            CreateMap<MusicMods.AdvancedMusicModModels.BgmAssignedInfoConfig, BgmAssignedInfoEntry>()
                 .ForMember(i => i.InfoId, me => me.Ignore())
-                .ForMember(i => i.StreamId, me => me.Ignore())
+                .ForMember(i => i.StreamId, me => me.MapFrom(p => p.StreamId))
                 .ForMember(i => i.Condition, me => me.MapFrom(p => p.Condition))
                 .ForMember(i => i.ConditionProcess, me => me.MapFrom(p => p.ConditionProcess))
                 .ForMember(i => i.StartFrame, me => me.MapFrom(p => p.StartFrame))
@@ -227,7 +189,7 @@ namespace Sm5sh.Mods.Music.Models.AutoMapper
                 .ForMember(i => i.MenuChangeFadeOutFrame, me => me.MapFrom(p => p.MenuChangeFadeOutFrame))
                 .ForMember(i => i.Unk1, me => me.MapFrom(p => p.Unk1));
 
-            CreateMap<BgmEntryModels.BgmStreamPropertyEntry, MusicMods.AdvancedMusicModModels.BgmStreamPropertyConfig>()
+            CreateMap<BgmStreamPropertyEntry, MusicMods.AdvancedMusicModModels.BgmStreamPropertyConfig>()
                 .ForMember(i => i.StreamId, me => me.MapFrom(p => p.StreamId))
                 .ForMember(i => i.DataName0, me => me.MapFrom(p => p.DataName0))
                 .ForMember(i => i.DataName1, me => me.MapFrom(p => p.DataName1))
@@ -244,10 +206,9 @@ namespace Sm5sh.Mods.Music.Models.AutoMapper
                 .ForMember(i => i.StartPoint2, me => me.MapFrom(p => p.StartPoint2))
                 .ForMember(i => i.StartPoint3, me => me.MapFrom(p => p.StartPoint3))
                 .ForMember(i => i.StartPoint4, me => me.MapFrom(p => p.StartPoint4));
-            CreateMap<MusicMods.AdvancedMusicModModels.BgmStreamPropertyConfig, BgmEntryModels.BgmStreamPropertyEntry>()
-               .ForMember(i => i.Parent, me => me.Ignore())
+            CreateMap<MusicMods.AdvancedMusicModModels.BgmStreamPropertyConfig, BgmStreamPropertyEntry>()
                .ForMember(i => i.StreamId, me => me.Ignore())
-               .ForMember(i => i.DataName0, me => me.Ignore())
+               .ForMember(i => i.DataName0, me => me.MapFrom(p => p.DataName0))
                .ForMember(i => i.DataName1, me => me.MapFrom(p => p.DataName1))
                .ForMember(i => i.DataName2, me => me.MapFrom(p => p.DataName2))
                .ForMember(i => i.DataName3, me => me.MapFrom(p => p.DataName3))

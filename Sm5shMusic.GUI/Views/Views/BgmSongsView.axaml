@@ -36,7 +36,7 @@
             <DataGridTemplateColumn.CellTemplate>
               <DataTemplate>
                 <TextBlock Margin="{StaticResource DataGridTextColumnCellTextBlockMargin}" VerticalAlignment="Center" 
-                           Foreground="{Binding DbRoot.TestDispOrder, Converter={StaticResource HiddenColumnConverter}}" Text="{Binding GameTitleViewModel.SeriesViewModel.Title, Mode=OneWay}"></TextBlock>
+                           Foreground="{Binding TestDispOrder, Converter={StaticResource HiddenColumnConverter}}" Text="{Binding GameTitleViewModel.SeriesViewModel.Title, Mode=OneWay}"></TextBlock>
               </DataTemplate>
             </DataGridTemplateColumn.CellTemplate>
           </DataGridTemplateColumn>
@@ -44,7 +44,7 @@
             <DataGridTemplateColumn.CellTemplate>
               <DataTemplate>
                 <TextBlock Margin="{StaticResource DataGridTextColumnCellTextBlockMargin}" VerticalAlignment="Center" 
-                           Foreground="{Binding DbRoot.TestDispOrder, Converter={StaticResource HiddenColumnConverter}}" Text="{Binding GameTitleViewModel.Title, Mode=OneWay}"></TextBlock>
+                           Foreground="{Binding TestDispOrder, Converter={StaticResource HiddenColumnConverter}}" Text="{Binding GameTitleViewModel.Title, Mode=OneWay}"></TextBlock>
               </DataTemplate>
             </DataGridTemplateColumn.CellTemplate>
           </DataGridTemplateColumn>
@@ -52,7 +52,7 @@
             <DataGridTemplateColumn.CellTemplate>
               <DataTemplate>
                 <TextBlock Margin="{StaticResource DataGridTextColumnCellTextBlockMargin}" VerticalAlignment="Center" 
-                           Foreground="{Binding DbRoot.TestDispOrder, Converter={StaticResource HiddenColumnConverter}}" Text="{Binding Title, Mode=OneWay}"></TextBlock>
+                           Foreground="{Binding TestDispOrder, Converter={StaticResource HiddenColumnConverter}}" Text="{Binding Title, Mode=OneWay}"></TextBlock>
               </DataTemplate>
             </DataGridTemplateColumn.CellTemplate>
           </DataGridTemplateColumn>
@@ -60,7 +60,7 @@
             <DataGridTemplateColumn.CellTemplate>
               <DataTemplate>
                 <TextBlock Margin="{StaticResource DataGridTextColumnCellTextBlockMargin}" VerticalAlignment="Center" 
-                           Foreground="{Binding DbRoot.TestDispOrder, Converter={StaticResource HiddenColumnConverter}}" Text="{Binding DbRoot.RecordType, Converter={StaticResource RecordTypeConverter}, Mode=OneWay}"></TextBlock>
+                           Foreground="{Binding TestDispOrder, Converter={StaticResource HiddenColumnConverter}}" Text="{Binding RecordType, Converter={StaticResource RecordTypeConverter}, Mode=OneWay}"></TextBlock>
               </DataTemplate>
             </DataGridTemplateColumn.CellTemplate>
           </DataGridTemplateColumn>
@@ -68,7 +68,7 @@
             <DataGridTemplateColumn.CellTemplate>
               <DataTemplate>
                 <TextBlock Margin="{StaticResource DataGridTextColumnCellTextBlockMargin}" VerticalAlignment="Center" 
-                           Foreground="{Binding DbRoot.TestDispOrder, Converter={StaticResource HiddenColumnConverter}}" Text="{Binding ModName, Mode=OneWay}"></TextBlock>
+                           Foreground="{Binding TestDispOrder, Converter={StaticResource HiddenColumnConverter}}" Text="{Binding MusicModViewModel.Name, Mode=OneWay}"></TextBlock>
               </DataTemplate>
             </DataGridTemplateColumn.CellTemplate>
           </DataGridTemplateColumn>

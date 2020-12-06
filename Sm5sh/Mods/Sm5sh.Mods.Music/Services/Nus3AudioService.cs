@@ -30,8 +30,8 @@ namespace Sm5sh.Mods.Music.Services
             _processService = processService;
             _audioMetadataService = audioMetadataService;
             _config = config;
-            _nus3AudioExeFile = Path.Combine(config.Value.ToolsPath, Constants.Resources.NUS3AUDIO_EXE_FILE);
-            _nus3BankTemplateFile = Path.Combine(config.Value.ResourcesPath, Constants.Resources.NUS3BANK_TEMPLATE_FILE);
+            _nus3AudioExeFile = Path.Combine(config.Value.ToolsPath, MusicConstants.Resources.NUS3AUDIO_EXE_FILE);
+            _nus3BankTemplateFile = Path.Combine(config.Value.ResourcesPath, MusicConstants.Resources.NUS3BANK_TEMPLATE_FILE);
 
             var nus3BankIds = GetCoreNus3BankIds();
             _lastBankId = (ushort)(nus3BankIds.Count > 0 ? GetCoreNus3BankIds().Values.OrderByDescending(p => p).First() : 0);
@@ -65,7 +65,7 @@ namespace Sm5sh.Mods.Music.Services
             }
 
             //Handle conversation if necessary
-            if (Constants.EXTENSIONS_NEED_CONVERSION.Contains(Path.GetExtension(inputMediaFile).ToLower()))
+            if (MusicConstants.EXTENSIONS_NEED_CONVERSION.Contains(Path.GetExtension(inputMediaFile).ToLower()))
                 return ConvertIncompatibleFormat(toneId, ref inputMediaFile, outputMediaFile);
 
             //Create nus3audio
@@ -171,7 +171,7 @@ namespace Sm5sh.Mods.Music.Services
         {
             bool result = false;
             var formatConversation = isFallback ? _config.Value.Sm5shMusic.AudioConversionFormatFallBack : _config.Value.Sm5shMusic.AudioConversionFormat;
-            var tempFile = Path.Combine(_config.Value.TempPath, string.Format(Constants.Resources.NUS3AUDIO_TEMP_FILE, formatConversation));
+            var tempFile = Path.Combine(_config.Value.TempPath, string.Format(MusicConstants.Resources.NUS3AUDIO_TEMP_FILE, formatConversation));
             if (_audioMetadataService.ConvertAudio(inputMediaFile, tempFile))
             {
                 inputMediaFile = tempFile;
@@ -194,7 +194,7 @@ namespace Sm5sh.Mods.Music.Services
         {
             var output = new Dictionary<string, ushort>();
 
-            var nusBankResourceFile = Path.Combine(_config.Value.GameResourcesPath, Constants.Resources.NUS3BANK_IDS_FILE);
+            var nusBankResourceFile = Path.Combine(_config.Value.GameResourcesPath, MusicConstants.Resources.NUS3BANK_IDS_FILE);
             if (!File.Exists(nusBankResourceFile))
                 return output;
 

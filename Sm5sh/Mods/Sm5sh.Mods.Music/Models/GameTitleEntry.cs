@@ -3,9 +3,8 @@ using System.Collections.Generic;
 
 namespace Sm5sh.Mods.Music.Models
 {
-    public class GameTitleEntry
+    public class GameTitleEntry : BgmBase
     {
-        public EntrySource Source { get; }
         public string UiGameTitleId { get; }
         public string NameId { get; set; }
         public string UiSeriesId { get; set; }
@@ -13,7 +12,7 @@ namespace Sm5sh.Mods.Music.Models
         public int Release { get; set; }
 
         public Dictionary<string, string> MSBTTitle { get; set; }
-        public string MSBTTitleKey { get { return !string.IsNullOrEmpty(NameId) ? string.Format(Constants.InternalIds.MSBT_GAME_TITLE, NameId) : null; } }
+        public string MSBTTitleKey { get { return !string.IsNullOrEmpty(NameId) ? string.Format(MusicConstants.InternalIds.MSBT_GAME_TITLE, NameId) : null; } }
 
         public override string ToString()
         {
@@ -21,8 +20,8 @@ namespace Sm5sh.Mods.Music.Models
         }
 
         public GameTitleEntry(string uiGameTitleId, EntrySource source = EntrySource.Core)
+            : base(source)
         {
-            Source = source;
             UiGameTitleId = uiGameTitleId;
             MSBTTitle = new Dictionary<string, string>();
         }

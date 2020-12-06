@@ -17,15 +17,16 @@ namespace Sm5shMusic.GUI.ViewModels
     public class PlaylistStageAssignementModalWindowViewModel : ViewModelBase
     {
         private readonly ILogger _logger;
-        private readonly IEnumerable<StageEntryViewModel> _stages;
         private readonly IEnumerable<ComboItem> _orders;
+        private readonly ReadOnlyObservableCollection<StageEntryViewModel> _stages;
         private readonly ReadOnlyObservableCollection<PlaylistEntryViewModel> _playlists;
         private readonly ReadOnlyObservableCollection<PlaylistEntryValueViewModel> _tracks;
 
+        public ReadOnlyObservableCollection<StageEntryViewModel> Stages { get { return _stages; } }
         public ReadOnlyObservableCollection<PlaylistEntryViewModel> Playlists { get { return _playlists; } }
         public ReadOnlyObservableCollection<PlaylistEntryValueViewModel> Tracks { get { return _tracks; } }
 
-        public IEnumerable<StageEntryViewModel> Stages { get; private set; }
+        public IEnumerable<StageEntryViewModel> EditableStages { get; private set; }
         public IEnumerable<ComboItem> Orders { get { return _orders; } }
 
         [Reactive]
@@ -42,13 +43,17 @@ namespace Sm5shMusic.GUI.ViewModels
 
 
         public PlaylistStageAssignementModalWindowViewModel(ILogger<ModPickerModalWindowViewModel> logger, IObservable<IChangeSet<PlaylistEntryViewModel, string>> observablePlaylists,
-            List<StageEntryViewModel> stages)
+            IObservable<IChangeSet<StageEntryViewModel, string>> observableStages)
         {
             _logger = logger;
-            _stages = stages;
             _orders = GetOrderList();
 
             //Bind observables
+            observableStages
+               .ObserveOn(RxApp.MainThreadScheduler)
+               .Bind(out _stages)
+               .DisposeMany()
+               .Subscribe();
             observablePlaylists
                .Sort(SortExpressionComparer<PlaylistEntryViewModel>.Ascending(p => p.Title), SortOptimisations.ComparesImmutableValuesOnly, 8000)
                .TreatMovesAsRemoveAdd()
@@ -80,9 +85,11 @@ namespace Sm5shMusic.GUI.ViewModels
 
         public void LoadControl()
         {
-            Stages = null;
+            _logger.LogDebug("Load Control");
+
+            EditableStages = null;
             SelectedStageEntry = null;
-            Stages = _stages.Select(p => new StageEntryViewModel(p.GetStageEntryReference())).ToList();
+            EditableStages = _stages.Select(p => new StageEntryViewModel(p.GetStageEntryReference())).ToList();
             SelectedStageEntry = Stages.FirstOrDefault();
         }
 
@@ -114,12 +121,14 @@ namespace Sm5shMusic.GUI.ViewModels
 
         private void Cancel(Window w)
         {
-            Stages = _stages;
+            _logger.LogDebug("Clicked Cancel");
+            EditableStages = null;
             w.Close();
         }
 
         private void Save(Window window)
         {
+            _logger.LogDebug("Clicked Save");
             window.Close(window);
         }
 

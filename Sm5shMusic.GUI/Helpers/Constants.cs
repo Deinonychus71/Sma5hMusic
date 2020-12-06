@@ -4,6 +4,8 @@ namespace Sm5shMusic.GUI.Helpers
 {
     public static class Constants
     {
+        public const double GUIVersion = 0.5;
+
         public class SpecialCategories
         {
             public const string SPECIAL_CATEGORY_PERSONA_STAGE_3_VALUE = "jack_mementoes_p3";
@@ -19,9 +21,6 @@ namespace Sm5shMusic.GUI.Helpers
                 { SPECIAL_CATEGORY_PERSONA_STAGE_5_VALUE, "Persona 5 Stage" }
             };
         }
-
-        public const string GAME_TITLE_PREFIX = "ui_gametitle_";
-        public const string PLAYLIST_TITLE_PREFIX = "bgm";
 
         public const string DEFAULT_LOCALE = "us_en";
 
@@ -97,7 +96,7 @@ namespace Sm5shMusic.GUI.Helpers
 
         public readonly static Dictionary<string, string> CONVERTER_CORE_PLAYLISTS = new Dictionary<string, string>()
         {
-            {"bgmsmashbtl", "Battlefield" },
+            {"bgmsmashbtl", "Smash Battle" },
             {"bgmsmashmenu", "Smash Menu" },
             {"bgmsmashmode", "Smash Mode" },
             {"bgmstageedit", "Stage Edit" },

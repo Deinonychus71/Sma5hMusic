@@ -2,9 +2,9 @@
 using DynamicData.Binding;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
+using Sm5sh.Mods.Music.Models;
 using Sm5shMusic.GUI.Helpers;
 using Sm5shMusic.GUI.Models;
-using Sm5sh.Mods.Music.Models;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -50,10 +50,10 @@ namespace Sm5shMusic.GUI.ViewModels
         [Reactive]
         public bool SelectedModSongs { get; set; }
 
-        public IObservable<IChangeSet<BgmEntryViewModel, string>> WhenFiltersAreApplied { get; }
+        public IObservable<IChangeSet<BgmDbRootEntryViewModel, string>> WhenFiltersAreApplied { get; }
 
 
-        public BgmFiltersViewModel(IObservable<IChangeSet<BgmEntryViewModel, string>> observableBgmEntries)
+        public BgmFiltersViewModel(IObservable<IChangeSet<BgmDbRootEntryViewModel, string>> observableBgmEntries)
         {
             _allModsChangeSet = GetAllModsChangeSet();
             _allSeriesChangeSet = GetAllSeriesChangeSet();
@@ -64,30 +64,26 @@ namespace Sm5shMusic.GUI.ViewModels
                 "SelectedRecordType", "SelectedMod", "SelectedShowInSoundTest", "SelectedShowHiddenSongs",
                 "SelectedCharacterVictorySongs", "SelectedPinchSongs", "SelectedCoreSongs", "SelectedModSongs");
             WhenFiltersAreApplied = observableBgmEntries
-                .AutoRefresh(p => p.DbRoot.TestDispOrder, TimeSpan.FromMilliseconds(50))
+                .AutoRefresh(p => p.TestDispOrder, TimeSpan.FromMilliseconds(50))
                 .AutoRefreshOnObservable(p => whenAnyPropertyChanged, changeSetBuffer: TimeSpan.FromMilliseconds(50), scheduler: RxApp.TaskpoolScheduler)
                 .Filter(p =>
                     (SelectedShowHiddenSongs || (!SelectedShowHiddenSongs && !p.HiddenInSoundTest)) &&
                     (SelectedShowInSoundTest || (!SelectedShowInSoundTest && p.HiddenInSoundTest)) &&
                     (SelectedModSongs || (!SelectedModSongs && p.Source == EntrySource.Core)) &&
                     (SelectedCoreSongs || (!SelectedCoreSongs && p.Source == EntrySource.Mod)) &&
-                    (SelectedMod == null || SelectedMod.AllFlag || p.ModId == SelectedMod.ModId) &&
-                    (SelectedRecordType == null || SelectedRecordType.AllFlag || p.RecordType == SelectedRecordType.Id) &&
+                    (SelectedMod == null || SelectedMod.DefaultFlag || p.ModId == SelectedMod.Id) &&
+                    (SelectedRecordType == null || SelectedRecordType.DefaultFlag || p.RecordType == SelectedRecordType.Id) &&
                     (SelectedSeries == null || SelectedSeries.AllFlag || p.SeriesId == SelectedSeries.SeriesId) &&
                     (SelectedGame == null || SelectedGame.AllFlag || p.UiGameTitleId == SelectedGame.UiGameTitleId)
                 );
 
-            var modsChanged = observableBgmEntries.WhenValueChanged(mod => mod.ModName);
+            var modsChanged = observableBgmEntries.WhenValueChanged(mod => mod.MusicModViewModel.Name);
             observableBgmEntries
                 .Filter(p => p.MusicMod != null)
                 .Group(p => p.ModId, modsChanged.Select(_ => Unit.Default))
-                .Transform(p =>
-                {
-                    var mod = p.Cache.Items.First();
-                    return new ModEntryViewModel(mod.ModId, mod.MusicMod);
-                })
+                .Transform(p => p.Cache.Items.First().MusicModViewModel)
                 .Prepend(_allModsChangeSet)
-                .Sort(SortExpressionComparer<ModEntryViewModel>.Descending(p => p.AllFlag).ThenByAscending(p => p.ModName), SortOptimisations.IgnoreEvaluates)
+                .Sort(SortExpressionComparer<ModEntryViewModel>.Descending(p => p.DefaultFlag).ThenByAscending(p => p.Name), SortOptimisations.IgnoreEvaluates)
                 .ObserveOn(RxApp.MainThreadScheduler)
                 .Bind(out _mods)
                 .DisposeMany()
@@ -155,8 +151,8 @@ namespace Sm5shMusic.GUI.ViewModels
             {
                 new Change<ModEntryViewModel, string>(ChangeReason.Add, "-1", new ModEntryViewModel()
                 {
-                    AllFlag = true,
-                    ModName = "All"
+                    DefaultFlag = true,
+                    Name = "All"
                 })
             });
         }

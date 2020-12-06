@@ -18,7 +18,7 @@
       <TextBlock>Pick Game to Edit</TextBlock>
     </Border>
     <StackPanel Classes="modalActions" DockPanel.Dock="Bottom">
-      <Button Content="Select" Command="{Binding ActionSelect}" CommandParameter="{Binding $parent[Window]}"></Button>
+      <Button Content="Select" Command="{Binding ActionOK}" CommandParameter="{Binding $parent[Window]}"></Button>
       <Button Content="Cancel" Command="{Binding ActionCancel}" CommandParameter="{Binding $parent[Window]}"></Button>
     </StackPanel>
 
@@ -26,8 +26,8 @@
       <fields:PropertyField Label="Mod" ToolTip="Pick an existing mod to modify.">
         <fields:PropertyField.FieldContent>
           <StackPanel>
-            <AutoCompleteBox Items="{Binding Mods}" ValueMemberBinding="{Binding ModName}" IsTextCompletionEnabled="True" MinimumPrefixLength="2"
-                           MinimumPopulateDelay="0.5" SelectedItem="{Binding SelectedModEntry, Mode=TwoWay}" FilterMode="Contains"/>
+            <AutoCompleteBox Items="{Binding Mods}" ValueMemberBinding="{Binding Name}" IsTextCompletionEnabled="True" MinimumPrefixLength="2"
+                           MinimumPopulateDelay="0.5" SelectedItem="{Binding SelectedItem, Mode=TwoWay}" FilterMode="Contains"/>
           </StackPanel>
         </fields:PropertyField.FieldContent>
       </fields:PropertyField>

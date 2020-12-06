@@ -13,6 +13,7 @@ namespace Sm5sh.CLI
         private readonly IStateManager _state;
         private readonly IServiceProvider _serviceProvider;
         private readonly IWorkspaceManager _workspace;
+        private const double CLIVersion = 0.5;
 
         public Script(IServiceProvider serviceProvider, IWorkspaceManager workspace, IStateManager state, ILogger<Script> logger)
         {
@@ -24,7 +25,7 @@ namespace Sm5sh.CLI
 
         public async Task Run()
         {
-            _logger.LogInformation("Sm5sh.CLI v.02");
+            _logger.LogInformation($"Sm5sh.CLI v.{CLIVersion}");
             _logger.LogInformation("--------------------");
             _logger.LogInformation("research: soneek");
             _logger.LogInformation("prcEditor: https://github.com/BenHall-7/paracobNET");

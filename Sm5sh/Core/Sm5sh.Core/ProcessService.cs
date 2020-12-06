@@ -58,7 +58,8 @@ namespace Sm5sh
             }
         }
 
-        private void ReadOnErrorReceived(object sender, DataReceivedEventArgs args) { 
+        private void ReadOnErrorReceived(object sender, DataReceivedEventArgs args)
+        {
         }
     }
 }

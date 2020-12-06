@@ -10,7 +10,7 @@
       <TextBlock Classes="required" IsVisible="{Binding $parent[UserControl].IsRequired}" Text="*"/>
       <TextBlock Text="&#128712;" Classes="tooltip" ToolTip.Tip="{Binding $parent[UserControl].ToolTip}"/>
     </StackPanel>
-    <CheckBox IsChecked="{Binding $parent[UserControl].IsChecked}" IsEnabled="{Binding $parent[UserControl].IsReadOnly}"/>
+    <CheckBox IsChecked="{Binding $parent[UserControl].IsChecked}" IsEnabled="{Binding !$parent[UserControl].IsReadOnly}"/>
     <TextBlock Classes="error" Text="{Binding $parent[UserControl].ValidationError}"/>
   </StackPanel>
 </UserControl>

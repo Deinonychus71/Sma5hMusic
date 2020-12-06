@@ -25,7 +25,7 @@
       <StackPanel Classes="content">
         <fields:PropertyField IsRequired="True" Label="Stage" ToolTip="Select a Stage">
           <fields:PropertyField.FieldContent>
-            <ComboBox SelectedItem="{Binding SelectedStageEntry, Mode=TwoWay}" Items="{Binding Stages, Mode=OneWay}">
+            <ComboBox SelectedItem="{Binding SelectedStageEntry, Mode=TwoWay}" Items="{Binding EditableStages, Mode=OneWay}">
               <ComboBox.ItemTemplate>
                 <DataTemplate>
                   <TextBlock Text="{Binding Title}" />

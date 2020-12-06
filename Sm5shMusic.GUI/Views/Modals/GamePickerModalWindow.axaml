@@ -18,7 +18,7 @@
       <TextBlock>Pick Game to Edit</TextBlock>
     </Border>
     <StackPanel Classes="modalActions" DockPanel.Dock="Bottom">
-      <Button Content="Select" Command="{Binding ActionSelect}" CommandParameter="{Binding $parent[Window]}"></Button>
+      <Button Content="Select" Command="{Binding ActionOK}" CommandParameter="{Binding $parent[Window]}"></Button>
       <Button Content="Cancel" Command="{Binding ActionCancel}" CommandParameter="{Binding $parent[Window]}"></Button>
     </StackPanel>
 
@@ -27,7 +27,7 @@
         <fields:PropertyField.FieldContent>
           <StackPanel>
             <AutoCompleteBox Items="{Binding Games}" ValueMemberBinding="{Binding Title}" IsTextCompletionEnabled="True" MinimumPrefixLength="2"
-                           MinimumPopulateDelay="0.5" SelectedItem="{Binding SelectedGameTitleEntry, Mode=TwoWay}" FilterMode="Contains"/>
+                           MinimumPopulateDelay="0.5" SelectedItem="{Binding SelectedItem, Mode=TwoWay}" FilterMode="Contains"/>
           </StackPanel>
         </fields:PropertyField.FieldContent>
       </fields:PropertyField>

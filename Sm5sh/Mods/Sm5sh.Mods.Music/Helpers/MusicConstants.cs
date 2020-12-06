@@ -1,8 +1,8 @@
 ﻿namespace Sm5sh.Mods.Music.Helpers
 {
-    internal class Constants
+    public class MusicConstants
     {
-        internal class MusicModFiles
+        public class MusicModFiles
         {
             public const string MUSIC_MOD_METADATA_JSON_FILE = "metadata_mod.json";
             public const string MUSIC_MOD_METADATA_CSV_FILE = "metadata_mod.csv";
@@ -28,7 +28,7 @@
             public const string NUS3BANK_FILE = "bgm_{0}.nus3bank";
         }
 
-        internal class InternalIds
+        public class InternalIds
         {
             public const string NUS3AUDIO_FILE_PREFIX = "bgm_";
 

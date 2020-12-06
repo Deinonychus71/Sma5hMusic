@@ -42,7 +42,7 @@ namespace VGMMusic
 
             if (!_reader.FileLoaded)
             {
-                _logger.LogError("Error while loading {FileName}. VGMStreamReader could not load the file.", filename);
+                _logger.LogError("Error while loading {FileName}. VGMStreamReader could not load the file. If this file plays on foobar make sure that libvgmstream is properly installed.", filename);
                 return false;
             }
 

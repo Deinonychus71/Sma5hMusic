@@ -1,51 +1,79 @@
-﻿using ReactiveUI.Fody.Helpers;
+﻿using AutoMapper;
+using ReactiveUI;
+using ReactiveUI.Fody.Helpers;
 using Sm5sh.Mods.Music.Models;
+using Sm5shMusic.GUI.Interfaces;
+using System.Collections.Generic;
 
 namespace Sm5shMusic.GUI.ViewModels
 {
-    public class GameTitleEntryViewModel : GameTitleEditableEntryViewModel
+    public class GameTitleEntryViewModel : BgmBaseViewModel<GameTitleEntry>
     {
+        private string _currentLocale;
+        private string _uiSeriesId;
+
         //Getters/Private Setters - For This View Only
         public bool AllFlag { get; set; }
-        public string SeriesId { get { return SeriesViewModel.SeriesId; } }
+        public string UiGameTitleId { get; }
+        public string NameId { get; set; }
+        public string UiSeriesId
+        {
+            get => _uiSeriesId;
+            set
+            {
+                this.RaiseAndSetIfChanged(ref _uiSeriesId, value);
+                this.RaisePropertyChanged(nameof(SeriesViewModel));
+            }
+        }
+        public bool Unk1 { get; set; }
+        public int Release { get; set; }
+        public Dictionary<string, string> MSBTTitle { get; set; }
 
         //To obtain reactive change for locale
         [Reactive]
         public string Title { get; set; }
 
-        public GameTitleEntryViewModel() { }
+        //[Reactive]
+        public SeriesEntryViewModel SeriesViewModel { get { return _viewModelManager.GetSeriesViewModel(UiSeriesId); } }
 
-        public GameTitleEntryViewModel(GameTitleEntry gameTitleEntry)
-            : base(gameTitleEntry)
+        public GameTitleEntryViewModel()
+            : base(null, null, null)
         {
+
+        }
+
+        public GameTitleEntryViewModel(IViewModelManager viewModelManager, IMapper mapper, GameTitleEntry gameTitleEntry)
+            : base(viewModelManager, mapper, gameTitleEntry)
+        {
+            UiGameTitleId = gameTitleEntry.UiGameTitleId;
         }
 
         public void LoadLocalized(string locale)
         {
-            if (string.IsNullOrEmpty(locale))
+            if (!string.IsNullOrEmpty(locale))
+                _currentLocale = locale;
+
+            if (string.IsNullOrEmpty(_currentLocale))
                 return;
 
-            if (MSBTTitle != null && MSBTTitle.ContainsKey(locale))
-                Title = MSBTTitle[locale];
+            if (MSBTTitle != null && MSBTTitle.ContainsKey(_currentLocale))
+                Title = MSBTTitle[_currentLocale];
             else
                 Title = UiGameTitleId;
         }
 
-        public override bool Equals(object obj)
+        public override ReactiveObjectBaseViewModel GetCopy()
         {
-            if (obj == null)
-                return false;
-
-            GameTitleEntryViewModel p = obj as GameTitleEntryViewModel;
-            if (p == null)
-                return false;
-
-            return p.UiGameTitleId == this.UiGameTitleId;
+            return _mapper.Map(this, new GameTitleEntryViewModel(_viewModelManager, _mapper, GetReferenceEntity()));
         }
 
-        public override int GetHashCode()
+        public override ReactiveObjectBaseViewModel SaveChanges()
         {
-            return base.GetHashCode();
+            var original = _viewModelManager.GetGameTitleViewModel(UiGameTitleId);
+            _mapper.Map(this, original.GetReferenceEntity());
+            _mapper.Map(this, original);
+            original.LoadLocalized(_currentLocale);
+            return original;
         }
     }
 }

@@ -6,7 +6,8 @@ namespace Sm5sh.Mods.Music.Models.AutoMapper
     {
         public MappingDb()
         {
-            CreateMap<AudioCuePoints, BgmEntryModels.BgmPropertyEntry>()
+            CreateMap<AudioCuePoints, BgmPropertyEntry>()
+               .ForMember(i => i.AudioVolume, me => me.Ignore())
                .ForMember(i => i.LoopEndMs, me => me.MapFrom(p => p.LoopEndMs))
                .ForMember(i => i.LoopEndSample, me => me.MapFrom(p => p.LoopEndSample))
                .ForMember(i => i.LoopStartMs, me => me.MapFrom(p => p.LoopStartMs))
@@ -14,7 +15,7 @@ namespace Sm5sh.Mods.Music.Models.AutoMapper
                .ForMember(i => i.NameId, me => me.Ignore())
                .ForMember(i => i.TotalSamples, me => me.MapFrom(p => p.TotalSamples))
                .ForMember(i => i.TotalTimeMs, me => me.MapFrom(p => p.TotalTimeMs));
-            CreateMap<BgmEntryModels.BgmPropertyEntry, AudioCuePoints>()
+            CreateMap<BgmPropertyEntry, AudioCuePoints>()
                .ForMember(i => i.LoopEndMs, me => me.MapFrom(p => p.LoopEndMs))
                .ForMember(i => i.LoopEndSample, me => me.MapFrom(p => p.LoopEndSample))
                .ForMember(i => i.LoopStartMs, me => me.MapFrom(p => p.LoopStartMs))
@@ -36,7 +37,8 @@ namespace Sm5sh.Mods.Music.Models.AutoMapper
                 .ForMember(i => i.UiSeriesId, me => me.MapFrom(p => p.UiSeriesId))
                 .ForMember(i => i.Unk1, me => me.MapFrom(p => p.Unk1));
 
-            CreateMap<Data.Sound.Config.BgmPropertyStructs.BgmPropertyEntry, BgmEntryModels.BgmPropertyEntry>()
+            CreateMap<Data.Sound.Config.BgmPropertyStructs.BgmPropertyEntry, BgmPropertyEntry>()
+                .ForMember(i => i.AudioVolume, me => me.Ignore())
                 .ForMember(i => i.LoopEndMs, me => me.MapFrom(p => p.LoopEndMs))
                 .ForMember(i => i.LoopEndSample, me => me.MapFrom(p => p.LoopEndSample))
                 .ForMember(i => i.LoopStartMs, me => me.MapFrom(p => p.LoopStartMs))
@@ -44,7 +46,7 @@ namespace Sm5sh.Mods.Music.Models.AutoMapper
                 .ForMember(i => i.TotalSamples, me => me.MapFrom(p => p.TotalSamples))
                 .ForMember(i => i.TotalTimeMs, me => me.MapFrom(p => p.TotalTimeMs))
                 .ForMember(i => i.NameId, me => me.Ignore());
-            CreateMap<BgmEntryModels.BgmPropertyEntry, Data.Sound.Config.BgmPropertyStructs.BgmPropertyEntry>()
+            CreateMap<BgmPropertyEntry, Data.Sound.Config.BgmPropertyStructs.BgmPropertyEntry>()
                 .ForMember(i => i.LoopEndMs, me => me.MapFrom(p => p.LoopEndMs))
                 .ForMember(i => i.LoopEndSample, me => me.MapFrom(p => p.LoopEndSample))
                 .ForMember(i => i.LoopStartMs, me => me.MapFrom(p => p.LoopStartMs))
@@ -53,7 +55,7 @@ namespace Sm5sh.Mods.Music.Models.AutoMapper
                 .ForMember(i => i.TotalTimeMs, me => me.MapFrom(p => p.TotalTimeMs))
                 .ForMember(i => i.NameId, me => me.MapFrom(p => p.NameId));
 
-            CreateMap<Sm5sh.Data.Ui.Param.Database.PrcUiBgmDatabaseModels.PrcBgmDbRootEntry, BgmEntryModels.BgmDbRootEntry>()
+            CreateMap<Sm5sh.Data.Ui.Param.Database.PrcUiBgmDatabaseModels.PrcBgmDbRootEntry, BgmDbRootEntry>()
                 .ForMember(i => i.CountTarget, me => me.MapFrom(p => p.CountTarget))
                 .ForMember(i => i.IsDlc, me => me.MapFrom(p => p.IsDlc))
                 .ForMember(i => i.IsPatch, me => me.MapFrom(p => p.IsPatch))
@@ -63,17 +65,16 @@ namespace Sm5sh.Mods.Music.Models.AutoMapper
                 .ForMember(i => i.MenuValue, me => me.MapFrom(p => p.MenuValue))
                 .ForMember(i => i.NameId, me => me.MapFrom(p => p.NameId))
                 .ForMember(i => i.OtherRegion, me => me.MapFrom(p => p.OtherRegion))
-                .ForMember(i => i.Parent, me => me.Ignore())
                 .ForMember(i => i.Possessed, me => me.MapFrom(p => p.Possessed))
                 .ForMember(i => i.PrizeLottery, me => me.MapFrom(p => p.PrizeLottery))
                 .ForMember(i => i.Rarity, me => me.MapFrom(p => p.Rarity))
                 .ForMember(i => i.RecordType, me => me.MapFrom(p => p.RecordType))
                 .ForMember(i => i.SaveNo, me => me.MapFrom(p => p.SaveNo))
                 .ForMember(i => i.ShopPrice, me => me.MapFrom(p => p.ShopPrice))
-                .ForMember(i => i.StreamSetId, me => me.Ignore())
+                .ForMember(i => i.StreamSetId, me => me.MapFrom(p => p.StreamSetId))
                 .ForMember(i => i.TestDispOrder, me => me.MapFrom(p => p.TestDispOrder))
                 .ForMember(i => i.UiBgmId, me => me.Ignore())
-                .ForMember(i => i.UiGameTitleId, me => me.Ignore())
+                .ForMember(i => i.UiGameTitleId, me => me.MapFrom(p => p.UiGameTitleId))
                 .ForMember(i => i.UiGameTitleId1, me => me.MapFrom(p => p.UiGameTitleId1))
                 .ForMember(i => i.UiGameTitleId2, me => me.MapFrom(p => p.UiGameTitleId2))
                 .ForMember(i => i.UiGameTitleId3, me => me.MapFrom(p => p.UiGameTitleId3))
@@ -83,7 +84,7 @@ namespace Sm5sh.Mods.Music.Models.AutoMapper
                 .ForMember(i => i.Unk3, me => me.MapFrom(p => p.Unk3))
                 .ForMember(i => i.Unk4, me => me.MapFrom(p => p.Unk4))
                 .ForMember(i => i.Unk5, me => me.MapFrom(p => p.Unk5));
-            CreateMap<BgmEntryModels.BgmDbRootEntry, Sm5sh.Data.Ui.Param.Database.PrcUiBgmDatabaseModels.PrcBgmDbRootEntry>()
+            CreateMap<BgmDbRootEntry, Sm5sh.Data.Ui.Param.Database.PrcUiBgmDatabaseModels.PrcBgmDbRootEntry>()
                 .ForMember(i => i.CountTarget, me => me.MapFrom(p => p.CountTarget))
                 .ForMember(i => i.IsDlc, me => me.MapFrom(p => p.IsDlc))
                 .ForMember(i => i.IsPatch, me => me.MapFrom(p => p.IsPatch))
@@ -113,8 +114,8 @@ namespace Sm5sh.Mods.Music.Models.AutoMapper
                 .ForMember(i => i.Unk4, me => me.MapFrom(p => p.Unk4))
                 .ForMember(i => i.Unk5, me => me.MapFrom(p => p.Unk5));
 
-            CreateMap<Sm5sh.Data.Ui.Param.Database.PrcUiBgmDatabaseModels.PrcBgmStreamSetEntry, BgmEntryModels.BgmStreamSetEntry>()
-                .ForMember(i => i.Info0, me => me.Ignore())
+            CreateMap<Sm5sh.Data.Ui.Param.Database.PrcUiBgmDatabaseModels.PrcBgmStreamSetEntry, BgmStreamSetEntry>()
+                .ForMember(i => i.Info0, me => me.MapFrom(p => p.Info0))
                 .ForMember(i => i.Info1, me => me.MapFrom(p => p.Info1))
                 .ForMember(i => i.Info2, me => me.MapFrom(p => p.Info2))
                 .ForMember(i => i.Info3, me => me.MapFrom(p => p.Info3))
@@ -132,7 +133,7 @@ namespace Sm5sh.Mods.Music.Models.AutoMapper
                 .ForMember(i => i.Info15, me => me.MapFrom(p => p.Info15))
                 .ForMember(i => i.SpecialCategory, me => me.MapFrom(p => p.SpecialCategory))
                 .ForMember(i => i.StreamSetId, me => me.Ignore());
-            CreateMap<BgmEntryModels.BgmStreamSetEntry, Sm5sh.Data.Ui.Param.Database.PrcUiBgmDatabaseModels.PrcBgmStreamSetEntry>()
+            CreateMap<BgmStreamSetEntry, Sm5sh.Data.Ui.Param.Database.PrcUiBgmDatabaseModels.PrcBgmStreamSetEntry>()
                 .ForMember(i => i.Info0, me => me.MapFrom(p => p.Info0))
                 .ForMember(i => i.Info1, me => me.MapFrom(p => p.Info1))
                 .ForMember(i => i.Info2, me => me.MapFrom(p => p.Info2))
@@ -152,7 +153,7 @@ namespace Sm5sh.Mods.Music.Models.AutoMapper
                 .ForMember(i => i.SpecialCategory, me => me.MapFrom(p => p.SpecialCategory))
                 .ForMember(i => i.StreamSetId, me => me.MapFrom(p => p.StreamSetId));
 
-            CreateMap<Sm5sh.Data.Ui.Param.Database.PrcUiBgmDatabaseModels.PrcBgmAssignedInfoEntry, BgmEntryModels.BgmAssignedInfoEntry>()
+            CreateMap<Sm5sh.Data.Ui.Param.Database.PrcUiBgmDatabaseModels.PrcBgmAssignedInfoEntry, BgmAssignedInfoEntry>()
                 .ForMember(i => i.ChangeFadeInFrame, me => me.MapFrom(p => p.ChangeFadeInFrame))
                 .ForMember(i => i.ChangeFadoutFrame, me => me.MapFrom(p => p.ChangeFadoutFrame))
                 .ForMember(i => i.ChangeStartDelayFrame, me => me.MapFrom(p => p.ChangeStartDelayFrame))
@@ -164,8 +165,8 @@ namespace Sm5sh.Mods.Music.Models.AutoMapper
                 .ForMember(i => i.MenuChangeFadeOutFrame, me => me.MapFrom(p => p.MenuChangeFadeOutFrame))
                 .ForMember(i => i.MenuChangeStartDelayFrame, me => me.MapFrom(p => p.MenuChangeStartDelayFrame))
                 .ForMember(i => i.StartFrame, me => me.MapFrom(p => p.StartFrame))
-                .ForMember(i => i.StreamId, me => me.Ignore());
-            CreateMap<BgmEntryModels.BgmAssignedInfoEntry, Sm5sh.Data.Ui.Param.Database.PrcUiBgmDatabaseModels.PrcBgmAssignedInfoEntry>()
+                .ForMember(i => i.StreamId, me => me.MapFrom(p => p.StreamId));
+            CreateMap<BgmAssignedInfoEntry, Sm5sh.Data.Ui.Param.Database.PrcUiBgmDatabaseModels.PrcBgmAssignedInfoEntry>()
                 .ForMember(i => i.ChangeFadeInFrame, me => me.MapFrom(p => p.ChangeFadeInFrame))
                 .ForMember(i => i.ChangeFadoutFrame, me => me.MapFrom(p => p.ChangeFadoutFrame))
                 .ForMember(i => i.ChangeStartDelayFrame, me => me.MapFrom(p => p.ChangeStartDelayFrame))
@@ -179,8 +180,8 @@ namespace Sm5sh.Mods.Music.Models.AutoMapper
                 .ForMember(i => i.StartFrame, me => me.MapFrom(p => p.StartFrame))
                 .ForMember(i => i.StreamId, me => me.MapFrom(p => p.StreamId));
 
-            CreateMap<Sm5sh.Data.Ui.Param.Database.PrcUiBgmDatabaseModels.PrcBgmStreamPropertyEntry, BgmEntryModels.BgmStreamPropertyEntry>()
-                .ForMember(i => i.DataName0, me => me.Ignore())
+            CreateMap<Sm5sh.Data.Ui.Param.Database.PrcUiBgmDatabaseModels.PrcBgmStreamPropertyEntry, BgmStreamPropertyEntry>()
+                .ForMember(i => i.DataName0, me => me.MapFrom(p => p.DataName0))
                 .ForMember(i => i.DataName1, me => me.MapFrom(p => p.DataName1))
                 .ForMember(i => i.DataName2, me => me.MapFrom(p => p.DataName2))
                 .ForMember(i => i.DataName3, me => me.MapFrom(p => p.DataName3))
@@ -196,7 +197,7 @@ namespace Sm5sh.Mods.Music.Models.AutoMapper
                 .ForMember(i => i.StartPointSuddenDeath, me => me.MapFrom(p => p.StartPointSuddenDeath))
                 .ForMember(i => i.StartPointTransition, me => me.MapFrom(p => p.StartPointTransition))
                 .ForMember(i => i.StreamId, me => me.Ignore());
-            CreateMap<BgmEntryModels.BgmStreamPropertyEntry, Sm5sh.Data.Ui.Param.Database.PrcUiBgmDatabaseModels.PrcBgmStreamPropertyEntry>()
+            CreateMap<BgmStreamPropertyEntry, Sm5sh.Data.Ui.Param.Database.PrcUiBgmDatabaseModels.PrcBgmStreamPropertyEntry>()
                 .ForMember(i => i.DataName0, me => me.MapFrom(p => p.DataName0))
                 .ForMember(i => i.DataName1, me => me.MapFrom(p => p.DataName1))
                 .ForMember(i => i.DataName2, me => me.MapFrom(p => p.DataName2))

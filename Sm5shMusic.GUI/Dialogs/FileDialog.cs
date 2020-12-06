@@ -10,9 +10,9 @@ namespace Sm5shMusic.GUI.Dialogs
 {
     public class FileDialog : IFileDialog
     {
-        private ILogger _logger;
-        private IDialogWindow _rootDialogWindow;
-        private OpenFileDialog _openFileDialog;
+        private readonly ILogger _logger;
+        private readonly IDialogWindow _rootDialogWindow;
+        private readonly OpenFileDialog _openFileDialog;
         private string _savedDirectory;
 
         public FileDialog(IDialogWindow rootDialogWindow, ILogger<FileDialog> logger)
@@ -25,6 +25,8 @@ namespace Sm5shMusic.GUI.Dialogs
 
         public async Task<string[]> OpenFileDialogAudio(Window parent = null)
         {
+            _logger.LogDebug("Opening FileDialog...");
+
             _openFileDialog.AllowMultiple = true;
             _openFileDialog.Directory = _savedDirectory;
             _openFileDialog.Filters = new List<FileDialogFilter>()
@@ -48,6 +50,8 @@ namespace Sm5shMusic.GUI.Dialogs
 
             if (results.Length > 0)
                 _savedDirectory = Path.GetDirectoryName(results[0]);
+
+            _logger.LogDebug("Selected {NbrItems} items", results?.Length);
 
             return results;
         }
