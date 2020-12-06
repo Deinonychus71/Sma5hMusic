@@ -108,6 +108,7 @@ namespace Sm5shMusic.GUI.Services
         {
             _logger.LogInformation("Initialize data");
 
+            _vmDictModsEntries.Clear();
             _vmDictLocalesEntries.Clear();
             _vmDictSeriesEntries.Clear();
             _vmDictGameTitlesEntries.Clear();
@@ -119,6 +120,7 @@ namespace Sm5shMusic.GUI.Services
             _vmDictPlaylistsEntries.Clear();
             _vmDictStagesEntries.Clear();
 
+            _vmObsvModsEntries.Clear();
             _vmObsvLocalesEntries.Clear();
             _vmObsvSeriesEntries.Clear();
             _vmObsvGameTitlesEntries.Clear();
@@ -169,7 +171,7 @@ namespace Sm5shMusic.GUI.Services
 
             var playlistsList = _audioState.GetPlaylists().Select(p => new PlaylistEntryViewModel(p, _vmDictBgmDbRootEntries)).ToList();
             foreach (var vmPlaylist in playlistsList)
-                _vmDictPlaylistsEntries.Add(vmPlaylist.Id, vmPlaylist); 
+                _vmDictPlaylistsEntries.Add(vmPlaylist.Id, vmPlaylist);
 
             var stagesList = _audioState.GetStagesEntries().Select(p => new StageEntryViewModel(p)).ToList();
             foreach (var vmStage in stagesList)
@@ -414,9 +416,49 @@ namespace Sm5shMusic.GUI.Services
 
         public bool AddNewGameTitleEntryViewModel(GameTitleEntry gameTitleEntry)
         {
-            var newVM = new GameTitleEntryViewModel(this, _mapper, gameTitleEntry);
+            var newVM = _mapper.Map(gameTitleEntry, new GameTitleEntryViewModel(this, _mapper, gameTitleEntry));
             _vmDictGameTitlesEntries.Add(newVM.UiGameTitleId, newVM);
             _vmObsvGameTitlesEntries.Add(newVM);
+            return true;
+        }
+
+        public bool AddNewBgmDbRootEntryViewModel(BgmDbRootEntry bgmDbRootEntry)
+        {
+            var newVM = _mapper.Map(bgmDbRootEntry, new BgmDbRootEntryViewModel(this, _mapper, bgmDbRootEntry));
+            _vmDictBgmDbRootEntries.Add(newVM.UiBgmId, newVM);
+            _vmObsvBgmDbRootEntries.Add(newVM);
+            return true;
+        }
+
+        public bool AddNewBgmStreamSetEntryViewModel(BgmStreamSetEntry bgmStreamSetEntry)
+        {
+            var newVM = _mapper.Map(bgmStreamSetEntry, new BgmStreamSetEntryViewModel(this, _mapper, bgmStreamSetEntry));
+            _vmDictBgmStreamSetEntries.Add(newVM.StreamSetId, newVM);
+            _vmObsvBgmStreamSetEntries.Add(newVM);
+            return true;
+        }
+
+        public bool AddNewBgmAssignedInfoEntryViewModel(BgmAssignedInfoEntry bgmAssignedInfoEntry)
+        {
+            var newVM = _mapper.Map(bgmAssignedInfoEntry, new BgmAssignedInfoEntryViewModel(this, _mapper, bgmAssignedInfoEntry));
+            _vmDictBgmAssignedInfoEntries.Add(newVM.InfoId, newVM);
+            _vmObsvBgmAssignedInfoEntries.Add(newVM);
+            return true;
+        }
+
+        public bool AddNewBgmStreamPropertyEntryViewModel(BgmStreamPropertyEntry bgmStreamPropertyEntry)
+        {
+            var newVM = _mapper.Map(bgmStreamPropertyEntry, new BgmStreamPropertyEntryViewModel(this, _mapper, bgmStreamPropertyEntry));
+            _vmDictBgmStreamPropertyEntries.Add(newVM.StreamId, newVM);
+            _vmObsvBgmStreamPropertyEntries.Add(newVM);
+            return true;
+        }
+
+        public bool AddNewBgmPropertyEntryViewModel(BgmPropertyEntry bgmPropertyEntry)
+        {
+            var newVM = _mapper.Map(bgmPropertyEntry, new BgmPropertyEntryViewModel(_vgmMusicPlayer, this, _mapper, bgmPropertyEntry));
+            _vmDictBgmPropertyEntries.Add(newVM.NameId, newVM);
+            _vmObsvBgmPropertyEntries.Add(newVM);
             return true;
         }
 

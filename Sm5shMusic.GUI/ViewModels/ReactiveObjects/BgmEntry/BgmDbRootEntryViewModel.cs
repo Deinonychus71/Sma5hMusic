@@ -80,8 +80,8 @@ namespace Sm5shMusic.GUI.ViewModels
         public BgmPropertyEntryViewModel BgmPropertyViewModel { get { return StreamPropertyViewModel?.DataName0ViewModel; } }
         public string SeriesId { get { return GameTitleViewModel?.UiSeriesId; } }
         public string ToneId { get { return StreamPropertyViewModel?.DataName0 != null ? StreamPropertyViewModel.DataName0 : null; } }
-        public string Filename { get { return BgmPropertyViewModel != null ? BgmPropertyViewModel.Filename : null; } }
-        public bool DoesFileExist { get {  return BgmPropertyViewModel != null && BgmPropertyViewModel.DoesFileExist; } }
+        public string Filename { get { return BgmPropertyViewModel?.Filename; } }
+        public bool DoesFileExist { get { return BgmPropertyViewModel != null && BgmPropertyViewModel.DoesFileExist; } }
         public MusicPlayerViewModel MusicPlayer { get { return BgmPropertyViewModel?.MusicPlayer; } }
 
         public BgmDbRootEntryViewModel(IViewModelManager viewModelManager, IMapper mapper, BgmDbRootEntry bgmDbRootEntry)
@@ -100,7 +100,7 @@ namespace Sm5shMusic.GUI.ViewModels
 
         public void LoadLocalized(string locale = null)
         {
-            if(!string.IsNullOrEmpty(locale))
+            if (!string.IsNullOrEmpty(locale))
                 _currentLocale = locale;
 
             if (string.IsNullOrEmpty(_currentLocale))

@@ -1,13 +1,13 @@
 ﻿using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
-using Sm5shMusic.GUI.Helpers;
 using Sm5sh.Mods.Music.Models;
+using Sm5shMusic.GUI.Helpers;
 
 namespace Sm5shMusic.GUI.ViewModels
 {
     public class StageEntryViewModel : ReactiveObject
     {
-        private StageEntry _refStageEntry;
+        private readonly StageEntry _refStageEntry;
 
         public string UiStageId { get { return _refStageEntry.UiStageId; } }
 
@@ -38,8 +38,7 @@ namespace Sm5shMusic.GUI.ViewModels
             if (obj == null)
                 return false;
 
-            StageEntryViewModel p = obj as StageEntryViewModel;
-            if (p == null)
+            if (!(obj is StageEntryViewModel p))
                 return false;
 
             return p.UiStageId == this.UiStageId;

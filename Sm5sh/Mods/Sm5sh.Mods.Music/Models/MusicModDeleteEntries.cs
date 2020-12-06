@@ -6,7 +6,7 @@ namespace Sm5sh.Mods.Music.Models
     {
         public List<string> BgmDbRootEntries { get; }
         public List<string> BgmAssignedInfoEntries { get; }
-        public List<string> BgmStreamSetEntries  { get; }
+        public List<string> BgmStreamSetEntries { get; }
         public List<string> BgmStreamPropertyEntries { get; }
         public List<string> BgmPropertyEntries { get; }
         public List<string> GameTitleEntries { get; }

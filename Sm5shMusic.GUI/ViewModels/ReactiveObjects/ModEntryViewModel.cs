@@ -31,6 +31,9 @@ namespace Sm5shMusic.GUI.ViewModels
             Id = musicMod.Mod.Id;
             MusicMod = musicMod;
             Name = musicMod?.Name;
+            Description = musicMod?.Mod.Description;
+            Author = musicMod?.Mod.Author;
+            Website = musicMod?.Mod.Website;
         }
 
         public override ReactiveObjectBaseViewModel GetCopy()

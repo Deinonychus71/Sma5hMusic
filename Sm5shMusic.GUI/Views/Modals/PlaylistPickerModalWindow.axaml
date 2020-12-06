@@ -23,7 +23,7 @@
     </StackPanel>
 
     <StackPanel Classes="content">
-      <fields:PropertyField Label="Mod" ToolTip="Pick an existing mod to modify.">
+      <fields:PropertyField Label="Playlist" ToolTip="Pick an existing playlist to modify.">
         <fields:PropertyField.FieldContent>
           <StackPanel>
             <AutoCompleteBox Items="{Binding Playlists}" ValueMemberBinding="{Binding Title}" IsTextCompletionEnabled="True" MinimumPrefixLength="2"

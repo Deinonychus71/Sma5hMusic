@@ -12,6 +12,7 @@ namespace Sm5shMusic.GUI.Interfaces
         void Init();
         void ReorderSongs();
 
+        IObservable<IChangeSet<ModEntryViewModel, string>> ObservableModsEntries { get; }
         IObservable<IChangeSet<LocaleViewModel, string>> ObservableLocales { get; }
         IObservable<IChangeSet<SeriesEntryViewModel, string>> ObservableSeries { get; }
         IObservable<IChangeSet<GameTitleEntryViewModel, string>> ObservableGameTitles { get; }
@@ -22,7 +23,6 @@ namespace Sm5shMusic.GUI.Interfaces
         IObservable<IChangeSet<BgmPropertyEntryViewModel, string>> ObservableBgmPropertyEntries { get; }
         IObservable<IChangeSet<PlaylistEntryViewModel, string>> ObservablePlaylistsEntries { get; }
         IObservable<IChangeSet<StageEntryViewModel, string>> ObservableStagesEntries { get; }
-        IObservable<IChangeSet<ModEntryViewModel, string>> ObservableModsEntries { get; }
 
         IEnumerable<LocaleViewModel> GetLocalesViewModels();
         IEnumerable<SeriesEntryViewModel> GetSeriesViewModels();
@@ -54,8 +54,13 @@ namespace Sm5shMusic.GUI.Interfaces
         void RemovePlaylist(string playlistId);
         void RemoveBgmInAllPlaylists(string uiBgmId);
 
-        bool AddNewGameTitleEntryViewModel(GameTitleEntry gameTitleEntry);
         bool AddNewModEntryViewModel(IMusicMod musicMod);
+        bool AddNewGameTitleEntryViewModel(GameTitleEntry gameTitleEntry);
+        bool AddNewBgmDbRootEntryViewModel(BgmDbRootEntry bgmDbRootEntry);
+        bool AddNewBgmStreamSetEntryViewModel(BgmStreamSetEntry bgmStreamSetEntry);
+        bool AddNewBgmAssignedInfoEntryViewModel(BgmAssignedInfoEntry bgmAssignedInfoEntry);
+        bool AddNewBgmStreamPropertyEntryViewModel(BgmStreamPropertyEntry bgmStreamPropertyEntry);
+        bool AddNewBgmPropertyEntryViewModel(BgmPropertyEntry bgmPropertyEntry);
         bool AddNewPlaylistEntryViewModel(PlaylistEntry playlistEntry);
     }
 }

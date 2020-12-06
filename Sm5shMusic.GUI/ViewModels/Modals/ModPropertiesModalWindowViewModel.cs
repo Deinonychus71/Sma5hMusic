@@ -1,5 +1,4 @@
-﻿using Avalonia.Controls;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
@@ -39,7 +38,7 @@ namespace Sm5shMusic.GUI.ViewModels
         [Reactive]
         public bool IsEdit { get; set; }
 
-        public ModPropertiesModalWindowViewModel(ILogger<ModPropertiesModalWindowViewModel> logger, IViewModelManager viewModelManager, 
+        public ModPropertiesModalWindowViewModel(ILogger<ModPropertiesModalWindowViewModel> logger, IViewModelManager viewModelManager,
             IGUIStateManager guiStateManager, IOptions<Sm5shMusicOptions> config)
         {
             _config = config;
@@ -72,6 +71,8 @@ namespace Sm5shMusic.GUI.ViewModels
 
         protected override void LoadItem(ModEntryViewModel item)
         {
+            _logger.LogDebug("Load Item");
+
             if (item?.MusicMod == null)
             {
                 IsEdit = false;
@@ -94,6 +95,8 @@ namespace Sm5shMusic.GUI.ViewModels
 
         protected override async Task SaveChanges()
         {
+            _logger.LogDebug("Save Changes");
+
             if (!IsEdit)
             {
                 var modId = await _guiStateManager.CreateNewModEntry(new MusicModInformation()

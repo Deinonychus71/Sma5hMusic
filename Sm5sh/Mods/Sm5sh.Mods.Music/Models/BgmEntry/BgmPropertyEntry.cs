@@ -6,7 +6,7 @@ namespace Sm5sh.Mods.Music.Models
     {
         public string NameId { get; }
         public float AudioVolume { get; set; }
-        public string Filename { get; }
+        public string Filename { get; private set; }
         public uint LoopStartMs { get; set; }
         public uint LoopStartSample { get; set; }
         public uint LoopEndMs { get; set; }
@@ -21,6 +21,12 @@ namespace Sm5sh.Mods.Music.Models
             NameId = nameId;
             Filename = filename;
             AudioVolume = 2.7f;
+        }
+
+        public void ChangeFilename(string filename)
+        {
+            //TODO - Try to figure out a better way for mod to override filename
+            Filename = filename;
         }
     }
 }

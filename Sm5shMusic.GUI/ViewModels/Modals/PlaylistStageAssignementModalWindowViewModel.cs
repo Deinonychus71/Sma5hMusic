@@ -85,6 +85,8 @@ namespace Sm5shMusic.GUI.ViewModels
 
         public void LoadControl()
         {
+            _logger.LogDebug("Load Control");
+
             EditableStages = null;
             SelectedStageEntry = null;
             EditableStages = _stages.Select(p => new StageEntryViewModel(p.GetStageEntryReference())).ToList();
@@ -119,12 +121,14 @@ namespace Sm5shMusic.GUI.ViewModels
 
         private void Cancel(Window w)
         {
+            _logger.LogDebug("Clicked Cancel");
             EditableStages = null;
             w.Close();
         }
 
         private void Save(Window window)
         {
+            _logger.LogDebug("Clicked Save");
             window.Close(window);
         }
 

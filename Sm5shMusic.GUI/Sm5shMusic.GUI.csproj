@@ -38,7 +38,7 @@
     <PackageReference Include="Serilog.Extensions.Logging.File" Version="2.0.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="5.0.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="5.0.0" />
-    <PackageReference Include="Splat.Microsoft.Extensions.DependencyInjection" Version="9.7.1" />
+    <PackageReference Include="Splat.Microsoft.Extensions.DependencyInjection" Version="9.8.1" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Sm5sh\Core\Helpers\VGMMusic\VGMMusic.csproj" />

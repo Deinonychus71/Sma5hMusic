@@ -139,7 +139,7 @@ namespace Sm5sh.Mods.Music.MusicMods
                 _logger.LogDebug("Parsed {MusicModFile} Json File", metadataJsonFile);
 
                 //File backup, as it's an old version of mod
-                if(!File.Exists($"{metadataJsonFile}.bak"))
+                if (!File.Exists($"{metadataJsonFile}.bak"))
                     File.Copy(metadataJsonFile, $"{metadataJsonFile}.bak");
 
                 return output;

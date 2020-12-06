@@ -1,5 +1,4 @@
-﻿using Avalonia;
-using Avalonia.Controls;
+﻿using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using Avalonia.ReactiveUI;
 using ReactiveUI;
@@ -24,7 +23,7 @@ namespace Sm5shMusic.GUI.Views
             AvaloniaXamlLoader.Load(this);
             this.WhenActivated(disposables =>
             {
-                this.BindValidation(ViewModel, vm => vm.UiBgmId, view => view.ToneIdValidation.ValidationError)
+                this.BindValidation(ViewModel, vm => vm.ToneId, view => view.ToneIdValidation.ValidationError)
                 .DisposeWith(disposables);
             });
         }

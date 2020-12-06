@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using System.IO;
 
 namespace Sm5sh.Mods.Music.Models.AutoMapper
 {

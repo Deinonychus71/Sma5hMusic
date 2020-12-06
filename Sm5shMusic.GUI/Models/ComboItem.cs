@@ -18,8 +18,7 @@
             if (obj == null)
                 return false;
 
-            ComboItem p = obj as ComboItem;
-            if (p == null)
+            if (!(obj is ComboItem p))
                 return false;
 
             return p.Id == this.Id;

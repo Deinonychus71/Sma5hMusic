@@ -4,19 +4,19 @@ using Microsoft.Extensions.Logging;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using ReactiveUI.Validation.Extensions;
-using Sm5shMusic.GUI.Helpers;
+using Sm5sh.Mods.Music.Helpers;
 using Sm5sh.Mods.Music.Interfaces;
 using Sm5sh.Mods.Music.Models;
+using Sm5shMusic.GUI.Helpers;
+using Sm5shMusic.GUI.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Text.RegularExpressions;
-using ILogger = Microsoft.Extensions.Logging.ILogger;
-using Sm5sh.Mods.Music.Helpers;
-using Sm5shMusic.GUI.Interfaces;
 using System.Threading.Tasks;
+using ILogger = Microsoft.Extensions.Logging.ILogger;
 
 namespace Sm5shMusic.GUI.ViewModels
 {
@@ -130,6 +130,8 @@ namespace Sm5shMusic.GUI.ViewModels
 
         protected override async Task SaveChanges()
         {
+            _logger.LogDebug("Save Changes");
+
             if (!IsEdit)
             {
                 var newGameEntry = new GameTitleEntry(UiGameTitleId, EntrySource.Mod);
@@ -146,6 +148,8 @@ namespace Sm5shMusic.GUI.ViewModels
 
         protected override void LoadItem(GameTitleEntryViewModel item)
         {
+            _logger.LogDebug("Load Item");
+
             if (item == null)
             {
                 IsEdit = false;

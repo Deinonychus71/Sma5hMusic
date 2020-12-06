@@ -27,7 +27,7 @@ namespace Sm5shMusic.GUI.ViewModels
         public string Info13 { get; set; }
         public string Info14 { get; set; }
         public string Info15 { get; set; }
-        
+
 
         //Getter Helpers
         public BgmAssignedInfoEntryViewModel Info0ViewModel { get { return _viewModelManager.GetBgmAssignedInfoViewModel(Info0); } }

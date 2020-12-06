@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using ReactiveUI.Fody.Helpers;
 using Sm5sh.Mods.Music.Models;
 using Sm5shMusic.GUI.Interfaces;
 

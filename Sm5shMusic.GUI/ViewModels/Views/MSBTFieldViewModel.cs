@@ -42,7 +42,7 @@ namespace Sm5shMusic.GUI.ViewModels
 
         public bool HasValue()
         {
-            if(MSBTValues != null)
+            if (MSBTValues != null)
             {
                 return MSBTValues.Values.Any(p => !string.IsNullOrEmpty(p));
             }

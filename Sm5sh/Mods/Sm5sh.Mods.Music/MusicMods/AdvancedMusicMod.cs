@@ -104,12 +104,11 @@ namespace Sm5sh.Mods.Music.MusicMods
             }
 
             //For this specific mod, we want 1 entry of everything
-            if(musicModEntries.BgmDbRootEntries.Count != 1 ||
+            if (musicModEntries.BgmDbRootEntries.Count != 1 ||
                musicModEntries.BgmAssignedInfoEntries.Count != 1 ||
                musicModEntries.BgmStreamSetEntries.Count != 1 ||
                musicModEntries.BgmStreamPropertyEntries.Count != 1 ||
-               musicModEntries.BgmPropertyEntries.Count != 1 ||
-               musicModEntries.GameTitleEntries.Count != 1)
+               musicModEntries.BgmPropertyEntries.Count != 1)
             {
                 _logger.LogError("This update is not compatible with {MusicMod}", nameof(AdvancedMusicMod));
                 return false;
@@ -142,20 +141,25 @@ namespace Sm5sh.Mods.Music.MusicMods
 
                 _mapper.Map(audioCuePoints, bgmProperty);
 
-                var newFilename = string.Format(MusicConstants.Resources.AUDIO_FILE, toneId, Path.GetExtension(filenameWithoutPath));
-                _logger.LogDebug("New filename for {OldFilename}: {NewFilename}", filenameWithoutPath, newFilename);
+                var oldFileName = filenameWithoutPath;
+                filenameWithoutPath = string.Format(MusicConstants.Resources.AUDIO_FILE, toneId, Path.GetExtension(filenameWithoutPath));
+                _logger.LogDebug("New filename for {OldFilename}: {NewFilename}", oldFileName, filenameWithoutPath);
 
                 //Copy song
-                var outputFile = GetMusicModAudioFile(newFilename);
+                var outputFile = GetMusicModAudioFile(filenameWithoutPath);
                 if (!File.Exists(outputFile))
                     File.Copy(filename, outputFile);
+
+                //Set new name / TODO: Try to find a better, less "hacky" way
+                bgmProperty.ChangeFilename(outputFile);
             }
 
             //Attempt to retrieve, create none if needed
             var game = _musicModConfig.Games.Where(p => p.UiGameTitleId == dbRoot.UiGameTitleId).FirstOrDefault();
             if (game == null)
             {
-                game = _mapper.Map<GameConfig>(gameTitle);
+                if (gameTitle != null)
+                    game = _mapper.Map<GameConfig>(gameTitle);
                 if (game == null)
                 {
                     game = new GameConfig()
@@ -220,8 +224,7 @@ namespace Sm5sh.Mods.Music.MusicMods
                musicModDeleteEntries.BgmAssignedInfoEntries.Count != 1 ||
                musicModDeleteEntries.BgmStreamSetEntries.Count != 1 ||
                musicModDeleteEntries.BgmStreamPropertyEntries.Count != 1 ||
-               musicModDeleteEntries.BgmPropertyEntries.Count != 1 ||
-               musicModDeleteEntries.GameTitleEntries.Count != 1)
+               musicModDeleteEntries.BgmPropertyEntries.Count != 1)
             {
                 _logger.LogError("This update is not compatible with {MusicMod}", nameof(AdvancedMusicMod));
                 return false;

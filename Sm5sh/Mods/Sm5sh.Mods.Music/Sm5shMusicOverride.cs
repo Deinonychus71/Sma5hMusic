@@ -61,7 +61,7 @@ namespace Sm5sh.Mods.Music
             }
 
             //Bgm Override
-            if(_musicOverrideConfig.CoreBgmOverrides != null)
+            if (_musicOverrideConfig.CoreBgmOverrides != null)
             {
                 //DbRoot
                 var coreDbRootOverrides = _musicOverrideConfig.CoreBgmOverrides.CoreBgmDbRootOverrides;
@@ -128,7 +128,7 @@ namespace Sm5sh.Mods.Music
             //Sound Test Order
             foreach (var bgmEntry in _audioStateService.GetBgmDbRootEntries())
             {
-               
+
                 if (_musicOverrideConfig.SoundTestOrder.ContainsKey(bgmEntry.UiBgmId))
                     bgmEntry.TestDispOrder = _musicOverrideConfig.SoundTestOrder[bgmEntry.UiBgmId];
             }
@@ -260,8 +260,8 @@ namespace Sm5sh.Mods.Music
             if (musicModEntries == null)
                 return true;
 
-            if(musicModEntries.BgmDbRootEntries != null)
-                foreach(var bgmDbRootEntry in musicModEntries.BgmDbRootEntries)
+            if (musicModEntries.BgmDbRootEntries != null)
+                foreach (var bgmDbRootEntry in musicModEntries.BgmDbRootEntries)
                     _musicOverrideConfig.CoreBgmOverrides.CoreBgmDbRootOverrides[bgmDbRootEntry.UiBgmId] = _mapper.Map<BgmDbRootConfig>(bgmDbRootEntry);
             if (musicModEntries.BgmStreamSetEntries != null)
                 foreach (var bgmStreamSetEntry in musicModEntries.BgmStreamSetEntries)

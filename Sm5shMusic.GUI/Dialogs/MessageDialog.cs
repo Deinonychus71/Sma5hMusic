@@ -11,8 +11,8 @@ namespace Sm5shMusic.GUI.Dialogs
 {
     public class MessageDialog : IMessageDialog
     {
-        private ILogger _logger;
-        private IDialogWindow _rootDialogWindow;
+        private readonly ILogger _logger;
+        private readonly IDialogWindow _rootDialogWindow;
         private const Style STYLE = Style.DarkMode;
 
         public MessageDialog(IDialogWindow rootDialogWindow, ILogger<MessageDialog> logger)

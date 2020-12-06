@@ -72,31 +72,37 @@ namespace Sm5shMusic.GUI.ViewModels
 
         public void ChangeLocale(LocaleViewModel vmLocale)
         {
+            _logger.LogDebug("Clicked Change Locale");
             _whenLocaleChanged.OnNext(vmLocale.Id);
         }
 
         public void AddNewBgmEntry(ModEntryViewModel vmMusicMod)
         {
+            _logger.LogDebug("Clicked New Bgm");
             _whenNewRequestToAddBgmEntry.OnNext(vmMusicMod);
         }
 
         public void AddNewGame()
         {
+            _logger.LogDebug("Clicked New Game");
             _whenNewRequestToAddGameEntry.OnNext(Unit.Default);
         }
 
         public void EditGame()
         {
+            _logger.LogDebug("Clicked Edit Game");
             _whenNewRequestToEditGameEntry.OnNext(Unit.Default);
         }
 
         public void AddNewMod()
         {
+            _logger.LogDebug("Clicked New Mod");
             _whenNewRequestToAddModEntry.OnNext(Unit.Default);
         }
 
         public void EditMod()
         {
+            _logger.LogDebug("Clicked Edit Mod");
             _whenNewRequestToEditModEntry.OnNext(Unit.Default);
         }
 
@@ -121,6 +127,16 @@ namespace Sm5shMusic.GUI.ViewModels
             {
                 _whenNewRequestToAddGameEntry?.OnCompleted();
                 _whenNewRequestToAddGameEntry?.Dispose();
+            }
+            if (_whenNewRequestToEditModEntry != null)
+            {
+                _whenNewRequestToEditModEntry?.OnCompleted();
+                _whenNewRequestToEditModEntry?.Dispose();
+            }
+            if (_whenNewRequestToEditGameEntry != null)
+            {
+                _whenNewRequestToEditGameEntry?.OnCompleted();
+                _whenNewRequestToEditGameEntry?.Dispose();
             }
         }
     }

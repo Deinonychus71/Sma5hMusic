@@ -1,20 +1,18 @@
 ﻿using DynamicData;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using ReactiveUI.Validation.Extensions;
-using Sm5sh.Mods.Music;
+using Sm5sh.Mods.Music.Helpers;
+using Sm5sh.Mods.Music.Models;
+using Sm5shMusic.GUI.Interfaces;
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Text.RegularExpressions;
-using ILogger = Microsoft.Extensions.Logging.ILogger;
-using Sm5sh.Mods.Music.Models;
-using Sm5sh.Mods.Music.Helpers;
 using System.Threading.Tasks;
-using Sm5shMusic.GUI.Interfaces;
+using ILogger = Microsoft.Extensions.Logging.ILogger;
 
 namespace Sm5shMusic.GUI.ViewModels
 {
@@ -37,7 +35,7 @@ namespace Sm5shMusic.GUI.ViewModels
 
         public ReadOnlyObservableCollection<PlaylistEntryViewModel> Playlists { get { return _playlists; } }
 
-        public PlaylistPropertiesModalWindowViewModel(ILogger<ModPropertiesModalWindowViewModel> logger, IViewModelManager viewModelManager, 
+        public PlaylistPropertiesModalWindowViewModel(ILogger<ModPropertiesModalWindowViewModel> logger, IViewModelManager viewModelManager,
             IGUIStateManager guiStateManager, IObservable<IChangeSet<PlaylistEntryViewModel, string>> observablePlaylists)
         {
             _logger = logger;
@@ -84,6 +82,8 @@ namespace Sm5shMusic.GUI.ViewModels
 
         protected override void LoadItem(PlaylistEntryViewModel item)
         {
+            _logger.LogDebug("Load Item");
+
             if (item == null)
             {
                 PlaylistId = string.Empty;
@@ -100,9 +100,11 @@ namespace Sm5shMusic.GUI.ViewModels
 
         protected override async Task SaveChanges()
         {
+            _logger.LogDebug("Save Changes");
+
             if (!IsEdit)
             {
-                await _guiStateManager.CreateNewPlaylists(new PlaylistEntry(PlaylistId, PlaylistTitle));
+                await _guiStateManager.CreateNewPlaylist(new PlaylistEntry(PlaylistId, PlaylistTitle));
                 _refSelectedItem = _viewModelManager.GetPlaylistViewModel(PlaylistId);
             }
             else

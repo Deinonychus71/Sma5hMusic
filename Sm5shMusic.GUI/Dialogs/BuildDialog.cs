@@ -2,31 +2,29 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Sm5shMusic.GUI.Interfaces;
+using Sm5sh;
 using Sm5sh.Interfaces;
+using Sm5shMusic.GUI.Interfaces;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
-using Sm5sh;
-using System.Collections.Generic;
 
 namespace Sm5shMusic.GUI.Dialogs
 {
     public class BuildDialog : IBuildDialog
     {
         private readonly ILogger _logger;
-        private readonly IDialogWindow _rootDialogWindow;
         private readonly IServiceProvider _serviceProvider;
         private readonly IMessageDialog _messageDialog;
         private readonly IStateManager _stateManager;
         private readonly IOptions<Sm5shOptions> _config;
 
-        public BuildDialog(IOptions<Sm5shOptions> config, IServiceProvider serviceProvider, IStateManager stateManager,
-            IDialogWindow rootDialogWindow, IMessageDialog messageDialog, ILogger<BuildDialog> logger)
+        public BuildDialog(IOptions<Sm5shOptions> config, IServiceProvider serviceProvider,
+            IStateManager stateManager, IMessageDialog messageDialog, ILogger<BuildDialog> logger)
         {
             _logger = logger;
             _config = config;
-            _rootDialogWindow = rootDialogWindow;
             _serviceProvider = serviceProvider;
             _stateManager = stateManager;
             _messageDialog = messageDialog;
@@ -41,7 +39,7 @@ namespace Sm5shMusic.GUI.Dialogs
                 {
                     if (!File.Exists(fileCheck))
                     {
-                        await Dispatcher.UIThread.InvokeAsync(async() =>
+                        await Dispatcher.UIThread.InvokeAsync(async () =>
                         {
                             await _messageDialog.ShowError("File Check", $"The file {fileCheck} is required and was not found.\r\nPlease check your setup.");
                             callbackError?.Invoke(new Exception("File Check Exception"));
@@ -94,7 +92,7 @@ namespace Sm5shMusic.GUI.Dialogs
             }
             catch (Exception e)
             {
-                await Dispatcher.UIThread.InvokeAsync(async() =>
+                await Dispatcher.UIThread.InvokeAsync(async () =>
                 {
                     await _messageDialog.ShowError("Initialization failure", $"There was a general exception during Init.\r\n{e.Message}");
                     callbackError?.Invoke(e);
@@ -114,7 +112,7 @@ namespace Sm5shMusic.GUI.Dialogs
             {
                 if (!o)
                 {
-                    await Dispatcher.UIThread.InvokeAsync(async() =>
+                    await Dispatcher.UIThread.InvokeAsync(async () =>
                     {
                         await _messageDialog.ShowError("Build", "Could not initialize the build.");
                         callbackError?.Invoke(new Exception("Mod Init Exception"));
@@ -155,7 +153,7 @@ namespace Sm5shMusic.GUI.Dialogs
                         }, DispatcherPriority.Background);
                     }
 
-                    await Dispatcher.UIThread.InvokeAsync(async() =>
+                    await Dispatcher.UIThread.InvokeAsync(async () =>
                     {
                         await _messageDialog.ShowInformation("Complete", "Build complete. If something goes wrong, please check the logs for error.");
 
@@ -199,7 +197,7 @@ namespace Sm5shMusic.GUI.Dialogs
                     }
                 }
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 await Dispatcher.UIThread.InvokeAsync(async () =>
                 {
@@ -221,7 +219,7 @@ namespace Sm5shMusic.GUI.Dialogs
 
         private async Task ShowBuildFailedError()
         {
-            await Dispatcher.UIThread.InvokeAsync(async() =>
+            await Dispatcher.UIThread.InvokeAsync(async () =>
             {
                 await _messageDialog.ShowError("Failed", "Build failed. Errors happened while writing the resource files. Please check the logs.");
 

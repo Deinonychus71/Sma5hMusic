@@ -43,7 +43,7 @@ namespace Sm5sh.Mods.Music.Services
                 _logger.LogWarning("VGMAudio Metadata for {FilePath}: Total Samples, Frequency or/and loop end sample was 0! Check the logs for more information. Use song_cue_points_override property in the payload to override these values.", inputFile);
             }
 
-            if(audioCuePoints.TotalSamples < 0 || audioCuePoints.LoopStartSample < 0 || audioCuePoints.LoopEndSample < 0 
+            if (audioCuePoints.TotalSamples < 0 || audioCuePoints.LoopStartSample < 0 || audioCuePoints.LoopEndSample < 0
                 || audioCuePoints.TotalTimeMs < 0 || audioCuePoints.LoopStartMs < 0)
             {
                 _logger.LogWarning("VGMAudio Metadata for {FilePath}: Some cue values are negative. This is shouldn't happen.", inputFile);

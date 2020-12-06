@@ -1,5 +1,4 @@
 ﻿using Sm5sh.Mods.Music.Helpers;
-using Sm5sh.Mods.Music.Interfaces;
 using System.Collections.Generic;
 
 namespace Sm5sh.Mods.Music.Models
@@ -21,7 +20,7 @@ namespace Sm5sh.Mods.Music.Models
         }
 
         public GameTitleEntry(string uiGameTitleId, EntrySource source = EntrySource.Core)
-            :base(source)
+            : base(source)
         {
             UiGameTitleId = uiGameTitleId;
             MSBTTitle = new Dictionary<string, string>();

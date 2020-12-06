@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using Avalonia.Controls;
+﻿using Avalonia.Controls;
 using DynamicData;
 using Microsoft.Extensions.Logging;
 using ReactiveUI;
@@ -7,7 +6,6 @@ using ReactiveUI.Fody.Helpers;
 using ReactiveUI.Validation.Extensions;
 using Sm5sh.Mods.Music.Helpers;
 using Sm5shMusic.GUI.Helpers;
-using Sm5shMusic.GUI.Interfaces;
 using Sm5shMusic.GUI.Models;
 using System;
 using System.Collections.Generic;
@@ -21,7 +19,7 @@ using ILogger = Microsoft.Extensions.Logging.ILogger;
 
 namespace Sm5shMusic.GUI.ViewModels
 {
-    public class BgmPropertiesModalWindowViewModel : ModalBaseViewModel<BgmEntryViewModel> 
+    public class BgmPropertiesModalWindowViewModel : ModalBaseViewModel<BgmEntryViewModel>
     {
         private readonly ILogger _logger;
         private readonly List<ComboItem> _recordTypes;
@@ -131,6 +129,7 @@ namespace Sm5shMusic.GUI.ViewModels
 
         private void AddNewGame(Window window)
         {
+            _logger.LogDebug("Clicked Add New Game");
             _whenNewRequestToAddGameEntry.OnNext(window);
         }
 
@@ -184,18 +183,21 @@ namespace Sm5shMusic.GUI.ViewModels
             }
         }
 
-        protected override async Task SaveChanges()
+        protected override Task SaveChanges()
         {
+            _logger.LogDebug("Save Changes");
             DbRootViewModel.TestDispOrder = (short)(IsInSoundTest ? DbRootViewModel.TestDispOrder > -1 ? DbRootViewModel.TestDispOrder : short.MaxValue : -1);
             if (SelectedRecordType != null)
                 DbRootViewModel.RecordType = SelectedRecordType.Id;
             DbRootViewModel.MSBTTitle = MSBTTitleEditor.MSBTValues;
             DbRootViewModel.MSBTAuthor = MSBTAuthorEditor.MSBTValues;
             DbRootViewModel.MSBTCopyright = MSBTCopyrightEditor.MSBTValues;
+            return Task.CompletedTask;
         }
 
         protected override void LoadItem(BgmEntryViewModel item)
         {
+            _logger.LogDebug("Load Item");
             DbRootViewModel = item?.DbRootViewModel;
             StreamSetViewModel = item?.StreamSetViewModel;
             AssignedInfoViewModel = item?.AssignedInfoViewModel;

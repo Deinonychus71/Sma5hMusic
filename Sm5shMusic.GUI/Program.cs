@@ -6,6 +6,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Sm5shMusic.GUI.Dialogs;
 using Sm5shMusic.GUI.Interfaces;
+using Sm5shMusic.GUI.Mods.Music.Models.AutoMapper;
+using Sm5shMusic.GUI.Services;
 using Sm5shMusic.GUI.ViewModels;
 using Sm5shMusic.GUI.Views;
 using Splat.Microsoft.Extensions.DependencyInjection;
@@ -13,8 +15,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using VGMMusic;
-using Sm5shMusic.GUI.Mods.Music.Models.AutoMapper;
-using Sm5shMusic.GUI.Services;
 
 namespace Sm5shMusic.GUI
 {

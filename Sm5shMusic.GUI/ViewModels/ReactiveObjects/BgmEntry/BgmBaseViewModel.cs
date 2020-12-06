@@ -15,7 +15,7 @@ namespace Sm5shMusic.GUI.ViewModels
 
     public abstract class BgmBaseViewModel<T> : ReactiveObjectBaseViewModel where T : BgmBase
     {
-        private T _refBgmBaseEntity;
+        private readonly T _refBgmBaseEntity;
         protected IMapper _mapper;
         protected IViewModelManager _viewModelManager;
 

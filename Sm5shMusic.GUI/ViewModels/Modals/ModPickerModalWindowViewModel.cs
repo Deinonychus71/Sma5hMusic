@@ -1,8 +1,5 @@
-﻿using Avalonia.Controls;
-using DynamicData;
-using Microsoft.Extensions.Logging;
+﻿using DynamicData;
 using ReactiveUI;
-using ReactiveUI.Fody.Helpers;
 using System;
 using System.Collections.ObjectModel;
 using System.Reactive.Linq;

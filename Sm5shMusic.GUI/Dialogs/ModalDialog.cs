@@ -6,7 +6,7 @@ namespace Sm5shMusic.GUI.Dialogs
 {
     public class ModalDialog<W, VM, T> where W : Window, new() where T : ReactiveObjectBaseViewModel where VM : ModalBaseViewModel<T>
     {
-        private VM _refVM;
+        private readonly VM _refVM;
 
         public ModalDialog(VM vm)
         {
@@ -22,7 +22,7 @@ namespace Sm5shMusic.GUI.Dialogs
             var window = new W() { DataContext = _refVM };
             var result = await window.ShowDialog<W>(rootWindow);
 
-            if(result != null)
+            if (result != null)
             {
                 return (T)_refVM.SelectedItem.SaveChanges();
             }
