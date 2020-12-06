@@ -152,13 +152,15 @@ namespace Sm5sh.Mods.Music.MusicMods
                     _mapper.Map(audioCuePoints, bgmProperty);
 
                     var oldFileName = filenameWithoutPath;
-                    filenameWithoutPath = string.Format(MusicConstants.Resources.AUDIO_FILE, toneId, Path.GetExtension(filenameWithoutPath));
+                    filenameWithoutPath = string.Format("{0}{1}", toneId, Path.GetExtension(filenameWithoutPath));
                     _logger.LogDebug("New filename for {OldFilename}: {NewFilename}", oldFileName, filenameWithoutPath);
 
                     //Copy song
                     var outputFile = GetMusicModAudioFile(filenameWithoutPath);
                     if (!File.Exists(outputFile))
                         File.Copy(filename, outputFile);
+                    else
+                        _logger.LogWarning("The file {OutputFile} already exist and will not replaced. If you are migrating a mod you can ignore this warning.", outputFile);
 
                     //Set new name / TODO: Try to find a better, less "hacky" way
                     bgmProperty.ChangeFilename(outputFile);

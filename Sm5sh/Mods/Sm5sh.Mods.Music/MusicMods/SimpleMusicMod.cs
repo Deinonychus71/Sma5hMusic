@@ -81,11 +81,19 @@ namespace Sm5sh.Mods.Music.MusicMods
                         Copyright = song.Copyright
                     };
 
+                    string specialCategory = "";
+                    string info1 = "";
+                    if (song.SpecialCategory?.Category == "sf_pinch")
+                    {
+                        specialCategory = "0x105274ba4f";
+                        info1 = song.SpecialCategory?.Parameters?[0];
+                    }
+
                     var bgmStreamSetEntry = new BgmStreamSetEntry($"{MusicConstants.InternalIds.STREAM_SET_PREFIX}{toneId}", this)
                     {
-                        SpecialCategory = song.SpecialCategory?.Category,
+                        SpecialCategory = specialCategory,
                         Info0 = $"{MusicConstants.InternalIds.INFO_ID_PREFIX}{toneId}",
-                        Info1 = song.SpecialCategory?.Parameters?[0]
+                        Info1 = info1
                     };
 
                     var bgmAssignedInfoEntry = new BgmAssignedInfoEntry($"{MusicConstants.InternalIds.INFO_ID_PREFIX}{toneId}", this)
