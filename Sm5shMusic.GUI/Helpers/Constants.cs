@@ -94,7 +94,7 @@ namespace Sm5shMusic.GUI.Helpers
 
         public readonly static Dictionary<string, string> CONVERTER_CORE_PLAYLISTS = new Dictionary<string, string>()
         {
-            {"bgmsmashbtl", "Battlefield" },
+            {"bgmsmashbtl", "Smash Battle" },
             {"bgmsmashmenu", "Smash Menu" },
             {"bgmsmashmode", "Smash Mode" },
             {"bgmstageedit", "Stage Edit" },

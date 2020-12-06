@@ -1,54 +1,30 @@
-﻿using Avalonia.Controls;
-using DynamicData;
-using Microsoft.Extensions.Logging;
+﻿using DynamicData;
 using ReactiveUI;
-using ReactiveUI.Fody.Helpers;
 using System;
 using System.Collections.ObjectModel;
-using System.Reactive;
 using System.Reactive.Linq;
 
 namespace Sm5shMusic.GUI.ViewModels
 {
-    public class PlaylistPickerModalWindowViewModel : ViewModelBase
+    public class PlaylistPickerModalWindowViewModel : ModalBaseViewModel<PlaylistEntryViewModel>
     {
-        private readonly ILogger _logger;
         private readonly ReadOnlyObservableCollection<PlaylistEntryViewModel> _playlist;
 
         public ReadOnlyObservableCollection<PlaylistEntryViewModel> Playlists { get { return _playlist; } }
 
-        public ReactiveCommand<Window, Unit> ActionCancel { get; }
-        public ReactiveCommand<Window, Unit> ActionSelect { get; }
-
-        [Reactive]
-        public PlaylistEntryViewModel SelectedPlaylistEntry { get; private set; }
-
-
-        public PlaylistPickerModalWindowViewModel(ILogger<PlaylistPickerModalWindowViewModel> logger, IObservable<IChangeSet<PlaylistEntryViewModel, string>> observablePlaylists)
+        public PlaylistPickerModalWindowViewModel(IObservable<IChangeSet<PlaylistEntryViewModel, string>> observablePlaylists)
         {
-            _logger = logger;
-
             //Bind observables
             observablePlaylists
                .ObserveOn(RxApp.MainThreadScheduler)
                .Bind(out _playlist)
                .DisposeMany()
                .Subscribe();
-
-            var canExecute = this.WhenAnyValue(x => x.SelectedPlaylistEntry, x => x != null && !string.IsNullOrEmpty(x.Title));
-            ActionCancel = ReactiveCommand.Create<Window>(Cancel);
-            ActionSelect = ReactiveCommand.Create<Window>(Select, canExecute);
         }
 
-        private void Cancel(Window w)
+        protected override IObservable<bool> GetValidationRule()
         {
-            SelectedPlaylistEntry = null;
-            w.Close();
-        }
-
-        private void Select(Window window)
-        {
-            window.Close(window);
+            return this.WhenAnyValue(x => x.SelectedItem, x => x != null && !string.IsNullOrEmpty(x.Title));
         }
     }
 }

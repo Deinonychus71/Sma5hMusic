@@ -14,5 +14,10 @@ namespace Sm5shMusic.GUI.Interfaces
 
         Task<string> CreateNewModEntry(MusicModInformation musicModInformation, string modPath);
         Task UpdateModEntry(IMusicMod musicMod, MusicModInformation musicModInformation);
+
+        Task<string> CreateNewPlaylists(PlaylistEntry playlistEntry);
+        Task UpdatePlaylists();
+        Task RemovePlaylist(string playlistId);
+        Task UpdateStages();
     }
 }

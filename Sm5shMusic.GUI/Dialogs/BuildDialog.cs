@@ -65,7 +65,7 @@ namespace Sm5shMusic.GUI.Dialogs
                     return;
                 }
 
-                _ = Task.Run(() =>
+                _ = Task.Run(async () =>
                 {
                     try
                     {
@@ -84,8 +84,11 @@ namespace Sm5shMusic.GUI.Dialogs
                     }
                     catch (Exception e)
                     {
-                        _logger.LogError(e.Message);
-                        callbackError?.Invoke(e);
+                        await Dispatcher.UIThread.InvokeAsync(async () =>
+                        {
+                            await _messageDialog.ShowError("Initialization failure", $"There was a general exception during Init.\r\n{e.Message}");
+                            callbackError?.Invoke(e);
+                        }, DispatcherPriority.Background);
                     }
                 });
             }
@@ -94,7 +97,7 @@ namespace Sm5shMusic.GUI.Dialogs
                 await Dispatcher.UIThread.InvokeAsync(async() =>
                 {
                     await _messageDialog.ShowError("Initialization failure", $"There was a general exception during Init.\r\n{e.Message}");
-                    callbackError?.Invoke(new Exception("Initialization failure"));
+                    callbackError?.Invoke(e);
                 }, DispatcherPriority.Background);
             }
         }
@@ -141,12 +144,15 @@ namespace Sm5shMusic.GUI.Dialogs
                             callbackError?.Invoke(new Exception("StateManager Exception"));
                             return;
                         }
-                        _logger.LogInformation(" Build Complete");
+                        _logger.LogInformation("Build Complete");
                     }
                     catch (Exception e)
                     {
-                        _logger.LogError(e.Message);
-                        callbackError?.Invoke(e);
+                        await Dispatcher.UIThread.InvokeAsync(async () =>
+                        {
+                            await _messageDialog.ShowError("Build failure", $"There was a general exception during Build.\r\n{e.Message}");
+                            callbackError?.Invoke(e);
+                        }, DispatcherPriority.Background);
                     }
 
                     await Dispatcher.UIThread.InvokeAsync(async() =>

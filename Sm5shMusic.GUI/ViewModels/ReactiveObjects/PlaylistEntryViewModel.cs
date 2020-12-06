@@ -1,5 +1,4 @@
-﻿using ReactiveUI;
-using ReactiveUI.Fody.Helpers;
+﻿using ReactiveUI.Fody.Helpers;
 using Sm5shMusic.GUI.Helpers;
 using Sm5sh.Mods.Music.Models;
 using Sm5sh.Mods.Music.Models.PlaylistEntryModels;
@@ -10,7 +9,7 @@ using System.Linq;
 
 namespace Sm5shMusic.GUI.ViewModels
 {
-    public class PlaylistEntryViewModel : ReactiveObject
+    public class PlaylistEntryViewModel : ReactiveObjectBaseViewModel
     {
         protected readonly PlaylistEntry _refPlaylistEntry;
         private List<string> _allTracks;
@@ -75,6 +74,7 @@ namespace Sm5shMusic.GUI.ViewModels
                 Tracks[i].Add(newValue);
                 if (i == orderId)
                     output = newValue;
+                ReorderSongs(i);
             }
 
             _cachedTracks = false;
@@ -226,6 +226,16 @@ namespace Sm5shMusic.GUI.ViewModels
         public override int GetHashCode()
         {
             return base.GetHashCode();
+        }
+
+        public override ReactiveObjectBaseViewModel GetCopy()
+        {
+            return this; //Not needed for this object
+        }
+
+        public override ReactiveObjectBaseViewModel SaveChanges()
+        {
+            return this; //Not needed for this object
         }
     }
 }

@@ -321,6 +321,13 @@ namespace Sm5shMusic.GUI.Services
                 return null;
             return _vmDictBgmPropertyEntries.ContainsKey(nameId) ? _vmDictBgmPropertyEntries[nameId] : null;
         }
+
+        public PlaylistEntryViewModel GetPlaylistViewModel(string playlistId)
+        {
+            if (string.IsNullOrEmpty(playlistId))
+                return null;
+            return _vmDictPlaylistsEntries.ContainsKey(playlistId) ? _vmDictPlaylistsEntries[playlistId] : null;
+        }
         #endregion
 
         #region REMOVE
@@ -378,6 +385,15 @@ namespace Sm5shMusic.GUI.Services
             }
         }
 
+        public void RemovePlaylist(string playlistId)
+        {
+            if (_vmDictPlaylistsEntries.ContainsKey(playlistId))
+            {
+                _vmObsvPlaylistsEntries.Remove(_vmDictPlaylistsEntries[playlistId]);
+                _vmDictPlaylistsEntries.Remove(playlistId);
+            }
+        }
+
         public void RemoveBgmInAllPlaylists(string uiBgmId)
         {
             foreach (var playlist in _vmDictPlaylistsEntries.Values)
@@ -401,6 +417,14 @@ namespace Sm5shMusic.GUI.Services
             var newVM = new GameTitleEntryViewModel(this, _mapper, gameTitleEntry);
             _vmDictGameTitlesEntries.Add(newVM.UiGameTitleId, newVM);
             _vmObsvGameTitlesEntries.Add(newVM);
+            return true;
+        }
+
+        public bool AddNewPlaylistEntryViewModel(PlaylistEntry playlistEntry)
+        {
+            var newVM = new PlaylistEntryViewModel(playlistEntry, null);
+            _vmDictPlaylistsEntries.Add(newVM.Id, newVM);
+            _vmObsvPlaylistsEntries.Add(newVM);
             return true;
         }
         #endregion
