@@ -59,6 +59,11 @@ namespace Sm5sh.Mods.Music.MusicMods
                 {
                     var audioFilePath = GetMusicModAudioFile(song.FileName);
                     var audioCuePoints = _audioMetadataService.GetCuePoints(audioFilePath).GetAwaiter().GetResult();
+                    if (audioCuePoints == null || audioCuePoints.TotalSamples <= 0)
+                    {
+                        _logger.LogError("The filename {Filename} didn't have cue points. Make sure audio library is properly installed.", audioFilePath);
+                        continue;
+                    }
 
                     var toneId = song.Id;
                     var hasDlcPlaylistId = song.Playlists != null && song.Playlists.Any(p => CoreConstants.DLC_STAGES.Contains(p.Id));

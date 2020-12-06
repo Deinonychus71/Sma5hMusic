@@ -87,7 +87,7 @@ namespace Sm5shMusic.GUI.ViewModels
         public BgmDbRootEntryViewModel(IViewModelManager viewModelManager, IMapper mapper, BgmDbRootEntry bgmDbRootEntry)
             : base(viewModelManager, mapper, bgmDbRootEntry)
         {
-            UiBgmId = bgmDbRootEntry.UiBgmId;
+            UiBgmId = bgmDbRootEntry?.UiBgmId;
         }
 
         public void StopPlay()
