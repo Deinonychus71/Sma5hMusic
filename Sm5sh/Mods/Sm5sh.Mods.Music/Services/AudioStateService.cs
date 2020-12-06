@@ -497,7 +497,10 @@ namespace Sm5sh.Mods.Music.Services
 
                 foreach (var track in playlist.Value.Tracks)
                 {
-                    tracks.Add(_mapper.Map<PrcBgmPlaylistEntry>(track));
+                    if (_bgmDbRootEntries.ContainsKey(track.UiBgmId))
+                        tracks.Add(_mapper.Map<PrcBgmPlaylistEntry>(track));
+                    else
+                        _logger.LogWarning("The track with BGM ID {UiBgmId}", track.UiBgmId);
                 }
             }
 
