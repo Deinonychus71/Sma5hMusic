@@ -35,6 +35,7 @@ namespace Sm5shMusic.GUI.ViewModels
         public string UiGameTitleId4 { get; set; }
         public string NameId { get; set; }
         public short SaveNo { get; set; }
+        [Reactive]
         public short TestDispOrder { get; set; }
         public int MenuValue { get; set; }
         public bool JpRegion { get; set; }
