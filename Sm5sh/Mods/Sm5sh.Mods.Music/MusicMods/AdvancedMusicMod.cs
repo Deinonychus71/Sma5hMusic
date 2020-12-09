@@ -103,7 +103,18 @@ namespace Sm5sh.Mods.Music.MusicMods
                 return false;
             }
 
-            //For this specific mod, we want 1 entry of everything
+            //Update game in v2. v3 will have the same update mechanism for everything
+            if (musicModEntries.BgmDbRootEntries.Count == 0 ||
+               musicModEntries.BgmAssignedInfoEntries.Count == 0 ||
+               musicModEntries.BgmStreamSetEntries.Count == 0 ||
+               musicModEntries.BgmStreamPropertyEntries.Count == 0 ||
+               musicModEntries.BgmPropertyEntries.Count == 0 ||
+               musicModEntries.GameTitleEntries.Count == 1)
+            {
+                return UpdateGameTitleEntry(musicModEntries.GameTitleEntries.FirstOrDefault());
+            }
+
+                //For this specific mod, we want 1 entry of everything
             if (musicModEntries.BgmDbRootEntries.Count < 1 ||
                musicModEntries.BgmAssignedInfoEntries.Count < 1 ||
                musicModEntries.BgmStreamSetEntries.Count < 1 ||
@@ -224,6 +235,29 @@ namespace Sm5sh.Mods.Music.MusicMods
 
             _logger.LogInformation("Save Changes to Mod {ModName}", _musicModConfig.Name);
 
+            return true;
+        }
+
+        public bool UpdateGameTitleEntry(GameTitleEntry gameTitleEntry)
+        {
+            if(_musicModConfig?.Games != null)
+            {
+                bool change = false;
+
+                foreach (var game in _musicModConfig.Games)
+                {
+                    if(game.UiGameTitleId == gameTitleEntry.UiGameTitleId)
+                    {
+                        _mapper.Map(gameTitleEntry, game);
+                        change = true;
+                    }
+                }
+
+                if (change)
+                {
+                    return SaveMusicModConfig();
+                }
+            }
             return true;
         }
 

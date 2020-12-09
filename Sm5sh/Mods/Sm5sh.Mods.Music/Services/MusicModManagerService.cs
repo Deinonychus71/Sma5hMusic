@@ -113,5 +113,20 @@ namespace Sm5sh.Mods.Music.Services
                 return null;
             }
         }
+
+        public bool UpdateGameEntry(GameTitleEntry gameTitleEntry)
+        {
+            if(_musicMods != null)
+            {
+                foreach(var musicMod in _musicMods)
+                {
+                    var newMusicModEntries = new MusicModEntries();
+                    newMusicModEntries.GameTitleEntries.Add(gameTitleEntry);
+                    if (!musicMod.AddOrUpdateMusicModEntries(newMusicModEntries))
+                        return false;
+                }
+            }
+            return true;
+        }
     }
 }

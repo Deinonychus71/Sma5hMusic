@@ -428,8 +428,7 @@ namespace Sm5shMusic.GUI.Services
 
                 if (gameTitleEntry.Source == EntrySource.Mod)
                 {
-                    //TODO - enumerate mods and update game
-                    result = true;
+                    result = _musicModManagerService.UpdateGameEntry(gameTitleEntry);
                 }
                 else
                 {
