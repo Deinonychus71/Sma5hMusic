@@ -80,7 +80,7 @@ namespace Sm5shMusic.GUI.Helpers
         {
             { "eu_de", "German" },
             { "eu_en", "English (UK)" },
-            { "eu_sp", "Spanish (Spain)" },
+            { "eu_es", "Spanish (Spain)" },
             { "eu_fr", "French (France)" },
             { "eu_it", "Italian" },
             { "eu_nl", "Dutch" },
