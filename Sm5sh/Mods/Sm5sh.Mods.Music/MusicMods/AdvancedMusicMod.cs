@@ -104,11 +104,11 @@ namespace Sm5sh.Mods.Music.MusicMods
             }
 
             //Update game in v2. v3 will have the same update mechanism for everything
-            if (musicModEntries.BgmDbRootEntries.Count == 0 ||
-               musicModEntries.BgmAssignedInfoEntries.Count == 0 ||
-               musicModEntries.BgmStreamSetEntries.Count == 0 ||
-               musicModEntries.BgmStreamPropertyEntries.Count == 0 ||
-               musicModEntries.BgmPropertyEntries.Count == 0 ||
+            if (musicModEntries.BgmDbRootEntries.Count == 0 &&
+               musicModEntries.BgmAssignedInfoEntries.Count == 0 &&
+               musicModEntries.BgmStreamSetEntries.Count == 0 &&
+               musicModEntries.BgmStreamPropertyEntries.Count == 0 &&
+               musicModEntries.BgmPropertyEntries.Count == 0 &&
                musicModEntries.GameTitleEntries.Count == 1)
             {
                 return UpdateGameTitleEntry(musicModEntries.GameTitleEntries.FirstOrDefault());
