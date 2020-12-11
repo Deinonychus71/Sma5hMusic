@@ -65,7 +65,7 @@ namespace Sm5shMusic.GUI.ViewModels
 
         public BgmPropertiesModalWindowViewModel(ILogger<BgmPropertiesModalWindowViewModel> logger, IObservable<IChangeSet<LocaleViewModel, string>> observableLocales,
             IObservable<IChangeSet<SeriesEntryViewModel, string>> observableSeries, IObservable<IChangeSet<GameTitleEntryViewModel, string>> observableGames,
-            IObservable<IChangeSet<BgmStreamSetEntryViewModel, string>> observableBgmStreamSetEntries)
+            IObservable<IChangeSet<BgmAssignedInfoEntryViewModel, string>> observableBgmAssignedInfoEntries)
         {
             _logger = logger;
             _recordTypes = GetRecordTypes();
@@ -88,8 +88,8 @@ namespace Sm5shMusic.GUI.ViewModels
                .Bind(out _games)
                .DisposeMany()
                .Subscribe();
-            observableBgmStreamSetEntries
-               .Transform(p => p.StreamSetId)
+            observableBgmAssignedInfoEntries
+               .Transform(p => p.InfoId)
                .ObserveOn(RxApp.MainThreadScheduler)
                .Bind(out _streamSetIds)
                .DisposeMany()

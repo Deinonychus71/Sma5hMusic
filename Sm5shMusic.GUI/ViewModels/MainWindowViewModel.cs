@@ -118,7 +118,7 @@ namespace Sm5shMusic.GUI.ViewModels
 
             //Setup BgmEditor
             var vmBgmEditor = ActivatorUtilities.CreateInstance<BgmPropertiesModalWindowViewModel>(serviceProvider,
-                viewModelManager.ObservableLocales, viewModelManager.ObservableSeries, observableGameEntriesList, viewModelManager.ObservableStreamSetEntries);
+                viewModelManager.ObservableLocales, viewModelManager.ObservableSeries, observableGameEntriesList, viewModelManager.ObservableAssignedInfoEntries);
             vmBgmEditor.VMGamePropertiesModal = vmGameEditor;
             vmBgmEditor.WhenNewRequestToAddGameEntry.Subscribe(async (o) => await AddNewOrEditGame(o));
             _dialogSimpleBgmEditor = new ModalDialog<BgmPropertiesModalWindow, BgmPropertiesModalWindowViewModel, BgmEntryViewModel>(vmBgmEditor);
