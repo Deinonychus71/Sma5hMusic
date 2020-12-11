@@ -463,7 +463,7 @@ namespace Sm5shMusic.GUI.Services
             {
                 _logger.LogInformation("Create New Mod {ModName}, {ModPath}", musicModInformation?.Name, modPath);
 
-                newManagerMod = _musicModManagerService.AddMusicMod(new MusicModInformation(), modPath);
+                newManagerMod = _musicModManagerService.AddMusicMod(musicModInformation, modPath);
 
                 if (newManagerMod != null)
                 {
