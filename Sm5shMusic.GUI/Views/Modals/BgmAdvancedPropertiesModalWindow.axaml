@@ -9,8 +9,6 @@
         xmlns:fields="clr-namespace:Sm5shMusic.GUI.Views.Fields"
         Title="BGM Properties">
   <Window.Styles>
-    <StyleInclude Source="/Assets/Styles/ContentStyles.xaml"/>
-    <StyleInclude Source="/Assets/Styles/ModalStyles.xaml"/>
     <Style Selector=".content Button:pointerover">
       <Setter Property="Background" Value="Gray"/>
     </Style>

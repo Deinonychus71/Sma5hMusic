@@ -17,6 +17,7 @@ using System.Reactive.Linq;
 using System.Threading.Tasks;
 using VGMMusic;
 using ILogger = Microsoft.Extensions.Logging.ILogger;
+using Avalonia;
 
 namespace Sm5shMusic.GUI.ViewModels
 {
@@ -61,6 +62,12 @@ namespace Sm5shMusic.GUI.ViewModels
         public ReactiveCommand<Unit, Unit> ActionBuild { get; }
         public ReactiveCommand<Unit, Unit> ActionBuildNoCache { get; }
         public ReactiveCommand<Unit, Unit> ActionRefreshData { get; }
+        public ReactiveCommand<Unit, Unit> ActionToggleAdvanced { get; }
+        public ReactiveCommand<Unit, Unit> ActionToggleConsole { get; }
+        public ReactiveCommand<Unit, Unit> ActionSetThemeDark { get; }
+        public ReactiveCommand<Unit, Unit> ActionSetThemeLight { get; }
+        public ReactiveCommand<Unit, Unit> ActionSetUIScaleDefault { get; }
+        public ReactiveCommand<Unit, Unit> ActionSetUIScaleSmall { get; }
 
         public MainWindowViewModel(IServiceProvider serviceProvider, IViewModelManager viewModelManager, IGUIStateManager guiStateManager, IMapper mapper, INus3AudioService nus3AudioService,
             IVGMMusicPlayer musicPlayer, IDialogWindow rootDialog, IMessageDialog messageDialog, IFileDialog fileDialog, IBuildDialog buildDialog, ILogger<MainWindowViewModel> logger)
@@ -153,8 +160,13 @@ namespace Sm5shMusic.GUI.ViewModels
             ActionBuild = ReactiveCommand.CreateFromTask(OnBuild);
             ActionBuildNoCache = ReactiveCommand.CreateFromTask(OnBuildNoCache);
             ActionRefreshData = ReactiveCommand.CreateFromTask(OnInitData);
+            ActionToggleAdvanced = ReactiveCommand.Create(OnAdvancedToggle);
+            ActionToggleConsole = ReactiveCommand.Create(OnConsoleToggle);
+            ActionSetThemeDark = ReactiveCommand.Create(() => OnThemeSet(StylesHelper.FluentDark));
+            ActionSetThemeLight = ReactiveCommand.Create(() => OnThemeSet(StylesHelper.FluentLight));
+            ActionSetUIScaleDefault = ReactiveCommand.Create(() => OnUIScaleSet(StylesHelper.DefaultUIScale));
+            ActionSetUIScaleSmall = ReactiveCommand.Create(() => OnUIScaleSet(StylesHelper.SmallUIScale));
         }
-
 
         #region Actions
         public void OnExit()
@@ -223,6 +235,26 @@ namespace Sm5shMusic.GUI.ViewModels
                 "VGAudio: https://github.com/Thealexbarney/VGAudio \r\nThealexbarney, soneek, jam1garner, devlead, Raytwo, nnn1590\r\n\r\n" +
                 "vgmstream: https://github.com/vgmstream/vgmstream \r\nbnnm, kode54, NicknineTheEagle, bxaimc, Thealexbarney\r\nAll contributors: https://github.com/vgmstream/vgmstream/graphs/contributors \r\n\r\n" +
                 "CrossArc: https://github.com/Ploaj/ArcCross \r\nPloaj, ScanMountGoat, BenHall-7, shadowninja108, jam1garner, M-1-RLG\r\n\r\n");
+        }
+
+        public void OnAdvancedToggle()
+        {
+            IsAdvanced = !IsAdvanced;
+        }
+
+        public void OnConsoleToggle()
+        {
+            IsShowingDebug = !IsShowingDebug;
+        }
+
+        public void OnThemeSet(Avalonia.Styling.Styles stylesTheme)
+        {
+            Application.Current.Styles[0] = stylesTheme;
+        }
+
+        public void OnUIScaleSet(Avalonia.Styling.Styles stylesTheme)
+        {
+            Application.Current.Styles[Application.Current.Styles.Count - 1] = stylesTheme;
         }
         #endregion
 

@@ -7,9 +7,6 @@
         xmlns:ia="clr-namespace:Avalonia.Xaml.Interactions.Core;assembly=Avalonia.Xaml.Interactions"
              x:Class="Sm5shMusic.GUI.Views.BgmSongsView"
              x:Name="SongsWindow">
-  <UserControl.Styles>
-    <StyleInclude Source="/Assets/Styles/ListsStyles.xaml" />
-  </UserControl.Styles>
   <Grid ColumnDefinitions="5*,*" RowDefinitions="30,*">
     <ContentControl Content="{Binding VMContextMenu}"></ContentControl>
     <Grid Grid.Row="1" Grid.Column="0" Classes="list">

@@ -2,12 +2,20 @@
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
+    <AssemblyName>Sm5shMusic.GUI</AssemblyName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
-    <AvaloniaResource Include="Assets\**" />
+    <Compile Update="**\*.xaml.cs">
+      <DependentUpon>%(Filename)</DependentUpon>
+    </Compile>
+    <AvaloniaResource Include="**\*.xaml">
+      <SubType>Designer</SubType>
+    </AvaloniaResource>
+    <AvaloniaResource Include="Assets\*" />
+    <AvaloniaResource Include="Assets\Fonts\*" />
   </ItemGroup>
   <ItemGroup>
     <None Remove="appsettings.json" />
@@ -16,7 +24,10 @@
     <None Remove="Assets\ModalStyles.xaml" />
     <None Remove="Assets\PropertiesStyles.xaml" />
     <None Remove="Assets\Styles.xaml" />
-    <None Remove="Assets\Styles\ContentStyles.xaml" />
+    <None Remove="Assets\Themes\CustomThemeDark.xaml" />
+    <None Remove="Assets\Themes\CustomThemeLight.xaml" />
+    <None Remove="Assets\Themes\CustomThemeNormalUI.xaml" />
+    <None Remove="Assets\Themes\CustomThemeSmallUI.xaml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="appsettings.json">
@@ -45,19 +56,16 @@
     <ProjectReference Include="..\Sm5sh\Mods\Sm5sh.Mods.Music\Sm5sh.Mods.Music.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <AvaloniaResource Update="Assets\Styles\ContentStyles.xaml">
-      <SubType>Designer</SubType>
+    <AvaloniaResource Update="Assets\Themes\CustomThemeSmallUI.xaml">
       <Generator>MSBuild:Compile</Generator>
     </AvaloniaResource>
-    <AvaloniaResource Update="Assets\Styles\ModalStyles.xaml">
-      <SubType>Designer</SubType>
+    <AvaloniaResource Update="Assets\Themes\CustomThemeNormalUI.xaml">
       <Generator>MSBuild:Compile</Generator>
     </AvaloniaResource>
-    <AvaloniaResource Update="Assets\Styles\ListsStyles.xaml">
-      <SubType>Designer</SubType>
+    <AvaloniaResource Update="Assets\Themes\CustomThemeLight.xaml">
       <Generator>MSBuild:Compile</Generator>
     </AvaloniaResource>
-    <AvaloniaResource Update="Assets\Styles\Styles.xaml">
+    <AvaloniaResource Update="Assets\Themes\CustomThemeDark.xaml">
       <Generator>MSBuild:Compile</Generator>
     </AvaloniaResource>
   </ItemGroup>

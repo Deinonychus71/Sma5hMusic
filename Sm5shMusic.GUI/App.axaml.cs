@@ -2,6 +2,7 @@
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
+using Sm5shMusic.GUI.Helpers;
 using Sm5shMusic.GUI.Interfaces;
 using Sm5shMusic.GUI.ViewModels;
 using Splat;
@@ -12,7 +13,9 @@ namespace Sm5shMusic.GUI
     {
         public override void Initialize()
         {
+            Styles.Insert(0, StylesHelper.FluentDark);
             AvaloniaXamlLoader.Load(this);
+            Styles.Add(StylesHelper.DefaultUIScale);
         }
 
         public override void OnFrameworkInitializationCompleted()

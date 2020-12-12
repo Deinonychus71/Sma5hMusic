@@ -7,9 +7,6 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              xmlns:fields="clr-namespace:Sm5shMusic.GUI.Views.Fields"
              x:Class="Sm5shMusic.GUI.Views.PlaylistView">
-  <UserControl.Styles>
-    <StyleInclude Source="/Assets/Styles/ListsStyles.xaml" />
-  </UserControl.Styles>
   <Grid ColumnDefinitions="3*,5,4*" RowDefinitions="30,*">
     <ContentControl Grid.Row="0" Grid.Column="0" Content="{Binding VMContextMenu}"></ContentControl>
     <Grid Grid.Row="1" Grid.Column="0" Classes="list">
