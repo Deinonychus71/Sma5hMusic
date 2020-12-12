@@ -4,7 +4,7 @@
         xmlns:vw="clr-namespace:Sm5shMusic.GUI.Views;assembly=Sm5shMusic.GUI"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        mc:Ignorable="d" MinWidth="1920" MinHeight="1080" d:DesignWidth="1280" d:DesignHeight="720"
+        mc:Ignorable="d" MinWidth="1280" MinHeight="720" d:DesignWidth="1280" d:DesignHeight="720"
         x:Class="Sm5shMusic.GUI.Views.MainWindow"
         Icon="/Assets/avalonia-logo.ico"
         xmlns:fields="clr-namespace:Sm5shMusic.GUI.Views.Fields"

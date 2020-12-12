@@ -283,7 +283,7 @@ namespace Sm5shMusic.GUI.Services
                     else
                         result = _sm5shMusicOverride.UpdateCoreBgmEntries(musicModEntries);
 
-                    _viewModelManager.ReorderSongs();
+                    ReorderSongs();
                 }
                 catch (Exception e)
                 {
@@ -636,5 +636,11 @@ namespace Sm5shMusic.GUI.Services
             return result;
         }
         #endregion
+
+        public void ReorderSongs()
+        {
+            _viewModelManager.ReorderSongs();
+            _sm5shMusicOverride.UpdateSoundTestOrderConfig(_viewModelManager.GetBgmDbRootEntriesViewModels().ToDictionary(p => p.UiBgmId, p => p.TestDispOrder));
+        }
     }
 }

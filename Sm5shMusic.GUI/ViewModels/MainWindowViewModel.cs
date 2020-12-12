@@ -142,7 +142,7 @@ namespace Sm5shMusic.GUI.ViewModels
             VMContextMenu.WhenNewRequestToEditModEntry.Subscribe(async (o) => await EditMod());
             VMBgmSongs.WhenNewRequestToEditBgmEntry.Subscribe(async (o) => await EditBgmEntry(o));
             VMBgmSongs.WhenNewRequestToDeleteBgmEntry.Subscribe(async (o) => await DeleteBgmEntry(o));
-            VMBgmSongs.WhenNewRequestToReorderBgmEntries.Subscribe((o) => _viewModelManager.ReorderSongs());
+            VMBgmSongs.WhenNewRequestToReorderBgmEntries.Subscribe((o) => _guiStateManager.ReorderSongs());
             VMPlaylists.WhenNewRequestToUpdatePlaylists.Subscribe(async (o) => await _guiStateManager.PersistPlaylistChanges());
             VMPlaylists.WhenNewRequestToCreatePlaylist.Subscribe(async (o) => await AddNewOrEditPlaylist());
             VMPlaylists.WhenNewRequestToEditPlaylist.Subscribe(async (o) => await EditPlaylist());

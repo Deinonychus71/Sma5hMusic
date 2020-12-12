@@ -480,8 +480,6 @@ namespace Sm5shMusic.GUI.Services
                 bgmEntry.TestDispOrder = i;
                 i += 2;
             }
-            //TODO - The data should be first persisted in the BgmEntries
-            _sm5shMusicOverride.UpdateSoundTestOrderConfig(listBgms.ToDictionary(p => p.UiBgmId, p => p.TestDispOrder));
         }
     }
 }

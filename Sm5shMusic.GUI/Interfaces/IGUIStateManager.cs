@@ -22,5 +22,6 @@ namespace Sm5shMusic.GUI.Interfaces
         Task<bool> PersistPlaylistChanges();
         Task<bool> RemovePlaylist(string playlistId);
         Task<bool> PersistStageChanges();
+        void ReorderSongs();
     }
 }
