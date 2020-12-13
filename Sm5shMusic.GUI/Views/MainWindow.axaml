@@ -16,11 +16,9 @@
       <ia:InvokeCommandAction Command="{Binding OnInitData}"/>
     </ia:EventTriggerBehavior>
   </i:Interaction.Behaviors>
-  <Grid RowDefinitions="20,70,*,Auto" ColumnDefinitions="*">
+  <Grid RowDefinitions="20,65,*,Auto" ColumnDefinitions="*">
     <Menu Grid.Row="0">
       <MenuItem Header="Project">
-        <!--<MenuItem Header="Choose Mod Workspace..."></MenuItem>
-        <Separator></Separator>-->
         <MenuItem Header="Build" Command="{Binding ActionBuild}"/>
         <MenuItem Header="Build [no cache]" Command="{Binding ActionBuildNoCache}"/>
         <Separator></Separator>
@@ -32,20 +30,20 @@
         <MenuItem Header="Export to CSV"></MenuItem>
       </MenuItem>-->
       <MenuItem Header="Settings">
-        <MenuItem Header="Advanced">
+        <MenuItem Header="Advanced" Command="{Binding ActionToggleAdvanced}">
           <MenuItem.Icon>
-            <CheckBox IsChecked="{Binding IsAdvanced}"/>
+            <CheckBox IsEnabled="False" IsChecked="{Binding IsAdvanced, Mode=OneWay}"/>
           </MenuItem.Icon>
         </MenuItem>
-        <MenuItem Header="Show Console">
+        <MenuItem Header="Show Console" Command="{Binding ActionToggleConsole}">
           <MenuItem.Icon>
-            <CheckBox IsChecked="{Binding IsShowingDebug}"/>
+            <CheckBox IsEnabled="False" IsChecked="{Binding IsShowingDebug, Mode=OneWay}"/>
           </MenuItem.Icon>
         </MenuItem>
-        <!--
-        <MenuItem Header="Global Settings"></MenuItem>-->
         <Separator></Separator>
-        <MenuItem Header="About" Command="{Binding OnAboutOpen}"></MenuItem>
+        <MenuItem Header="Global Settings" Command="{Binding ActionOpenGlobalSettings}"></MenuItem>
+        <Separator></Separator>
+        <MenuItem Header="About" Command="{Binding ActionOpenAbout}"></MenuItem>
       </MenuItem>
     </Menu>
     <DockPanel Grid.Row="1">

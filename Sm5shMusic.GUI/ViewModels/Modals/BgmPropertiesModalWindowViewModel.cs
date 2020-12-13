@@ -183,7 +183,7 @@ namespace Sm5shMusic.GUI.ViewModels
             }
         }
 
-        protected override Task SaveChanges()
+        protected override Task<bool> SaveChanges()
         {
             _logger.LogDebug("Save Changes");
             DbRootViewModel.TestDispOrder = (short)(IsInSoundTest ? DbRootViewModel.TestDispOrder > -1 ? DbRootViewModel.TestDispOrder : short.MaxValue : -1);
@@ -192,7 +192,7 @@ namespace Sm5shMusic.GUI.ViewModels
             DbRootViewModel.MSBTTitle = MSBTTitleEditor.MSBTValues;
             DbRootViewModel.MSBTAuthor = MSBTAuthorEditor.MSBTValues;
             DbRootViewModel.MSBTCopyright = MSBTCopyrightEditor.MSBTValues;
-            return Task.CompletedTask;
+            return Task.FromResult(true);
         }
 
         protected override void LoadItem(BgmEntryViewModel item)

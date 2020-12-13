@@ -16,9 +16,9 @@
   </Application.Resources>
   <Application.Styles>
 
-    <StyleInclude Source="avares://Avalonia.Themes.Fluent/Accents/FluentDark.xaml"/>
+    <!--<StyleInclude Source="avares://Avalonia.Themes.Fluent/Accents/FluentDark.xaml"/>
     <StyleInclude Source="avares://Avalonia.Themes.Fluent/FluentTheme.xaml"/>
-    <StyleInclude Source="avares://Avalonia.Controls.DataGrid/Themes/Fluent.xaml"/>
+    <StyleInclude Source="avares://Avalonia.Controls.DataGrid/Themes/Fluent.xaml"/>-->
     <!--<StyleInclude Source="avares://Avalonia.Themes.Default/Accents/BaseDark.xaml"/>
     <StyleInclude Source="avares://Avalonia.Themes.Default/DefaultTheme.xaml"/>
     <StyleInclude Source="avares://Avalonia.Controls.DataGrid/Themes/Default.xaml"/>-->

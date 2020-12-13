@@ -1,4 +1,5 @@
-﻿using Sm5sh.Mods.Music.Interfaces;
+﻿using Sm5sh.Mods.Music;
+using Sm5sh.Mods.Music.Interfaces;
 using Sm5sh.Mods.Music.Models;
 using System.Threading.Tasks;
 
@@ -22,6 +23,9 @@ namespace Sm5shMusic.GUI.Interfaces
         Task<bool> PersistPlaylistChanges();
         Task<bool> RemovePlaylist(string playlistId);
         Task<bool> PersistStageChanges();
-        void ReorderSongs();
+
+        Task<bool> UpdateGlobalSettings(ApplicationSettings appSettings);
+        Task<bool> WipeAudioCache();
+        Task<bool> ReorderSongs();
     }
 }

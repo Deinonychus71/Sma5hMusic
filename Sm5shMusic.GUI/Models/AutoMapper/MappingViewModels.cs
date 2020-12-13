@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
+using Sm5sh.Mods.Music;
 using Sm5sh.Mods.Music.Models;
+using System;
 
 namespace Sm5shMusic.GUI.Mods.Music.Models.AutoMapper
 {
@@ -7,6 +9,52 @@ namespace Sm5shMusic.GUI.Mods.Music.Models.AutoMapper
     {
         public MappingViewModels()
         {
+            CreateMap<GUI.ViewModels.GlobalConfigurationViewModel, ApplicationSettings>()
+                .ForMember(i => i.GameResourcesPath, me => me.MapFrom(p => p.GameResourcesPath))
+                .ForMember(i => i.LogPath, me => me.MapFrom(p => p.LogPath))
+                .ForMember(i => i.OutputPath, me => me.MapFrom(p => p.OutputPath))
+                .ForMember(i => i.ResourcesPath, me => me.MapFrom(p => p.ResourcesPath))
+                .ForMember(i => i.SkipOutputPathCleanupConfirmation, me => me.MapFrom(p => p.SkipOutputPathCleanupConfirmation))
+                .ForMember(i => i.Sm5shMusic, me => me.MapFrom(p => new Sm5shMusicOptions.Sm5shMusicOptionsSection()
+                {
+                    AudioConversionFormat = p.AudioConversionFormat,
+                    DefaultLocale = p.DefaultLocale,
+                    AudioConversionFormatFallBack = p.AudioConversionFormatFallBack,
+                    CachePath = p.CachePath,
+                    EnableAudioCaching = p.EnableAudioCaching,
+                    ModPath = p.ModPath
+                }))
+                .ForMember(i => i.Sm5shMusicGUI, me => me.MapFrom(p => new ApplicationSettings.Sm5shMusicGuiOptionsSection()
+                {
+                    UIScale = Enum.Parse<Helpers.StylesHelper.UIScale>(p.UIScale, true),
+                    UITheme = Enum.Parse<Helpers.StylesHelper.UITheme>(p.UITheme, true),
+                    Advanced = p.Advanced
+                }))
+                .ForMember(i => i.Sm5shMusicOverride, me => me.MapFrom(p => new Sm5shMusicOverrideOptions.Sm5shMusicOverrideOptionsSection()
+                {
+                    ModPath = p.ModOverridePath
+                }))
+                .ForMember(i => i.TempPath, me => me.MapFrom(p => p.TempPath))
+                .ForMember(i => i.ToolsPath, me => me.MapFrom(p => p.ToolsPath));
+            CreateMap<ApplicationSettings, GUI.ViewModels.GlobalConfigurationViewModel>()
+                .ForMember(i => i.GameResourcesPath, me => me.MapFrom(p => p.GameResourcesPath))
+                .ForMember(i => i.LogPath, me => me.MapFrom(p => p.LogPath))
+                .ForMember(i => i.OutputPath, me => me.MapFrom(p => p.OutputPath))
+                .ForMember(i => i.ResourcesPath, me => me.MapFrom(p => p.ResourcesPath))
+                .ForMember(i => i.SkipOutputPathCleanupConfirmation, me => me.MapFrom(p => p.SkipOutputPathCleanupConfirmation))
+                .ForMember(i => i.AudioConversionFormat, me => me.MapFrom(p => p.Sm5shMusic.AudioConversionFormat))
+                .ForMember(i => i.DefaultLocale, me => me.MapFrom(p => p.Sm5shMusic.DefaultLocale))
+                .ForMember(i => i.AudioConversionFormatFallBack, me => me.MapFrom(p => p.Sm5shMusic.AudioConversionFormatFallBack))
+                .ForMember(i => i.CachePath, me => me.MapFrom(p => p.Sm5shMusic.CachePath))
+                .ForMember(i => i.EnableAudioCaching, me => me.MapFrom(p => p.Sm5shMusic.EnableAudioCaching))
+                .ForMember(i => i.ModPath, me => me.MapFrom(p => p.Sm5shMusic.ModPath))
+                .ForMember(i => i.UIScale, me => me.MapFrom(p => p.Sm5shMusicGUI.UIScale))
+                .ForMember(i => i.UITheme, me => me.MapFrom(p => p.Sm5shMusicGUI.UITheme))
+                .ForMember(i => i.Advanced, me => me.MapFrom(p => p.Sm5shMusicGUI.Advanced))
+                .ForMember(i => i.ModOverridePath, me => me.MapFrom(p => p.Sm5shMusicOverride.ModPath))
+                .ForMember(i => i.TempPath, me => me.MapFrom(p => p.TempPath))
+                .ForMember(i => i.ToolsPath, me => me.MapFrom(p => p.ToolsPath));
+
             CreateMap<GUI.ViewModels.StageEntryViewModel, StageEntry>()
                 .ForMember(i => i.UiStageId, me => me.Ignore())
                 .ForMember(i => i.NameId, me => me.Ignore())

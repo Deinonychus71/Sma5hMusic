@@ -4,6 +4,7 @@ using Avalonia.ReactiveUI;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Sm5sh.Mods.Music;
 using Sm5shMusic.GUI.Dialogs;
 using Sm5shMusic.GUI.Interfaces;
 using Sm5shMusic.GUI.Mods.Music.Models.AutoMapper;
@@ -38,6 +39,8 @@ namespace Sm5shMusic.GUI
                 .UseReactiveUI();
         }
 
+        public static IConfiguration Configuration { get; private set; }
+
         public static void ConfigureServices()
         {
             var services = new ServiceCollection();
@@ -48,6 +51,7 @@ namespace Sm5shMusic.GUI
                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
                //.AddJsonFile(GetCurrentPathFile("user.json"), optional: false, reloadOnChange: true)
                .Build();
+            Configuration = configuration;
 
             var loggerFactory = LoggerFactory.Create(builder => builder
                 .AddFile(Path.Combine(configuration.GetValue<string>("LogPath"), "log_{Date}.txt"), LogLevel.Debug, retainedFileCountLimit: 7)
@@ -72,6 +76,7 @@ namespace Sm5shMusic.GUI
             services.AddSingleton<BgmFiltersViewModel>();
 
             //Add UI Services
+            services.Configure<ApplicationSettings>(configuration);
             services.AddSingleton<IVGMMusicPlayer, VGMMusicPlayer>();
             services.AddSingleton<IFileDialog, FileDialog>();
             services.AddSingleton<IMessageDialog, MessageDialog>();
@@ -106,7 +111,10 @@ namespace Sm5shMusic.GUI
                 { "Sm5shMusic:EnableAudioCaching", "false" },
                 { "Sm5shMusic:AudioConversionFormat", "lopus" },
                 { "Sm5shMusic:AudioConversionFormatFallBack", "idsp" },
-                { "Sm5shMusic:DefaultLocale", "en_us" },
+                { "Sm5shMusic:DefaultLocale", "us_en" },
+                { "Sm5shMusicGUI:Advanced", "false" },
+                { "Sm5shMusicGUI:UIScale", "Normal" },
+                { "Sm5shMusicGUI:UITheme", "Dark" },
                 { "Sm5shMusicOverride:ModPath", $"Mods{Path.DirectorySeparatorChar}MusicOverride" },
             };
         }

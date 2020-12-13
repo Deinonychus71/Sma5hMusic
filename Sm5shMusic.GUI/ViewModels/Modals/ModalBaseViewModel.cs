@@ -36,7 +36,7 @@ namespace Sm5shMusic.GUI.ViewModels
         }
 
         protected virtual void LoadItem(T item) { }
-        protected virtual Task SaveChanges() { return Task.CompletedTask; }
+        protected virtual Task<bool> SaveChanges() { return Task.FromResult(true); }
         protected virtual Task CancelChanges() { return Task.CompletedTask; }
 
         private async Task CancelChanges(Window w)
@@ -47,8 +47,8 @@ namespace Sm5shMusic.GUI.ViewModels
 
         private async Task SaveChanges(Window window)
         {
-            await SaveChanges();
-            window.Close(window);
+            if(await SaveChanges())
+                window.Close(window);
         }
     }
 }

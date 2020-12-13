@@ -13,14 +13,18 @@ namespace Sm5shMusic.GUI.Dialogs
         private readonly ILogger _logger;
         private readonly IDialogWindow _rootDialogWindow;
         private readonly OpenFileDialog _openFileDialog;
+        private readonly OpenFolderDialog _openFolderDialog;
         private string _savedDirectory;
+        private string _savedFolderDirectory;
 
         public FileDialog(IDialogWindow rootDialogWindow, ILogger<FileDialog> logger)
         {
             _logger = logger;
             _rootDialogWindow = rootDialogWindow;
             _savedDirectory = Environment.CurrentDirectory;
+            _savedFolderDirectory = Environment.CurrentDirectory;
             _openFileDialog = new OpenFileDialog();
+            _openFolderDialog = new OpenFolderDialog();
         }
 
         public async Task<string[]> OpenFileDialogAudio(Window parent = null)
@@ -54,6 +58,27 @@ namespace Sm5shMusic.GUI.Dialogs
             _logger.LogDebug("Selected {NbrItems} items", results?.Length);
 
             return results;
+        }
+
+        public async Task<string> OpenFolderDialog(Window parent = null)
+        {
+            _logger.LogDebug("Opening FolderDialog...");
+
+            _openFolderDialog.Title = "Choose Directory";
+            _openFolderDialog.Directory = _savedFolderDirectory;
+
+            string result;
+            if (parent == null)
+                result = await _openFolderDialog.ShowAsync(_rootDialogWindow.Window);
+            else
+                result = await _openFolderDialog.ShowAsync(parent);
+
+            if (!string.IsNullOrEmpty(result))
+                _savedFolderDirectory = result;
+
+            _logger.LogDebug("Selected {Directory}", result);
+
+            return result;
         }
     }
 }

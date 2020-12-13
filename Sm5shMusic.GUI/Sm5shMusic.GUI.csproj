@@ -2,26 +2,31 @@
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
+    <AssemblyName>Sm5shMusic.GUI</AssemblyName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
-    <AvaloniaResource Include="Assets\**" />
+    <Compile Update="**\*.xaml.cs">
+      <DependentUpon>%(Filename)</DependentUpon>
+    </Compile>
+    <AvaloniaResource Include="**\*.xaml">
+      <SubType>Designer</SubType>
+    </AvaloniaResource>
+    <AvaloniaResource Include="Assets\*" />
+    <AvaloniaResource Include="Assets\Fonts\*" />
   </ItemGroup>
   <ItemGroup>
-    <None Remove="appsettings.json" />
     <None Remove="Assets\FilterStyles.xaml" />
     <None Remove="Assets\ListsStyles.xaml" />
     <None Remove="Assets\ModalStyles.xaml" />
     <None Remove="Assets\PropertiesStyles.xaml" />
     <None Remove="Assets\Styles.xaml" />
-    <None Remove="Assets\Styles\ContentStyles.xaml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="appsettings.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
+    <None Remove="Assets\Themes\CustomThemeDark.xaml" />
+    <None Remove="Assets\Themes\CustomThemeLight.xaml" />
+    <None Remove="Assets\Themes\CustomThemeNormalUI.xaml" />
+    <None Remove="Assets\Themes\CustomThemeSmallUI.xaml" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Avalonia" Version="0.10.0-preview6" />
@@ -37,7 +42,7 @@
     <PackageReference Include="ReactiveUI.Validation" Version="1.8.6" />
     <PackageReference Include="Serilog.Extensions.Logging.File" Version="2.0.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="5.0.0" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="5.0.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="5.0.1" />
     <PackageReference Include="Splat.Microsoft.Extensions.DependencyInjection" Version="9.8.1" />
   </ItemGroup>
   <ItemGroup>
@@ -45,25 +50,25 @@
     <ProjectReference Include="..\Sm5sh\Mods\Sm5sh.Mods.Music\Sm5sh.Mods.Music.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <AvaloniaResource Update="Assets\Styles\ContentStyles.xaml">
-      <SubType>Designer</SubType>
+    <AvaloniaResource Update="Assets\Themes\CustomThemeSmallUI.xaml">
       <Generator>MSBuild:Compile</Generator>
     </AvaloniaResource>
-    <AvaloniaResource Update="Assets\Styles\ModalStyles.xaml">
-      <SubType>Designer</SubType>
+    <AvaloniaResource Update="Assets\Themes\CustomThemeNormalUI.xaml">
       <Generator>MSBuild:Compile</Generator>
     </AvaloniaResource>
-    <AvaloniaResource Update="Assets\Styles\ListsStyles.xaml">
-      <SubType>Designer</SubType>
+    <AvaloniaResource Update="Assets\Themes\CustomThemeLight.xaml">
       <Generator>MSBuild:Compile</Generator>
     </AvaloniaResource>
-    <AvaloniaResource Update="Assets\Styles\Styles.xaml">
+    <AvaloniaResource Update="Assets\Themes\CustomThemeDark.xaml">
       <Generator>MSBuild:Compile</Generator>
     </AvaloniaResource>
   </ItemGroup>
   <ItemGroup>
     <Compile Update="Views\Fields\PropertyByteField.axaml.cs">
       <DependentUpon>PropertyByteField.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\Fields\PropertyFolderPickupField.axaml.cs">
+      <DependentUpon>PropertyFolderPickupField.axaml</DependentUpon>
     </Compile>
     <Compile Update="Views\Fields\PropertyULongField.axaml.cs">
       <DependentUpon>PropertyULongField.axaml</DependentUpon>

@@ -128,7 +128,7 @@ namespace Sm5shMusic.GUI.ViewModels
             }
         }
 
-        protected override async Task SaveChanges()
+        protected override async Task<bool> SaveChanges()
         {
             _logger.LogDebug("Save Changes");
 
@@ -144,6 +144,8 @@ namespace Sm5shMusic.GUI.ViewModels
             _refSelectedItem.Release = Release;
             _refSelectedItem.Unk1 = Unk1;
             _refSelectedItem.UiSeriesId = SelectedSeries.SeriesId;
+
+            return true;
         }
 
         protected override void LoadItem(GameTitleEntryViewModel item)
