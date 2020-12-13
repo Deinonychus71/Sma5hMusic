@@ -8,11 +8,6 @@
         WindowStartupLocation="CenterScreen" ShowInTaskbar="False"
         xmlns:fields="clr-namespace:Sm5shMusic.GUI.Views.Fields"
         Title="Playlist Stage Assignment">
-  <Window.Styles>
-    <StyleInclude Source="/Assets/Styles/ContentStyles.xaml" />
-    <StyleInclude Source="/Assets/Styles/ModalStyles.xaml" />
-    <StyleInclude Source="/Assets/Styles/ListsStyles.xaml" />
-  </Window.Styles>
   <DockPanel Classes="modal" LastChildFill="True">
     <Border Classes="headerTitle" DockPanel.Dock="Top">
       <TextBlock>Playlist Assignment</TextBlock>

@@ -8,11 +8,6 @@
         WindowStartupLocation="CenterScreen" ShowInTaskbar="False"
         xmlns:fields="clr-namespace:Sm5shMusic.GUI.Views.Fields"
         Title="Playlist Picker">
-  <Window.Styles>
-    <StyleInclude Source="/Assets/Styles/ContentStyles.xaml"/>
-    <StyleInclude Source="/Assets/Styles/ModalStyles.xaml"/>
-  </Window.Styles>
-
   <DockPanel Classes="modal" LastChildFill="True" HorizontalAlignment="Stretch">
     <Border Classes="headerTitle" DockPanel.Dock="Top">
       <TextBlock>Pick Playlist to Edit</TextBlock>

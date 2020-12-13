@@ -17,6 +17,8 @@ using System.Reactive.Linq;
 using System.Threading.Tasks;
 using VGMMusic;
 using ILogger = Microsoft.Extensions.Logging.ILogger;
+using Microsoft.Extensions.Options;
+using Sm5sh.Mods.Music;
 
 namespace Sm5shMusic.GUI.ViewModels
 {
@@ -30,6 +32,7 @@ namespace Sm5shMusic.GUI.ViewModels
         private readonly IFileDialog _fileDialog;
         private readonly IDialogWindow _rootDialog;
         private readonly IBuildDialog _buildDialog;
+        private readonly IOptions<ApplicationSettings> _appSettings;
         private readonly ILogger _logger;
         private readonly IMapper _mapper;
         private string _currentLocale;
@@ -42,6 +45,7 @@ namespace Sm5shMusic.GUI.ViewModels
         private readonly ModalDialog<ModPickerModalWindow, ModPickerModalWindowViewModel, ModEntryViewModel> _dialogModPicker;
         private readonly ModalDialog<PlaylistPropertiesModalWindow, PlaylistPropertiesModalWindowViewModel, PlaylistEntryViewModel> _dialogPlaylistEditor;
         private readonly ModalDialog<PlaylistPickerModalWindow, PlaylistPickerModalWindowViewModel, PlaylistEntryViewModel> _dialogPlaylistPicker;
+        private readonly ModalDialog<GlobalSettingsModalWindow, GlobalSettingsModalWindowViewModel, GlobalConfigurationViewModel> _dialogGlobalSettingsEditor;
         private readonly PlaylistStageAssignementModalWindowViewModel _vmStageAssignement;
         private readonly ToneIdCreationModalWindowModel _vmToneIdCreation;
 
@@ -61,9 +65,14 @@ namespace Sm5shMusic.GUI.ViewModels
         public ReactiveCommand<Unit, Unit> ActionBuild { get; }
         public ReactiveCommand<Unit, Unit> ActionBuildNoCache { get; }
         public ReactiveCommand<Unit, Unit> ActionRefreshData { get; }
+        public ReactiveCommand<Unit, Unit> ActionToggleAdvanced { get; }
+        public ReactiveCommand<Unit, Unit> ActionToggleConsole { get; }
+        public ReactiveCommand<Unit, Unit> ActionOpenAbout { get; }
+        public ReactiveCommand<Unit, Unit> ActionOpenGlobalSettings { get; }
 
         public MainWindowViewModel(IServiceProvider serviceProvider, IViewModelManager viewModelManager, IGUIStateManager guiStateManager, IMapper mapper, INus3AudioService nus3AudioService,
-            IVGMMusicPlayer musicPlayer, IDialogWindow rootDialog, IMessageDialog messageDialog, IFileDialog fileDialog, IBuildDialog buildDialog, ILogger<MainWindowViewModel> logger)
+            IVGMMusicPlayer musicPlayer, IDialogWindow rootDialog, IMessageDialog messageDialog, IFileDialog fileDialog, IBuildDialog buildDialog, IOptions<ApplicationSettings> appSettings,
+            ILogger<MainWindowViewModel> logger)
         {
             _viewModelManager = viewModelManager;
             _guiStateManager = guiStateManager;
@@ -75,9 +84,17 @@ namespace Sm5shMusic.GUI.ViewModels
             _rootDialog = rootDialog;
             _logger = logger;
             _mapper = mapper;
+            _appSettings = appSettings;
             IsLoading = true;
 
             _logger.LogInformation($"GUI Version: {Constants.GUIVersion}");
+
+            //Set values
+            IsAdvanced = appSettings.Value.Sm5shMusicGUI.Advanced;
+
+            //Set global settings
+            var vmGlobalSettings = new GlobalSettingsModalWindowViewModel(_guiStateManager, fileDialog);
+            _dialogGlobalSettingsEditor = new ModalDialog<GlobalSettingsModalWindow, GlobalSettingsModalWindowViewModel, GlobalConfigurationViewModel>(vmGlobalSettings);
 
             //Initialize Contextual Menu view
             VMContextMenu = ActivatorUtilities.CreateInstance<ContextMenuViewModel>(serviceProvider, viewModelManager.ObservableModsEntries, viewModelManager.ObservableLocales);
@@ -142,7 +159,7 @@ namespace Sm5shMusic.GUI.ViewModels
             VMContextMenu.WhenNewRequestToEditModEntry.Subscribe(async (o) => await EditMod());
             VMBgmSongs.WhenNewRequestToEditBgmEntry.Subscribe(async (o) => await EditBgmEntry(o));
             VMBgmSongs.WhenNewRequestToDeleteBgmEntry.Subscribe(async (o) => await DeleteBgmEntry(o));
-            VMBgmSongs.WhenNewRequestToReorderBgmEntries.Subscribe((o) => _guiStateManager.ReorderSongs());
+            VMBgmSongs.WhenNewRequestToReorderBgmEntries.Subscribe(async (o) => await _guiStateManager.ReorderSongs());
             VMPlaylists.WhenNewRequestToUpdatePlaylists.Subscribe(async (o) => await _guiStateManager.PersistPlaylistChanges());
             VMPlaylists.WhenNewRequestToCreatePlaylist.Subscribe(async (o) => await AddNewOrEditPlaylist());
             VMPlaylists.WhenNewRequestToEditPlaylist.Subscribe(async (o) => await EditPlaylist());
@@ -153,8 +170,11 @@ namespace Sm5shMusic.GUI.ViewModels
             ActionBuild = ReactiveCommand.CreateFromTask(OnBuild);
             ActionBuildNoCache = ReactiveCommand.CreateFromTask(OnBuildNoCache);
             ActionRefreshData = ReactiveCommand.CreateFromTask(OnInitData);
+            ActionToggleAdvanced = ReactiveCommand.Create(OnAdvancedToggle);
+            ActionToggleConsole = ReactiveCommand.Create(OnConsoleToggle);
+            ActionOpenAbout = ReactiveCommand.CreateFromTask(OnAboutOpen);
+            ActionOpenGlobalSettings = ReactiveCommand.CreateFromTask(OnGlobalSettingsOpen);
         }
-
 
         #region Actions
         public void OnExit()
@@ -223,6 +243,27 @@ namespace Sm5shMusic.GUI.ViewModels
                 "VGAudio: https://github.com/Thealexbarney/VGAudio \r\nThealexbarney, soneek, jam1garner, devlead, Raytwo, nnn1590\r\n\r\n" +
                 "vgmstream: https://github.com/vgmstream/vgmstream \r\nbnnm, kode54, NicknineTheEagle, bxaimc, Thealexbarney\r\nAll contributors: https://github.com/vgmstream/vgmstream/graphs/contributors \r\n\r\n" +
                 "CrossArc: https://github.com/Ploaj/ArcCross \r\nPloaj, ScanMountGoat, BenHall-7, shadowninja108, jam1garner, M-1-RLG\r\n\r\n");
+        }
+
+        public async Task OnGlobalSettingsOpen()
+        {
+            var vmGlobalSettings = new GlobalConfigurationViewModel(_mapper, _appSettings.Value);
+            var result = await _dialogGlobalSettingsEditor.ShowDialog(_rootDialog.Window, new GlobalConfigurationViewModel(_mapper, _appSettings.Value));
+            if(result != null)
+            {
+                await _guiStateManager.UpdateGlobalSettings(vmGlobalSettings.GetReference());
+                IsAdvanced = result.Advanced;
+            }
+        }
+
+        public void OnAdvancedToggle()
+        {
+            IsAdvanced = !IsAdvanced;
+        }
+
+        public void OnConsoleToggle()
+        {
+            IsShowingDebug = !IsShowingDebug;
         }
         #endregion
 

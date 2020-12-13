@@ -1,0 +1,123 @@
+﻿<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:fields="clr-namespace:Sm5shMusic.GUI.Views.Fields"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <!-- MODALS -->
+  <Style Selector=".modal StackPanel.content">
+    <Setter Property="Margin" Value="15"/>
+    <Setter Property="Spacing" Value="15"/>
+  </Style>
+  <Style Selector=".modal > StackPanel.modalActions">
+    <Setter Property="MaxHeight" Value="40"/>
+    <Setter Property="Margin" Value="15"/>
+    <Setter Property="Spacing" Value="15"/>
+  </Style>
+  <Style Selector=".modalActions > Button">
+    <Setter Property="Margin" Value="15,0,15,0"/>
+  </Style>
+  <!-- END MODALS -->
+
+  <!-- HEADER TITLE -->
+  <Style Selector="Border.headerTitle">
+    <Setter Property="Margin" Value="0,7,0,7"/>
+  </Style>
+  <Style Selector=".headerTitle > TextBlock">
+    <Setter Property="FontSize" Value="20"/>
+    <Setter Property="Margin" Value="10"/>
+  </Style>
+  <!-- END HEADER TITLE -->
+
+  <!-- CONTENT TITLE -->
+  <Style Selector=".contentTitle > TextBlock">
+    <Setter Property="FontSize" Value="13"/>
+  </Style>
+  <!-- END CONTENT TITLE -->
+
+  <!-- CONTENT CONTAINER -->
+  <Style Selector="StackPanel.content">
+    <Setter Property="Margin" Value="3"/>
+  </Style>
+  <Style Selector="Grid.content">
+    <Setter Property="Margin" Value="3"/>
+  </Style>
+  <Style Selector="TabControl.content">
+    <Setter Property="Margin" Value="3"/>
+  </Style>
+  <!-- CONTENT CONTAINER -->
+
+  <!-- CONTENT FIELDS -->
+  <Style Selector="StackPanel.propertyField">
+    <Setter Property="Margin" Value="7,5,7,2"/>
+  </Style>
+  <Style Selector=".propertyField > StackPanel > TextBlock">
+    <Setter Property="FontSize" Value="12"/>
+  </Style>
+  <Style Selector=".propertyField > StackPanel > TextBlock.subLabel">
+    <Setter Property="FontSize" Value="11"/>
+  </Style>
+  <Style Selector="TextBlock.error">
+    <Setter Property="FontSize" Value="11"/>
+  </Style>
+  <Style Selector=".propertyField > TextBox.valueSoundPreview">
+    <Setter Property="Width" Value="120"/>
+  </Style>
+  <!-- END CONTENT FIELDS -->
+
+  <!-- WINDOW SIZE -->
+  <Style Selector="Window">
+    <Setter Property="MinHeight" Value="720"/>
+  </Style>
+  <!-- END WINDOW SIZE -->
+
+  <!-- OVERRIDE GLOBAL SIZE -->
+  <Style Selector="TextBlock">
+    <Setter Property="FontSize" Value="12"/>
+  </Style>
+  <Style Selector="Button">
+    <Setter Property="FontSize" Value="12"/>
+  </Style>
+  <Style Selector="ComboBox">
+    <Setter Property="FontSize" Value="12"/>
+    <Setter Property="Height" Value="28"/>
+    <Setter Property="Padding" Value="8,4,8,4"/>
+    <Setter Property="MinHeight" Value="28"/>
+  </Style>
+  <Style Selector="AutoCompleteBox">
+    <Setter Property="FontSize" Value="12"/>
+    <Setter Property="Padding" Value="4"/>
+    <Setter Property="MinHeight" Value="28"/>
+  </Style>
+  <Style Selector="AutoCompleteBox /template/ TextBox#PART_TextBox">
+    <Setter Property="FontSize" Value="12"/>
+    <Setter Property="Padding" Value="4"/>
+    <Setter Property="MinHeight" Value="28"/>
+  </Style>
+  <Style Selector="NumericUpDown">
+    <Setter Property="FontSize" Value="12"/>
+    <Setter Property="Padding" Value="4"/>
+    <Setter Property="MinHeight" Value="28"/>
+  </Style>
+  <Style Selector="NumericUpDown /template/ ButtonSpinner#PART_Spinner">
+    <Setter Property="FontSize" Value="12"/>
+    <Setter Property="Padding" Value="4"/>
+    <Setter Property="MinHeight" Value="28"/>
+  </Style>
+  <Style Selector="CheckBox">
+    <Setter Property="FontSize" Value="12"/>
+    <Setter Property="MinHeight" Value="28"/>
+  </Style>
+  <Style Selector="TextBox">
+    <Setter Property="FontSize" Value="11"/>
+    <Setter Property="Padding" Value="4"/>
+    <Setter Property="MinHeight" Value="28"/>
+  </Style>
+  <Style Selector="DataGridCell TextBlock">
+    <Setter Property="FontSize" Value="12" />
+  </Style>
+  <Style Selector="TabStrip TextBlock">
+    <Setter Property="FontSize" Value="24" />
+  </Style>
+  <Style Selector="DataGridCell TextBlock">
+    <Setter Property="FontSize" Value="12" />
+  </Style>
+  <!-- END OVERRIDE GLOBAL SIZE -->
+</Styles>
