@@ -93,7 +93,7 @@ namespace Sm5shMusic.GUI.ViewModels
             }
         }
 
-        protected override async Task SaveChanges()
+        protected override async Task<bool> SaveChanges()
         {
             _logger.LogDebug("Save Changes");
 
@@ -115,6 +115,8 @@ namespace Sm5shMusic.GUI.ViewModels
                 _refSelectedItem.Website = this.ModWebsite;
                 _refSelectedItem.Description = this.ModDescription;
             }
+
+            return true;
         }
     }
 }

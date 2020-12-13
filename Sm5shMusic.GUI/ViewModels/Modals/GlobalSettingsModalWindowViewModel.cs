@@ -1,8 +1,10 @@
 ﻿using ReactiveUI;
+using ReactiveUI.Validation.Extensions;
 using Sm5shMusic.GUI.Helpers;
 using Sm5shMusic.GUI.Interfaces;
 using Sm5shMusic.GUI.Models;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reactive;
 using System.Threading.Tasks;
@@ -32,6 +34,38 @@ namespace Sm5shMusic.GUI.ViewModels
 
             ActionWipeAudioCache = ReactiveCommand.CreateFromTask(OnWipeAudioCache);
             ActionOpenFileDialog = ReactiveCommand.CreateFromTask<string>(OnChooseFolder);
+
+            this.ValidationRule(p => p.SelectedItem.OutputPath,
+                p => !string.IsNullOrEmpty(p) && Directory.Exists(p),
+                "This directory does not exist.");
+
+            this.ValidationRule(p => p.SelectedItem.GameResourcesPath,
+                p => !string.IsNullOrEmpty(p) && Directory.Exists(p),
+                "This directory does not exist.");
+
+            this.ValidationRule(p => p.SelectedItem.CachePath,
+                p => !string.IsNullOrEmpty(p) && Directory.Exists(p),
+                "This directory does not exist.");
+
+            this.ValidationRule(p => p.SelectedItem.LogPath,
+                p => !string.IsNullOrEmpty(p) && Directory.Exists(p),
+                "This directory does not exist.");
+
+            this.ValidationRule(p => p.SelectedItem.ModOverridePath,
+                p => !string.IsNullOrEmpty(p) && Directory.Exists(p),
+                "This directory does not exist.");
+
+            this.ValidationRule(p => p.SelectedItem.ModPath,
+                p => !string.IsNullOrEmpty(p) && Directory.Exists(p),
+                "This directory does not exist.");
+
+            this.ValidationRule(p => p.SelectedItem.ResourcesPath,
+                p => !string.IsNullOrEmpty(p) && Directory.Exists(p),
+                "This directory does not exist.");
+
+            this.ValidationRule(p => p.SelectedItem.ToolsPath,
+                p => !string.IsNullOrEmpty(p) && Directory.Exists(p),
+                "This directory does not exist.");
         }
 
         public async Task OnWipeAudioCache()
