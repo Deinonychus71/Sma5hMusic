@@ -3,6 +3,8 @@ using MessageBox.Avalonia.DTO;
 using MessageBox.Avalonia.Enums;
 using MessageBox.Avalonia.Models;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using Sm5sh.Mods.Music;
 using Sm5shMusic.GUI.Interfaces;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -13,12 +15,13 @@ namespace Sm5shMusic.GUI.Dialogs
     {
         private readonly ILogger _logger;
         private readonly IDialogWindow _rootDialogWindow;
-        private const Style STYLE = Style.DarkMode;
+        private readonly Style _style = Style.DarkMode;
 
-        public MessageDialog(IDialogWindow rootDialogWindow, ILogger<MessageDialog> logger)
+        public MessageDialog(IDialogWindow rootDialogWindow, IOptions<ApplicationSettings> appSettings, ILogger<MessageDialog> logger)
         {
             _logger = logger;
             _rootDialogWindow = rootDialogWindow;
+            _style = appSettings.Value.Sm5shMusicGUI.UITheme == Helpers.StylesHelper.UITheme.Dark ? Style.DarkMode : Style.Windows;
         }
 
         public async Task<bool> ShowWarningConfirm(string title, string message)
@@ -31,7 +34,7 @@ namespace Sm5shMusic.GUI.Dialogs
                 ContentTitle = title,
                 ContentMessage = message,
                 Icon = Icon.Warning,
-                Style = STYLE
+                Style = _style
             });
             var result = await msBoxStandardWindow.ShowDialog(_rootDialogWindow.Window);
             return result == ButtonResult.Ok;
@@ -47,7 +50,7 @@ namespace Sm5shMusic.GUI.Dialogs
                 ContentTitle = title,
                 ContentMessage = message,
                 Icon = Icon.Error,
-                Style = STYLE
+                Style = _style
             });
             await msBoxStandardWindow.ShowDialog(_rootDialogWindow.Window);
         }
@@ -62,7 +65,7 @@ namespace Sm5shMusic.GUI.Dialogs
                 ContentTitle = title,
                 ContentMessage = message,
                 Icon = Icon.Info,
-                Style = STYLE
+                Style = _style
             });
             await msBoxStandardWindow.ShowDialog(_rootDialogWindow.Window);
         }

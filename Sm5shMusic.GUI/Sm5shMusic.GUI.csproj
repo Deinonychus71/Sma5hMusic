@@ -18,7 +18,6 @@
     <AvaloniaResource Include="Assets\Fonts\*" />
   </ItemGroup>
   <ItemGroup>
-    <None Remove="appsettings.json" />
     <None Remove="Assets\FilterStyles.xaml" />
     <None Remove="Assets\ListsStyles.xaml" />
     <None Remove="Assets\ModalStyles.xaml" />
@@ -28,11 +27,6 @@
     <None Remove="Assets\Themes\CustomThemeLight.xaml" />
     <None Remove="Assets\Themes\CustomThemeNormalUI.xaml" />
     <None Remove="Assets\Themes\CustomThemeSmallUI.xaml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="appsettings.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Avalonia" Version="0.10.0-preview6" />
@@ -72,6 +66,9 @@
   <ItemGroup>
     <Compile Update="Views\Fields\PropertyByteField.axaml.cs">
       <DependentUpon>PropertyByteField.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\Fields\PropertyFolderPickupField.axaml.cs">
+      <DependentUpon>PropertyFolderPickupField.axaml</DependentUpon>
     </Compile>
     <Compile Update="Views\Fields\PropertyULongField.axaml.cs">
       <DependentUpon>PropertyULongField.axaml</DependentUpon>

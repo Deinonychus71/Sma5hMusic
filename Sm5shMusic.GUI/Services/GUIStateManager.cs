@@ -1,10 +1,14 @@
 ﻿using Avalonia.Threading;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
+using Sm5sh.Mods.Music;
 using Sm5sh.Mods.Music.Helpers;
 using Sm5sh.Mods.Music.Interfaces;
 using Sm5sh.Mods.Music.Models;
 using Sm5shMusic.GUI.Interfaces;
 using System;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -18,11 +22,13 @@ namespace Sm5shMusic.GUI.Services
         private readonly ISm5shMusicOverride _sm5shMusicOverride;
         private readonly IMusicModManagerService _musicModManagerService;
         private readonly IViewModelManager _viewModelManager;
+        private readonly IOptions<ApplicationSettings> _config;
 
         public GUIStateManager(ISm5shMusicOverride sm5shMusicOverride, IViewModelManager viewModelManager, IAudioStateService audioStateService,
-            IMusicModManagerService musicModManagerService, IMessageDialog messageDialog, ILogger<IGUIStateManager> logger)
+            IOptions<ApplicationSettings> config, IMusicModManagerService musicModManagerService, IMessageDialog messageDialog, ILogger<IGUIStateManager> logger)
         {
             _logger = logger;
+            _config = config;
             _messageDialog = messageDialog;
             _sm5shMusicOverride = sm5shMusicOverride;
             _audioState = audioStateService;
@@ -283,7 +289,8 @@ namespace Sm5shMusic.GUI.Services
                     else
                         result = _sm5shMusicOverride.UpdateCoreBgmEntries(musicModEntries);
 
-                    ReorderSongs();
+                    if(result)
+                        await ReorderSongs();
                 }
                 catch (Exception e)
                 {
@@ -637,10 +644,111 @@ namespace Sm5shMusic.GUI.Services
         }
         #endregion
 
-        public void ReorderSongs()
+        public async Task<bool> UpdateGlobalSettings(ApplicationSettings appSettings)
         {
-            _viewModelManager.ReorderSongs();
-            _sm5shMusicOverride.UpdateSoundTestOrderConfig(_viewModelManager.GetBgmDbRootEntriesViewModels().ToDictionary(p => p.UiBgmId, p => p.TestDispOrder));
+            bool result;
+
+            try
+            {
+                var settings = JsonConvert.SerializeObject(appSettings, Formatting.Indented);
+                File.WriteAllText("appsettings.json", settings);
+                result = true;
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "Error while updating global settings");
+                result = false;
+            }
+
+            if (!result)
+            {
+                await Dispatcher.UIThread.InvokeAsync(async () =>
+                {
+                    await _messageDialog.ShowError("Update Global Settings", "There was an error while updating appsettings.json. Please check the logs.");
+                }, DispatcherPriority.Background);
+            }
+            else
+            {
+                await Dispatcher.UIThread.InvokeAsync(async () =>
+                {
+                    await _messageDialog.ShowInformation("Update Global Settings", "Your settings were saved. Please restart the application.");
+                }, DispatcherPriority.Background);
+            }
+
+            return result;
+        }
+
+        public async Task<bool> WipeAudioCache()
+        {
+            bool result;
+
+            try
+            {
+                if (await _messageDialog.ShowWarningConfirm("Wipe Audio Cache", "Are you sure you want to delete the audio cache?"))
+                {
+                    if (Directory.Exists(_config.Value.Sm5shMusic.CachePath))
+                    {
+                        var existingFiles = Directory.GetFiles(_config.Value.Sm5shMusic.CachePath, "*.nus3audio", SearchOption.AllDirectories);
+                        foreach (var fileToDelete in existingFiles)
+                        {
+                            File.Delete(fileToDelete);
+                        }
+                    }
+                    result = true;
+                }
+                else
+                {
+                    return true;
+                }
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "Error while deleting audio cache");
+                result = false;
+            }
+
+            if (!result)
+            {
+                await Dispatcher.UIThread.InvokeAsync(async () =>
+                {
+                    await _messageDialog.ShowError("Wipe Audio Cache", "There was an error while deleting audio cache. Please check the logs.");
+                }, DispatcherPriority.Background);
+            }
+            else
+            {
+                await Dispatcher.UIThread.InvokeAsync(async () =>
+                {
+                    await _messageDialog.ShowInformation("Wipe Audio Cache", "Success!");
+                }, DispatcherPriority.Background);
+            }
+
+            return result;
+        }
+
+        public async Task<bool> ReorderSongs()
+        {
+            bool result;
+
+            try
+            {
+                _viewModelManager.ReorderSongs();
+                result = _sm5shMusicOverride.UpdateSoundTestOrderConfig(_viewModelManager.GetBgmDbRootEntriesViewModels().ToDictionary(p => p.UiBgmId, p => p.TestDispOrder));
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "Error while updating music mod entries");
+                result = false;
+            }
+
+            if (!result)
+            {
+                await Dispatcher.UIThread.InvokeAsync(async () =>
+                {
+                    await _messageDialog.ShowError("Update Tracks order", "There was an error while persisting some modifications. Please check the logs.");
+                }, DispatcherPriority.Background);
+            }
+
+            return result;
         }
     }
 }

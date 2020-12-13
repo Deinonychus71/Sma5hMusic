@@ -16,7 +16,7 @@
       <ia:InvokeCommandAction Command="{Binding OnInitData}"/>
     </ia:EventTriggerBehavior>
   </i:Interaction.Behaviors>
-  <Grid RowDefinitions="20,70,*,Auto" ColumnDefinitions="*">
+  <Grid RowDefinitions="20,65,*,Auto" ColumnDefinitions="*">
     <Menu Grid.Row="0">
       <MenuItem Header="Project">
         <MenuItem Header="Build" Command="{Binding ActionBuild}"/>
@@ -40,16 +40,10 @@
             <CheckBox IsEnabled="False" IsChecked="{Binding IsShowingDebug, Mode=OneWay}"/>
           </MenuItem.Icon>
         </MenuItem>
-        <!--<Separator></Separator>
-        <MenuItem Header="Dark Theme" Command="{Binding ActionSetThemeDark}"/>
-        <MenuItem Header="Light Theme" Command="{Binding ActionSetThemeLight}"/>-->
         <Separator></Separator>
-        <MenuItem Header="Normal UI" Command="{Binding ActionSetUIScaleDefault}"/>
-        <MenuItem Header="Small UI" Command="{Binding ActionSetUIScaleSmall}"/>
-        <!--
-        <MenuItem Header="Global Settings"></MenuItem>-->
+        <MenuItem Header="Global Settings" Command="{Binding ActionOpenGlobalSettings}"></MenuItem>
         <Separator></Separator>
-        <MenuItem Header="About" Command="{Binding OnAboutOpen}"></MenuItem>
+        <MenuItem Header="About" Command="{Binding ActionOpenAbout}"></MenuItem>
       </MenuItem>
     </Menu>
     <DockPanel Grid.Row="1">

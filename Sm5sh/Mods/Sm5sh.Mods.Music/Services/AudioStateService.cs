@@ -435,7 +435,7 @@ namespace Sm5sh.Mods.Music.Services
                         //Title
                         if (titleDict != null && titleDict.ContainsKey(msbtDb.Key) && !string.IsNullOrEmpty(titleDict[msbtDb.Key]))
                             entries[titleLabel] = titleDict[msbtDb.Key];
-                        else if (titleDict != null && titleDict.ContainsKey(defaultLocale) && !string.IsNullOrEmpty(titleDict[msbtDb.Key]))
+                        else if (titleDict != null && titleDict.ContainsKey(defaultLocale) && !string.IsNullOrEmpty(titleDict[defaultLocale]))
                             entries[titleLabel] = titleDict[defaultLocale];
 
                         //Author
@@ -443,7 +443,7 @@ namespace Sm5sh.Mods.Music.Services
                         {
                             if (authorDict.ContainsKey(msbtDb.Key) && !string.IsNullOrEmpty(authorDict[msbtDb.Key]))
                                 entries[authorLabel] = authorDict[msbtDb.Key];
-                            else if (authorDict.ContainsKey(defaultLocale) && !string.IsNullOrEmpty(authorDict[msbtDb.Key]))
+                            else if (authorDict.ContainsKey(defaultLocale) && !string.IsNullOrEmpty(authorDict[defaultLocale]))
                                 entries[authorLabel] = authorDict[defaultLocale];
                         }
 
@@ -452,7 +452,7 @@ namespace Sm5sh.Mods.Music.Services
                         {
                             if (copyrightDict.ContainsKey(msbtDb.Key) && !string.IsNullOrEmpty(copyrightDict[msbtDb.Key]))
                                 entries[copyrightLabel] = copyrightDict[msbtDb.Key];
-                            else if (copyrightDict.ContainsKey(defaultLocale) && !string.IsNullOrEmpty(copyrightDict[msbtDb.Key]))
+                            else if (copyrightDict.ContainsKey(defaultLocale) && !string.IsNullOrEmpty(copyrightDict[defaultLocale]))
                                 entries[copyrightLabel] = copyrightDict[defaultLocale];
                         }
                     }

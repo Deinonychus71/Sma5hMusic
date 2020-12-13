@@ -1,9 +1,8 @@
 ﻿<Styles xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
   <Styles.Resources>
-    <SolidColorBrush x:Key="BrushGrayDark">#202020</SolidColorBrush>
-    <SolidColorBrush x:Key="BrushGrayLight">#606060</SolidColorBrush>
-    <SolidColorBrush x:Key="BrushBackgroundDark">#191919</SolidColorBrush>
+    <SolidColorBrush x:Key="BrushBorderTitle">#202020</SolidColorBrush>
+    <SolidColorBrush x:Key="BrushSmallTitle">#606060</SolidColorBrush>
   </Styles.Resources>
 
   <Style Selector="ContentControl.list">
@@ -16,5 +15,8 @@
   <Style Selector="DataGrid.bgmList">
     <Setter Property="AlternatingRowBackground" Value="#101010"/>
   </Style>
-  
+
+  <Style Selector="Grid.debugConsole">
+    <Setter Property="Background" Value="Black"/>
+  </Style>
 </Styles>

@@ -18,8 +18,8 @@ namespace Sm5shMusic.GUI.ViewModels
     public class ModPropertiesModalWindowViewModel : ModalBaseViewModel<ModEntryViewModel>
     {
         private readonly IOptions<Sm5shMusicOptions> _config;
-        private const string REGEX_REPLACE = @"[^a-zA-Z0-9\-_ ]";
-        private readonly string REGEX_VALIDATION = @"^[\w\-. ]+$";
+        private const string REGEX_REPLACE = @"[^a-zA-Z0-9\-_ \[\]]";
+        private readonly string REGEX_VALIDATION = @"^[\w\-. \[\]]+$";
         private readonly ILogger _logger;
         private readonly IGUIStateManager _guiStateManager;
         private readonly IViewModelManager _viewModelManager;

@@ -1,22 +1,28 @@
 ﻿using System;
 using Avalonia.Markup.Xaml.Styling;
 using Avalonia.Styling;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 namespace Sm5shMusic.GUI.Helpers
 {
     public class StylesHelper
     {
-        private static readonly StyleInclude DataGridFluent = new StyleInclude(new Uri("resm:Styles?assembly=Sm5shMusic.GUI"))
+        [JsonConverter(typeof(StringEnumConverter))]
+        public enum UIScale
         {
-            Source = new Uri("avares://Avalonia.Controls.DataGrid/Themes/Fluent.xaml")
-        };
+            Normal = 0,
+            Small = 1
+        }
 
-        private static readonly StyleInclude DataGridDefault = new StyleInclude(new Uri("resm:Styles?assembly=Sm5shMusic.GUI"))
+        [JsonConverter(typeof(StringEnumConverter))]
+        public enum UITheme
         {
-            Source = new Uri("avares://Avalonia.Controls.DataGrid/Themes/Default.xaml")
-        };
+            Dark = 0,
+            Light = 1
+        }
 
-        public static Styles FluentDark = new Styles
+        private static readonly Styles FluentDark = new Styles
         {
             /*new StyleInclude(new Uri("resm:Styles?assembly=Sm5shMusic.GUI"))
             {
@@ -32,12 +38,15 @@ namespace Sm5shMusic.GUI.Helpers
             },
             new StyleInclude(new Uri("resm:Styles?assembly=Sm5shMusic.GUI"))
             {
-                Source = new Uri("avares://Sm5shMusic.GUI/Assets/Themes/CustomThemeDark.xaml")
+                Source = new Uri("avares://Avalonia.Controls.DataGrid/Themes/Fluent.xaml")
             },
-            DataGridFluent
+            new StyleInclude(new Uri("resm:Styles?assembly=Sm5shMusic.GUI"))
+            {
+                Source = new Uri("avares://Sm5shMusic.GUI/Assets/Themes/CustomThemeDark.xaml")
+            }
         };
 
-        public static Styles FluentLight = new Styles
+        private static readonly Styles FluentLight = new Styles
         {
             /*new StyleInclude(new Uri("resm:Styles?assembly=Sm5shMusic.GUI"))
             {
@@ -53,12 +62,15 @@ namespace Sm5shMusic.GUI.Helpers
             },
             new StyleInclude(new Uri("resm:Styles?assembly=Sm5shMusic.GUI"))
             {
-                Source = new Uri("avares://Sm5shMusic.GUI/Assets/Themes/CustomThemeLight.xaml")
+                Source = new Uri("avares://Avalonia.Controls.DataGrid/Themes/Fluent.xaml")
             },
-            DataGridFluent
+            new StyleInclude(new Uri("resm:Styles?assembly=Sm5shMusic.GUI"))
+            {
+                Source = new Uri("avares://Sm5shMusic.GUI/Assets/Themes/CustomThemeLight.xaml")
+            }
         };
 
-        public static Styles DefaultLight = new Styles
+        private static readonly Styles DefaultLight = new Styles
         {
             new StyleInclude(new Uri("resm:Styles?assembly=Sm5shMusic.GUI"))
             {
@@ -76,10 +88,13 @@ namespace Sm5shMusic.GUI.Helpers
             {
                 Source = new Uri("avares://Avalonia.Themes.Default/DefaultTheme.xaml")
             },
-            DataGridDefault
+            new StyleInclude(new Uri("resm:Styles?assembly=Sm5shMusic.GUI"))
+            {
+                Source = new Uri("avares://Avalonia.Controls.DataGrid/Themes/Default.xaml")
+            }
         };
 
-        public static Styles DefaultDark = new Styles
+        private static readonly Styles DefaultDark = new Styles
         {
             new StyleInclude(new Uri("resm:Styles?assembly=Sm5shMusic.GUI"))
             {
@@ -97,10 +112,13 @@ namespace Sm5shMusic.GUI.Helpers
             {
                 Source = new Uri("avares://Avalonia.Themes.Default/DefaultTheme.xaml")
             },
-            DataGridDefault
+            new StyleInclude(new Uri("resm:Styles?assembly=Sm5shMusic.GUI"))
+            {
+                Source = new Uri("avares://Avalonia.Controls.DataGrid/Themes/Default.xaml")
+            }
         };
 
-        public static Styles DefaultUIScale = new Styles
+        private static readonly Styles DefaultUIScale = new Styles
         {
             new StyleInclude(new Uri("resm:Styles?assembly=Sm5shMusic.GUI"))
             {
@@ -108,12 +126,32 @@ namespace Sm5shMusic.GUI.Helpers
             }
         };
 
-        public static Styles SmallUIScale = new Styles
+        private static readonly Styles SmallUIScale = new Styles
         {
             new StyleInclude(new Uri("resm:Styles?assembly=Sm5shMusic.GUI"))
             {
                 Source = new Uri("avares://Sm5shMusic.GUI/Assets/Themes/CustomThemeSmallUI.xaml")
             }
         };
+
+        public static Styles GetUITheme(UITheme themeStyle)
+        {
+            return themeStyle switch
+            {
+                UITheme.Dark => FluentDark,
+                UITheme.Light => FluentLight,
+                _ => throw new NotImplementedException("Theme not implemented"),
+            };
+        }
+
+        public static Styles GetUIScale(UIScale scaleStyle)
+        {
+            return scaleStyle switch
+            {
+                UIScale.Normal => DefaultUIScale,
+                UIScale.Small => SmallUIScale,
+                _ => throw new NotImplementedException("Theme not implemented"),
+            };
+        }
     }
 }

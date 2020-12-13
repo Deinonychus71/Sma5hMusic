@@ -3,7 +3,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="Sm5shMusic.GUI.Views.Fields.PropertyMusicField">
+             x:Class="Sm5shMusic.GUI.Views.Fields.PropertyFolderPickupField">
   <StackPanel Classes="propertyField">
     <StackPanel Orientation="Horizontal">
       <TextBlock Text="{Binding $parent[UserControl].Label}"/>
@@ -11,8 +11,8 @@
       <TextBlock Text="&#128712;" Classes="tooltip" ToolTip.Tip="{Binding $parent[UserControl].ToolTip}"/>
     </StackPanel>
     <DockPanel>
-      <ContentControl DockPanel.Dock="Left" Content="{Binding $parent[UserControl].MusicPlayer}"/>
-      <TextBox AcceptsReturn="{Binding !$parent[UserControl].AcceptsReturn}" IsReadOnly="{Binding $parent[UserControl].IsReadOnly}" Text="{Binding $parent[UserControl].Text}"></TextBox>
+      <Button DockPanel.Dock="Right" Content="Choose..." Command="{Binding $parent[UserControl].Command}" CommandParameter="{Binding $parent[UserControl].CommandParameter}"></Button>
+      <TextBox Classes="valueFolderPicker" AcceptsReturn="{Binding !$parent[UserControl].AcceptsReturn}" IsReadOnly="{Binding $parent[UserControl].IsReadOnly}" Text="{Binding $parent[UserControl].Text}"></TextBox>
     </DockPanel>
   </StackPanel>
 </UserControl>

@@ -3,13 +3,14 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
   <!-- TITLE-->
   <Style Selector="TextBlock.title">
-    <Setter Property="FontSize" Value="32"/>
+    <Setter Property="FontSize" Value="28"/>
     <Setter Property="FontWeight" Value="Bold"/>
-    <Setter Property="Margin" Value="13"/>
+    <Setter Property="Margin" Value="17"/>
     <Setter Property="HorizontalAlignment" Value="Center"/>
   </Style>
   <Style Selector="Image.logo">
-    <Setter Property="Margin" Value="13,5,0,0"/>
+    <Setter Property="Margin" Value="13,8,0,0"/>
+    <Setter Property="Height" Value="55"/>
   </Style>
   <!-- END TITLE -->
 
@@ -82,7 +83,7 @@
 
   <!-- HEADER TITLE -->
   <Style Selector="Border.headerTitle">
-    <Setter Property="BorderBrush" Value="{StaticResource BrushGrayDark}"/>
+    <Setter Property="BorderBrush" Value="{StaticResource BrushBorderTitle}"/>
     <Setter Property="BorderThickness" Value="0,0,0,2"/>
     <Setter Property="Margin" Value="0,10,0,10"/>
   </Style>
@@ -96,13 +97,13 @@
   
   <!-- CONTENT TITLE -->
   <Style Selector="Border.contentTitle">
-    <Setter Property="BorderBrush" Value="{StaticResource BrushGrayDark}"/>
+    <Setter Property="BorderBrush" Value="{StaticResource BrushBorderTitle}"/>
     <Setter Property="BorderThickness" Value="0,0,0,1"/>
     <Setter Property="Margin" Value="0,1,0,0"/>
   </Style>
   <Style Selector=".contentTitle > TextBlock">
     <Setter Property="FontSize" Value="14"/>
-    <Setter Property="Foreground" Value="{StaticResource BrushGrayLight}"/>
+    <Setter Property="Foreground" Value="{StaticResource BrushSmallTitle}"/>
     <Setter Property="FontWeight" Value="Bold"/>
     <Setter Property="Margin" Value="1"/>
     <Setter Property="HorizontalAlignment" Value="Center"/>
@@ -131,6 +132,7 @@
     <Setter Property="FontSize" Value="14"/>
     <Setter Property="HorizontalAlignment" Value="Stretch"/>
     <Setter Property="Margin" Value="0,1,0,0"/>
+    <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Hidden"/>
   </Style>
   <Style Selector=".propertyField > StackPanel > TextBlock.tooltip">
     <Setter Property="VerticalAlignment" Value="Top"/>
@@ -145,6 +147,7 @@
   <Style Selector=".propertyField > TextBox">
     <Setter Property="HorizontalAlignment" Value="Stretch"/>
     <Setter Property="Margin" Value="0,1,0,0"/>
+    <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Hidden"/>
   </Style>
   <Style Selector="TextBox[IsReadOnly=true]">
     <Setter Property="Foreground" Value="Gray"/>
@@ -168,7 +171,13 @@
     <Setter Property="Margin" Value="0,2,0,0"/>
   </Style>
   <Style Selector=".propertyField > TextBox.valueSoundPreview">
-    <Setter Property="Width" Value="150"/>
+    <!--<Setter Property="Width" Value="150"/>-->
+    <Setter Property="HorizontalAlignment" Value="Stretch"/>
+    <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Hidden"/>
+  </Style>
+  <Style Selector=".propertyField TextBox.valueFolderPicker">
+    <Setter Property="HorizontalAlignment" Value="Stretch"/>
+    <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Hidden"/>
   </Style>
   <Style Selector=".propertyField > NumericUpDown">
     <Setter Property="HorizontalAlignment" Value="Stretch"/>
