@@ -9,6 +9,7 @@ using Sm5sh.Mods.Music.MusicMods;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading.Tasks;
 
 namespace Sm5sh.Mods.Music.Services
 {
@@ -114,7 +115,7 @@ namespace Sm5sh.Mods.Music.Services
             }
         }
 
-        public bool UpdateGameEntry(GameTitleEntry gameTitleEntry)
+        public async Task<bool> UpdateGameEntry(GameTitleEntry gameTitleEntry)
         {
             if(_musicMods != null)
             {
@@ -122,7 +123,7 @@ namespace Sm5sh.Mods.Music.Services
                 {
                     var newMusicModEntries = new MusicModEntries();
                     newMusicModEntries.GameTitleEntries.Add(gameTitleEntry);
-                    if (!musicMod.AddOrUpdateMusicModEntries(newMusicModEntries))
+                    if (!await musicMod.AddOrUpdateMusicModEntries(newMusicModEntries))
                         return false;
                 }
             }

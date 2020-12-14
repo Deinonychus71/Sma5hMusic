@@ -1,5 +1,6 @@
 ﻿using Sm5sh.Mods.Music.Models;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Sm5sh.Mods.Music.Interfaces
 {
@@ -8,6 +9,6 @@ namespace Sm5sh.Mods.Music.Interfaces
         IEnumerable<IMusicMod> MusicMods { get; }
         IEnumerable<IMusicMod> RefreshMusicMods();
         IMusicMod AddMusicMod(MusicModInformation configBase, string modPath);
-        bool UpdateGameEntry(GameTitleEntry gameTitleEntry);
+        Task<bool> UpdateGameEntry(GameTitleEntry gameTitleEntry);
     }
 }

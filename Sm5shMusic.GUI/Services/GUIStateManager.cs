@@ -285,7 +285,7 @@ namespace Sm5shMusic.GUI.Services
                         musicModEntries.BgmAssignedInfoEntries.Count, musicModEntries.BgmStreamPropertyEntries.Count, musicModEntries.BgmPropertyEntries.Count, musicMod?.Id);
 
                     if (musicMod != null)
-                        result = musicMod.AddOrUpdateMusicModEntries(musicModEntries);
+                        result = await musicMod.AddOrUpdateMusicModEntries(musicModEntries);
                     else
                         result = _sm5shMusicOverride.UpdateCoreBgmEntries(musicModEntries);
 
@@ -435,7 +435,7 @@ namespace Sm5shMusic.GUI.Services
 
                 if (gameTitleEntry.Source == EntrySource.Mod)
                 {
-                    result = _musicModManagerService.UpdateGameEntry(gameTitleEntry);
+                    result = await _musicModManagerService.UpdateGameEntry(gameTitleEntry);
                 }
                 else
                 {

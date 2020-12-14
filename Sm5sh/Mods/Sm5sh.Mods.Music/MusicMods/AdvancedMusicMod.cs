@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Sm5sh.Mods.Music.MusicMods
 {
@@ -52,7 +53,7 @@ namespace Sm5sh.Mods.Music.MusicMods
             _mapper = mapper;
             _musicModConfig = ConvertOldMod(oldMod);
             var bgms = oldMod.GetMusicModEntries();
-            AddOrUpdateMusicModEntries(bgms);
+            AddOrUpdateMusicModEntries(bgms).GetAwaiter().GetResult();
             SaveMusicModConfig();
         }
 
@@ -96,7 +97,7 @@ namespace Sm5sh.Mods.Music.MusicMods
             return output;
         }
 
-        public bool AddOrUpdateMusicModEntries(MusicModEntries musicModEntries)
+        public async Task<bool> AddOrUpdateMusicModEntries(MusicModEntries musicModEntries)
         {
             if (musicModEntries == null)
             {
@@ -153,7 +154,7 @@ namespace Sm5sh.Mods.Music.MusicMods
                 //New
                 if (!isEdit)
                 {
-                    var audioCuePoints = _audioMetadataService.GetCuePoints(filename).GetAwaiter().GetResult();
+                    var audioCuePoints = await _audioMetadataService.GetCuePoints(filename);
                     if (audioCuePoints == null || audioCuePoints.TotalSamples <= 0)
                     {
                         _logger.LogError("The filename {Filename} didn't have cue points. Make sure audio library is properly installed.", filenameWithoutPath);

@@ -1,4 +1,5 @@
 ﻿using Sm5sh.Mods.Music.Models;
+using System.Threading.Tasks;
 
 namespace Sm5sh.Mods.Music.Interfaces
 {
@@ -12,7 +13,7 @@ namespace Sm5sh.Mods.Music.Interfaces
 
         bool UpdateModInformation(MusicModInformation configBase);
         MusicModEntries GetMusicModEntries();
-        bool AddOrUpdateMusicModEntries(MusicModEntries musicModEntries);
+        Task<bool> AddOrUpdateMusicModEntries(MusicModEntries musicModEntries);
         bool RemoveMusicModEntries(MusicModDeleteEntries musicModDeleteEntries);
     }
 }

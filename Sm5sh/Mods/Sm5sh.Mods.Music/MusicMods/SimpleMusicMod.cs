@@ -11,6 +11,7 @@ using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Sm5sh.Mods.Music.MusicMods
 {
@@ -330,7 +331,7 @@ namespace Sm5sh.Mods.Music.MusicMods
             return true;
         }
 
-        public bool AddOrUpdateMusicModEntries(MusicModEntries musicModEntries)
+        public Task<bool> AddOrUpdateMusicModEntries(MusicModEntries musicModEntries)
         {
             throw new NotImplementedException();
         }
