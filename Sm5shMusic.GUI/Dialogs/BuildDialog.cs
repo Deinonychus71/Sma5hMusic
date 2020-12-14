@@ -213,8 +213,15 @@ namespace Sm5shMusic.GUI.Dialogs
             _logger.LogInformation("Cleaning up workspace folder");
             foreach (var fileToDelete in existingFiles)
             {
-                File.Delete(fileToDelete);
+                if(IsWorkspaceFile(fileToDelete))
+                    File.Delete(fileToDelete);
             }
+        }
+
+        private bool IsWorkspaceFile(string filename)
+        {
+            var file = Path.GetFileName(filename).ToLower();
+            return file.EndsWith("msbt") || file.EndsWith("nus3audio") || file.EndsWith("nus3bank") || file.EndsWith("prc") || file == "bgm_property.bin";
         }
 
         private async Task ShowBuildFailedError()
