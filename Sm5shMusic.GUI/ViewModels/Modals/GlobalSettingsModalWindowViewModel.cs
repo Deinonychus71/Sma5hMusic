@@ -43,13 +43,13 @@ namespace Sm5shMusic.GUI.ViewModels
                 p => !string.IsNullOrEmpty(p) && Directory.Exists(p),
                 "This directory does not exist.");
 
-            this.ValidationRule(p => p.SelectedItem.CachePath,
-                p => !string.IsNullOrEmpty(p) && Directory.Exists(p),
-                "This directory does not exist.");
+            //this.ValidationRule(p => p.SelectedItem.CachePath,
+            //    p => !string.IsNullOrEmpty(p) && Directory.Exists(p),
+            //    "This directory does not exist.");
 
-            this.ValidationRule(p => p.SelectedItem.LogPath,
-                p => !string.IsNullOrEmpty(p) && Directory.Exists(p),
-                "This directory does not exist.");
+            //this.ValidationRule(p => p.SelectedItem.LogPath,
+            //    p => !string.IsNullOrEmpty(p) && Directory.Exists(p),
+            //    "This directory does not exist.");
 
             this.ValidationRule(p => p.SelectedItem.ModOverridePath,
                 p => !string.IsNullOrEmpty(p) && Directory.Exists(p),
