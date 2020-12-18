@@ -140,6 +140,7 @@ namespace Sm5sh.Mods.Music
             {
                 _logger.LogInformation("Overriding Playlists...");
                 var corePlaylists = _audioStateService.GetPlaylists();
+                var dbRootEntries = _audioStateService.GetBgmDbRootEntries().Select(p => p.UiBgmId);
 
                 foreach (var playlistConfig in _musicOverrideConfig.PlaylistsOverrides)
                 {
@@ -154,7 +155,10 @@ namespace Sm5sh.Mods.Music
                     playlist.Tracks.Clear();
                     foreach (var overrideTrack in playlistConfig.Value.Tracks)
                     {
-                        playlist.Tracks.Add(_mapper.Map<Models.PlaylistEntryModels.PlaylistValueEntry>(overrideTrack));
+                        if (dbRootEntries.Contains(overrideTrack.UiBgmId))
+                            playlist.Tracks.Add(_mapper.Map<Models.PlaylistEntryModels.PlaylistValueEntry>(overrideTrack));
+                        else
+                            _logger.LogWarning("Track with BGM ID {BgmId} from Playlist {Playlist} was not found. This song was removed.", overrideTrack.UiBgmId, playlistConfig.Key);
                     }
                     
                 }
