@@ -139,6 +139,7 @@ namespace Sm5shMusic.GUI.Helpers
             {"bgmmaster", "Fire Emblem Three Houses" },
             {"bgmtantan", "Arms" },
             {"bgmpickel", "Minecraft" },
+            {"bgmedge", "Final Fantasy (Sephiroth)" },
             {"bgmplaylist", "Playlist" },
         };
 
@@ -276,6 +277,7 @@ namespace Sm5shMusic.GUI.Helpers
             {"ui_stage_fe_shrine","Garreg Mach Monastery"},
             {"ui_stage_tantan_spring","Spring Stadium"},
             {"ui_stage_pickel_world","Minecraft World"},
+            {"ui_stage_ff_cave","Northern Cave"},
             {"ui_stage_battle_field_s", "Small Battlefield"}
         };
 

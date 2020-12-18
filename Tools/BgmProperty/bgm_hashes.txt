@@ -413,6 +413,15 @@ f41_sta_tomotokizunanotatakai2
 f42_kby_gb_medley
 ff01_ff7_tatakaumonotachi
 ff02_ff7_saranitatakaumonotachi
+ff03_ff7_opening_bakuhamission
+ff04_ff7_maintheme
+ff05_ff7_jenova
+ff06_ff7_hoshifurukyokoku
+ff07_ff7_aerithnotheme
+ff08_ff7_katayokunotenshi
+ff09_ff7ac_tatakaumonotachi_ac
+ff10_ff7ac_saranitatakaumonotachi_ac
+ff11_ff7ac_sairin_katayokunotenshi
 g01_sfx_maintheme
 g02_sfx_corneria
 g03_sfx64_maintheme
@@ -1162,3 +1171,5 @@ zz01_f_dolly
 zz02_f_master
 zz03_f_tantan
 zz04_f_pickel
+zz05_f_edge
+zz05a_f_edge_challenge

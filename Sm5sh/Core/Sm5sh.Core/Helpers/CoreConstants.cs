@@ -53,7 +53,8 @@
             "ui_stage_dolly",
             "ui_stage_master",
             "ui_stage_tantan",
-            "ui_stage_pickel"
+            "ui_stage_pickel",
+            "ui_stage_edge"
         };
 
         public static string[] VALID_STAGES = new string[]
@@ -190,6 +191,7 @@
             "ui_stage_fe_shrine",
             "ui_stage_tantan_spring",
             "ui_stage_pickel_world",
+            "ui_stage_ff_cave",
             "ui_stage_battle_field_s"
         };
     }
