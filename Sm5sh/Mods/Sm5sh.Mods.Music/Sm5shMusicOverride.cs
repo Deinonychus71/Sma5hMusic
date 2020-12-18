@@ -139,17 +139,24 @@ namespace Sm5sh.Mods.Music
             if (_musicOverrideConfig.PlaylistsOverrides != null && _musicOverrideConfig.PlaylistsOverrides.Count > 0)
             {
                 _logger.LogInformation("Overriding Playlists...");
-                foreach (var playlistEntry in _audioStateService.GetPlaylists())
-                    _audioStateService.RemovePlaylistEntry(playlistEntry.Id);
+                var corePlaylists = _audioStateService.GetPlaylists();
 
                 foreach (var playlistConfig in _musicOverrideConfig.PlaylistsOverrides)
                 {
-                    var newPlaylist = new PlaylistEntry(playlistConfig.Key, playlistConfig.Value.Title);
+                    var playlist = corePlaylists.FirstOrDefault(p => p.Id == playlistConfig.Key);
+                    if(playlist == null)
+                    {
+                        var newPlaylist = new PlaylistEntry(playlistConfig.Key, playlistConfig.Value.Title);
+                        _audioStateService.AddPlaylistEntry(newPlaylist);
+                        playlist = newPlaylist;
+                    }
+
+                    playlist.Tracks.Clear();
                     foreach (var overrideTrack in playlistConfig.Value.Tracks)
                     {
-                        newPlaylist.Tracks.Add(_mapper.Map<Models.PlaylistEntryModels.PlaylistValueEntry>(overrideTrack));
+                        playlist.Tracks.Add(_mapper.Map<Models.PlaylistEntryModels.PlaylistValueEntry>(overrideTrack));
                     }
-                    _audioStateService.AddPlaylistEntry(newPlaylist);
+                    
                 }
             }
 

@@ -45,6 +45,7 @@ namespace Sm5shMusic.GUI.ViewModels
         private readonly ModalDialog<ModPickerModalWindow, ModPickerModalWindowViewModel, ModEntryViewModel> _dialogModPicker;
         private readonly ModalDialog<PlaylistPropertiesModalWindow, PlaylistPropertiesModalWindowViewModel, PlaylistEntryViewModel> _dialogPlaylistEditor;
         private readonly ModalDialog<PlaylistPickerModalWindow, PlaylistPickerModalWindowViewModel, PlaylistEntryViewModel> _dialogPlaylistPicker;
+        private readonly ModalDialog<PlaylistDeletePickerModalWindow, PlaylistDeletePickerModalWindowViewModel, PlaylistEntryViewModel> _dialogPlaylistDeletePicker;
         private readonly ModalDialog<GlobalSettingsModalWindow, GlobalSettingsModalWindowViewModel, GlobalConfigurationViewModel> _dialogGlobalSettingsEditor;
         private readonly PlaylistStageAssignementModalWindowViewModel _vmStageAssignement;
         private readonly ToneIdCreationModalWindowModel _vmToneIdCreation;
@@ -144,7 +145,10 @@ namespace Sm5shMusic.GUI.ViewModels
             //Setup PlaylistControls
             var vmPlaylistPicker = ActivatorUtilities.CreateInstance<PlaylistPickerModalWindowViewModel>(serviceProvider,
                 viewModelManager.ObservablePlaylistsEntries);
+            var vmPlaylistDeletePicker = ActivatorUtilities.CreateInstance<PlaylistDeletePickerModalWindowViewModel>(serviceProvider,
+                viewModelManager.ObservablePlaylistsEntries);
             _dialogPlaylistPicker = new ModalDialog<PlaylistPickerModalWindow, PlaylistPickerModalWindowViewModel, PlaylistEntryViewModel>(vmPlaylistPicker);
+            _dialogPlaylistDeletePicker = new ModalDialog<PlaylistDeletePickerModalWindow, PlaylistDeletePickerModalWindowViewModel, PlaylistEntryViewModel>(vmPlaylistDeletePicker);
             var vmPlaylistEditor = ActivatorUtilities.CreateInstance<PlaylistPropertiesModalWindowViewModel>(serviceProvider,
                viewModelManager.ObservablePlaylistsEntries);
             _dialogPlaylistEditor = new ModalDialog<PlaylistPropertiesModalWindow, PlaylistPropertiesModalWindowViewModel, PlaylistEntryViewModel>(vmPlaylistEditor);
@@ -402,7 +406,7 @@ namespace Sm5shMusic.GUI.ViewModels
 
         public async Task DeletePlaylist(Window parent = null)
         {
-            var result = await _dialogPlaylistPicker.ShowPickerDialog(parent ?? _rootDialog.Window);
+            var result = await _dialogPlaylistDeletePicker.ShowPickerDialog(parent ?? _rootDialog.Window);
             if (result != null)
             {
                 var resultConfirm = await _messageDialog.ShowWarningConfirm($"Delete Playlist '{result.Title}'?", "Do you really want to remove this playlist?\r\nIf it's a Core playlist, this could cause unknown issues.");
