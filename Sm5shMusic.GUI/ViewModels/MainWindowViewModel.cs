@@ -236,9 +236,9 @@ namespace Sm5shMusic.GUI.ViewModels
         public async Task OnAboutOpen()
         {
             await _messageDialog.ShowInformation("About",
-                "Sm5sh Music - v0.03 by deinonychus71\r\n\r\n\r\n" +
+                $"Sm5sh Music - v{Constants.GUIVersion} by deinonychus71\r\n\r\n\r\n" +
                 "Research: soneek\r\n\r\n" +
-                "Testing: Demonslayerx8\r\n\r\n" +
+                "Testing: Demonslayerx8, Segtendo\r\n\r\n" +
                 "prcEditor: https://github.com/BenHall-7/paracobNET \r\nBenHall-7\r\n\r\n" +
                 "paramLabels: https://github.com/ultimate-research/param-labels \r\nBenHall-7, jam1garner, Dr-HyperCake, Birdwards, ThatNintendoNerd, ScanMountGoat, Meshima, Blazingflare, TheSmartKid, jugeeya, Demonslayerx8\r\n\r\n" +
                 "msbtEditor: https://github.com/IcySon55/3DLandMSBTeditor \r\nIcySon55, exelix11 \r\n\r\n" +
