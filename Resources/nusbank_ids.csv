@@ -1163,3 +1163,14 @@ ID,NUS3Bank Name
 0x04f9,bgm_zz04_f_pickel
 0x04fa,bgm_mc06_mc_clockworkcrafter
 0x04fb,bgm_mc07_mc_danceoftheblocks
+0x04fc,bgm_ff03_ff7_opening_bakuhamission
+0x04fd,bgm_ff04_ff7_maintheme
+0x04fe,bgm_ff05_ff7_jenova
+0x04ff,bgm_ff06_ff7_hoshifurukyokoku
+0x0500,bgm_ff07_ff7_aerithnotheme
+0x0501,bgm_ff08_ff7_katayokunotenshi
+0x0502,bgm_ff09_ff7ac_tatakaumonotachi_ac
+0x0503,bgm_ff10_ff7ac_saranitatakaumonotachi_ac
+0x0504,bgm_ff11_ff7ac_sairin_katayokunotenshi
+0x0505,bgm_zz05_f_edge
+0x0506,bgm_zz05a_f_edge_challenge
