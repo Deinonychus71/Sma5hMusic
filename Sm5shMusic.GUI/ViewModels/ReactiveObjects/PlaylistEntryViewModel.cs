@@ -70,7 +70,7 @@ namespace Sm5shMusic.GUI.ViewModels
 
             for (short i = 0; i < 16; i++)
             {
-                var newValue = new PlaylistEntryValueViewModel(this, sourceObj.UiBgmId, destinationIndex, 5000, sourceObj);
+                var newValue = new PlaylistEntryValueViewModel(this, sourceObj.UiBgmId, destinationIndex, 0, sourceObj);
                 Tracks[i].Add(newValue);
                 if (i == orderId)
                     output = newValue;
