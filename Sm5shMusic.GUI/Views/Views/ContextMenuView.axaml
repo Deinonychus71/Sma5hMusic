@@ -17,6 +17,7 @@
     <MenuItem Header="Manage..." IsEnabled="True">
       <MenuItem Header="Create Game" Command="{Binding ActionNewGame}" />
       <MenuItem Header="Edit a Game" Command="{Binding ActionEditGame}"/>
+      <MenuItem Header="Delete a Game" Command="{Binding ActionDeleteGame}"/>
       <Separator/>
       <MenuItem Header="Create a Mod" Command="{Binding ActionNewMod}"/>
       <MenuItem Header="Edit a Mod" Command="{Binding ActionEditMod}"/>

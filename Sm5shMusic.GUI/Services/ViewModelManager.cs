@@ -20,7 +20,6 @@ namespace Sm5shMusic.GUI.Services
         private readonly ILogger _logger;
         private readonly IMapper _mapper;
         private readonly IAudioStateService _audioState;
-        private readonly ISm5shMusicOverride _sm5shMusicOverride;
         private readonly IMusicModManagerService _musicModManager;
         private readonly IVGMMusicPlayer _vgmMusicPlayer;
         private readonly Dictionary<string, LocaleViewModel> _vmDictLocalesEntries;
@@ -59,14 +58,13 @@ namespace Sm5shMusic.GUI.Services
         private readonly IObservable<IChangeSet<StageEntryViewModel, string>> _vmChangeSetStagesEntries;
         private readonly IObservable<IChangeSet<ModEntryViewModel, string>> _vmChangeSetModsEntries;
 
-        public ViewModelManager(IAudioStateService audioStateService, IMusicModManagerService musicModManager, IVGMMusicPlayer vgmMusicPlayer, ISm5shMusicOverride sm5shMusicOverride, IMapper mapper, ILogger<IViewModelManager> logger)
+        public ViewModelManager(IAudioStateService audioStateService, IMusicModManagerService musicModManager, IVGMMusicPlayer vgmMusicPlayer, IMapper mapper, ILogger<IViewModelManager> logger)
         {
             _mapper = mapper;
             _logger = logger;
             _vgmMusicPlayer = vgmMusicPlayer;
             _audioState = audioStateService;
             _musicModManager = musicModManager;
-            _sm5shMusicOverride = sm5shMusicOverride;
             _vmDictLocalesEntries = new Dictionary<string, LocaleViewModel>();
             _vmDictSeriesEntries = new Dictionary<string, SeriesEntryViewModel>();
             _vmDictGameTitlesEntries = new Dictionary<string, GameTitleEntryViewModel>();

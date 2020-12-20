@@ -426,6 +426,34 @@ namespace Sm5shMusic.GUI.Services
             return gameTitleEntry.UiGameTitleId;
         }
 
+        public async Task<bool> RemoveGameTitleEntry(string gameTitleId)
+        {
+            bool result = false;
+
+            try
+            {
+                _logger.LogInformation("Remove Game Title {GameTitleId}", gameTitleId);
+
+                _viewModelManager.RemoveGameTitleView(gameTitleId);
+                result = _sm5shMusicOverride.DeleteGameTitleEntry(gameTitleId);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "Error while deleting game entry");
+                result = false;
+            }
+
+            if (!result)
+            {
+                await Dispatcher.UIThread.InvokeAsync(async () =>
+                {
+                    await _messageDialog.ShowError("Delete Game Title Entry Error", "There was an error while deleting a game entry. Please check the logs.");
+                }, DispatcherPriority.Background);
+            }
+
+            return result;
+        }
+
         public async Task<bool> PersistGameTitleEntryChange(GameTitleEntry gameTitleEntry)
         {
             bool result;
@@ -440,7 +468,7 @@ namespace Sm5shMusic.GUI.Services
                 //We save in CoreGameTitle no matter what so it gets loaded
                 //else
                 //{
-                    result = _sm5shMusicOverride.UpdateCoreGameTitleEntry(gameTitleEntry);
+                    result = _sm5shMusicOverride.UpdateGameTitleEntry(gameTitleEntry);
                 //}
             }
             catch (Exception e)

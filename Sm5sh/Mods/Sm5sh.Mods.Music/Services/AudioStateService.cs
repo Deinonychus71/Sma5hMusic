@@ -376,6 +376,18 @@ namespace Sm5sh.Mods.Music.Services
             //GameTitle PRC - We don't delete existing games... yet.
             foreach (var gameTitle in _gameTitleEntries.Values)
             {
+                //Ensure that the game needs to be added - If no song is using the game, there is no need to compile it.
+                if(gameTitle.Source == EntrySource.Mod)
+                {
+                    if (_bgmDbRootEntries.Values.Count(p => 
+                    p.UiGameTitleId == gameTitle.UiGameTitleId ||
+                    p.UiGameTitleId1 == gameTitle.UiGameTitleId ||
+                    p.UiGameTitleId2 == gameTitle.UiGameTitleId ||
+                    p.UiGameTitleId3 == gameTitle.UiGameTitleId ||
+                    p.UiGameTitleId4 == gameTitle.UiGameTitleId) == 0)
+                        continue;
+                }
+
                 paramGameTitleDatabaseRoot[gameTitle.UiGameTitleId] = _mapper.Map<PrcGameTitleDbRootEntry>(gameTitle);
 
                 if (!string.IsNullOrEmpty(gameTitle?.NameId))

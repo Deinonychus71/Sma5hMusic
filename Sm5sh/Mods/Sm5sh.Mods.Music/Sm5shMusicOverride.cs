@@ -300,9 +300,18 @@ namespace Sm5sh.Mods.Music
             return true;
         }
 
-        public bool UpdateCoreGameTitleEntry(Models.GameTitleEntry gameTitleEntry)
+        public bool UpdateGameTitleEntry(Models.GameTitleEntry gameTitleEntry)
         {
             _musicOverrideConfig.CoreGameOverrides[gameTitleEntry.UiGameTitleId] = _mapper.Map<GameConfig>(gameTitleEntry);
+            var overrideJsonFile = Path.Combine(_config.Value.Sm5shMusicOverride.ModPath, MusicConstants.MusicModFiles.MUSIC_OVERRIDE_CORE_GAME_JSON_FILE);
+            File.WriteAllText(overrideJsonFile, JsonConvert.SerializeObject(_musicOverrideConfig.CoreGameOverrides, _defaultFormatting));
+            return true;
+        }
+
+        public bool DeleteGameTitleEntry(string gameTitleId)
+        {
+            if (_musicOverrideConfig.CoreGameOverrides.ContainsKey(gameTitleId))
+                _musicOverrideConfig.CoreGameOverrides.Remove(gameTitleId);
             var overrideJsonFile = Path.Combine(_config.Value.Sm5shMusicOverride.ModPath, MusicConstants.MusicModFiles.MUSIC_OVERRIDE_CORE_GAME_JSON_FILE);
             File.WriteAllText(overrideJsonFile, JsonConvert.SerializeObject(_musicOverrideConfig.CoreGameOverrides, _defaultFormatting));
             return true;

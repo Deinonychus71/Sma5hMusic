@@ -5,7 +5,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
-using Sm5sh.Mods.Music.Interfaces;
 using Sm5shMusic.GUI.Dialogs;
 using Sm5shMusic.GUI.Helpers;
 using Sm5shMusic.GUI.Interfaces;
@@ -40,6 +39,7 @@ namespace Sm5shMusic.GUI.ViewModels
         private readonly ModalDialog<BgmAdvancedPropertiesModalWindow, BgmPropertiesModalWindowViewModel, BgmEntryViewModel> _dialogAdvancedBgmEditor;
         private readonly ModalDialog<GamePropertiesModalWindow, GamePropertiesModalWindowViewModel, GameTitleEntryViewModel> _dialogGameEditor;
         private readonly ModalDialog<GamePickerModalWindow, GamePickerModalWindowViewModel, GameTitleEntryViewModel> _dialogGamePicker;
+        private readonly ModalDialog<GameDeletePickerModalWindow, GameDeletePickerModalWindowViewModel, GameTitleEntryViewModel> _dialogGameDeletePicker;
         private readonly ModalDialog<ModPropertiesModalWindow, ModPropertiesModalWindowViewModel, ModEntryViewModel> _dialogModEditor;
         private readonly ModalDialog<ModPickerModalWindow, ModPickerModalWindowViewModel, ModEntryViewModel> _dialogModPicker;
         private readonly ModalDialog<PlaylistPropertiesModalWindow, PlaylistPropertiesModalWindowViewModel, PlaylistEntryViewModel> _dialogPlaylistEditor;
@@ -126,8 +126,11 @@ namespace Sm5shMusic.GUI.ViewModels
                 viewModelManager.ObservableLocales, viewModelManager.ObservableSeries, observableGameEntriesList);
             var vmGamePicker = ActivatorUtilities.CreateInstance<GamePickerModalWindowViewModel>(serviceProvider,
                 observableGameEntriesList);
+            var vmGameDeletePicker = ActivatorUtilities.CreateInstance<GameDeletePickerModalWindowViewModel>(serviceProvider,
+                observableGameEntriesList, observableBgmDbRootEntriesList);
             _dialogGameEditor = new ModalDialog<GamePropertiesModalWindow, GamePropertiesModalWindowViewModel, GameTitleEntryViewModel>(vmGameEditor);
             _dialogGamePicker = new ModalDialog<GamePickerModalWindow, GamePickerModalWindowViewModel, GameTitleEntryViewModel>(vmGamePicker);
+            _dialogGameDeletePicker = new ModalDialog<GameDeletePickerModalWindow, GameDeletePickerModalWindowViewModel, GameTitleEntryViewModel>(vmGameDeletePicker);
             _vmToneIdCreation = ActivatorUtilities.CreateInstance<ToneIdCreationModalWindowModel>(serviceProvider,
                 viewModelManager.ObservableBgmPropertyEntries);
 
@@ -157,6 +160,7 @@ namespace Sm5shMusic.GUI.ViewModels
             VMContextMenu.WhenNewRequestToAddModEntry.Subscribe(async (o) => await AddNewOrEditMod());
             VMContextMenu.WhenNewRequestToAddGameEntry.Subscribe(async (o) => await AddNewOrEditGame());
             VMContextMenu.WhenNewRequestToEditGameEntry.Subscribe(async (o) => await EditGame());
+            VMContextMenu.WhenNewRequestToDeleteGameEntry.Subscribe(async (o) => await DeleteGame());
             VMContextMenu.WhenNewRequestToEditModEntry.Subscribe(async (o) => await EditMod());
             VMBgmSongs.WhenNewRequestToEditBgmEntry.Subscribe(async (o) => await EditBgmEntry(o));
             VMBgmSongs.WhenNewRequestToDeleteBgmEntry.Subscribe(async (o) => await DeleteBgmEntry(o));
@@ -359,6 +363,17 @@ namespace Sm5shMusic.GUI.ViewModels
             var result = await _dialogGamePicker.ShowPickerDialog(parent ?? _rootDialog.Window);
             if (result != null)
                 await AddNewOrEditGame(parent, result);
+        }
+
+        public async Task DeleteGame(Window parent = null)
+        {
+            var result = await _dialogGameDeletePicker.ShowPickerDialog(parent ?? _rootDialog.Window);
+            if (result != null)
+            {
+                var resultConfirm = await _messageDialog.ShowWarningConfirm($"Delete Game '{result.Title}'?", "Do you really want to remove this game?\r\nThis game should not be associated to any song or it will cause issues.");
+                if (resultConfirm)
+                    await _guiStateManager.RemoveGameTitleEntry(result.UiGameTitleId);
+            }
         }
         #endregion
 

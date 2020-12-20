@@ -15,6 +15,7 @@ namespace Sm5shMusic.GUI.Interfaces
 
         Task<string> CreateNewGameTitleEntry(GameTitleEntry gameTitleEntry);
         Task<bool> PersistGameTitleEntryChange(GameTitleEntry gameTitleEntry);
+        Task<bool> RemoveGameTitleEntry(string gameTitleId);
 
         Task<string> CreateNewModEntry(MusicModInformation musicModInformation, string modPath);
         Task<bool> PersistModInformationChange(IMusicMod musicMod, MusicModInformation musicModInformation);

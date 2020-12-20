@@ -22,7 +22,7 @@ namespace Sm5shMusic.GUI.ViewModels
         //Helper Getters
         public ModEntryViewModel MusicModViewModel { get { return _viewModelManager.GetModEntryViewModel(ModId); } }
         public IMusicMod MusicMod { get; }
-        public EntrySource Source { get { return MusicMod != null ? EntrySource.Mod : EntrySource.Core; } }
+        public EntrySource Source { get { return _refBgmBaseEntity.Source; } }
         public string ModId { get { return MusicMod?.Id; } }
         public string ModPath { get { return MusicMod?.ModPath; } }
         public bool IsMod { get { return Source == EntrySource.Mod; } }

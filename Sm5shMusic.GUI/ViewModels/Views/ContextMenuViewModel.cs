@@ -22,6 +22,7 @@ namespace Sm5shMusic.GUI.ViewModels
         private readonly Subject<Unit> _whenNewRequestToAddGameEntry;
         private readonly Subject<Unit> _whenNewRequestToEditModEntry;
         private readonly Subject<Unit> _whenNewRequestToEditGameEntry;
+        private readonly Subject<Unit> _whenNewRequestToDeleteGameEntry;
 
         public ReadOnlyObservableCollection<ModEntryViewModel> Mods { get { return _mods; } }
         public ReadOnlyObservableCollection<LocaleViewModel> Locales { get { return _locales; } }
@@ -30,11 +31,13 @@ namespace Sm5shMusic.GUI.ViewModels
         public IObservable<Unit> WhenNewRequestToAddGameEntry { get { return _whenNewRequestToAddGameEntry; } }
         public IObservable<Unit> WhenNewRequestToEditModEntry { get { return _whenNewRequestToEditModEntry; } }
         public IObservable<Unit> WhenNewRequestToEditGameEntry { get { return _whenNewRequestToEditGameEntry; } }
+        public IObservable<Unit> WhenNewRequestToDeleteGameEntry { get { return _whenNewRequestToDeleteGameEntry; } }
         public IObservable<string> WhenLocaleChanged { get { return _whenLocaleChanged; } }
         public ReactiveCommand<Unit, Unit> ActionNewMod { get; }
         public ReactiveCommand<Unit, Unit> ActionNewGame { get; }
         public ReactiveCommand<Unit, Unit> ActionEditMod { get; }
         public ReactiveCommand<Unit, Unit> ActionEditGame { get; }
+        public ReactiveCommand<Unit, Unit> ActionDeleteGame { get; }
         public ReactiveCommand<ModEntryViewModel, Unit> ActionAddNewBgm { get; }
 
         public ContextMenuViewModel(ILogger<BgmSongsViewModel> logger,
@@ -48,6 +51,7 @@ namespace Sm5shMusic.GUI.ViewModels
             _whenNewRequestToAddGameEntry = new Subject<Unit>();
             _whenNewRequestToEditModEntry = new Subject<Unit>();
             _whenNewRequestToEditGameEntry = new Subject<Unit>();
+            _whenNewRequestToDeleteGameEntry = new Subject<Unit>();
 
             //List of mods
             observableMusicModsList
@@ -68,6 +72,7 @@ namespace Sm5shMusic.GUI.ViewModels
             ActionEditMod = ReactiveCommand.Create(EditMod);
             ActionEditGame = ReactiveCommand.Create(EditGame);
             ActionAddNewBgm = ReactiveCommand.Create<ModEntryViewModel>(AddNewBgmEntry);
+            ActionDeleteGame = ReactiveCommand.Create(DeleteGame);
         }
 
         public void ChangeLocale(LocaleViewModel vmLocale)
@@ -92,6 +97,12 @@ namespace Sm5shMusic.GUI.ViewModels
         {
             _logger.LogDebug("Clicked Edit Game");
             _whenNewRequestToEditGameEntry.OnNext(Unit.Default);
+        }
+
+        public void DeleteGame()
+        {
+            _logger.LogDebug("Clicked Delete Game");
+            _whenNewRequestToDeleteGameEntry.OnNext(Unit.Default);
         }
 
         public void AddNewMod()
@@ -137,6 +148,11 @@ namespace Sm5shMusic.GUI.ViewModels
             {
                 _whenNewRequestToEditGameEntry?.OnCompleted();
                 _whenNewRequestToEditGameEntry?.Dispose();
+            }
+            if (_whenNewRequestToDeleteGameEntry != null)
+            {
+                _whenNewRequestToDeleteGameEntry?.OnCompleted();
+                _whenNewRequestToDeleteGameEntry?.Dispose();
             }
         }
     }
