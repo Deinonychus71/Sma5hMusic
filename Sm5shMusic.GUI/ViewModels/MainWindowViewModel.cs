@@ -26,7 +26,6 @@ namespace Sm5shMusic.GUI.ViewModels
     {
         private readonly IGUIStateManager _guiStateManager;
         private readonly IViewModelManager _viewModelManager;
-        private readonly INus3AudioService _nus3AudioService;
         private readonly IVGMMusicPlayer _musicPlayer;
         private readonly IMessageDialog _messageDialog;
         private readonly IFileDialog _fileDialog;
@@ -71,13 +70,11 @@ namespace Sm5shMusic.GUI.ViewModels
         public ReactiveCommand<Unit, Unit> ActionOpenAbout { get; }
         public ReactiveCommand<Unit, Unit> ActionOpenGlobalSettings { get; }
 
-        public MainWindowViewModel(IServiceProvider serviceProvider, IViewModelManager viewModelManager, IGUIStateManager guiStateManager, IMapper mapper, INus3AudioService nus3AudioService,
-            IVGMMusicPlayer musicPlayer, IDialogWindow rootDialog, IMessageDialog messageDialog, IFileDialog fileDialog, IBuildDialog buildDialog, IOptions<ApplicationSettings> appSettings,
-            ILogger<MainWindowViewModel> logger)
+        public MainWindowViewModel(IServiceProvider serviceProvider, IViewModelManager viewModelManager, IGUIStateManager guiStateManager, IMapper mapper, IVGMMusicPlayer musicPlayer, 
+            IDialogWindow rootDialog, IMessageDialog messageDialog, IFileDialog fileDialog, IBuildDialog buildDialog, IOptions<ApplicationSettings> appSettings, ILogger<MainWindowViewModel> logger)
         {
             _viewModelManager = viewModelManager;
             _guiStateManager = guiStateManager;
-            _nus3AudioService = nus3AudioService;
             _musicPlayer = musicPlayer;
             _fileDialog = fileDialog;
             _buildDialog = buildDialog;
@@ -289,21 +286,13 @@ namespace Sm5shMusic.GUI.ViewModels
             _logger.LogInformation("Adding {NbrFiles} files to Mod {ModPath}", results.Length, managerMod.ModPath);
             foreach (var inputFile in results)
             {
-                string toneId = null;
-
-                //Nus3audio - Retrieve Tone ID from file
-                if (Path.GetExtension(inputFile).ToLower() == ".nus3audio")
-                {
-                    toneId = _nus3AudioService.GetToneIdFromNus3Audio(inputFile);
-                }
-
                 _vmToneIdCreation.Filename = inputFile;
-                _vmToneIdCreation.ToneId = toneId;
+                _vmToneIdCreation.LoadToneId(Path.GetFileNameWithoutExtension(inputFile));
                 var modalToneIdCreation = new ToneIdCreationModalWindow() { DataContext = _vmToneIdCreation };
                 var result = await modalToneIdCreation.ShowDialog<ToneIdCreationModalWindow>(_rootDialog.Window);
                 if (result != null)
                 {
-                    toneId = _vmToneIdCreation.ToneId;
+                    string toneId = _vmToneIdCreation.ToneId;
 
                     var uiBgmId = await _guiStateManager.CreateNewMusicModFromToneId(toneId, inputFile, managerMod.MusicMod);
                     if (!string.IsNullOrEmpty(uiBgmId))

@@ -19,6 +19,7 @@ namespace Sm5shMusic.GUI.ViewModels
     {
         private readonly ILogger _logger;
         private readonly ReadOnlyObservableCollection<BgmPropertyEntryViewModel> _bgmPropertyEntries;
+        private const string REGEX_REPLACE = @"[^a-zA-Z0-9_]";
         private const string REGEX_VALIDATION = @"^[a-z0-9_]+$";
 
         public ReactiveCommand<Window, Unit> ActionCancel { get; }
@@ -54,6 +55,11 @@ namespace Sm5shMusic.GUI.ViewModels
             var canExecute = this.WhenAnyValue(x => x.ValidationContext.IsValid);
             ActionCancel = ReactiveCommand.Create<Window>(Cancel);
             ActionCreate = ReactiveCommand.Create<Window>(Select, canExecute);
+        }
+
+        public void LoadToneId(string toneId)
+        {
+            ToneId = Regex.Replace(toneId.Replace(" ", "_"), REGEX_REPLACE, string.Empty).ToLower();
         }
 
         private void Cancel(Window w)
