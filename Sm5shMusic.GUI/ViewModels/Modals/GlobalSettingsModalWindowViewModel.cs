@@ -25,7 +25,8 @@ namespace Sm5shMusic.GUI.ViewModels
         public ReactiveCommand<Unit, Unit> ActionWipeAudioCache { get; }
         public ReactiveCommand<string, Unit> ActionOpenFileDialog { get; }
 
-        public ComboItem SelectedLocale { get; set; }
+        public ComboItem SelectedGUILocale { get; set; }
+        public ComboItem SelectedMSBTLocale { get; set; }
 
         public GlobalSettingsModalWindowViewModel(IGUIStateManager guiStateManager, IFileDialog fileDialog)
         {
@@ -113,7 +114,16 @@ namespace Sm5shMusic.GUI.ViewModels
 
         protected override void LoadItem(GlobalConfigurationViewModel item)
         {
-            SelectedLocale = Locales.FirstOrDefault(p => p.Id == item?.DefaultLocale);
+            SelectedGUILocale = Locales.FirstOrDefault(p => p.Id == item?.DefaultGUILocale);
+            SelectedMSBTLocale = Locales.FirstOrDefault(p => p.Id == item?.DefaultMSBTLocale);
+        }
+
+        protected override Task<bool> SaveChanges()
+        {
+            SelectedItem.DefaultGUILocale = SelectedGUILocale?.Id;
+            SelectedItem.DefaultMSBTLocale = SelectedMSBTLocale?.Id;
+
+            return base.SaveChanges();
         }
     }
 }

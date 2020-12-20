@@ -18,9 +18,9 @@ namespace Sm5shMusic.GUI.Mods.Music.Models.AutoMapper
                 .ForMember(i => i.Sm5shMusic, me => me.MapFrom(p => new Sm5shMusicOptions.Sm5shMusicOptionsSection()
                 {
                     AudioConversionFormat = p.AudioConversionFormat,
-                    DefaultLocale = p.DefaultLocale,
                     AudioConversionFormatFallBack = p.AudioConversionFormatFallBack,
                     CachePath = p.CachePath,
+                    DefaultLocale = p.DefaultSm5shMusicLocale,
                     EnableAudioCaching = p.EnableAudioCaching,
                     ModPath = p.ModPath
                 }))
@@ -28,7 +28,9 @@ namespace Sm5shMusic.GUI.Mods.Music.Models.AutoMapper
                 {
                     UIScale = Enum.Parse<Helpers.StylesHelper.UIScale>(p.UIScale, true),
                     UITheme = Enum.Parse<Helpers.StylesHelper.UITheme>(p.UITheme, true),
-                    Advanced = p.Advanced
+                    Advanced = p.Advanced,
+                    DefaultGUILocale = p.DefaultGUILocale,
+                    DefaultMSBTLocale = p.DefaultMSBTLocale
                 }))
                 .ForMember(i => i.Sm5shMusicOverride, me => me.MapFrom(p => new Sm5shMusicOverrideOptions.Sm5shMusicOverrideOptionsSection()
                 {
@@ -43,14 +45,16 @@ namespace Sm5shMusic.GUI.Mods.Music.Models.AutoMapper
                 .ForMember(i => i.ResourcesPath, me => me.MapFrom(p => p.ResourcesPath))
                 .ForMember(i => i.SkipOutputPathCleanupConfirmation, me => me.MapFrom(p => p.SkipOutputPathCleanupConfirmation))
                 .ForMember(i => i.AudioConversionFormat, me => me.MapFrom(p => p.Sm5shMusic.AudioConversionFormat))
-                .ForMember(i => i.DefaultLocale, me => me.MapFrom(p => p.Sm5shMusic.DefaultLocale))
                 .ForMember(i => i.AudioConversionFormatFallBack, me => me.MapFrom(p => p.Sm5shMusic.AudioConversionFormatFallBack))
                 .ForMember(i => i.CachePath, me => me.MapFrom(p => p.Sm5shMusic.CachePath))
+                .ForMember(i => i.DefaultSm5shMusicLocale, me => me.MapFrom(p => p.Sm5shMusic.DefaultLocale))
                 .ForMember(i => i.EnableAudioCaching, me => me.MapFrom(p => p.Sm5shMusic.EnableAudioCaching))
                 .ForMember(i => i.ModPath, me => me.MapFrom(p => p.Sm5shMusic.ModPath))
                 .ForMember(i => i.UIScale, me => me.MapFrom(p => p.Sm5shMusicGUI.UIScale))
                 .ForMember(i => i.UITheme, me => me.MapFrom(p => p.Sm5shMusicGUI.UITheme))
                 .ForMember(i => i.Advanced, me => me.MapFrom(p => p.Sm5shMusicGUI.Advanced))
+                .ForMember(i => i.DefaultGUILocale, me => me.MapFrom(p => p.Sm5shMusicGUI.DefaultGUILocale))
+                .ForMember(i => i.DefaultMSBTLocale, me => me.MapFrom(p => p.Sm5shMusicGUI.DefaultMSBTLocale))
                 .ForMember(i => i.ModOverridePath, me => me.MapFrom(p => p.Sm5shMusicOverride.ModPath))
                 .ForMember(i => i.TempPath, me => me.MapFrom(p => p.TempPath))
                 .ForMember(i => i.ToolsPath, me => me.MapFrom(p => p.ToolsPath));

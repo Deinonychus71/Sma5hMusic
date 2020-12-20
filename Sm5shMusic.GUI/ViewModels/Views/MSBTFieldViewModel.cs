@@ -1,10 +1,10 @@
 ﻿using Avalonia.Threading;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
+using Sm5shMusic.GUI.Helpers;
 using Sm5shMusic.GUI.Models;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
@@ -17,15 +17,16 @@ namespace Sm5shMusic.GUI.ViewModels
         private const string COPY_ACTION_ALL = "all";
         private const string COPY_ACTION_EMPTY = "empty";
         private readonly IEnumerable<ComboItem> _copyActions;
+        private readonly IEnumerable<ComboItem> _locales;
 
-        public ReadOnlyObservableCollection<LocaleViewModel> Locales { get; set; }
+        public IEnumerable<ComboItem> Locales { get { return _locales; } }
 
         public bool AcceptsReturn { get; set; }
 
         public IEnumerable<ComboItem> CopyActions { get { return _copyActions; } }
 
         [Reactive]
-        public LocaleViewModel SelectedLocale { get; set; }
+        public ComboItem SelectedLocale { get; set; }
 
         public Dictionary<string, string> MSBTValues
         {
@@ -51,14 +52,15 @@ namespace Sm5shMusic.GUI.ViewModels
 
         [Reactive]
         public ComboItem SelectedCopyAction { get; set; }
-        public ReactiveCommand<LocaleViewModel, Unit> ActionChangeLocale { get; }
+        public ReactiveCommand<ComboItem, Unit> ActionChangeLocale { get; }
         public ReactiveCommand<Unit, Unit> ActionCopyToAll { get; }
         public ReactiveCommand<Unit, Unit> ActionCopyToEmptyLanguages { get; }
 
         public MSBTFieldViewModel()
         {
+            _locales = Constants.CONVERTER_LOCALE.Select(p => new ComboItem(p.Key, p.Value));
             _copyActions = GetCopyActions();
-            ActionChangeLocale = ReactiveCommand.Create<LocaleViewModel>(ChangeLocale);
+            ActionChangeLocale = ReactiveCommand.Create<ComboItem>(ChangeLocale);
             ActionCopyToAll = ReactiveCommand.Create(CopyToAllLanguages);
             ActionCopyToEmptyLanguages = ReactiveCommand.Create(CopyToEmptyLanguages);
 
@@ -67,7 +69,7 @@ namespace Sm5shMusic.GUI.ViewModels
             this.WhenAnyValue(p => p.CurrentLocalizedValue).Subscribe((p) => { SaveValueToCurrentLocale(); });
         }
 
-        private void ChangeLocale(LocaleViewModel locale)
+        private void ChangeLocale(ComboItem locale)
         {
             if (MSBTValues != null && SelectedLocale != null)
             {

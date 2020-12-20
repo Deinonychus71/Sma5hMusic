@@ -1,8 +1,9 @@
 ﻿using DynamicData;
 using DynamicData.Binding;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using ReactiveUI;
-using Sm5shMusic.GUI.Helpers;
+using Sm5sh.Mods.Music;
 using System;
 using System.Collections.ObjectModel;
 using System.Reactive;
@@ -40,13 +41,13 @@ namespace Sm5shMusic.GUI.ViewModels
         public ReactiveCommand<Unit, Unit> ActionDeleteGame { get; }
         public ReactiveCommand<ModEntryViewModel, Unit> ActionAddNewBgm { get; }
 
-        public ContextMenuViewModel(ILogger<BgmSongsViewModel> logger,
+        public ContextMenuViewModel(IOptions<ApplicationSettings> config, ILogger<BgmSongsViewModel> logger,
             IObservable<IChangeSet<ModEntryViewModel, string>> observableMusicModsList,
             IObservable<IChangeSet<LocaleViewModel, string>> observableLocalesList)
         {
             _logger = logger;
             _whenNewRequestToAddBgmEntry = new Subject<ModEntryViewModel>();
-            _whenLocaleChanged = new BehaviorSubject<string>(Constants.DEFAULT_LOCALE);
+            _whenLocaleChanged = new BehaviorSubject<string>(config.Value.Sm5shMusicGUI.DefaultGUILocale);
             _whenNewRequestToAddModEntry = new Subject<Unit>();
             _whenNewRequestToAddGameEntry = new Subject<Unit>();
             _whenNewRequestToEditModEntry = new Subject<Unit>();

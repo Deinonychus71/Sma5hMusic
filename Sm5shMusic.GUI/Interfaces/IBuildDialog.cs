@@ -5,7 +5,7 @@ namespace Sm5shMusic.GUI.Interfaces
 {
     public interface IBuildDialog
     {
-        Task Init(Action<bool> callbackSuccess = null, Action<Exception> callbackError = null);
-        Task Build(bool useCache, Action<bool> callbackSuccess = null, Action<Exception> callbackError = null);
+        Task Init(Func<bool, Task> callbackSuccess = null, Func<Exception, Task> callbackError = null);
+        Task Build(bool useCache, Func<bool, Task> callbackSuccess = null, Func<Exception, Task> callbackError = null);
     }
 }

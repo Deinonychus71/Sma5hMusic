@@ -30,7 +30,7 @@ namespace Sm5shMusic.GUI.Dialogs
             _messageDialog = messageDialog;
         }
 
-        public async Task Init(Action<bool> callbackSuccess = null, Action<Exception> callbackError = null)
+        public async Task Init(Func<bool, Task> callbackSuccess = null, Func<Exception, Task> callbackError = null)
         {
             try
             {
@@ -42,7 +42,7 @@ namespace Sm5shMusic.GUI.Dialogs
                         await Dispatcher.UIThread.InvokeAsync(async () =>
                         {
                             await _messageDialog.ShowError("File Check", $"The file {fileCheck} is required and was not found.\r\nPlease check your setup.");
-                            callbackError?.Invoke(new Exception("File Check Exception"));
+                            await callbackError?.Invoke(new Exception("File Check Exception"));
                         }, DispatcherPriority.Background);
                         return;
                     }
@@ -58,7 +58,7 @@ namespace Sm5shMusic.GUI.Dialogs
                     await Dispatcher.UIThread.InvokeAsync(async () =>
                     {
                         await _messageDialog.ShowError("File Check", $"There should be at least one localized msg_bgm.msbt and one msg_title.msbt\r\nresource in {Path.Combine(_config.Value.GameResourcesPath, "ui", "message")}.");
-                        callbackError?.Invoke(new Exception("File Check Exception"));
+                        await callbackError?.Invoke(new Exception("File Check Exception"));
                     }, DispatcherPriority.Background);
                     return;
                 }
@@ -78,14 +78,14 @@ namespace Sm5shMusic.GUI.Dialogs
                             mod.Init();
                         }
 
-                        callbackSuccess?.Invoke(true);
+                        await callbackSuccess?.Invoke(true);
                     }
                     catch (Exception e)
                     {
                         await Dispatcher.UIThread.InvokeAsync(async () =>
                         {
                             await _messageDialog.ShowError("Initialization failure", $"There was a general exception during Init.\r\n{e.Message}");
-                            callbackError?.Invoke(e);
+                            await callbackError?.Invoke(e);
                         }, DispatcherPriority.Background);
                     }
                 });
@@ -95,16 +95,16 @@ namespace Sm5shMusic.GUI.Dialogs
                 await Dispatcher.UIThread.InvokeAsync(async () =>
                 {
                     await _messageDialog.ShowError("Initialization failure", $"There was a general exception during Init.\r\n{e.Message}");
-                    callbackError?.Invoke(e);
+                    await callbackError?.Invoke(e);
                 }, DispatcherPriority.Background);
             }
         }
 
-        public async Task Build(bool useCache, Action<bool> callbackSuccess = null, Action<Exception> callbackError = null)
+        public async Task Build(bool useCache, Func<bool, Task> callbackSuccess = null, Func<Exception, Task> callbackError = null)
         {
             if (!await EnsureArcOutputIsClean())
             {
-                callbackSuccess?.Invoke(false);
+                await callbackSuccess?.Invoke(false);
                 return;
             }
 
@@ -115,7 +115,7 @@ namespace Sm5shMusic.GUI.Dialogs
                     await Dispatcher.UIThread.InvokeAsync(async () =>
                     {
                         await _messageDialog.ShowError("Build", "Could not initialize the build.");
-                        callbackError?.Invoke(new Exception("Mod Init Exception"));
+                        await callbackError?.Invoke(new Exception("Mod Init Exception"));
                     }, DispatcherPriority.Background);
                 }
 
@@ -131,7 +131,7 @@ namespace Sm5shMusic.GUI.Dialogs
                             if (!mod.Build(useCache))
                             {
                                 await ShowBuildFailedError();
-                                callbackError?.Invoke(new Exception("Mod Build Exception"));
+                                await callbackError?.Invoke(new Exception("Mod Build Exception"));
                                 return;
                             }
                         }
@@ -139,7 +139,7 @@ namespace Sm5shMusic.GUI.Dialogs
                         if (!_stateManager.WriteChanges())
                         {
                             await ShowBuildFailedError();
-                            callbackError?.Invoke(new Exception("StateManager Exception"));
+                            await callbackError?.Invoke(new Exception("StateManager Exception"));
                             return;
                         }
                         _logger.LogInformation("Build Complete");
@@ -149,7 +149,7 @@ namespace Sm5shMusic.GUI.Dialogs
                         await Dispatcher.UIThread.InvokeAsync(async () =>
                         {
                             await _messageDialog.ShowError("Build failure", $"There was a general exception during Build.\r\n{e.Message}");
-                            callbackError?.Invoke(e);
+                            await callbackError?.Invoke(e);
                         }, DispatcherPriority.Background);
                     }
 
@@ -157,7 +157,7 @@ namespace Sm5shMusic.GUI.Dialogs
                     {
                         await _messageDialog.ShowInformation("Complete", "Build complete. If something goes wrong, please check the logs for error.");
 
-                        callbackSuccess?.Invoke(true);
+                        await callbackSuccess?.Invoke(true);
 
                     }, DispatcherPriority.Background);
                 });

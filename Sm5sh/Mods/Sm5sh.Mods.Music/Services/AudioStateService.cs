@@ -370,7 +370,7 @@ namespace Sm5sh.Mods.Music.Services
             var daoMsbtBgms = GetBgmDatabases();
             var daoMsbtTitle = GetGameTitleDatabases();
 
-            var defaultLocale = _config.Value.Sm5shMusic.DefaultLocale;
+            var defaultLocale = _config.Value.Sm5shMusic.DefaultLocale; //TODO: Remove? It should now be handled from UI
             var coreSeriesGames = paramGameTitleDatabaseRoot.Values.Select(p => p.UiSeriesId).Distinct(); //Not handling series addition right now.
 
             //GameTitle PRC - We don't delete existing games... yet.

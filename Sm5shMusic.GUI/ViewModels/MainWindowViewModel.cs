@@ -10,6 +10,7 @@ using Sm5shMusic.GUI.Helpers;
 using Sm5shMusic.GUI.Interfaces;
 using Sm5shMusic.GUI.Views;
 using System;
+using System.Linq;
 using System.IO;
 using System.Reactive;
 using System.Reactive.Linq;
@@ -18,6 +19,7 @@ using VGMMusic;
 using ILogger = Microsoft.Extensions.Logging.ILogger;
 using Microsoft.Extensions.Options;
 using Sm5sh.Mods.Music;
+using Avalonia.Threading;
 
 namespace Sm5shMusic.GUI.ViewModels
 {
@@ -123,7 +125,7 @@ namespace Sm5shMusic.GUI.ViewModels
 
             //Setup GameEditor
             var vmGameEditor = ActivatorUtilities.CreateInstance<GamePropertiesModalWindowViewModel>(serviceProvider,
-                viewModelManager.ObservableLocales, viewModelManager.ObservableSeries, observableGameEntriesList);
+                viewModelManager.ObservableSeries, observableGameEntriesList);
             var vmGamePicker = ActivatorUtilities.CreateInstance<GamePickerModalWindowViewModel>(serviceProvider,
                 observableGameEntriesList);
             var vmGameDeletePicker = ActivatorUtilities.CreateInstance<GameDeletePickerModalWindowViewModel>(serviceProvider,
@@ -136,7 +138,7 @@ namespace Sm5shMusic.GUI.ViewModels
 
             //Setup BgmEditor
             var vmBgmEditor = ActivatorUtilities.CreateInstance<BgmPropertiesModalWindowViewModel>(serviceProvider,
-                viewModelManager.ObservableLocales, viewModelManager.ObservableSeries, observableGameEntriesList, viewModelManager.ObservableAssignedInfoEntries);
+                viewModelManager.ObservableSeries, observableGameEntriesList, viewModelManager.ObservableAssignedInfoEntries);
             vmBgmEditor.VMGamePropertiesModal = vmGameEditor;
             vmBgmEditor.WhenNewRequestToAddGameEntry.Subscribe(async (o) => await AddNewOrEditGame(o));
             _dialogSimpleBgmEditor = new ModalDialog<BgmPropertiesModalWindow, BgmPropertiesModalWindowViewModel, BgmEntryViewModel>(vmBgmEditor);
@@ -197,10 +199,12 @@ namespace Sm5shMusic.GUI.ViewModels
             {
                 IsLoading = false;
                 IsShowingDebug = false;
+                return Task.CompletedTask;
             }, (o) =>
             {
                 IsLoading = false;
                 IsShowingDebug = false;
+                return Task.CompletedTask;
             });
         }
 
@@ -214,23 +218,37 @@ namespace Sm5shMusic.GUI.ViewModels
             {
                 IsLoading = false;
                 IsShowingDebug = false;
+                return Task.CompletedTask;
             }, (o) =>
             {
                 IsLoading = false;
                 IsShowingDebug = false;
+                return Task.CompletedTask;
             });
         }
-
+        
         public async Task OnInitData()
         {
             IsLoading = true;
-            await _buildDialog.Init((o) =>
+            await _buildDialog.Init(async (o) =>
             {
                 _viewModelManager.Init();
+                var locales = _viewModelManager.GetLocalesViewModels();
+                var defaultLocaleFound = locales.FirstOrDefault(p => p.Id == _currentLocale) != null;
+                if (!defaultLocaleFound)
+                {
+                    var newDefaultLanguage = locales.FirstOrDefault();
+                    await Dispatcher.UIThread.InvokeAsync(async () =>
+                    {
+                        await _messageDialog.ShowError("Locale error", $"The default locale {Constants.GetLocaleDisplayName(_currentLocale)} was not properly loaded.\r\nVerify that msbt_bgm+{_currentLocale}.msbt is in your resource files or change the defaut locale.\r\nThe GUI locale will be changed to {Constants.GetLocaleDisplayName(newDefaultLanguage?.Id)}.");
+                    }, DispatcherPriority.Background);
+                    VMContextMenu.ChangeLocale(newDefaultLanguage);
+                }
                 IsLoading = false;
             }, (o) =>
             {
                 OnExit();
+                return Task.CompletedTask;
             });
         }
 

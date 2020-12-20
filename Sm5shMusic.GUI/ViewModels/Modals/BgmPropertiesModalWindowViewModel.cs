@@ -1,9 +1,11 @@
 ﻿using Avalonia.Controls;
 using DynamicData;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using ReactiveUI.Validation.Extensions;
+using Sm5sh.Mods.Music;
 using Sm5sh.Mods.Music.Helpers;
 using Sm5shMusic.GUI.Helpers;
 using Sm5shMusic.GUI.Models;
@@ -21,10 +23,10 @@ namespace Sm5shMusic.GUI.ViewModels
 {
     public class BgmPropertiesModalWindowViewModel : ModalBaseViewModel<BgmEntryViewModel>
     {
+        private readonly IOptions<ApplicationSettings> _config;
         private readonly ILogger _logger;
         private readonly List<ComboItem> _recordTypes;
         private readonly List<ComboItem> _specialCategories;
-        private readonly ReadOnlyObservableCollection<LocaleViewModel> _locales;
         private readonly ReadOnlyObservableCollection<SeriesEntryViewModel> _series;
         private readonly ReadOnlyObservableCollection<GameTitleEntryViewModel> _games;
         private readonly ReadOnlyObservableCollection<string> _streamSetIds;
@@ -59,25 +61,20 @@ namespace Sm5shMusic.GUI.ViewModels
         public ReadOnlyObservableCollection<SeriesEntryViewModel> Series { get { return _series; } }
         public ReadOnlyObservableCollection<GameTitleEntryViewModel> Games { get { return _games; } }
         public ReadOnlyObservableCollection<string> StreamSetIds { get { return _streamSetIds; } }
-        public ReadOnlyObservableCollection<LocaleViewModel> Locales { get { return _locales; } }
 
         public ReactiveCommand<Window, Unit> ActionNewGame { get; }
 
-        public BgmPropertiesModalWindowViewModel(ILogger<BgmPropertiesModalWindowViewModel> logger, IObservable<IChangeSet<LocaleViewModel, string>> observableLocales,
+        public BgmPropertiesModalWindowViewModel(IOptions<ApplicationSettings> config, ILogger<BgmPropertiesModalWindowViewModel> logger,
             IObservable<IChangeSet<SeriesEntryViewModel, string>> observableSeries, IObservable<IChangeSet<GameTitleEntryViewModel, string>> observableGames,
             IObservable<IChangeSet<BgmAssignedInfoEntryViewModel, string>> observableBgmAssignedInfoEntries)
         {
+            _config = config;
             _logger = logger;
             _recordTypes = GetRecordTypes();
             _specialCategories = GetSpecialCategories();
             _whenNewRequestToAddGameEntry = new Subject<Window>();
 
             //Bind observables
-            observableLocales
-                .ObserveOn(RxApp.MainThreadScheduler)
-                .Bind(out _locales)
-                .DisposeMany()
-                .Subscribe();
             observableSeries
                .ObserveOn(RxApp.MainThreadScheduler)
                .Bind(out _series)
@@ -96,21 +93,19 @@ namespace Sm5shMusic.GUI.ViewModels
                .Subscribe();
 
             //Set up MSBT Fields
-            var defaultLocale = new LocaleViewModel(Constants.DEFAULT_LOCALE, Constants.GetLocaleDisplayName(Constants.DEFAULT_LOCALE));
+            var defaultLocale = _config.Value.Sm5shMusicGUI.DefaultGUILocale;
+            var defaultLocaleItem = new ComboItem(defaultLocale, Constants.GetLocaleDisplayName(defaultLocale));
             MSBTTitleEditor = new MSBTFieldViewModel()
             {
-                Locales = Locales,
-                SelectedLocale = defaultLocale
+                SelectedLocale = defaultLocaleItem
             };
             MSBTAuthorEditor = new MSBTFieldViewModel()
             {
-                Locales = Locales,
-                SelectedLocale = defaultLocale
+                SelectedLocale = defaultLocaleItem
             };
             MSBTCopyrightEditor = new MSBTFieldViewModel()
             {
-                Locales = Locales,
-                SelectedLocale = defaultLocale,
+                SelectedLocale = defaultLocaleItem,
                 AcceptsReturn = true
             };
 

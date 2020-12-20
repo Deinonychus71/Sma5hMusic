@@ -111,10 +111,12 @@ namespace Sm5shMusic.GUI
                 { "Sm5shMusic:EnableAudioCaching", "false" },
                 { "Sm5shMusic:AudioConversionFormat", "lopus" },
                 { "Sm5shMusic:AudioConversionFormatFallBack", "idsp" },
-                { "Sm5shMusic:DefaultLocale", "us_en" },
+                { "Sm5shMusic:DefaultLocale", "us_en" }, //Delete? This should now be handled from GUI with DefaultCopyLocale
                 { "Sm5shMusicGUI:Advanced", "false" },
                 { "Sm5shMusicGUI:UIScale", "Normal" },
                 { "Sm5shMusicGUI:UITheme", "Dark" },
+                { "Sm5shMusicGUI:DefaultGUILocale", "us_en" },
+                { "Sm5shMusicGUI:DefaultMSBTLocale", "us_en" },
                 { "Sm5shMusicOverride:ModPath", $"Mods{Path.DirectorySeparatorChar}MusicOverride" },
             };
         }

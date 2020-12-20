@@ -16,7 +16,9 @@ namespace Sm5shMusic.GUI.ViewModels
         public bool EnableAudioCaching { get; set; }
         public string AudioConversionFormat { get; set; }
         public string AudioConversionFormatFallBack { get; set; }
-        public string DefaultLocale { get; set; }
+        public string DefaultSm5shMusicLocale { get; set; } //TODO, remove?
+        public string DefaultGUILocale { get; set; }
+        public string DefaultMSBTLocale { get; set; }
 
         [Reactive]
         public string ModOverridePath { get; set; }

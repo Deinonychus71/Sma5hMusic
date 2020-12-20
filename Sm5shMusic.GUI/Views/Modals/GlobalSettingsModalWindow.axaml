@@ -34,9 +34,20 @@
               <ComboBox Items="{Binding UIScales}" SelectedItem="{Binding SelectedItem.UIScale}"/>
             </fields:PropertyField.FieldContent>
           </fields:PropertyField>
-          <fields:PropertyField Label="Default Locale" ToolTip="Default Locale for UI">
+          <fields:PropertyField Label="Default GUI Locale" ToolTip="Default Locale for UI">
             <fields:PropertyField.FieldContent>
-              <ComboBox Items="{Binding Locales}" SelectedItem="{Binding SelectedLocale}">
+              <ComboBox Items="{Binding Locales}" SelectedItem="{Binding SelectedGUILocale}">
+                <ComboBox.ItemTemplate>
+                  <DataTemplate>
+                    <TextBlock Text="{Binding Label}"/>
+                  </DataTemplate>
+                </ComboBox.ItemTemplate>
+              </ComboBox>
+            </fields:PropertyField.FieldContent>
+          </fields:PropertyField>
+          <fields:PropertyField Label="Default MSBT Locale" ToolTip="For mod songs/games, empty locales automatically get populated with the value of the default MSBT locale">
+            <fields:PropertyField.FieldContent>
+              <ComboBox Items="{Binding Locales}" SelectedItem="{Binding SelectedMSBTLocale}">
                 <ComboBox.ItemTemplate>
                   <DataTemplate>
                     <TextBlock Text="{Binding Label}"/>

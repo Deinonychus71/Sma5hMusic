@@ -22,8 +22,6 @@ namespace Sm5shMusic.GUI.Helpers
             };
         }
 
-        public const string DEFAULT_LOCALE = "us_en";
-
         public readonly static Dictionary<string, string> CONVERTER_SERIES = new Dictionary<string, string>()
         {
             { "ui_series_none", "None" },
