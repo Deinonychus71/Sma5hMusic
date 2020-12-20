@@ -16,7 +16,7 @@ namespace Sm5shMusic.GUI.ViewModels
         private Dictionary<string, string> _msbtValues;
         private const string COPY_ACTION_ALL = "all";
         private const string COPY_ACTION_EMPTY = "empty";
-        private IEnumerable<ComboItem> _copyActions;
+        private readonly IEnumerable<ComboItem> _copyActions;
 
         public ReadOnlyObservableCollection<LocaleViewModel> Locales { get; set; }
 
