@@ -12,7 +12,7 @@
     </StackPanel>
     <DockPanel>
       <ContentControl DockPanel.Dock="Left" Content="{Binding $parent[UserControl].MusicPlayer}"/>
-      <TextBox AcceptsReturn="{Binding !$parent[UserControl].AcceptsReturn}" IsReadOnly="{Binding $parent[UserControl].IsReadOnly}" Text="{Binding $parent[UserControl].Text}"></TextBox>
+      <TextBox AcceptsReturn="{Binding $parent[UserControl].AcceptsReturn}" IsReadOnly="{Binding $parent[UserControl].IsReadOnly}" Text="{Binding $parent[UserControl].Text}"></TextBox>
     </DockPanel>
   </StackPanel>
 </UserControl>

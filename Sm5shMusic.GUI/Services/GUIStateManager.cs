@@ -437,10 +437,11 @@ namespace Sm5shMusic.GUI.Services
                 {
                     result = await _musicModManagerService.UpdateGameEntry(gameTitleEntry);
                 }
-                else
-                {
+                //We save in CoreGameTitle no matter what so it gets loaded
+                //else
+                //{
                     result = _sm5shMusicOverride.UpdateCoreGameTitleEntry(gameTitleEntry);
-                }
+                //}
             }
             catch (Exception e)
             {

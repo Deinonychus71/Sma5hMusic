@@ -50,14 +50,20 @@ namespace Sm5sh.Mods.Music
                 _logger.LogInformation("Overriding SoundTest Order...");
 
             //Game Override
+            //Even mod games can be loaded, as they can be created separately from mods
             if (_musicOverrideConfig.CoreGameOverrides != null)
             {
-                foreach (var gameTitleEntry in _audioStateService.GetGameTitleEntries())
+                var gameTitleEntries = _audioStateService.GetGameTitleEntries().ToDictionary(p => p.UiGameTitleId, p => p);
+                foreach (var coreGameTitle in _musicOverrideConfig.CoreGameOverrides.Values)
                 {
-                    if (_musicOverrideConfig.CoreGameOverrides.ContainsKey(gameTitleEntry.UiGameTitleId))
+                    if (gameTitleEntries.ContainsKey(coreGameTitle.UiGameTitleId))
                     {
-                        _logger.LogInformation("Overriding Core Game {GameId}...", gameTitleEntry.UiGameTitleId);
-                        _mapper.Map(_musicOverrideConfig.CoreGameOverrides[gameTitleEntry.UiGameTitleId], gameTitleEntry);
+                        _logger.LogInformation("Overriding Core Game {GameId}...", coreGameTitle.UiGameTitleId);
+                        _mapper.Map(coreGameTitle, gameTitleEntries[coreGameTitle.UiGameTitleId]);
+                    }
+                    else
+                    {
+                        _audioStateService.AddGameTitleEntry(_mapper.Map(coreGameTitle, new GameTitleEntry(coreGameTitle.UiGameTitleId, EntrySource.Mod)));
                     }
                 }
             }
