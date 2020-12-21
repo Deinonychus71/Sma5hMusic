@@ -184,10 +184,26 @@ namespace Sm5shMusic.GUI.ViewModels
             DbRootViewModel.TestDispOrder = (short)(IsInSoundTest ? DbRootViewModel.TestDispOrder > -1 ? DbRootViewModel.TestDispOrder : short.MaxValue : -1);
             if (SelectedRecordType != null)
                 DbRootViewModel.RecordType = SelectedRecordType.Id;
-            DbRootViewModel.MSBTTitle = MSBTTitleEditor.MSBTValues;
-            DbRootViewModel.MSBTAuthor = MSBTAuthorEditor.MSBTValues;
-            DbRootViewModel.MSBTCopyright = MSBTCopyrightEditor.MSBTValues;
+            DbRootViewModel.MSBTTitle = SaveMSBTValues(MSBTTitleEditor.MSBTValues);
+            DbRootViewModel.MSBTAuthor = SaveMSBTValues(MSBTAuthorEditor.MSBTValues);
+            DbRootViewModel.MSBTCopyright = SaveMSBTValues(MSBTCopyrightEditor.MSBTValues);
             return Task.FromResult(true);
+        }
+
+        private Dictionary<string, string> SaveMSBTValues(Dictionary<string, string> msbtValues)
+        {
+            var output = new Dictionary<string, string>();
+            if (msbtValues != null)
+            {
+                foreach (var msbtValue in msbtValues)
+                {
+                    if (!string.IsNullOrEmpty(msbtValue.Value))
+                        output.Add(msbtValue.Key, msbtValue.Value);
+                    else if (_config.Value.Sm5shMusicGUI.CopyToEmptyLocales && msbtValues.ContainsKey(_config.Value.Sm5shMusicGUI.DefaultMSBTLocale))
+                        output.Add(msbtValue.Key, msbtValues[_config.Value.Sm5shMusicGUI.DefaultMSBTLocale]);
+                }
+            }
+            return output;
         }
 
         protected override void LoadItem(BgmEntryViewModel item)

@@ -116,6 +116,7 @@ namespace Sm5shMusic.GUI
                 { "Sm5shMusicGUI:UIScale", "Normal" },
                 { "Sm5shMusicGUI:UITheme", "Dark" },
                 { "Sm5shMusicGUI:DefaultGUILocale", "us_en" },
+                { "Sm5shMusicGUI:CopyToEmptyLocales", "true" },
                 { "Sm5shMusicGUI:DefaultMSBTLocale", "us_en" },
                 { "Sm5shMusicOverride:ModPath", $"Mods{Path.DirectorySeparatorChar}MusicOverride" },
             };

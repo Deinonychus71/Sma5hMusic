@@ -45,7 +45,8 @@
               </ComboBox>
             </fields:PropertyField.FieldContent>
           </fields:PropertyField>
-          <fields:PropertyField Label="Default MSBT Locale" ToolTip="For mod songs/games, empty locales automatically get populated with the value of the default MSBT locale">
+          <fields:PropertyBooleanField Label="Automatically Fill Empty Locales" IsChecked="{Binding SelectedItem.CopyToEmptyLocales}" ToolTip="Every locale will get the value of 'Default MSBT Locale' if left empty." />
+          <fields:PropertyField IsVisible="{Binding SelectedItem.CopyToEmptyLocales}" Label="Default MSBT Locale" ToolTip="For mod songs/games, empty locales automatically get populated with the value of the default MSBT locale">
             <fields:PropertyField.FieldContent>
               <ComboBox Items="{Binding Locales}" SelectedItem="{Binding SelectedMSBTLocale}">
                 <ComboBox.ItemTemplate>
@@ -56,7 +57,7 @@
               </ComboBox>
             </fields:PropertyField.FieldContent>
           </fields:PropertyField>
-          <fields:PropertyBooleanField Label="Skip Cleanup Confirmation" IsChecked="{Binding SelectedItem.SkipOutputPathCleanupConfirmation}" ToolTip="If this is set to off, the program will automatically clean up your output path when building." />
+          <fields:PropertyBooleanField Label="Skip Cleanup Confirmation" IsChecked="{Binding SelectedItem.SkipOutputPathCleanupConfirmation}" ToolTip="If this is set to on, the program will automatically clean up your output path when building." />
           <fields:PropertyBooleanField Label="Advanced" IsChecked="{Binding SelectedItem.Advanced}" ToolTip="Advanced will let you edit advanced properties for each song." />
         </StackPanel>
         <!-- Path -->

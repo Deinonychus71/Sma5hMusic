@@ -34,6 +34,7 @@ namespace Sm5shMusic.GUI.ViewModels
             set
             {
                 this.RaiseAndSetIfChanged(ref _msbtValues, value);
+                InitMsbtArray();
                 SetCurrentLocalizedValue();
             }
         }
@@ -115,6 +116,18 @@ namespace Sm5shMusic.GUI.ViewModels
                 if (!_msbtValues.ContainsKey(locale.Id))
                     _msbtValues.Add(locale.Id, string.Empty);
                 MSBTValues[locale.Id] = CurrentLocalizedValue;
+            }
+        }
+
+        private void InitMsbtArray()
+        {
+            if (_msbtValues != null)
+            {
+                foreach (var locale in Constants.CONVERTER_LOCALE.Keys)
+                {
+                    if (!_msbtValues.ContainsKey(locale))
+                        _msbtValues.Add(locale, string.Empty);
+                }
             }
         }
 

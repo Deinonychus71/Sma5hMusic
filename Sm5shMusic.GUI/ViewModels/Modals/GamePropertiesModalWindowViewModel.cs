@@ -138,13 +138,29 @@ namespace Sm5shMusic.GUI.ViewModels
                 _refSelectedItem = _viewModelManager.GetGameTitleViewModel(UiGameTitleId);
             }
 
-            _refSelectedItem.MSBTTitle = MSBTTitleEditor.MSBTValues;
+            _refSelectedItem.MSBTTitle = SaveMSBTValues(MSBTTitleEditor.MSBTValues);
             _refSelectedItem.NameId = NameId;
             _refSelectedItem.Release = Release;
             _refSelectedItem.Unk1 = Unk1;
             _refSelectedItem.UiSeriesId = SelectedSeries.SeriesId;
 
             return true;
+        }
+
+        private Dictionary<string, string> SaveMSBTValues(Dictionary<string, string> msbtValues)
+        {
+            var output = new Dictionary<string, string>();
+            if (msbtValues != null)
+            {
+                foreach (var msbtValue in msbtValues)
+                {
+                    if (!string.IsNullOrEmpty(msbtValue.Value))
+                        output.Add(msbtValue.Key, msbtValue.Value);
+                    else if (_config.Value.Sm5shMusicGUI.CopyToEmptyLocales && msbtValues.ContainsKey(_config.Value.Sm5shMusicGUI.DefaultMSBTLocale))
+                        output.Add(msbtValue.Key, msbtValues[_config.Value.Sm5shMusicGUI.DefaultMSBTLocale]);
+                }
+            }
+            return output;
         }
 
         protected override void LoadItem(GameTitleEntryViewModel item)
