@@ -31,7 +31,8 @@ namespace Sm5shMusic.GUI.Mods.Music.Models.AutoMapper
                     Advanced = p.Advanced,
                     DefaultGUILocale = p.DefaultGUILocale,
                     DefaultMSBTLocale = p.DefaultMSBTLocale,
-                    CopyToEmptyLocales = p.CopyToEmptyLocales
+                    CopyToEmptyLocales = p.CopyToEmptyLocales,
+                    PlaylistIncidenceDefault = p.PlaylistIncidenceDefault
                 }))
                 .ForMember(i => i.Sm5shMusicOverride, me => me.MapFrom(p => new Sm5shMusicOverrideOptions.Sm5shMusicOverrideOptionsSection()
                 {
@@ -57,6 +58,7 @@ namespace Sm5shMusic.GUI.Mods.Music.Models.AutoMapper
                 .ForMember(i => i.DefaultGUILocale, me => me.MapFrom(p => p.Sm5shMusicGUI.DefaultGUILocale))
                 .ForMember(i => i.DefaultMSBTLocale, me => me.MapFrom(p => p.Sm5shMusicGUI.DefaultMSBTLocale))
                 .ForMember(i => i.CopyToEmptyLocales, me => me.MapFrom(p => p.Sm5shMusicGUI.CopyToEmptyLocales))
+                .ForMember(i => i.PlaylistIncidenceDefault, me => me.MapFrom(p => p.Sm5shMusicGUI.PlaylistIncidenceDefault))
                 .ForMember(i => i.ModOverridePath, me => me.MapFrom(p => p.Sm5shMusicOverride.ModPath))
                 .ForMember(i => i.TempPath, me => me.MapFrom(p => p.TempPath))
                 .ForMember(i => i.ToolsPath, me => me.MapFrom(p => p.ToolsPath));

@@ -64,13 +64,13 @@ namespace Sm5shMusic.GUI.ViewModels
             }
         }
 
-        public PlaylistEntryValueViewModel AddSong(BgmDbRootEntryViewModel sourceObj, short orderId, short destinationIndex)
+        public PlaylistEntryValueViewModel AddSong(BgmDbRootEntryViewModel sourceObj, short orderId, short destinationIndex, ushort incidence)
         {
             PlaylistEntryValueViewModel output = null;
 
             for (short i = 0; i < 16; i++)
             {
-                var newValue = new PlaylistEntryValueViewModel(this, sourceObj.UiBgmId, destinationIndex, 0, sourceObj);
+                var newValue = new PlaylistEntryValueViewModel(this, sourceObj.UiBgmId, destinationIndex, incidence, sourceObj);
                 Tracks[i].Add(newValue);
                 if (i == orderId)
                     output = newValue;

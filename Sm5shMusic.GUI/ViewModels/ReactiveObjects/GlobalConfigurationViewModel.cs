@@ -21,6 +21,8 @@ namespace Sm5shMusic.GUI.ViewModels
         public string DefaultMSBTLocale { get; set; }
 
         [Reactive]
+        public ushort PlaylistIncidenceDefault { get; set; }
+        [Reactive]
         public bool CopyToEmptyLocales { get; set; }
         [Reactive]
         public string ModOverridePath { get; set; }

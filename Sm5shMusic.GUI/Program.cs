@@ -124,6 +124,7 @@ namespace Sm5shMusic.GUI
                 { "Sm5shMusicGUI:DefaultGUILocale", "us_en" },
                 { "Sm5shMusicGUI:CopyToEmptyLocales", "true" },
                 { "Sm5shMusicGUI:DefaultMSBTLocale", "us_en" },
+                { "Sm5shMusicGUI:PlaylistIncidenceDefault", "0" },
                 { "Sm5shMusicOverride:ModPath", $"Mods{Path.DirectorySeparatorChar}MusicOverride" },
             };
         }

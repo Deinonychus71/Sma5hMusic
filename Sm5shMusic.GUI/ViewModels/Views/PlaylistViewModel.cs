@@ -4,8 +4,10 @@ using DynamicData;
 using DynamicData.Binding;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
+using Sm5sh.Mods.Music;
 using Sm5shMusic.GUI.Interfaces;
 using Sm5shMusic.GUI.Models;
 using System;
@@ -22,6 +24,7 @@ namespace Sm5shMusic.GUI.ViewModels
 {
     public class PlaylistViewModel : ViewModelBase
     {
+        private readonly IOptions<ApplicationSettings> _config;
         private readonly ILogger _logging;
         private readonly IMessageDialog _messageDialog;
         private readonly ReadOnlyObservableCollection<BgmDbRootEntryViewModel> _bgms;
@@ -75,9 +78,10 @@ namespace Sm5shMusic.GUI.ViewModels
         public ReactiveCommand<Unit, Unit> ActionDeletePlaylist { get; }
         public ReactiveCommand<Unit, Unit> ActionAssignPlaylistToStage { get; }
 
-        public PlaylistViewModel(ILogger<PlaylistViewModel> logging, IMessageDialog messageDialog, IObservable<IChangeSet<BgmDbRootEntryViewModel, string>> observableBgmEntries,
+        public PlaylistViewModel(IOptions<ApplicationSettings> config, ILogger<PlaylistViewModel> logging, IMessageDialog messageDialog, IObservable<IChangeSet<BgmDbRootEntryViewModel, string>> observableBgmEntries,
             IObservable<IChangeSet<PlaylistEntryViewModel, string>> observablePlaylistEntries, ContextMenuViewModel vmContextMenu)
         {
+            _config = config;
             _logging = logging;
             _messageDialog = messageDialog;
             VMContextMenu = vmContextMenu;
@@ -198,7 +202,7 @@ namespace Sm5shMusic.GUI.ViewModels
             }
             if (SelectedPlaylistEntry != null && e.Data.Get(DATAOBJECT_FORMAT_BGM) is BgmDbRootEntryViewModel sourceBgmObj)
             {
-                AddToPlaylist(sourceBgmObj, destinationObj);
+                AddToPlaylist(sourceBgmObj, destinationObj, _config.Value.Sm5shMusicGUI.PlaylistIncidenceDefault);
             }
         }
         #endregion
@@ -224,10 +228,10 @@ namespace Sm5shMusic.GUI.ViewModels
             _whenNewRequestToDeletePlaylist.OnNext(Unit.Default);
         }
 
-        public void AddToPlaylist(BgmDbRootEntryViewModel sourceObj, PlaylistEntryValueViewModel destinationObj)
+        public void AddToPlaylist(BgmDbRootEntryViewModel sourceObj, PlaylistEntryValueViewModel destinationObj, ushort incidence)
         {
             var order = destinationObj != null ? (short)(destinationObj.Order + 1) : (short)999;
-            var newEntry = SelectedPlaylistEntry.AddSong(sourceObj, SelectedPlaylistOrder, order);
+            var newEntry = SelectedPlaylistEntry.AddSong(sourceObj, SelectedPlaylistOrder, order, incidence);
             _postReorderSelection = () => _refGrid.SelectedItem = newEntry;
             SelectedPlaylistEntry.ReorderSongs(SelectedPlaylistOrder);
             _whenNewRequestToUpdatePlaylistsInternal.OnNext(Unit.Default);
