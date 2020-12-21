@@ -24,18 +24,18 @@ namespace Sm5shMusic.GUI.Helpers
 
         private static readonly Styles FluentDark = new Styles
         {
-            /*new StyleInclude(new Uri("resm:Styles?assembly=Sm5shMusic.GUI"))
+            new StyleInclude(new Uri("resm:Styles?assembly=Sm5shMusic.GUI"))
             {
                 Source = new Uri("avares://Avalonia.Themes.Fluent/FluentDark.xaml")
-            },*/
-            new StyleInclude(new Uri("resm:Styles?assembly=Sm5shMusic.GUI"))
+            },
+            /*new StyleInclude(new Uri("resm:Styles?assembly=Sm5shMusic.GUI"))
             {
                 Source = new Uri("avares://Avalonia.Themes.Fluent/Accents/FluentDark.xaml")
             },
             new StyleInclude(new Uri("resm:Styles?assembly=Sm5shMusic.GUI"))
             {
                 Source = new Uri("avares://Avalonia.Themes.Fluent/FluentTheme.xaml")
-            },
+            },*/
             new StyleInclude(new Uri("resm:Styles?assembly=Sm5shMusic.GUI"))
             {
                 Source = new Uri("avares://Avalonia.Controls.DataGrid/Themes/Fluent.xaml")
@@ -48,18 +48,18 @@ namespace Sm5shMusic.GUI.Helpers
 
         private static readonly Styles FluentLight = new Styles
         {
-            /*new StyleInclude(new Uri("resm:Styles?assembly=Sm5shMusic.GUI"))
+            new StyleInclude(new Uri("resm:Styles?assembly=Sm5shMusic.GUI"))
             {
                 Source = new Uri("avares://Avalonia.Themes.Fluent/FluentLight.xaml")
-            },*/
-            new StyleInclude(new Uri("resm:Styles?assembly=Sm5shMusic.GUI"))
+            },
+            /*new StyleInclude(new Uri("resm:Styles?assembly=Sm5shMusic.GUI"))
             {
                 Source = new Uri("avares://Avalonia.Themes.Fluent/Accents/FluentLight.xaml")
             },
             new StyleInclude(new Uri("resm:Styles?assembly=Sm5shMusic.GUI"))
             {
                 Source = new Uri("avares://Avalonia.Themes.Fluent/FluentTheme.xaml")
-            },
+            },*/
             new StyleInclude(new Uri("resm:Styles?assembly=Sm5shMusic.GUI"))
             {
                 Source = new Uri("avares://Avalonia.Controls.DataGrid/Themes/Fluent.xaml")

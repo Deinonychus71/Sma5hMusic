@@ -20,8 +20,7 @@ namespace Sm5shMusic.GUI.ViewModels
             if (obj == null)
                 return false;
 
-            LocaleViewModel p = obj as LocaleViewModel;
-            if (p == null)
+            if (!(obj is LocaleViewModel p))
                 return false;
 
             return p.Id == this.Id;
