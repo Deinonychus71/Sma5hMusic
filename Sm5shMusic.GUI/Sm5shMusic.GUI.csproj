@@ -37,10 +37,9 @@
     <PackageReference Include="MessageBox.Avalonia" Version="0.10.7-rc1" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="5.0.0" />
     <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="5.0.0" />
-    <PackageReference Include="Nett" Version="0.15.0" />
+    <PackageReference Include="NReco.Logging.File" Version="1.1.1" />
     <PackageReference Include="ReactiveUI.Fody" Version="13.0.27" />
     <PackageReference Include="ReactiveUI.Validation" Version="2.0.1" />
-    <PackageReference Include="Serilog.Extensions.Logging.File" Version="2.0.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="5.0.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="5.0.1" />
     <PackageReference Include="Splat.Microsoft.Extensions.DependencyInjection" Version="9.8.1" />

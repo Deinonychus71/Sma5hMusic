@@ -12,6 +12,7 @@ using Sm5shMusic.GUI.Services;
 using Sm5shMusic.GUI.ViewModels;
 using Sm5shMusic.GUI.Views;
 using Splat.Microsoft.Extensions.DependencyInjection;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -54,7 +55,12 @@ namespace Sm5shMusic.GUI
             Configuration = configuration;
 
             var loggerFactory = LoggerFactory.Create(builder => builder
-                .AddFile(Path.Combine(configuration.GetValue<string>("LogPath"), "log_{Date}.txt"), LogLevel.Debug, retainedFileCountLimit: 7)
+                .AddFile(Path.Combine(configuration.GetValue<string>("LogPath"), $"log_{DateTime.Today.ToString("yyyyMMdd")}.txt"), c =>
+                {
+                    c.Append = true;
+                    c.MaxRollingFiles = 10;
+                    c.FileSizeLimitBytes = 10485760;
+                })
                 .AddProvider(new CustomConsoleLoggerProvider(LogLevel.Debug)));
 
             services.AddLogging();
