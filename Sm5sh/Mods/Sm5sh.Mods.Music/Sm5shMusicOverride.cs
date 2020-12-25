@@ -23,7 +23,7 @@ namespace Sm5sh.Mods.Music
         private readonly IAudioStateService _audioStateService;
         private const Formatting _defaultFormatting = Formatting.Indented;
         private MusicOverrideConfig _musicOverrideConfig;
-        private const double Version = 0.8;
+        private const double Version = 0.9;
 
         public override string ModName => "Sm5shMusicOverride";
 

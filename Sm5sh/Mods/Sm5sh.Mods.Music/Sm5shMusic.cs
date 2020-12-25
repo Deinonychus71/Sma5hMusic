@@ -15,7 +15,7 @@ namespace Sm5sh.Mods.Music
         private readonly IAudioStateService _audioStateService;
         private readonly IMusicModManagerService _musicModManagerService;
         private readonly INus3AudioService _nus3AudioService;
-        private const double Version = 0.8;
+        private const double Version = 0.9;
 
         public override string ModName => "Sm5shMusic";
 
