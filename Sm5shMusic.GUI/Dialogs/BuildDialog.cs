@@ -84,7 +84,7 @@ namespace Sm5shMusic.GUI.Dialogs
                     {
                         await Dispatcher.UIThread.InvokeAsync(async () =>
                         {
-                            await _messageDialog.ShowError("Initialization failure", $"There was a general exception during Init.\r\n{e.Message}");
+                            await _messageDialog.ShowError("Initialization failure", $"There was a general exception during Init.\r\n{e.Message}", e);
                             await callbackError?.Invoke(e);
                         }, DispatcherPriority.Background);
                     }
@@ -94,7 +94,7 @@ namespace Sm5shMusic.GUI.Dialogs
             {
                 await Dispatcher.UIThread.InvokeAsync(async () =>
                 {
-                    await _messageDialog.ShowError("Initialization failure", $"There was a general exception during Init.\r\n{e.Message}");
+                    await _messageDialog.ShowError("Initialization failure", $"There was a general exception during Init.\r\n{e.Message}", e);
                     await callbackError?.Invoke(e);
                 }, DispatcherPriority.Background);
             }
@@ -148,7 +148,7 @@ namespace Sm5shMusic.GUI.Dialogs
                     {
                         await Dispatcher.UIThread.InvokeAsync(async () =>
                         {
-                            await _messageDialog.ShowError("Build failure", $"There was a general exception during Build.\r\n{e.Message}");
+                            await _messageDialog.ShowError("Build failure", $"There was a general exception during Build.\r\n{e.Message}", e);
                             await callbackError?.Invoke(e);
                         }, DispatcherPriority.Background);
                     }

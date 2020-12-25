@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Sm5sh.Mods.Music;
 using Sm5shMusic.GUI.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -40,9 +41,12 @@ namespace Sm5shMusic.GUI.Dialogs
             return result == ButtonResult.Ok;
         }
 
-        public async Task ShowError(string title, string message)
+        public async Task ShowError(string title, string message, Exception e = null)
         {
-            _logger.LogWarning("Showing Error: {Title} - {Message}", title, message);
+            if(e != null)
+                _logger.LogError(e, "Showing Error: {Title} - {Message}", title, message);
+            else
+                _logger.LogError("Showing Error: {Title} - {Message}", title, message);
             var msBoxStandardWindow = MessageBoxManager.GetMessageBoxStandardWindow(new MessageBoxStandardParams
             {
                 ButtonDefinitions = ButtonEnum.Ok,

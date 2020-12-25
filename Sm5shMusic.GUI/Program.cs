@@ -50,18 +50,16 @@ namespace Sm5shMusic.GUI
                .SetBasePath(GetBasePath())
                .AddInMemoryCollection(GetDefaultConfiguration())
                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-               //.AddJsonFile(GetCurrentPathFile("user.json"), optional: false, reloadOnChange: true)
                .Build();
             Configuration = configuration;
 
             var loggerFactory = LoggerFactory.Create(builder => builder
-                .AddFile(Path.Combine(configuration.GetValue<string>("LogPath"), $"log_{DateTime.Today.ToString("yyyyMMdd")}.txt"), c =>
+                .SetMinimumLevel(LogLevel.Debug)
+                .AddFile(configuration.GetSection("Logging"), c =>
                 {
-                    c.Append = true;
-                    c.MaxRollingFiles = 10;
-                    c.FileSizeLimitBytes = 10485760;
+                    c.FormatLogFileName = (o) => $"{Path.ChangeExtension(o, string.Empty)}{DateTime.Today.ToString("yyyyMMdd")}{Path.GetExtension(o)}";
                 })
-                .AddProvider(new CustomConsoleLoggerProvider(LogLevel.Debug)));
+                .AddProvider(new CustomConsoleLoggerProvider(LogLevel.Information)));
 
             services.AddLogging();
             services.AddOptions();
@@ -105,6 +103,14 @@ namespace Sm5shMusic.GUI
         {
             return new Dictionary<string, string>()
             {
+                { "Logging:IncludeScopes", "False" },
+                { "Logging:LogLevel:Default", "Debug" },
+                { "Logging:LogLevel:System", "Information" },
+                { "Logging:LogLevel:Microsoft", "Error" },
+                { "Logging:File:Path", $"Log{Path.DirectorySeparatorChar}log.txt" },
+                { "Logging:File:Append", "True" },
+                { "Logging:File:FileSizeLimitBytes", "10485760" },
+                { "Logging:File:MaxRollingFiles", "10" },
                 { "GameResourcesPath",$"Resources{Path.DirectorySeparatorChar}Game" },
                 { "ResourcesPath", "Resources" },
                 { "OutputPath", "ArcOutput" },

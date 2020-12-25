@@ -188,7 +188,7 @@ namespace Sm5shMusic.GUI.Services
                 _logger.LogError(e, "Error in CanAddMusicModEntries");
                 await Dispatcher.UIThread.InvokeAsync(async () =>
                 {
-                    await _messageDialog.ShowError("Check Audio State DB", "One or more elements of this mod cannot be added to the DB. \r\nPlease check the logs.");
+                    await _messageDialog.ShowError("Check Audio State DB", "One or more elements of this mod cannot be added to the DB. \r\nPlease check the logs.", e);
                 }, DispatcherPriority.Background);
             }
             return false;
@@ -264,7 +264,7 @@ namespace Sm5shMusic.GUI.Services
                 _logger.LogError(e, "Error while adding music mod entries");
                 await Dispatcher.UIThread.InvokeAsync(async () =>
                 {
-                    await _messageDialog.ShowError("Add Music Mod Entries", "One or more elements of this mod cannot be added to the DB. \r\nPlease check the logs.");
+                    await _messageDialog.ShowError("Add Music Mod Entries", "One or more elements of this mod cannot be added to the DB. \r\nPlease check the logs.", e);
                 }, DispatcherPriority.Background);
             }
 
