@@ -13,6 +13,7 @@ using Sm5shMusic.GUI.Helpers;
 using Sm5shMusic.GUI.Interfaces;
 using Sm5shMusic.GUI.Models;
 using System;
+using Sm5sh.Helpers;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -147,7 +148,7 @@ namespace Sm5shMusic.GUI.ViewModels
             }
 
             _refSelectedItem.MSBTTitle = SaveMSBTValues(MSBTTitleEditor.MSBTValues);
-            _refSelectedItem.NameId = NameId;
+            _refSelectedItem.NameId = UiGameTitleId.TrimStart(MusicConstants.InternalIds.GAME_TITLE_ID_PREFIX);
             _refSelectedItem.Release = Release;
             _refSelectedItem.Unk1 = Unk1;
             _refSelectedItem.UiSeriesId = SelectedSeries.SeriesId;
