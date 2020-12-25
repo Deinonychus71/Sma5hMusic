@@ -96,6 +96,14 @@ namespace Sm5shMusic.GUI.ViewModels
                 $"The Game ID must start by '{MusicConstants.InternalIds.GAME_TITLE_ID_PREFIX}' and only contain lowercase letters, digits and underscore.");
 
             this.ValidationRule(p => p.UiGameTitleId,
+              p => p != null && p.Length <= MusicConstants.GameResources.GameTitleMaximumSize,
+              $"The Game ID is too long. Maximum is {MusicConstants.GameResources.GameTitleMaximumSize}");
+
+            this.ValidationRule(p => p.UiGameTitleId,
+             p => p != null && p.Length >= MusicConstants.GameResources.GameTitleMinimumSize,
+             $"The Game ID is too short. Minimum is {MusicConstants.GameResources.GameTitleMinimumSize}");
+
+            this.ValidationRule(p => p.UiGameTitleId,
                 p => (IsEdit || !_games.Select(p => p.UiGameTitleId).Contains(p)),
                 $"The Game ID already exists.");
 

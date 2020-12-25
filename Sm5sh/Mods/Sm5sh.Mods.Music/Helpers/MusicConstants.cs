@@ -26,6 +26,24 @@
         {
             public const string NUS3AUDIO_FILE = "bgm_{0}.nus3audio";
             public const string NUS3BANK_FILE = "bgm_{0}.nus3bank";
+            
+            public const int ToneIdMinimumSize = 1; //TOVERIFY
+            public const int ToneIdMaximumSize = 47;
+
+            public const int DbRootIdMinimumSize = ToneIdMinimumSize + 7;
+            public const int DbRootIdMaximumSize = ToneIdMaximumSize + 7;
+
+            public const int StreamSetIdMinimumSize = ToneIdMinimumSize + 4;
+            public const int StreamSetIdMaximumSize = ToneIdMaximumSize + 4;
+
+            public const int AssignedInfoIdMinimumSize = ToneIdMinimumSize + 5;
+            public const int AssignedInfoIdMaximumSize = ToneIdMaximumSize + 5;
+
+            public const int StreamIdMinimumSize = ToneIdMinimumSize + 7;
+            public const int StreamIdMaximumSize = ToneIdMaximumSize + 7;
+
+            public const int GameTitleMinimumSize = 14; //TO VERIFY
+            public const int GameTitleMaximumSize = 62; //TO VERIFY
         }
 
         public class InternalIds

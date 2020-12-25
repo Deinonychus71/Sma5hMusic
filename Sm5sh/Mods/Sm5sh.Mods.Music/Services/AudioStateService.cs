@@ -168,6 +168,14 @@ namespace Sm5sh.Mods.Music.Services
         #region ADD
         public bool AddBgmDbRootEntry(BgmDbRootEntry bgmDbRootEntry)
         {
+            if (bgmDbRootEntry.UiBgmId.Length > MusicConstants.GameResources.DbRootIdMaximumSize ||
+                bgmDbRootEntry.UiBgmId.Length < MusicConstants.GameResources.DbRootIdMinimumSize)
+            {
+                _logger.LogError("The DBRoot ID {DBRootId} is either too long or too short. Minimum: {DbRootIdMinimumSize}, Maximum: {DbRootIdMaximumSize}",
+                    bgmDbRootEntry.UiBgmId, MusicConstants.GameResources.DbRootIdMinimumSize, MusicConstants.GameResources.DbRootIdMaximumSize);
+                return false;
+            }
+
             //TODO: Figure out how MenuValue works - Incrementing for now
             bgmDbRootEntry.MenuValue = _bgmDbRootEntries.Values.OrderByDescending(p => p.MenuValue).First().MenuValue + 1; //TODO: Treat separately
 
@@ -184,6 +192,14 @@ namespace Sm5sh.Mods.Music.Services
 
         public bool AddBgmStreamSetEntry(BgmStreamSetEntry bgmStreamSetEntry)
         {
+            if (bgmStreamSetEntry.StreamSetId.Length > MusicConstants.GameResources.StreamSetIdMaximumSize ||
+                bgmStreamSetEntry.StreamSetId.Length < MusicConstants.GameResources.StreamSetIdMinimumSize)
+            {
+                _logger.LogError("The StreamSet ID {StreamSetId} is either too long or too short. Minimum: {StreamSetIdMinimumSize}, Maximum: {StreamSetIdMaximumSize}",
+                    bgmStreamSetEntry.StreamSetId, MusicConstants.GameResources.StreamSetIdMinimumSize, MusicConstants.GameResources.StreamSetIdMaximumSize);
+                return false;
+            }
+
             if (CanAddBgmStreamSetEntry(bgmStreamSetEntry.StreamSetId))
                 _bgmStreamSetEntries.Add(bgmStreamSetEntry.StreamSetId, bgmStreamSetEntry);
             else
@@ -197,6 +213,14 @@ namespace Sm5sh.Mods.Music.Services
 
         public bool AddBgmAssignedInfoEntry(BgmAssignedInfoEntry bgmAssignedInfoEntry)
         {
+            if (bgmAssignedInfoEntry.InfoId.Length > MusicConstants.GameResources.AssignedInfoIdMaximumSize ||
+                bgmAssignedInfoEntry.InfoId.Length < MusicConstants.GameResources.AssignedInfoIdMinimumSize)
+            {
+                _logger.LogError("The AssignedInfo ID {InfoId} is either too long or too short. Minimum: {AssignedInfoIdMinimumSize}, Maximum: {AssignedInfoIdMaximumSize}",
+                    bgmAssignedInfoEntry.InfoId, MusicConstants.GameResources.AssignedInfoIdMinimumSize, MusicConstants.GameResources.AssignedInfoIdMaximumSize);
+                return false;
+            }
+
             if (CanAddBgmAssignedInfoEntry(bgmAssignedInfoEntry.InfoId))
                 _bgmAssignedInfoEntries.Add(bgmAssignedInfoEntry.InfoId, bgmAssignedInfoEntry);
             else
@@ -210,6 +234,14 @@ namespace Sm5sh.Mods.Music.Services
 
         public bool AddBgmStreamPropertyEntry(BgmStreamPropertyEntry bgmStreamPropertyEntry)
         {
+            if (bgmStreamPropertyEntry.StreamId.Length > MusicConstants.GameResources.StreamIdMaximumSize ||
+                bgmStreamPropertyEntry.StreamId.Length < MusicConstants.GameResources.StreamIdMinimumSize)
+            {
+                _logger.LogError("The Stream ID {StreamId} is either too long or too short. Minimum: {StreamIdMinimumSize}, Maximum: {StreamIdMaximumSize}",
+                    bgmStreamPropertyEntry.StreamId, MusicConstants.GameResources.StreamIdMinimumSize, MusicConstants.GameResources.StreamIdMaximumSize);
+                return false;
+            }
+
             if (CanAddBgmStreamPropertyEntry(bgmStreamPropertyEntry.StreamId))
                 _bgmStreamPropertyEntries.Add(bgmStreamPropertyEntry.StreamId, bgmStreamPropertyEntry);
             else
@@ -223,6 +255,14 @@ namespace Sm5sh.Mods.Music.Services
 
         public bool AddBgmPropertyEntry(BgmPropertyEntry bgmPropertyEntry)
         {
+            if (bgmPropertyEntry.NameId.Length > MusicConstants.GameResources.ToneIdMaximumSize ||
+                bgmPropertyEntry.NameId.Length < MusicConstants.GameResources.ToneIdMinimumSize)
+            {
+                _logger.LogError("The Name ID {NameId} is either too long or too short. Minimum: {ToneIdMinimumSize}, Maximum: {ToneIdMaximumSize}",
+                    bgmPropertyEntry.NameId, MusicConstants.GameResources.ToneIdMinimumSize, MusicConstants.GameResources.ToneIdMaximumSize);
+                return false;
+            }
+
             if (CanAddBgmPropertyEntry(bgmPropertyEntry.NameId))
                 _bgmPropertyEntries.Add(bgmPropertyEntry.NameId, bgmPropertyEntry);
             else
@@ -236,6 +276,14 @@ namespace Sm5sh.Mods.Music.Services
 
         public bool AddGameTitleEntry(GameTitleEntry gameTitleEntry)
         {
+            if(gameTitleEntry.UiGameTitleId.Length > MusicConstants.GameResources.GameTitleMaximumSize ||
+                gameTitleEntry.UiGameTitleId.Length < MusicConstants.GameResources.GameTitleMinimumSize)
+            {
+                _logger.LogError("The Game Title ID {GameTitleId} is either too long or too short. Minimum: {GameTitleMinimumValue}, Maximum: {GameTitleMaximumValue}",
+                    gameTitleEntry.UiGameTitleId, MusicConstants.GameResources.GameTitleMinimumSize, MusicConstants.GameResources.GameTitleMaximumSize);
+                return false;
+            }
+
             //Save GameTitle & Series
             if (!_gameTitleEntries.ContainsKey(gameTitleEntry.UiGameTitleId))
                 _gameTitleEntries.Add(gameTitleEntry.UiGameTitleId, gameTitleEntry);

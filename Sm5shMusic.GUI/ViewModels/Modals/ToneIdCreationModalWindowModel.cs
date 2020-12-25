@@ -5,6 +5,7 @@ using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using ReactiveUI.Validation.Extensions;
 using ReactiveUI.Validation.Helpers;
+using Sm5sh.Mods.Music.Helpers;
 using Sm5sh.Mods.Music.Models;
 using System;
 using System.Collections.ObjectModel;
@@ -47,6 +48,14 @@ namespace Sm5shMusic.GUI.ViewModels
             this.ValidationRule(p => p.ToneId,
                 p => !string.IsNullOrEmpty(p) && Regex.IsMatch(p, REGEX_VALIDATION),
                 $"The ToneId can only contain lowercase letters, digits and underscore.");
+
+            this.ValidationRule(p => p.ToneId,
+              p => p != null && p.Length <= MusicConstants.GameResources.ToneIdMaximumSize,
+              $"The ToneId is too long. Maximum is {MusicConstants.GameResources.ToneIdMaximumSize}");
+
+            this.ValidationRule(p => p.ToneId,
+             p => p != null && p.Length >= MusicConstants.GameResources.ToneIdMinimumSize,
+             $"The ToneId is too short. Minimum is {MusicConstants.GameResources.ToneIdMinimumSize}");
 
             this.ValidationRule(p => p.ToneId,
                p => !string.IsNullOrEmpty(p) && !_bgmPropertyEntries.Select(p2 => p2.NameId).Contains(p),
