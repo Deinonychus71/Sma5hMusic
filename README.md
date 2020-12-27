@@ -9,7 +9,7 @@ This tool is highly experimental and may not always work as expect. **Always kee
 ## Thanks & Repos of the different tools
 1.  Research: soneek
 2.  Testing: Demonslayerx8, Segtendo
-3.  Icon: Segtendo,
+3.  Icon: Segtendo
 4.  prcEditor: https://github.com/BenHall-7/paracobNET - BenHall-7
 5.  paramLabels: https://github.com/ultimate-research/param-labels - BenHall-7, jam1garner, Dr-HyperCake, Birdwards, ThatNintendoNerd, ScanMountGoat, Meshima, Blazingflare, TheSmartKid, jugeeya, Demonslayerx8
 6.  msbtEditor: https://github.com/IcySon55/3DLandMSBTeditor - IcySon55, exelix11
