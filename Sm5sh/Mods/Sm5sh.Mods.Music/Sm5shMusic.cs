@@ -15,7 +15,6 @@ namespace Sm5sh.Mods.Music
         private readonly IAudioStateService _audioStateService;
         private readonly IMusicModManagerService _musicModManagerService;
         private readonly INus3AudioService _nus3AudioService;
-        private const double Version = 0.9;
 
         public override string ModName => "Sm5shMusic";
 
@@ -34,7 +33,7 @@ namespace Sm5sh.Mods.Music
         public override bool Init()
         {
             _logger.LogInformation("Sm5shMusic Path: {MusicModPath}", _config.Value.Sm5shMusic.ModPath);
-            _logger.LogInformation("Sm5shMusic Version: {Version}", Version);
+            _logger.LogInformation("Sm5shMusic Version: {Version}", MusicConstants.VersionSm5shMusic);
             _logger.LogInformation("Audio Conversion Format: {AudioConversionFormat}", _config.Value.Sm5shMusic.AudioConversionFormat);
             _logger.LogInformation("Resources Path: {ResourcesPath}", _config.Value.Sm5shMusic.EnableAudioCaching ? "Enabled - If songs are mismatched try to clear the cache!" : "Disabled");
             _logger.LogInformation("Cache Path: {CachePath}", _config.Value.Sm5shMusic.CachePath);

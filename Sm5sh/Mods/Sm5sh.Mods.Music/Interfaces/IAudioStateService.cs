@@ -21,6 +21,8 @@ namespace Sm5sh.Mods.Music.Interfaces
         IEnumerable<string> GetLocales();
         IEnumerable<PlaylistEntry> GetPlaylists();
 
+        double GameVersion { get; }
+
         bool CanAddBgmDbRootEntry(string uiBgmId);
         bool CanAddBgmStreamSetEntry(string streamSetId);
         bool CanAddBgmAssignedInfoEntry(string infoId);

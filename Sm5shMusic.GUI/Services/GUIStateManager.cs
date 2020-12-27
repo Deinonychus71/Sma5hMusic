@@ -673,6 +673,22 @@ namespace Sm5shMusic.GUI.Services
         }
         #endregion
 
+        public string GameVersion
+        {
+            get
+            {
+                return _audioState.GameVersion == 0 ? "?? (custom)" : _audioState.GameVersion.ToString();
+            }
+        }
+
+        public bool IsGameVersionFound
+        {
+            get
+            {
+                return _audioState.GameVersion != 0;
+            }
+        }
+
         public async Task<bool> UpdateGlobalSettings(ApplicationSettings appSettings)
         {
             bool result;

@@ -2,6 +2,9 @@
 {
     public class MusicConstants
     {
+        public const double VersionSm5shMusic = 0.9;
+        public const double VersionSm5shMusicOverride = 0.9;
+
         public class MusicModFiles
         {
             public const string MUSIC_MOD_METADATA_JSON_FILE = "metadata_mod.json";

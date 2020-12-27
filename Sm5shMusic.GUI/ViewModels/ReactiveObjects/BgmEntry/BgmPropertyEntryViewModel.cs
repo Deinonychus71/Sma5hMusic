@@ -21,7 +21,7 @@ namespace Sm5shMusic.GUI.ViewModels
         public uint Frequency { get { return TotalTimeMs == 0 ? 0 : (uint)((double)TotalSamples / (double)TotalTimeMs * 1000.0); } }
         public string Filename { get; }
         [Reactive]
-        public string AudioVolume { get; set; }
+        public float AudioVolume { get; set; }
 
         //Music player
         public bool DoesFileExist { get; set; }

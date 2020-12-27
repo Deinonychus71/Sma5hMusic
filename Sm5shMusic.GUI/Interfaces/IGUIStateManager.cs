@@ -28,5 +28,9 @@ namespace Sm5shMusic.GUI.Interfaces
         Task<bool> UpdateGlobalSettings(ApplicationSettings appSettings);
         Task<bool> WipeAudioCache();
         Task<bool> ReorderSongs();
+
+        string GameVersion { get; }
+
+        bool IsGameVersionFound { get; }
     }
 }

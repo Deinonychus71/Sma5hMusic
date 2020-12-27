@@ -20,6 +20,7 @@ using ILogger = Microsoft.Extensions.Logging.ILogger;
 using Microsoft.Extensions.Options;
 using Sm5sh.Mods.Music;
 using Avalonia.Threading;
+using Sm5sh.Mods.Music.Helpers;
 
 namespace Sm5shMusic.GUI.ViewModels
 {
@@ -52,6 +53,9 @@ namespace Sm5shMusic.GUI.ViewModels
         private readonly ToneIdCreationModalWindowModel _vmToneIdCreation;
 
         [Reactive]
+        public string Title { get; set; }
+
+        [Reactive]
         public bool IsAdvanced { get; set; }
         [Reactive]
         public bool IsLoading { get; set; }
@@ -69,7 +73,8 @@ namespace Sm5shMusic.GUI.ViewModels
         public ReactiveCommand<Unit, Unit> ActionRefreshData { get; }
         public ReactiveCommand<Unit, Unit> ActionToggleAdvanced { get; }
         public ReactiveCommand<Unit, Unit> ActionToggleConsole { get; }
-        public ReactiveCommand<Unit, Unit> ActionOpenAbout { get; }
+        public ReactiveCommand<Unit, Unit> ActionOpenThanks { get; }
+        public ReactiveCommand<Unit, Unit> ActionOpenWiki { get; }
         public ReactiveCommand<Unit, Unit> ActionOpenGlobalSettings { get; }
 
         public MainWindowViewModel(IServiceProvider serviceProvider, IViewModelManager viewModelManager, IGUIStateManager guiStateManager, IMapper mapper, IVGMMusicPlayer musicPlayer, 
@@ -87,7 +92,8 @@ namespace Sm5shMusic.GUI.ViewModels
             _appSettings = appSettings;
             IsLoading = true;
 
-            _logger.LogInformation($"GUI Version: {Constants.GUIVersion}");
+            _logger.LogInformation($"GUI v{Constants.GUIVersion} | Game v{_guiStateManager.GameVersion}");
+            Title = $"Sm5shMusic - GUI v{Constants.GUIVersion}";
 
             //Set values
             IsAdvanced = appSettings.Value.Sm5shMusicGUI.Advanced;
@@ -179,7 +185,8 @@ namespace Sm5shMusic.GUI.ViewModels
             ActionRefreshData = ReactiveCommand.CreateFromTask(OnInitData);
             ActionToggleAdvanced = ReactiveCommand.Create(OnAdvancedToggle);
             ActionToggleConsole = ReactiveCommand.Create(OnConsoleToggle);
-            ActionOpenAbout = ReactiveCommand.CreateFromTask(OnAboutOpen);
+            ActionOpenThanks = ReactiveCommand.CreateFromTask(OnThanksOpen);
+            ActionOpenWiki = ReactiveCommand.Create(OnWikiOpen);
             ActionOpenGlobalSettings = ReactiveCommand.CreateFromTask(OnGlobalSettingsOpen);
         }
 
@@ -244,6 +251,16 @@ namespace Sm5shMusic.GUI.ViewModels
                     }, DispatcherPriority.Background);
                     VMContextMenu.ChangeLocale(newDefaultLanguage);
                 }
+
+                if(!_guiStateManager.IsGameVersionFound && !_appSettings.Value.Sm5shMusicGUI.SkipWarningGameVersion)
+                {
+                    await Dispatcher.UIThread.InvokeAsync(async () =>
+                    {
+                        await _messageDialog.ShowInformation("Game version not found", $"The version of your game could not be identified. It might be that you are using a version that is unsupported or that your game files are customized.");
+                    }, DispatcherPriority.Background);
+                }
+                Title = $"{Title} | Game v{_guiStateManager.GameVersion}";
+
                 IsLoading = false;
             }, (o) =>
             {
@@ -252,10 +269,13 @@ namespace Sm5shMusic.GUI.ViewModels
             });
         }
 
-        public async Task OnAboutOpen()
+        public async Task OnThanksOpen()
         {
             await _messageDialog.ShowInformation("About",
-                $"Sm5sh Music - v{Constants.GUIVersion} by deinonychus71\r\n" +
+                $"Sm5shMusic - GUI v{Constants.GUIVersion} by deinonychus71\r\n" +
+                $"Mod Sm5shMusic - v{MusicConstants.VersionSm5shMusic} by deinonychus71\r\n" +
+                $"Mod Sm5shMusicOverride - v{MusicConstants.VersionSm5shMusicOverride} by deinonychus71\r\n" +
+                $"Game - v{_guiStateManager.GameVersion}\r\n" +
                 "https://github.com/Deinonychus71/Sm5shMusic \r\n\r\n" +
                 "Research: soneek\r\n" +
                 "Testing: Demonslayerx8, Segtendo\r\n" +
@@ -268,6 +288,11 @@ namespace Sm5shMusic.GUI.ViewModels
                 "VGAudio: https://github.com/Thealexbarney/VGAudio \r\nThealexbarney, soneek, jam1garner, devlead, Raytwo, nnn1590\r\n\r\n" +
                 "vgmstream: https://github.com/vgmstream/vgmstream \r\nbnnm, kode54, NicknineTheEagle, bxaimc, Thealexbarney\r\nAll contributors: https://github.com/vgmstream/vgmstream/graphs/contributors \r\n\r\n" +
                 "CrossArc: https://github.com/Ploaj/ArcCross \r\nPloaj, ScanMountGoat, BenHall-7, shadowninja108, jam1garner, M-1-RLG\r\n\r\n");
+        }
+
+        public void OnWikiOpen()
+        {
+            WebBrowserHelper.OpenBrowser("https://github.com/Deinonychus71/Sm5shMusic/wiki");
         }
 
         public async Task OnGlobalSettingsOpen()

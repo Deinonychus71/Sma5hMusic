@@ -42,6 +42,8 @@ namespace Sm5shMusic.GUI.ViewModels
         public string ResourcesPath { get; set; }
         [Reactive]
         public string LogPath { get; set; }
+        [Reactive]
+        public bool SkipWarningGameVersion { get; set; }
 
         public ApplicationSettings GetReference()
         {

@@ -18,6 +18,7 @@ namespace Sm5sh.Mods.Music
             public string DefaultMSBTLocale { get; set; }
             public bool CopyToEmptyLocales { get; set; }
             public ushort PlaylistIncidenceDefault { get; set; }
+            public bool SkipWarningGameVersion { get; set; }
         }
     }
 }

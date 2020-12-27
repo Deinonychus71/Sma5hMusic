@@ -23,7 +23,6 @@ namespace Sm5sh.Mods.Music
         private readonly IAudioStateService _audioStateService;
         private const Formatting _defaultFormatting = Formatting.Indented;
         private MusicOverrideConfig _musicOverrideConfig;
-        private const double Version = 0.9;
 
         public override string ModName => "Sm5shMusicOverride";
 
@@ -40,7 +39,7 @@ namespace Sm5sh.Mods.Music
         public override bool Init()
         {
             _logger.LogInformation("Sm5shMusic Override Path: {MusicModPath}", _config.Value.Sm5shMusicOverride.ModPath);
-            _logger.LogInformation("Sm5shMusic Override Version: {Version}", Version);
+            _logger.LogInformation("Sm5shMusic Override Version: {Version}", MusicConstants.VersionSm5shMusicOverride);
 
             //Load Music Override
             _logger.LogInformation("Loading Sm5shMusic Override Config");
