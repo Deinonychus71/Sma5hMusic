@@ -57,7 +57,7 @@ namespace Sm5shMusic.GUI
                 .SetMinimumLevel(LogLevel.Debug)
                 .AddFile(configuration.GetSection("Logging"), c =>
                 {
-                    c.FormatLogFileName = (o) => $"{Path.ChangeExtension(o, string.Empty)}{DateTime.Today.ToString("yyyyMMdd")}{Path.GetExtension(o)}";
+                    c.FormatLogFileName = (o) => $"{Path.ChangeExtension(o, string.Empty)}{DateTime.Today:yyyyMMdd}{Path.GetExtension(o)}";
                 })
                 .AddProvider(new CustomConsoleLoggerProvider(LogLevel.Information)));
 

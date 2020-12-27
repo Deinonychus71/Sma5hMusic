@@ -24,8 +24,7 @@ namespace Sm5shMusic.GUI.ViewModels
             if (obj == null)
                 return false;
 
-            SeriesEntryViewModel p = obj as SeriesEntryViewModel;
-            if (p == null)
+            if (!(obj is SeriesEntryViewModel p))
                 return false;
 
             return p.SeriesId == this.SeriesId;

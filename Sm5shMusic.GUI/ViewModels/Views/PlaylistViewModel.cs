@@ -25,7 +25,6 @@ namespace Sm5shMusic.GUI.ViewModels
     public class PlaylistViewModel : ViewModelBase
     {
         private readonly IOptions<ApplicationSettings> _config;
-        private readonly ILogger _logging;
         private readonly IMessageDialog _messageDialog;
         private readonly ReadOnlyObservableCollection<BgmDbRootEntryViewModel> _bgms;
         private readonly ReadOnlyObservableCollection<PlaylistEntryViewModel> _playlists;
@@ -78,11 +77,10 @@ namespace Sm5shMusic.GUI.ViewModels
         public ReactiveCommand<Unit, Unit> ActionDeletePlaylist { get; }
         public ReactiveCommand<Unit, Unit> ActionAssignPlaylistToStage { get; }
 
-        public PlaylistViewModel(IOptions<ApplicationSettings> config, ILogger<PlaylistViewModel> logging, IMessageDialog messageDialog, IObservable<IChangeSet<BgmDbRootEntryViewModel, string>> observableBgmEntries,
+        public PlaylistViewModel(IOptions<ApplicationSettings> config, IMessageDialog messageDialog, IObservable<IChangeSet<BgmDbRootEntryViewModel, string>> observableBgmEntries,
             IObservable<IChangeSet<PlaylistEntryViewModel, string>> observablePlaylistEntries, ContextMenuViewModel vmContextMenu)
         {
             _config = config;
-            _logging = logging;
             _messageDialog = messageDialog;
             VMContextMenu = vmContextMenu;
             _orderMenu = GetOrderList();

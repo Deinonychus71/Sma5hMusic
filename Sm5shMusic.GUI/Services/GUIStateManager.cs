@@ -677,7 +677,7 @@ namespace Sm5shMusic.GUI.Services
         {
             get
             {
-                return _audioState.GameVersion == 0 ? "?? (custom)" : _audioState.GameVersion.ToString();
+                return _audioState.GameVersion == 0 ? "?? (custom)" : $"{_audioState.GameVersion}.0";
             }
         }
 

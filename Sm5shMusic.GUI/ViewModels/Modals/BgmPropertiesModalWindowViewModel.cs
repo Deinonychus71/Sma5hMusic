@@ -32,8 +32,8 @@ namespace Sm5shMusic.GUI.ViewModels
         private readonly ReadOnlyObservableCollection<string> _streamSetIds;
         private readonly Subject<Window> _whenNewRequestToAddGameEntry;
         private bool _isUpdatingSpecialRule = false;
-        private const float _minimumVolume = -20.0;
-        private const float _maximumVolume = 20.0;
+        private const float _minimumVolume = -20.0f;
+        private const float _maximumVolume = 20.0f;
 
         public IObservable<Window> WhenNewRequestToAddGameEntry { get { return _whenNewRequestToAddGameEntry; } }
         public GamePropertiesModalWindowViewModel VMGamePropertiesModal { get; set; }
