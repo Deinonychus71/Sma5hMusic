@@ -259,7 +259,7 @@ namespace Sm5shMusic.GUI.ViewModels
                         await _messageDialog.ShowInformation("Game version not found", $"The version of your game could not be identified. It might be that you are using a version that is unsupported or that your game files are customized.");
                     }, DispatcherPriority.Background);
                 }
-                Title = $"{Title} | Game v{_guiStateManager.GameVersion}";
+                Title = $"Sm5shMusic - GUI v{Constants.GUIVersion} | Game v{_guiStateManager.GameVersion}";
 
                 IsLoading = false;
             }, (o) =>
