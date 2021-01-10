@@ -29,7 +29,7 @@ namespace Sm5shMusic.GUI.ViewModels
         private readonly List<ComboItem> _specialCategories;
         private readonly ReadOnlyObservableCollection<SeriesEntryViewModel> _series;
         private readonly ReadOnlyObservableCollection<GameTitleEntryViewModel> _games;
-        private readonly ReadOnlyObservableCollection<string> _streamSetIds;
+        private readonly ReadOnlyObservableCollection<string> _assignedInfoIds;
         private readonly Subject<Window> _whenNewRequestToAddGameEntry;
         private bool _isUpdatingSpecialRule = false;
         private const float _minimumVolume = -20.0f;
@@ -62,7 +62,7 @@ namespace Sm5shMusic.GUI.ViewModels
 
         public ReadOnlyObservableCollection<SeriesEntryViewModel> Series { get { return _series; } }
         public ReadOnlyObservableCollection<GameTitleEntryViewModel> Games { get { return _games; } }
-        public ReadOnlyObservableCollection<string> StreamSetIds { get { return _streamSetIds; } }
+        public ReadOnlyObservableCollection<string> AssignedInfoIds { get { return _assignedInfoIds; } }
 
         public ReactiveCommand<Window, Unit> ActionNewGame { get; }
 
@@ -90,7 +90,7 @@ namespace Sm5shMusic.GUI.ViewModels
             observableBgmAssignedInfoEntries
                .Transform(p => p.InfoId)
                .ObserveOn(RxApp.MainThreadScheduler)
-               .Bind(out _streamSetIds)
+               .Bind(out _assignedInfoIds)
                .DisposeMany()
                .Subscribe();
 
