@@ -4,7 +4,9 @@ Based on research & guide by Soneek
 
 ## What is it?
 Sm5sh.CLI and Sm5shMusic are a series of tools to import additional tracks to Smash Ultimate. 
-This tool is highly experimental and may not always work as expect. **Always keep backups of your files and savegames.**
+This tool is highly experimental and may not always work as expect.
+* **Always keep backups of your files and savegames.**
+* **This mod is not safe online!**
 
 ## Thanks & Repos of the different tools
 1.  Research: soneek
