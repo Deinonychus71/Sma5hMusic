@@ -1,6 +1,7 @@
 ﻿using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using System.Reactive;
+using System.Threading.Tasks;
 using VGMMusic;
 
 namespace Sm5shMusic.GUI.ViewModels
@@ -11,6 +12,7 @@ namespace Sm5shMusic.GUI.ViewModels
         private const string PLAY = "\u25B6";
         private const string STOP = "\u23F9";
         private bool _isPlaying;
+        private bool _isExecutingAction;
         private static MusicPlayerViewModel _currentPlayControl;
 
         public ReactiveCommand<Unit, Unit> ActionPlaySong { get; }
@@ -27,31 +29,33 @@ namespace Sm5shMusic.GUI.ViewModels
 
             Text = PLAY;
 
-            ActionPlaySong = ReactiveCommand.Create(TriggerButton);
+            ActionPlaySong = ReactiveCommand.CreateFromTask(TriggerButton, this.WhenAnyValue(p => p._isExecutingAction, p => p == false));
         }
 
-        public void TriggerButton()
+        public async Task TriggerButton()
         {
+            _isExecutingAction = true;
             if (_isPlaying)
-                StopSong();
+                await StopSong();
             else
-                PlaySong();
+                await PlaySong();
+           // _isExecutingAction = false;
         }
 
-        public void PlaySong()
+        public async Task PlaySong()
         {
             if (_currentPlayControl != null)
-                _currentPlayControl.StopSong();
+                await _currentPlayControl.StopSong();
 
-            _musicPlayer.Play(Filename);
+            await _musicPlayer.Play(Filename);
             Text = STOP;
             _currentPlayControl = this;
             _isPlaying = true;
         }
 
-        public void StopSong()
+        public async Task StopSong()
         {
-            _musicPlayer.Stop();
+            await _musicPlayer.Stop();
             Text = PLAY;
             _isPlaying = false;
         }
