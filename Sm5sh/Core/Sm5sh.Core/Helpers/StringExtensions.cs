@@ -9,7 +9,7 @@
             string result = target;
             while (result.StartsWith(trimString))
             {
-                result = result.Substring(trimString.Length);
+                result = result[trimString.Length..];
             }
 
             return result;

@@ -1,4 +1,5 @@
 ﻿using CsvHelper;
+using CsvHelper.Configuration;
 using Microsoft.Extensions.Logging;
 using Sm5sh.Helpers;
 using Sm5sh.Mods.Music.Helpers;
@@ -36,11 +37,14 @@ namespace Sm5sh.Mods.Music.MusicMods
                 _logger.LogDebug("Parsing {MusicModFile} CSV File", metadataCsvFile);
                 using (var reader = new StreamReader(metadataCsvFile))
                 {
-                    using (var csv = new CsvReader(reader, CultureInfo.InvariantCulture))
+                    var csvConfiguration = new CsvConfiguration(CultureInfo.InvariantCulture)
                     {
-                        csv.Configuration.PrepareHeaderForMatch = (header, index) => Regex.Replace(header, @"\s", string.Empty);
-                        csv.Configuration.MissingFieldFound = null;
-                        csv.Configuration.HeaderValidated = null;
+                        PrepareHeaderForMatch = (args) => Regex.Replace(args.Header, @"\s", string.Empty),
+                        MissingFieldFound = null,
+                        HeaderValidated = null
+                    };
+                    using (var csv = new CsvReader(reader, csvConfiguration))
+                    {
                         List<MusicModCSVConfig> records = null;
                         try
                         {

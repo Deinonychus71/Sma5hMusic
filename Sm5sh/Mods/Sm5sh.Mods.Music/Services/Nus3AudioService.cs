@@ -1,4 +1,5 @@
 ﻿using CsvHelper;
+using CsvHelper.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Sm5sh.Interfaces;
@@ -201,9 +202,12 @@ namespace Sm5sh.Mods.Music.Services
             _logger.LogDebug("Retrieving NusBankIds from CSV {CSVResource}", nusBankResourceFile);
             using (var reader = new StreamReader(nusBankResourceFile))
             {
-                using (var csv = new CsvReader(reader, CultureInfo.InvariantCulture))
+                var csvConfiguration = new CsvConfiguration(CultureInfo.InvariantCulture)
                 {
-                    csv.Configuration.PrepareHeaderForMatch = (header, index) => Regex.Replace(header, @"\s", string.Empty);
+                    PrepareHeaderForMatch = (args) => Regex.Replace(args.Header, @"\s", string.Empty)
+                };
+                using (var csv = new CsvReader(reader, csvConfiguration))
+                {
                     var records = csv.GetRecords<dynamic>();
                     foreach (var record in records)
                     {
