@@ -90,7 +90,7 @@ namespace Sm5sh.Mods.Music.Helpers
                 Version = 11.0,
                 CrcResources = new Dictionary<string, uint>()
                 {
-                    { BgmPropertyFileConstants.BGM_PROPERTY_PATH, 0x5DA473DC },
+                    { BgmPropertyFileConstants.BGM_PROPERTY_PATH, 0xBA5AA485 },
                     { PrcExtConstants.PRC_UI_BGM_DB_PATH, 0x8C9C8CFA },
                     { PrcExtConstants.PRC_UI_GAMETITLE_DB_PATH, 0xD8DF6BB7 },
                     { PrcExtConstants.PRC_UI_STAGE_DB_PATH, 0x166F5A24 },

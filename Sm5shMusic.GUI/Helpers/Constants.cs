@@ -4,7 +4,7 @@ namespace Sm5shMusic.GUI.Helpers
 {
     public static class Constants
     {
-        public const double GUIVersion = 1.0;
+        public const double GUIVersion = 1.1;
 
         public class SpecialCategories
         {
@@ -138,6 +138,7 @@ namespace Sm5shMusic.GUI.Helpers
             {"bgmtantan", "Arms" },
             {"bgmpickel", "Minecraft" },
             {"bgmedge", "Final Fantasy (Sephiroth)" },
+            {"bgmelement", "Xenoblade 2 (Pyra & Mythra)" },
             {"bgmplaylist", "Playlist" },
         };
 
@@ -276,6 +277,7 @@ namespace Sm5shMusic.GUI.Helpers
             {"ui_stage_tantan_spring","Spring Stadium"},
             {"ui_stage_pickel_world","Minecraft World"},
             {"ui_stage_ff_cave","Northern Cave"},
+            {"ui_stage_xeno_alst","Cloud Sea of Alrest"},
             {"ui_stage_battle_field_s", "Small Battlefield"}
         };
 

@@ -833,6 +833,22 @@ rr12_gm4_ringdongdang
 rr13_dhb_kaitakuchinotatakai
 rr14_ut_megalovania
 rr15_chd_floralfury_rekkanogotoku
+rr16_xbd2_arrangemedley
+rr17_xbd2_tigertiger
+rr18_xbd2_counterattack
+rr19_xbd2_avaritiashoukai
+rr20_xbd2_arashinosenjyou
+rr21_xbd2_exploration
+rr22_xbd2_majiwarutsurugi
+rr23_xbd2_incoming
+rr24_xbd2_gularyou
+rr26_xbd2_shitou_ira
+rr28_xbd2_saraninawokansurumonotachi
+rr29_xbd2_driver_vs
+rr31_xbd2_superbiateikoku
+rr32_xbd2_raigou_ultimate
+rr33_xbd2_marveni
+rr34_xbd2_sentou_ira
 s01_rm2_medley
 s02_rm2_airman_stage
 s03_rm3_sparkman_stage
@@ -1173,3 +1189,4 @@ zz03_f_tantan
 zz04_f_pickel
 zz05_f_edge
 zz05a_f_edge_challenge
+zz06_f_element
