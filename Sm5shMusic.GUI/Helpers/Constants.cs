@@ -4,7 +4,7 @@ namespace Sm5shMusic.GUI.Helpers
 {
     public static class Constants
     {
-        public const double GUIVersion = 1.1;
+        public const double GUIVersion = 1.2;
 
         public class SpecialCategories
         {

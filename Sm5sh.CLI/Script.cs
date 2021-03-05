@@ -13,7 +13,7 @@ namespace Sm5sh.CLI
         private readonly IStateManager _state;
         private readonly IServiceProvider _serviceProvider;
         private readonly IWorkspaceManager _workspace;
-        private const double CLIVersion = 0.9;
+        private const double CLIVersion = 1.2;
 
         public Script(IServiceProvider serviceProvider, IWorkspaceManager workspace, IStateManager state, ILogger<Script> logger)
         {
