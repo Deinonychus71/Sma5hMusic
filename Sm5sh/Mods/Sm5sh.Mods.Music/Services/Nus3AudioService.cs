@@ -35,7 +35,7 @@ namespace Sm5sh.Mods.Music.Services
             _nus3BankTemplateFile = Path.Combine(config.Value.ResourcesPath, MusicConstants.Resources.NUS3BANK_TEMPLATE_FILE);
 
             var nus3BankIds = GetCoreNus3BankIds();
-            _lastBankId = (ushort)(nus3BankIds.Count > 0 ? GetCoreNus3BankIds().Values.OrderByDescending(p => p).First() : 0);
+            _lastBankId = (ushort)(nus3BankIds.Count > 0 ? nus3BankIds.Values.OrderByDescending(p => p).First() : 0);
         }
 
         public bool GenerateNus3Audio(string toneId, string inputMediaFile, string outputMediaFile)
@@ -195,7 +195,7 @@ namespace Sm5sh.Mods.Music.Services
         {
             var output = new Dictionary<string, ushort>();
 
-            var nusBankResourceFile = Path.Combine(_config.Value.GameResourcesPath, MusicConstants.Resources.NUS3BANK_IDS_FILE);
+            var nusBankResourceFile = Path.Combine(_config.Value.ResourcesPath, MusicConstants.Resources.NUS3BANK_IDS_FILE);
             if (!File.Exists(nusBankResourceFile))
                 return output;
 
