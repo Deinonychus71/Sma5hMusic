@@ -1,0 +1,31 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="10.1.1" />
+    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.1.1" />
+    <PackageReference Include="Crc32.NET" Version="1.2.0" />
+    <PackageReference Include="Microsoft.Extensions.Options" Version="5.0.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Core\Helpers\VGMMusic\VGMMusic.csproj" />
+    <ProjectReference Include="..\..\ResourceProviders\Sma5h.ResourceProviders.BgmPropertyFile\Sma5h.ResourceProviders.BgmPropertyFile.csproj" />
+    <ProjectReference Include="..\..\ResourceProviders\Sma5h.ResourceProviders.MsbtExt\Sma5h.ResourceProviders.MsbtExt.csproj" />
+    <ProjectReference Include="..\..\ResourceProviders\Sma5h.ResourceProviders.PrcExt\Sma5h.ResourceProviders.PrcExt.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="paracobNET">
+      <HintPath>..\..\..\Sma5h.CLI\bin\Debug\netcoreapp3.1\Tools\paracobNET.dll</HintPath>
+    </Reference>
+    <Reference Include="VGAudioCli">
+      <HintPath>..\..\..\Tools\VGAudioCli.exe</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>

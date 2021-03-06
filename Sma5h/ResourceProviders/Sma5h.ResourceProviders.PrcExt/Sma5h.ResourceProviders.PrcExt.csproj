@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CsvHelper" Version="26.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Core\Sma5h.Core\Sma5h.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="paracobNET">
+      <HintPath>..\..\..\Tools\paracobNET.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>

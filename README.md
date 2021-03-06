@@ -1,9 +1,9 @@
-# Sm5sh.CLI + Sm5shMusic GUI
+# Sma5h.CLI + Sma5hMusic GUI
 Script to add (not replace) musics for Smash Ultimate
 Based on research & guide by Soneek
 
 ## What is it?
-Sm5sh.CLI and Sm5shMusic are a series of tools to import additional tracks to Smash Ultimate. 
+Sma5h.CLI and Sma5hMusic are a series of tools to import additional tracks to Smash Ultimate. 
 This tool is highly experimental and may not always work as expect.
 * **Always keep backups of your files and savegames.**
 * **This mod is not safe online!**
@@ -41,18 +41,18 @@ All contributors: https://github.com/vgmstream/vgmstream/graphs/contributors
 8.  To add songs to a playlist, edit the file playlist_override.json
 
 ## GUI
-For instructions check the wiki https://github.com/Deinonychus71/Sm5shMusic/wiki
+For instructions check the wiki https://github.com/Deinonychus71/Sma5hMusic/wiki
 
 ## Daisy chaining mods - adding new functionalities (WIP)
-1.  The code was reworked to allow for additional mods/code to execute on top of Sm5shMusic.
+1.  The code was reworked to allow for additional mods/code to execute on top of Sma5hMusic.
 2.  A state manager takes care of load/parsing game file to c# models. Each new mod can request its own game resource in the form of /ui/param/database/xxx (for example)
 3.  This object is kept in memory, and can be modified sequentially by a succession of mod
 4.  When mods are finished running (or a user click Build in future UI), the state manager will write back all the game files to an output folder.
-5.  Look at the Script.cs in Sm5sh.CLI to get started
+5.  Look at the Script.cs in Sma5h.CLI to get started
 6.  For now only a few files / filetypes can be loaded from state manager, register new resource providers to support more formats.
 
 ## Todo
-1.  Sm5sh: start suddendeath, start transition and whatever can be figured out
+1.  Sma5h: start suddendeath, start transition and whatever can be figured out
 2.  More cleanup
 3.  Loading external mods/resource providers
 4.  Add tests against collisions when adding new songs

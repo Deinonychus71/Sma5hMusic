@@ -1,0 +1,128 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <AssemblyName>Sma5hMusic.GUI</AssemblyName>
+    <ApplicationIcon>Sma5hmusic-logo.ico</ApplicationIcon>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <PlatformTarget>x86</PlatformTarget>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Update="**\*.xaml.cs">
+      <DependentUpon>%(Filename)</DependentUpon>
+    </Compile>
+    <AvaloniaResource Include="**\*.xaml">
+      <SubType>Designer</SubType>
+    </AvaloniaResource>
+    <AvaloniaResource Include="Assets\*" />
+    <AvaloniaResource Include="Assets\Fonts\*" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="Assets\FilterStyles.xaml" />
+    <None Remove="Assets\ListsStyles.xaml" />
+    <None Remove="Assets\ModalStyles.xaml" />
+    <None Remove="Assets\PropertiesStyles.xaml" />
+    <None Remove="Assets\Styles.xaml" />
+    <None Remove="Assets\Themes\CustomThemeDark.xaml" />
+    <None Remove="Assets\Themes\CustomThemeLight.xaml" />
+    <None Remove="Assets\Themes\CustomThemeNormalUI.xaml" />
+    <None Remove="Assets\Themes\CustomThemeSmallUI.xaml" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Avalonia" Version="0.10.0" />
+    <PackageReference Include="Avalonia.Controls.DataGrid" Version="0.10.0" />
+    <PackageReference Include="Avalonia.Desktop" Version="0.10.0" />
+    <PackageReference Include="Avalonia.ReactiveUI" Version="0.10.0" />
+    <PackageReference Include="Avalonia.Xaml.Behaviors" Version="0.10.0" />
+    <PackageReference Include="MessageBox.Avalonia" Version="1.0.5" />
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="5.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="5.0.0" />
+    <PackageReference Include="NReco.Logging.File" Version="1.1.1" />
+    <PackageReference Include="ReactiveUI.Fody" Version="13.2.2" />
+    <PackageReference Include="ReactiveUI.Validation" Version="2.1.1" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="5.0.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="5.0.1" />
+    <PackageReference Include="Splat.Microsoft.Extensions.DependencyInjection" Version="10.0.1" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Sma5h\Core\Helpers\VGMMusic\VGMMusic.csproj" />
+    <ProjectReference Include="..\Sma5h\Mods\Sma5h.Mods.Music\Sma5h.Mods.Music.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <AvaloniaResource Update="Assets\Themes\CustomThemeSmallUI.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </AvaloniaResource>
+    <AvaloniaResource Update="Assets\Themes\CustomThemeNormalUI.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </AvaloniaResource>
+    <AvaloniaResource Update="Assets\Themes\CustomThemeLight.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </AvaloniaResource>
+    <AvaloniaResource Update="Assets\Themes\CustomThemeDark.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </AvaloniaResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Update="Views\Fields\PropertyByteField.axaml.cs">
+      <DependentUpon>PropertyByteField.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\Fields\PropertyFolderPickupField.axaml.cs">
+      <DependentUpon>PropertyFolderPickupField.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\Fields\PropertyULongField.axaml.cs">
+      <DependentUpon>PropertyULongField.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\Fields\PropertyUShortField.axaml.cs">
+      <DependentUpon>PropertyUShortField.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\Fields\PropertyUIntField.axaml.cs">
+      <DependentUpon>PropertyUIntField.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\Fields\PropertyIntField.axaml.cs">
+      <DependentUpon>PropertyIntField.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\Fields\PropertyShortField.axaml.cs">
+      <DependentUpon>PropertyShortField.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\Fields\PropertyMusicField.axaml.cs">
+      <DependentUpon>PropertyMusicField.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\Fields\PropertyField.axaml.cs">
+      <DependentUpon>PropertyField.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\Fields\PropertyBooleanField.axaml.cs">
+      <DependentUpon>PropertyBooleanField.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\Modals\BgmAdvancedPropertiesModalWindow.axaml.cs">
+      <DependentUpon>BgmAdvancedPropertiesModalWindow.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\Modals\GameDeletePickerModalWindow.axaml.cs">
+      <DependentUpon>GameDeletePickerModalWindow.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\Modals\PlaylistDeletePickerModalWindow.axaml.cs">
+      <DependentUpon>PlaylistDeletePickerModalWindow.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\Views\PlaylistView.axaml.cs">
+      <DependentUpon>PlaylistView.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\Views\MSBTFieldView.axaml.cs">
+      <DependentUpon>MSBTFieldView.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\Modals\BgmPropertiesModalWindow.axaml.cs">
+      <DependentUpon>BgmPropertiesModalWindow.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\Views\BgmFiltersView.axaml.cs">
+      <DependentUpon>BgmFiltersView.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\Views\BgmPropertiesView.axaml.cs">
+      <DependentUpon>BgmPropertiesView.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\Modals\ModPropertiesModalWindow.axaml.cs">
+      <DependentUpon>ModPropertiesModalWindow.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\Views\MusicPlayerView.axaml.cs">
+      <DependentUpon>MusicPlayerView.axaml</DependentUpon>
+    </Compile>
+  </ItemGroup>
+</Project>
