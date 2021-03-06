@@ -92,6 +92,9 @@ namespace Sma5hMusic.GUI.ViewModels
 
         public async Task ReorderBgm(DataGridCellPointerPressedEventArgs e)
         {
+            if (e.Column.DisplayIndex != 0)
+                return;
+
             var dragData = new DataObject();
 
             if (e.Cell.DataContext is BgmDbRootEntryViewModel vmBgmEntry)

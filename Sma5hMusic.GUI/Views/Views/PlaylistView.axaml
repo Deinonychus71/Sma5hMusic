@@ -83,6 +83,13 @@
           </ia:EventTriggerBehavior>
         </i:Interaction.Behaviors>
         <DataGrid.Columns>
+          <DataGridTemplateColumn CanUserResize="false" Width="36">
+            <DataGridTemplateColumn.CellTemplate>
+              <DataTemplate>
+                <Button Width="30" IsEnabled="False" Margin="3,0,3,0" Content="&#8597;" HorizontalContentAlignment="Center" FontFamily="Segoe UI Symbol" />
+              </DataTemplate>
+            </DataGridTemplateColumn.CellTemplate>
+          </DataGridTemplateColumn>
           <DataGridTemplateColumn CanUserResize="false" Width="40">
             <DataGridTemplateColumn.CellTemplate>
               <DataTemplate>

@@ -163,6 +163,9 @@ namespace Sma5hMusic.GUI.ViewModels
 
         public async Task ReorderPlaylist(DataGridCellPointerPressedEventArgs e)
         {
+            if (e.Column.DisplayIndex != 0)
+                return;
+
             var dragData = new DataObject();
 
             if (e.Cell.DataContext is PlaylistEntryValueViewModel vmPlaylistValue)
