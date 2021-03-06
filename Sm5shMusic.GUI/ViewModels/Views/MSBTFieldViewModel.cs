@@ -16,6 +16,7 @@ namespace Sm5shMusic.GUI.ViewModels
         private Dictionary<string, string> _msbtValues;
         private const string COPY_ACTION_ALL = "all";
         private const string COPY_ACTION_EMPTY = "empty";
+        private readonly Dictionary<string, List<string>> _useRecentDict;
         private readonly IEnumerable<ComboItem> _copyActions;
         private readonly IEnumerable<ComboItem> _locales;
 
@@ -24,6 +25,9 @@ namespace Sm5shMusic.GUI.ViewModels
         public bool AcceptsReturn { get; set; }
 
         public IEnumerable<ComboItem> CopyActions { get { return _copyActions; } }
+
+        [Reactive]
+        public IEnumerable<string> UseRecent { get; set; }
 
         [Reactive]
         public ComboItem SelectedLocale { get; set; }
@@ -52,7 +56,12 @@ namespace Sm5shMusic.GUI.ViewModels
         }
 
         [Reactive]
+        public bool DisplayRecents { get; set; }
+
+        [Reactive]
         public ComboItem SelectedCopyAction { get; set; }
+        [Reactive]
+        public string SelectedRecentAction { get; set; }
         public ReactiveCommand<ComboItem, Unit> ActionChangeLocale { get; }
         public ReactiveCommand<Unit, Unit> ActionCopyToAll { get; }
         public ReactiveCommand<Unit, Unit> ActionCopyToEmptyLanguages { get; }
@@ -61,10 +70,12 @@ namespace Sm5shMusic.GUI.ViewModels
         {
             _locales = Constants.CONVERTER_LOCALE.Select(p => new ComboItem(p.Key, p.Value));
             _copyActions = GetCopyActions();
+            _useRecentDict = Constants.CONVERTER_LOCALE.ToDictionary(p => p.Key, p => new List<string>());
             ActionChangeLocale = ReactiveCommand.Create<ComboItem>(ChangeLocale);
             ActionCopyToAll = ReactiveCommand.Create(CopyToAllLanguages);
             ActionCopyToEmptyLanguages = ReactiveCommand.Create(CopyToEmptyLanguages);
 
+            this.WhenAnyValue(p => p.SelectedRecentAction).Subscribe(o => HandleRecentAction(o));
             this.WhenAnyValue(p => p.SelectedCopyAction).Subscribe(o => HandleCopyAction(o));
             this.WhenAnyValue(p => p.SelectedLocale).Subscribe(o => ChangeLocale(o));
             this.WhenAnyValue(p => p.CurrentLocalizedValue).Subscribe((p) => { SaveValueToCurrentLocale(); });
@@ -76,6 +87,19 @@ namespace Sm5shMusic.GUI.ViewModels
             {
                 SetCurrentLocalizedValue();
             }
+        }
+
+        private void HandleRecentAction(string o)
+        {
+            if (o == null)
+                return;
+
+            CurrentLocalizedValue = o;
+
+            Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                SelectedRecentAction = null;
+            }, DispatcherPriority.Background);
         }
 
         private void HandleCopyAction(ComboItem o)
@@ -138,6 +162,22 @@ namespace Sm5shMusic.GUI.ViewModels
                 if (!_msbtValues.ContainsKey(SelectedLocale.Id))
                     _msbtValues.Add(SelectedLocale.Id, string.Empty);
                 CurrentLocalizedValue = _msbtValues[SelectedLocale.Id];
+                UseRecent = _useRecentDict[SelectedLocale.Id];
+                DisplayRecents = UseRecent.Count() > 0;
+            }
+        }
+
+        public void SaveValueToRecent()
+        {
+            foreach(var msbtValue in _msbtValues)
+            {
+                var list = _useRecentDict[msbtValue.Key];
+                if (!list.Contains(msbtValue.Value) && !string.IsNullOrEmpty(msbtValue.Value))
+                {
+                    if(list.Count > 9)
+                        list.RemoveAt(list.Count - 1);
+                    list.Insert(0, msbtValue.Value);
+                }
             }
         }
 
@@ -155,8 +195,8 @@ namespace Sm5shMusic.GUI.ViewModels
         {
             return new List<ComboItem>()
             {
-                new ComboItem(COPY_ACTION_ALL, "All other languages"),
-                new ComboItem(COPY_ACTION_EMPTY, "All languages with empty values")
+                new ComboItem(COPY_ACTION_ALL, "To all other languages"),
+                new ComboItem(COPY_ACTION_EMPTY, "To all languages with empty values")
             };
         }
     }

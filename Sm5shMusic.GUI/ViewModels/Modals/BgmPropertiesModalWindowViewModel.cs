@@ -191,6 +191,9 @@ namespace Sm5shMusic.GUI.ViewModels
             DbRootViewModel.TestDispOrder = (short)(IsInSoundTest ? DbRootViewModel.TestDispOrder > -1 ? DbRootViewModel.TestDispOrder : short.MaxValue : -1);
             if (SelectedRecordType != null)
                 DbRootViewModel.RecordType = SelectedRecordType.Id;
+            MSBTTitleEditor.SaveValueToRecent();
+            MSBTAuthorEditor.SaveValueToRecent();
+            MSBTCopyrightEditor.SaveValueToRecent();
             DbRootViewModel.MSBTTitle = SaveMSBTValues(MSBTTitleEditor.MSBTValues);
             DbRootViewModel.MSBTAuthor = SaveMSBTValues(MSBTAuthorEditor.MSBTValues);
             DbRootViewModel.MSBTCopyright = SaveMSBTValues(MSBTCopyrightEditor.MSBTValues);
