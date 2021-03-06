@@ -327,7 +327,7 @@ namespace Sma5hMusic.GUI.ViewModels
                 return;
             }
 
-            var results = await _fileDialog.OpenFileDialogAudio();
+            var results = await _fileDialog.OpenFileDialogAudioMultiple();
             if (results.Length == 0)
                 return;
 

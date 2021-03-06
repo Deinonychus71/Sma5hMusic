@@ -154,15 +154,6 @@ namespace Sma5h.Mods.Music.MusicMods
                 //New
                 if (!isEdit)
                 {
-                    var audioCuePoints = await _audioMetadataService.GetCuePoints(filename);
-                    if (audioCuePoints == null || audioCuePoints.TotalSamples <= 0)
-                    {
-                        _logger.LogError("The filename {Filename} didn't have cue points. Make sure audio library is properly installed.", filenameWithoutPath);
-                        return false;
-                    }
-
-                    _mapper.Map(audioCuePoints, bgmProperty);
-
                     var oldFileName = filenameWithoutPath;
                     filenameWithoutPath = string.Format("{0}{1}", toneId, Path.GetExtension(filenameWithoutPath));
                     _logger.LogDebug("New filename for {OldFilename}: {NewFilename}", oldFileName, filenameWithoutPath);

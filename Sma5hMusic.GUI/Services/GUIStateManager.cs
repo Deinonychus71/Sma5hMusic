@@ -1,4 +1,5 @@
-﻿using Avalonia.Threading;
+﻿using AutoMapper;
+using Avalonia.Threading;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
@@ -17,21 +18,25 @@ namespace Sma5hMusic.GUI.Services
     public class GUIStateManager : IGUIStateManager
     {
         private readonly ILogger _logger;
+        protected readonly IMapper _mapper;
         private readonly IMessageDialog _messageDialog;
         private readonly IAudioStateService _audioState;
+        private readonly IAudioMetadataService _audioMetadataService;
         private readonly ISma5hMusicOverride _Sma5hMusicOverride;
         private readonly IMusicModManagerService _musicModManagerService;
         private readonly IViewModelManager _viewModelManager;
         private readonly IOptions<ApplicationSettings> _config;
 
-        public GUIStateManager(ISma5hMusicOverride Sma5hMusicOverride, IViewModelManager viewModelManager, IAudioStateService audioStateService,
-            IOptions<ApplicationSettings> config, IMusicModManagerService musicModManagerService, IMessageDialog messageDialog, ILogger<IGUIStateManager> logger)
+        public GUIStateManager(ISma5hMusicOverride Sma5hMusicOverride, IViewModelManager viewModelManager, IAudioStateService audioStateService, IAudioMetadataService audioMetadataService,
+            IOptions<ApplicationSettings> config, IMusicModManagerService musicModManagerService, IMessageDialog messageDialog, IMapper mapper, ILogger<IGUIStateManager> logger)
         {
             _logger = logger;
+            _mapper = mapper;
             _config = config;
             _messageDialog = messageDialog;
             _Sma5hMusicOverride = Sma5hMusicOverride;
             _audioState = audioStateService;
+            _audioMetadataService = audioMetadataService;
             _musicModManagerService = musicModManagerService;
             _viewModelManager = viewModelManager;
         }
@@ -50,6 +55,10 @@ namespace Sma5hMusic.GUI.Services
                 var newBgmAssignedInfoEntry = new BgmAssignedInfoEntry($"{MusicConstants.InternalIds.INFO_ID_PREFIX}{toneId}", musicMod) { StreamId = newBgmStreamPropertyEntry.StreamId };
                 var newBgmStreamSetEntry = new BgmStreamSetEntry($"{MusicConstants.InternalIds.STREAM_SET_PREFIX}{toneId}", musicMod) { Info0 = newBgmAssignedInfoEntry.InfoId };
                 var newBgmDbRootEntry = new BgmDbRootEntry($"{MusicConstants.InternalIds.UI_BGM_ID_PREFIX}{toneId}", musicMod) { StreamSetId = newBgmStreamSetEntry.StreamSetId };
+
+                //Calculate cues
+                if (!await CalculateAudioCues(filename, newBgmPropertyEntry))
+                    return string.Empty;
 
                 //Create mod
                 var musicModEntries = new MusicModEntries();
@@ -72,6 +81,18 @@ namespace Sma5hMusic.GUI.Services
             }, DispatcherPriority.Background);
 
             return string.Empty;
+        }
+
+        public async Task<bool> CalculateAudioCues(string filename, BgmPropertyEntry bgmPropertyEntry)
+        {
+            var audioCuePoints = await _audioMetadataService.GetCuePoints(filename);
+            if (audioCuePoints == null || audioCuePoints.TotalSamples <= 0)
+            {
+                _logger.LogError("The filename {Filename} didn't have cue points. Make sure audio library is properly installed.", filename);
+                return false;
+            }
+            _mapper.Map(audioCuePoints, bgmPropertyEntry);
+            return true;
         }
 
         public async Task<string> CreateNewMusicMod(MusicModEntries musicModEntries, IMusicMod musicMod)
