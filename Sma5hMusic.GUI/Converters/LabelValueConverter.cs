@@ -1,17 +1,15 @@
 ﻿using Avalonia.Data.Converters;
-using Avalonia.Data.Converters;
 using System;
 using System.Globalization;
-using System.IO;
 
 namespace Sma5hMusic.GUI.Converters
 {
-    public class FilePathConverter : IValueConverter
+    public class LabelValueConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             var valueStr = value as string;
-            return Path.GetFileName(valueStr);
+            return valueStr.Replace("{{", string.Empty).Replace("}}", string.Empty);
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

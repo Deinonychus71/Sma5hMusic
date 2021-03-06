@@ -497,9 +497,9 @@ namespace Sma5h.Mods.Music.Services
 
                         //Title
                         if (titleDict != null && titleDict.ContainsKey(msbtDb.Key) && !string.IsNullOrEmpty(titleDict[msbtDb.Key]))
-                            entries[titleLabel] = titleDict[msbtDb.Key];
+                            entries[titleLabel] = ConvertToGameTextTag(titleDict[msbtDb.Key]);
                         else if (titleDict != null && titleDict.ContainsKey(defaultLocale) && !string.IsNullOrEmpty(titleDict[defaultLocale]))
-                            entries[titleLabel] = titleDict[defaultLocale];
+                            entries[titleLabel] = ConvertToGameTextTag(titleDict[defaultLocale]);
 
                         //Author
                         if (authorDict != null)
@@ -622,7 +622,7 @@ namespace Sma5h.Mods.Music.Services
                     {
                         var entries = msbtDb.Value.Entries;
                         if (entries.ContainsKey(titleLabel))
-                            bgmDbRootEntry.Title.Add(msbtDb.Key, entries[titleLabel]);
+                            bgmDbRootEntry.Title.Add(msbtDb.Key, ConvertFromGameTextTag(entries[titleLabel]));
                         if (entries.ContainsKey(authorLabel))
                             bgmDbRootEntry.Author.Add(msbtDb.Key, entries[authorLabel]);
                         if (entries.ContainsKey(copyrightLabel))
@@ -763,6 +763,16 @@ namespace Sma5h.Mods.Music.Services
                     output.Add(locale, msbt);
             }
             return output;
+        }
+
+        private string ConvertFromGameTextTag(string input)
+        {
+            return input.Replace("\u000e\u0000\u0002\u0002P", "{{").Replace("\u000e\u0000\u0002\u0002d", "}}");
+        }
+
+        private string ConvertToGameTextTag(string input)
+        {
+            return input.Replace("{{", "\u000e\u0000\u0002\u0002P").Replace("}}", "\u000e\u0000\u0002\u0002d");
         }
         #endregion
         #endregion

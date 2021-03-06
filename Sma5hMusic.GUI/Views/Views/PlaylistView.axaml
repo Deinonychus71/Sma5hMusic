@@ -36,7 +36,7 @@
             <DataGridTemplateColumn.CellTemplate>
               <DataTemplate>
                 <TextBlock Margin="{StaticResource DataGridTextColumnCellTextBlockMargin}" VerticalAlignment="Center"
-                           Foreground="{Binding DbRoot.TestDispOrder, Converter={StaticResource HiddenColumnConverter}}" Text="{Binding Title, Mode=OneWay}"></TextBlock>
+                           Foreground="{Binding DbRoot.TestDispOrder, Converter={StaticResource HiddenColumnConverter}}" Text="{Binding Title, Mode=OneWay, Converter={StaticResource LabelValueConverter}}"></TextBlock>
               </DataTemplate>
             </DataGridTemplateColumn.CellTemplate>
           </DataGridTemplateColumn>
@@ -102,7 +102,7 @@
             <DataGridTemplateColumn.CellTemplate>
               <DataTemplate>
                 <TextBlock Margin="{StaticResource DataGridTextColumnCellTextBlockMargin}" VerticalAlignment="Center"
-                           Foreground="{Binding Order, Converter={StaticResource HiddenColumnConverter}}" Text="{Binding BgmReference.Title, Mode=OneWay}"></TextBlock>
+                           Foreground="{Binding Order, Converter={StaticResource HiddenColumnConverter}}" Text="{Binding BgmReference.Title, Mode=OneWay, Converter={StaticResource LabelValueConverter}}"></TextBlock>
               </DataTemplate>
             </DataGridTemplateColumn.CellTemplate>
           </DataGridTemplateColumn>

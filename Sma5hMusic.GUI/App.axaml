@@ -13,6 +13,7 @@
     <cv:FilePathConverter x:Key="FilePathConverter"/>
     <cv:LocaleNameConverter x:Key="LocaleNameConverter"/>
     <cv:HiddenColumnConverter x:Key="HiddenColumnConverter"/>
+    <cv:LabelValueConverter x:Key="LabelValueConverter"/>
   </Application.Resources>
   <Application.Styles>
 
