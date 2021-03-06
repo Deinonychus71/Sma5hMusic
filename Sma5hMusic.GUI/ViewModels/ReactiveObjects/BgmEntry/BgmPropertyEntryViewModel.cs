@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using Sma5h.Mods.Music.Models;
 using Sma5hMusic.GUI.Interfaces;
@@ -10,16 +11,39 @@ namespace Sma5hMusic.GUI.ViewModels
     public class BgmPropertyEntryViewModel : BgmBaseViewModel<BgmPropertyEntry>
     {
         private readonly IVGMMusicPlayer _vgmPlayer;
+        private uint _totalTimeMs;
+        private uint _totalSamples;
 
         public string NameId { get; }
+        [Reactive]
         public uint LoopStartMs { get; set; }
+        [Reactive]
         public uint LoopStartSample { get; set; }
+        [Reactive]
         public uint LoopEndMs { get; set; }
+        [Reactive]
         public uint LoopEndSample { get; set; }
-        public uint TotalTimeMs { get; set; }
-        public uint TotalSamples { get; set; }
+        public uint TotalTimeMs
+        {
+            get => _totalTimeMs;
+            set
+            {
+                this.RaiseAndSetIfChanged(ref _totalTimeMs, value);
+                this.RaisePropertyChanged(nameof(Frequency));
+            }
+        }
+        public uint TotalSamples
+        {
+            get => _totalSamples;
+            set
+            {
+                this.RaiseAndSetIfChanged(ref _totalSamples, value);
+                this.RaisePropertyChanged(nameof(Frequency));
+            }
+        }
         public uint Frequency { get { return TotalTimeMs == 0 ? 0 : (uint)((double)TotalSamples / (double)TotalTimeMs * 1000.0); } }
-        public string Filename { get; }
+        [Reactive]
+        public string Filename { get; set; }
         [Reactive]
         public float AudioVolume { get; set; }
 

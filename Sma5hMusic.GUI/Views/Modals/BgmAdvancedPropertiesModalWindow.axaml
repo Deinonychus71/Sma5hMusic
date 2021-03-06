@@ -36,7 +36,17 @@
               <Border Classes="contentTitle" DockPanel.Dock="Top">
                 <TextBlock>File Properties</TextBlock>
               </Border>
-              <fields:PropertyMusicField Label="File" Text="{Binding BgmPropertyViewModel.Filename, Mode=OneWay}" MusicPlayer="{Binding BgmPropertyViewModel.MusicPlayer, Mode=OneWay}" ToolTip="Path to the song in the File System" IsReadOnly="True" />
+              <StackPanel Orientation="Horizontal">
+                <fields:PropertyMusicField Label="File" Text="{Binding BgmPropertyViewModel.Filename, Mode=OneWay}" MusicPlayer="{Binding BgmPropertyViewModel.MusicPlayer, Mode=OneWay}" ToolTip="Path to the song in the File System" IsReadOnly="True" />
+                <fields:PropertyField IsVisible="{Binding IsModSong}" Label="Actions" ToolTip="Execute actions exclusive to mod entries.">
+                  <fields:PropertyField.FieldContent>
+                    <StackPanel Orientation="Horizontal">
+                      <Button Content="Change File..." Command="{Binding ActionChangeFile}" CommandParameter="{Binding BgmPropertyViewModel}" />
+                      <Button Content="Calculate Loop Cues" Command="{Binding ActionCalculateLoopCues}" CommandParameter="{Binding BgmPropertyViewModel}" />
+                    </StackPanel>
+                  </fields:PropertyField.FieldContent>
+                </fields:PropertyField>
+              </StackPanel>
             </StackPanel>
             <!-- Song Information -->
             <StackPanel Classes="content" Grid.Column="0" Grid.Row="1" HorizontalAlignment="Stretch">
@@ -257,6 +267,11 @@
             <StackPanel Grid.Row="0" Grid.ColumnSpan="3" Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Stretch">
               <fields:PropertyTextField Label="name_id" Text="{Binding BgmPropertyViewModel.NameId, Mode=OneWay}" ToolTip="[Read-Only][Hash40] ID in BGM Property" IsReadOnly="True" />
               <fields:PropertyUIntField Label="frequency" Value="{Binding BgmPropertyViewModel.Frequency, Mode=OneWay}" ToolTip="[UInt]" IsReadOnly="True" />
+              <fields:PropertyField IsVisible="{Binding IsModSong}" Label="Audio Cues" ToolTip="Retrieve audio cues from the file metadata.">
+                <fields:PropertyField.FieldContent>
+                  <Button VerticalAlignment="Center" Content="Calculate Loop Cues" Command="{Binding ActionCalculateLoopCues}" CommandParameter="{Binding BgmPropertyViewModel}" />
+                </fields:PropertyField.FieldContent>
+              </fields:PropertyField>
             </StackPanel>
             <StackPanel Grid.Row="1" Grid.Column="0" HorizontalAlignment="Stretch">
               <fields:PropertyUIntField Label="loop_start_ms" Value="{Binding BgmPropertyViewModel.LoopStartMs, Mode=TwoWay}" ToolTip="[UInt]" />

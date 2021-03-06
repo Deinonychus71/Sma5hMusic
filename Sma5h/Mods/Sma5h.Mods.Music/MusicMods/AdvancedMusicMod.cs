@@ -147,12 +147,35 @@ namespace Sma5h.Mods.Music.MusicMods
 
                 //Get toneId
                 var toneId = bgmProperty.NameId;
-                var isEdit = _musicModConfig.Games.Any(p => p.Bgms.Any(s => s.ToneId == toneId));
+                var isFileEdit = _musicModConfig.Games.Any(p => p.Bgms.Any(s => s.ToneId == toneId));
                 var filename = bgmProperty.Filename;
                 var filenameWithoutPath = Path.GetFileName(filename);
 
+                //In case of change of file
+                if (isFileEdit)
+                {
+                    var oldBgmData = _musicModConfig.Games.Select(p => p.Bgms.FirstOrDefault(s => s.ToneId == toneId))?.FirstOrDefault();
+                    string oldFilename = Path.Combine(ModPath, oldBgmData.Filename);
+                    if (oldFilename.ToLower() != bgmProperty.Filename.ToLower())
+                    {
+                        _logger.LogInformation("Need to update filename for toneId: {ToneId}", oldBgmData.ToneId);
+
+                        if (File.Exists(oldFilename))
+                        {
+                            File.Delete(oldFilename);
+                            _logger.LogDebug("Old Filename deleted: {OldFilename}", oldFilename);
+                        }
+                        else
+                        {
+                            _logger.LogWarning("Old Filename could not be deleted: {OldFilename}", oldFilename);
+                        }
+
+                        isFileEdit = false;
+                    }
+                }
+
                 //New
-                if (!isEdit)
+                if (!isFileEdit)
                 {
                     var oldFileName = filenameWithoutPath;
                     filenameWithoutPath = string.Format("{0}{1}", toneId, Path.GetExtension(filenameWithoutPath));

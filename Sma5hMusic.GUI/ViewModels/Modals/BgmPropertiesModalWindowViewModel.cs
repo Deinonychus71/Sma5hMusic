@@ -1,4 +1,5 @@
-﻿using Avalonia.Controls;
+﻿using AutoMapper;
+using Avalonia.Controls;
 using DynamicData;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -7,7 +8,9 @@ using ReactiveUI.Fody.Helpers;
 using ReactiveUI.Validation.Extensions;
 using Sma5h.Mods.Music;
 using Sma5h.Mods.Music.Helpers;
+using Sma5h.Mods.Music.Interfaces;
 using Sma5hMusic.GUI.Helpers;
+using Sma5hMusic.GUI.Interfaces;
 using Sma5hMusic.GUI.Models;
 using System;
 using System.Collections.Generic;
@@ -24,7 +27,10 @@ namespace Sma5hMusic.GUI.ViewModels
     public class BgmPropertiesModalWindowViewModel : ModalBaseViewModel<BgmEntryViewModel>
     {
         private readonly IOptions<ApplicationSettings> _config;
+        private readonly IMapper _mapper;
         private readonly ILogger _logger;
+        private readonly IFileDialog _fileDialog;
+        private readonly IAudioMetadataService _audioMetadataService;
         private readonly List<ComboItem> _recordTypes;
         private readonly List<ComboItem> _specialCategories;
         private readonly ReadOnlyObservableCollection<SeriesEntryViewModel> _series;
@@ -34,6 +40,7 @@ namespace Sma5hMusic.GUI.ViewModels
         private bool _isUpdatingSpecialRule = false;
         private const float _minimumVolume = -20.0f;
         private const float _maximumVolume = 20.0f;
+        private string _originalFilename;
 
         public IObservable<Window> WhenNewRequestToAddGameEntry { get { return _whenNewRequestToAddGameEntry; } }
         public GamePropertiesModalWindowViewModel VMGamePropertiesModal { get; set; }
@@ -60,18 +67,25 @@ namespace Sma5hMusic.GUI.ViewModels
         [Reactive]
         public bool IsInSoundTest { get; set; }
 
+        public bool IsModSong { get; set; }
+
         public ReadOnlyObservableCollection<SeriesEntryViewModel> Series { get { return _series; } }
         public ReadOnlyObservableCollection<GameTitleEntryViewModel> Games { get { return _games; } }
         public ReadOnlyObservableCollection<string> AssignedInfoIds { get { return _assignedInfoIds; } }
 
         public ReactiveCommand<Window, Unit> ActionNewGame { get; }
+        public ReactiveCommand<BgmPropertyEntryViewModel, Unit> ActionChangeFile { get; }
+        public ReactiveCommand<BgmPropertyEntryViewModel, Unit> ActionCalculateLoopCues { get; }
 
-        public BgmPropertiesModalWindowViewModel(IOptions<ApplicationSettings> config, ILogger<BgmPropertiesModalWindowViewModel> logger,
-            IObservable<IChangeSet<SeriesEntryViewModel, string>> observableSeries, IObservable<IChangeSet<GameTitleEntryViewModel, string>> observableGames,
-            IObservable<IChangeSet<BgmAssignedInfoEntryViewModel, string>> observableBgmAssignedInfoEntries)
+        public BgmPropertiesModalWindowViewModel(IOptions<ApplicationSettings> config, ILogger<BgmPropertiesModalWindowViewModel> logger, IFileDialog fileDialog,
+            IMapper mapper, IAudioMetadataService audioMetadataService, IObservable<IChangeSet<SeriesEntryViewModel, string>> observableSeries, 
+            IObservable<IChangeSet<GameTitleEntryViewModel, string>> observableGames, IObservable<IChangeSet<BgmAssignedInfoEntryViewModel, string>> observableBgmAssignedInfoEntries)
         {
             _config = config;
             _logger = logger;
+            _mapper = mapper;
+            _audioMetadataService = audioMetadataService;
+            _fileDialog = fileDialog;
             _recordTypes = GetRecordTypes();
             _specialCategories = GetSpecialCategories();
             _whenNewRequestToAddGameEntry = new Subject<Window>();
@@ -122,12 +136,26 @@ namespace Sma5hMusic.GUI.ViewModels
                 "Please select a game.");
 
             ActionNewGame = ReactiveCommand.Create<Window>(AddNewGame);
+            ActionChangeFile = ReactiveCommand.CreateFromTask<BgmPropertyEntryViewModel>(ChangeFile);
+            ActionCalculateLoopCues = ReactiveCommand.CreateFromTask<BgmPropertyEntryViewModel>(CalculateAudioCues);
         }
 
         private void AddNewGame(Window window)
         {
             _logger.LogDebug("Clicked Add New Game");
             _whenNewRequestToAddGameEntry.OnNext(window);
+        }
+
+        private async Task ChangeFile(BgmPropertyEntryViewModel bgmPropertyEntryViewModel)
+        {
+            _logger.LogDebug("Clicked Change File");
+            var filename = await _fileDialog.OpenFileDialogAudioSingle();
+            if (!string.IsNullOrEmpty(filename))
+            {
+                BgmPropertyViewModel.Filename = filename;
+                await BgmPropertyViewModel.MusicPlayer?.ChangeFilename(filename);
+                await CalculateAudioCues(bgmPropertyEntryViewModel);
+            }
         }
 
         private List<ComboItem> GetRecordTypes()
@@ -180,6 +208,12 @@ namespace Sma5hMusic.GUI.ViewModels
             }
         }
 
+        protected override Task CancelChanges()
+        {
+            BgmPropertyViewModel?.MusicPlayer?.ChangeFilename(_originalFilename);
+            return base.CancelChanges();
+        }
+
         protected override Task<bool> SaveChanges()
         {
             _logger.LogDebug("Save Changes");
@@ -224,6 +258,9 @@ namespace Sma5hMusic.GUI.ViewModels
             AssignedInfoViewModel = item?.AssignedInfoViewModel;
             StreamPropertyViewModel = item?.StreamPropertyViewModel;
             BgmPropertyViewModel = item?.BgmPropertyViewModel;
+            _originalFilename = BgmPropertyViewModel?.Filename;
+
+            IsModSong = item.MusicMod != null;
 
             MSBTTitleEditor.MSBTValues = DbRootViewModel.MSBTTitle;
             MSBTAuthorEditor.MSBTValues = DbRootViewModel.MSBTAuthor;
@@ -232,6 +269,18 @@ namespace Sma5hMusic.GUI.ViewModels
             SelectedRecordType = _recordTypes.FirstOrDefault(p => p.Id == DbRootViewModel.RecordType);
             SelectedGameTitleViewModel = _games.FirstOrDefault(p => p.UiGameTitleId == DbRootViewModel.UiGameTitleId);
             SetSpecialCategoryRules(StreamSetViewModel.SpecialCategory);
+        }
+
+        private async Task CalculateAudioCues(BgmPropertyEntryViewModel bgmPropertyEntryViewModel)
+        {
+            //Calculate cues
+            var audioCuePoints = await _audioMetadataService.GetCuePoints(bgmPropertyEntryViewModel.Filename);
+            if (audioCuePoints == null || audioCuePoints.TotalSamples <= 0)
+            {
+                _logger.LogError("The filename {Filename} didn't have cue points. Make sure audio library is properly installed.", bgmPropertyEntryViewModel.Filename);
+                return;
+            }
+            _mapper.Map(audioCuePoints, bgmPropertyEntryViewModel);
         }
     }
 }

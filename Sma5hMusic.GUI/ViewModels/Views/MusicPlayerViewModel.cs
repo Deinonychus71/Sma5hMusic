@@ -32,6 +32,13 @@ namespace Sma5hMusic.GUI.ViewModels
             ActionPlaySong = ReactiveCommand.CreateFromTask(TriggerButton, this.WhenAnyValue(p => p._isExecutingAction, p => p == false));
         }
 
+        public async Task ChangeFilename(string filename)
+        {
+            if (_isPlaying)
+                await StopSong();
+            Filename = filename;
+        }
+
         public async Task TriggerButton()
         {
             _isExecutingAction = true;

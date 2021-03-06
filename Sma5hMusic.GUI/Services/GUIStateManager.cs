@@ -57,8 +57,13 @@ namespace Sma5hMusic.GUI.Services
                 var newBgmDbRootEntry = new BgmDbRootEntry($"{MusicConstants.InternalIds.UI_BGM_ID_PREFIX}{toneId}", musicMod) { StreamSetId = newBgmStreamSetEntry.StreamSetId };
 
                 //Calculate cues
-                if (!await CalculateAudioCues(filename, newBgmPropertyEntry))
-                    return string.Empty;
+                var audioCuePoints = await _audioMetadataService.GetCuePoints(filename);
+                if (audioCuePoints == null || audioCuePoints.TotalSamples <= 0)
+                {
+                    _logger.LogError("The filename {Filename} didn't have cue points. Make sure audio library is properly installed.", filename);
+                    throw new Exception();
+                }
+                _mapper.Map(audioCuePoints, newBgmPropertyEntry);
 
                 //Create mod
                 var musicModEntries = new MusicModEntries();
@@ -81,18 +86,6 @@ namespace Sma5hMusic.GUI.Services
             }, DispatcherPriority.Background);
 
             return string.Empty;
-        }
-
-        public async Task<bool> CalculateAudioCues(string filename, BgmPropertyEntry bgmPropertyEntry)
-        {
-            var audioCuePoints = await _audioMetadataService.GetCuePoints(filename);
-            if (audioCuePoints == null || audioCuePoints.TotalSamples <= 0)
-            {
-                _logger.LogError("The filename {Filename} didn't have cue points. Make sure audio library is properly installed.", filename);
-                return false;
-            }
-            _mapper.Map(audioCuePoints, bgmPropertyEntry);
-            return true;
         }
 
         public async Task<string> CreateNewMusicMod(MusicModEntries musicModEntries, IMusicMod musicMod)

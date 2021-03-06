@@ -115,7 +115,7 @@ namespace Sma5hMusic.GUI.Mods.Music.Models.AutoMapper
                 .ForMember(i => i.TotalSamples, me => me.MapFrom(p => p.TotalSamples))
                 .ForMember(i => i.TotalTimeMs, me => me.MapFrom(p => p.TotalTimeMs))
                 .ForMember(i => i.AudioVolume, me => me.MapFrom(p => p.AudioVolume))
-                .ForMember(i => i.Filename, me => me.Ignore())
+                .ForMember(i => i.Filename, me => me.MapFrom(p => p.Filename))
                 .ForMember(i => i.NameId, me => me.Ignore());
             CreateMap<BgmPropertyEntry, ViewModels.BgmPropertyEntryViewModel>()
                 .ForMember(i => i.LoopEndMs, me => me.MapFrom(p => p.LoopEndMs))
@@ -293,6 +293,23 @@ namespace Sma5hMusic.GUI.Mods.Music.Models.AutoMapper
                 .ForMember(i => i.StartPointSuddenDeath, me => me.MapFrom(p => p.StartPointSuddenDeath))
                 .ForMember(i => i.StartPointTransition, me => me.MapFrom(p => p.StartPointTransition))
                 .ForMember(i => i.StreamId, me => me.MapFrom(p => p.StreamId));
+
+            CreateMap<AudioCuePoints, ViewModels.BgmPropertyEntryViewModel>()
+               .ForMember(i => i.AudioVolume, me => me.Ignore())
+               .ForMember(i => i.LoopEndMs, me => me.MapFrom(p => p.LoopEndMs))
+               .ForMember(i => i.LoopEndSample, me => me.MapFrom(p => p.LoopEndSample))
+               .ForMember(i => i.LoopStartMs, me => me.MapFrom(p => p.LoopStartMs))
+               .ForMember(i => i.LoopStartSample, me => me.MapFrom(p => p.LoopStartSample))
+               .ForMember(i => i.NameId, me => me.Ignore())
+               .ForMember(i => i.TotalSamples, me => me.MapFrom(p => p.TotalSamples))
+               .ForMember(i => i.TotalTimeMs, me => me.MapFrom(p => p.TotalTimeMs));
+            CreateMap<ViewModels.BgmPropertyEntryViewModel, AudioCuePoints>()
+               .ForMember(i => i.LoopEndMs, me => me.MapFrom(p => p.LoopEndMs))
+               .ForMember(i => i.LoopEndSample, me => me.MapFrom(p => p.LoopEndSample))
+               .ForMember(i => i.LoopStartMs, me => me.MapFrom(p => p.LoopStartMs))
+               .ForMember(i => i.LoopStartSample, me => me.MapFrom(p => p.LoopStartSample))
+               .ForMember(i => i.TotalSamples, me => me.MapFrom(p => p.TotalSamples))
+               .ForMember(i => i.TotalTimeMs, me => me.MapFrom(p => p.TotalTimeMs));
 
             //CreateMap<ViewModels.GameTitleEntryViewModel, ViewModels.GameTitleEntryViewModel>();
             CreateMap<ViewModels.BgmDbRootEntryViewModel, ViewModels.BgmDbRootEntryViewModel>();

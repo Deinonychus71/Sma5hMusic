@@ -36,7 +36,17 @@
               <Border Classes="contentTitle" DockPanel.Dock="Top">
                 <TextBlock>File Properties</TextBlock>
               </Border>
-              <fields:PropertyMusicField Label="File" Text="{Binding BgmPropertyViewModel.Filename, Mode=OneWay}" MusicPlayer="{Binding BgmPropertyViewModel.MusicPlayer, Mode=OneWay}" ToolTip="Path to the song in the File System" IsReadOnly="True" />
+              <StackPanel Orientation="Horizontal">
+                <fields:PropertyMusicField Label="File" Text="{Binding BgmPropertyViewModel.Filename, Mode=OneWay}" MusicPlayer="{Binding BgmPropertyViewModel.MusicPlayer, Mode=OneWay}" ToolTip="Path to the song in the File System" IsReadOnly="True" />
+                <fields:PropertyField IsVisible="{Binding IsModSong}" Label="Actions" ToolTip="Execute actions exclusive to mod entries.">
+                  <fields:PropertyField.FieldContent>
+                    <StackPanel Orientation="Horizontal">
+                      <Button Content="Change File..." Command="{Binding ActionChangeFile}" CommandParameter="{Binding BgmPropertyViewModel}" />
+                      <Button Content="Calculate Loop Cues" Command="{Binding ActionCalculateLoopCues}" CommandParameter="{Binding BgmPropertyViewModel}" />
+                    </StackPanel>
+                  </fields:PropertyField.FieldContent>
+                </fields:PropertyField>
+              </StackPanel>
             </StackPanel>
             <!-- Song Information -->
             <StackPanel Classes="content" Grid.Column="0" Grid.Row="1" HorizontalAlignment="Stretch">
