@@ -86,12 +86,26 @@
           <DataGridTemplateColumn CanUserResize="false" Width="40">
             <DataGridTemplateColumn.CellTemplate>
               <DataTemplate>
-                <ContentControl IsVisible="{Binding BgmReference.DoesFileExist, Mode=OneWay}" Content="{Binding BgmReference.MusicPlayer, Mode=OneWay}"/>
+                <ContentControl IsVisible="{Binding BgmReference.DoesFileExist, Mode=OneWay}"  Content="{Binding BgmReference.MusicPlayer, Mode=OneWay}"/>
               </DataTemplate>
             </DataGridTemplateColumn.CellTemplate>
           </DataGridTemplateColumn>
-          <DataGridTextColumn Width="2*" Header="Game" Binding="{Binding BgmReference.GameTitleViewModel.Title, Mode=OneWay}" />
-          <DataGridTextColumn Width="3*" Header="Title" Binding="{Binding BgmReference.Title, Mode=OneWay}" />
+          <DataGridTemplateColumn Width="2*" Header="Game">
+            <DataGridTemplateColumn.CellTemplate>
+              <DataTemplate>
+                <TextBlock Margin="{StaticResource DataGridTextColumnCellTextBlockMargin}" VerticalAlignment="Center"
+                           Foreground="{Binding Order, Converter={StaticResource HiddenColumnConverter}}" Text="{Binding BgmReference.GameTitleViewModel.Title, Mode=OneWay}"></TextBlock>
+              </DataTemplate>
+            </DataGridTemplateColumn.CellTemplate>
+          </DataGridTemplateColumn>
+          <DataGridTemplateColumn Width="3*" Header="Title">
+            <DataGridTemplateColumn.CellTemplate>
+              <DataTemplate>
+                <TextBlock Margin="{StaticResource DataGridTextColumnCellTextBlockMargin}" VerticalAlignment="Center"
+                           Foreground="{Binding Order, Converter={StaticResource HiddenColumnConverter}}" Text="{Binding BgmReference.Title, Mode=OneWay}"></TextBlock>
+              </DataTemplate>
+            </DataGridTemplateColumn.CellTemplate>
+          </DataGridTemplateColumn>
           <DataGridTemplateColumn MinWidth="200" Header="Incidence">
             <DataGridTemplateColumn.CellTemplate>
               <DataTemplate>
@@ -99,10 +113,11 @@
               </DataTemplate>
             </DataGridTemplateColumn.CellTemplate>
           </DataGridTemplateColumn>
-          <DataGridTemplateColumn Header="Actions" CanUserResize="false" Width="40">
+          <DataGridTemplateColumn Header="Actions" CanUserResize="false" Width="80">
             <DataGridTemplateColumn.CellTemplate>
               <DataTemplate>
                 <StackPanel Orientation="Horizontal">
+                  <Button IsEnabled="{Binding !Hidden}" Width="40" FontFamily="Segoe UI Symbol" HorizontalContentAlignment="Center" Content="&#x1F441;" Command="{Binding $parent[DataGrid].DataContext.ActionHidePlaylistItem, Mode=OneWay}" CommandParameter="{Binding}"/>
                   <Button Width="40" FontFamily="Segoe UI Symbol" HorizontalContentAlignment="Center" Content="&#x274C;" Command="{Binding $parent[DataGrid].DataContext.ActionDeletePlaylistItem, Mode=OneWay}" CommandParameter="{Binding}"/>
                 </StackPanel>
               </DataTemplate>

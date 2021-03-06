@@ -22,6 +22,9 @@ namespace Sm5shMusic.GUI.ViewModels
         public string IncidencePercentage { get { return $"{Math.Round((double)(Incidence / 100), 2)} %"; } }
 
         [Reactive]
+        public bool Hidden { get; set; }
+
+        [Reactive]
         public short Order { get; set; }
 
         public PlaylistEntryValueViewModel(PlaylistEntryViewModel parent, string bgmId, short order, ushort incidence, BgmDbRootEntryViewModel vmBgmEntry = null)
@@ -30,6 +33,8 @@ namespace Sm5shMusic.GUI.ViewModels
             UniqueId = Guid.NewGuid().ToString(); // $"{bgmId}{orderId}";
             UiBgmId = bgmId;
             Order = order;
+            if (order == -1)
+                Hidden = true;
             Incidence = incidence;
             //In case not found :)
             BgmReference = vmBgmEntry ?? new BgmDbRootEntryViewModel(null, null, null)

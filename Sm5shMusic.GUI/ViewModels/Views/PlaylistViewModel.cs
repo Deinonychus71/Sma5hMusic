@@ -71,6 +71,7 @@ namespace Sm5shMusic.GUI.ViewModels
         public ReactiveCommand<DataGrid, Unit> ActionInitializeDragAndDrop { get; }
         public ReactiveCommand<PlaylistEntryViewModel, Unit> ActionSelectPlaylist { get; }
         public ReactiveCommand<PlaylistEntryValueViewModel, Unit> ActionDeletePlaylistItem { get; }
+        public ReactiveCommand<PlaylistEntryValueViewModel, Unit> ActionHidePlaylistItem { get; }
         public ReactiveCommand<ComboItem, Unit> ActionSelectPlaylistOrder { get; }
         public ReactiveCommand<Unit, Unit> ActionCreatePlaylist { get; }
         public ReactiveCommand<Unit, Unit> ActionEditPlaylist { get; }
@@ -141,6 +142,7 @@ namespace Sm5shMusic.GUI.ViewModels
             ActionSelectPlaylist = ReactiveCommand.Create<PlaylistEntryViewModel>(SelectPlaylistId);
             ActionSelectPlaylistOrder = ReactiveCommand.Create<ComboItem>(SelectPlaylistOrder);
             ActionDeletePlaylistItem = ReactiveCommand.CreateFromTask<PlaylistEntryValueViewModel>(RemoveItem);
+            ActionHidePlaylistItem = ReactiveCommand.Create<PlaylistEntryValueViewModel>(HideItem);
             ActionCreatePlaylist = ReactiveCommand.Create(() => AddNewPlaylist());
             ActionEditPlaylist = ReactiveCommand.Create(() => EditPlaylist());
             ActionDeletePlaylist = ReactiveCommand.Create(() => DeletePlaylist());
@@ -243,6 +245,7 @@ namespace Sm5shMusic.GUI.ViewModels
                 sourceObj.Order = (short)(destinationObj.Order - 1);
             else
                 sourceObj.Order = (short)(destinationObj.Order + 1);
+            sourceObj.Hidden = false;
             sourceObj.Parent.ReorderSongs(SelectedPlaylistOrder);
             _whenNewRequestToUpdatePlaylistsInternal.OnNext(Unit.Default);
         }
@@ -255,6 +258,16 @@ namespace Sm5shMusic.GUI.ViewModels
                 _whenNewRequestToUpdatePlaylistsInternal.OnNext(Unit.Default);
             }
         }
+
+        public void HideItem(PlaylistEntryValueViewModel sourceObj)
+        {
+            sourceObj.Hidden = true;
+            sourceObj.Order = -1;
+            sourceObj.Parent.ReorderSongs(SelectedPlaylistOrder);
+            _whenNewRequestToUpdatePlaylistsInternal.OnNext(Unit.Default);
+        }
+
+        
 
         public void FocusAfterMove()
         {

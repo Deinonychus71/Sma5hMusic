@@ -56,7 +56,7 @@ namespace Sm5shMusic.GUI.ViewModels
         public void ReorderSongs(short orderId)
         {
             short i = 0;
-            var listPlaylistTracks = Tracks[orderId].OrderBy(p => p.Order);
+            var listPlaylistTracks = Tracks[orderId].Where(p => !p.Hidden).OrderBy(p => p.Order);
             foreach (var track in listPlaylistTracks)
             {
                 track.Order = i;
