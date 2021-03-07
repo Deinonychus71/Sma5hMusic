@@ -173,6 +173,8 @@ namespace Sma5hMusic.GUI.ViewModels
             VMBgmSongs.WhenNewRequestToEditBgmEntry.Subscribe(async (o) => await EditBgmEntry(o));
             VMBgmSongs.WhenNewRequestToDeleteBgmEntry.Subscribe(async (o) => await DeleteBgmEntry(o));
             VMBgmSongs.WhenNewRequestToReorderBgmEntries.Subscribe(async (o) => await _guiStateManager.ReorderSongs());
+            VMBgmSongs.WhenNewRequestToRenameToneId.Subscribe(async (o) => await RenameToneId(o));
+            VMBgmSongs.WhenNewRequestToMoveToOtherMod.Subscribe(async (o) => await MoveToAnotherMod(o));
             VMPlaylists.WhenNewRequestToUpdatePlaylists.Subscribe(async (o) => await _guiStateManager.PersistPlaylistChanges());
             VMPlaylists.WhenNewRequestToCreatePlaylist.Subscribe(async (o) => await AddNewOrEditPlaylist());
             VMPlaylists.WhenNewRequestToEditPlaylist.Subscribe(async (o) => await EditPlaylist());
@@ -368,6 +370,25 @@ namespace Sma5hMusic.GUI.ViewModels
             }
         }
 
+        public async Task RenameToneId(BgmDbRootEntryViewModel vmBgmEntry)
+        {
+            _vmToneIdCreation.Filename = vmBgmEntry.Filename;
+            _vmToneIdCreation.LoadToneId(vmBgmEntry.ToneId);
+            var modalToneIdCreation = new ToneIdCreationModalWindow() { DataContext = _vmToneIdCreation };
+            var result = await modalToneIdCreation.ShowDialog<ToneIdCreationModalWindow>(_rootDialog.Window);
+            if (result != null && _vmToneIdCreation.ToneId != vmBgmEntry.ToneId)
+            {
+                await vmBgmEntry.StopPlay();
+                var bgmEntryVM = new BgmEntryViewModel(vmBgmEntry);
+                await _guiStateManager.RenameMusicModToneId(bgmEntryVM.GetMusicModEntries(), vmBgmEntry.MusicMod, _vmToneIdCreation.ToneId);
+            }
+        }
+
+        public async Task MoveToAnotherMod(BgmDbRootEntryViewModel vmBgmEntry)
+        {
+
+        }
+
         public async Task DeleteBgmEntry(BgmDbRootEntryViewModel vmBgmEntry)
         {
             if (vmBgmEntry != null)
@@ -378,8 +399,7 @@ namespace Sma5hMusic.GUI.ViewModels
                 {
                     if (vmBgmEntry != null)
                     {
-                        vmBgmEntry.StopPlay();
-                        await Task.Delay(300);
+                        await vmBgmEntry.StopPlay();
 
                         _logger.LogInformation("Deleting {ToneId}...", vmBgmEntry.ToneId);
 

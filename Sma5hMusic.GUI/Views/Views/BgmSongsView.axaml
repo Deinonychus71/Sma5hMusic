@@ -39,40 +39,75 @@
           <DataGridTemplateColumn Header="Series" Width="*">
             <DataGridTemplateColumn.CellTemplate>
               <DataTemplate>
-                <TextBlock Margin="{StaticResource DataGridTextColumnCellTextBlockMargin}" VerticalAlignment="Center"
-                           Foreground="{Binding TestDispOrder, Converter={StaticResource HiddenColumnConverter}}" Text="{Binding GameTitleViewModel.SeriesViewModel.Title, Mode=OneWay}"></TextBlock>
+                <TextBlock Background="Transparent" Margin="{StaticResource DataGridTextColumnCellTextBlockMargin}" VerticalAlignment="Center"
+                           Foreground="{Binding TestDispOrder, Converter={StaticResource HiddenColumnConverter}}" Text="{Binding GameTitleViewModel.SeriesViewModel.Title, Mode=OneWay}">
+                  <TextBlock.ContextMenu>
+                    <ContextMenu IsVisible="{Binding IsMod}">
+                      <MenuItem Header="Rename Tone ID..." Command="{Binding $parent[DataGrid].DataContext.ActionRenameToneId, Mode=OneWay}" CommandParameter="{Binding}"/>
+                      <MenuItem Header="Move to Another Mod..."  Command="{Binding $parent[DataGrid].DataContext.ActionMoveToOtherMod, Mode=OneWay}" CommandParameter="{Binding}"/>
+                    </ContextMenu>
+                  </TextBlock.ContextMenu>
+                </TextBlock>
               </DataTemplate>
             </DataGridTemplateColumn.CellTemplate>
           </DataGridTemplateColumn>
           <DataGridTemplateColumn MaxWidth="300" Width="3*" Header="Game">
             <DataGridTemplateColumn.CellTemplate>
               <DataTemplate>
-                <TextBlock Margin="{StaticResource DataGridTextColumnCellTextBlockMargin}" VerticalAlignment="Center" 
-                           Foreground="{Binding TestDispOrder, Converter={StaticResource HiddenColumnConverter}}" Text="{Binding GameTitleViewModel.Title, Mode=OneWay}"></TextBlock>
+                <TextBlock Background="Transparent" Margin="{StaticResource DataGridTextColumnCellTextBlockMargin}" VerticalAlignment="Center" 
+                           Foreground="{Binding TestDispOrder, Converter={StaticResource HiddenColumnConverter}}" Text="{Binding GameTitleViewModel.Title, Mode=OneWay}">
+                  <TextBlock.ContextMenu>
+                    <ContextMenu IsVisible="{Binding IsMod}">
+                      <MenuItem Header="Rename Tone ID..." Command="{Binding $parent[DataGrid].DataContext.ActionRenameToneId, Mode=OneWay}" CommandParameter="{Binding}"/>
+                      <MenuItem Header="Move to Another Mod..."  Command="{Binding $parent[DataGrid].DataContext.ActionMoveToOtherMod, Mode=OneWay}" CommandParameter="{Binding}"/>
+                    </ContextMenu>
+                  </TextBlock.ContextMenu>
+                </TextBlock>
               </DataTemplate>
             </DataGridTemplateColumn.CellTemplate>
           </DataGridTemplateColumn>
           <DataGridTemplateColumn MaxWidth="400" Width="3*" Header="Title">
             <DataGridTemplateColumn.CellTemplate>
               <DataTemplate>
-                <TextBlock Margin="{StaticResource DataGridTextColumnCellTextBlockMargin}" VerticalAlignment="Center" 
-                           Foreground="{Binding TestDispOrder, Converter={StaticResource HiddenColumnConverter}}" Text="{Binding Title, Mode=OneWay, Converter={StaticResource LabelValueConverter}}"></TextBlock>
+                <TextBlock Background="Transparent" Margin="{StaticResource DataGridTextColumnCellTextBlockMargin}" VerticalAlignment="Center"
+                           Foreground="{Binding TestDispOrder, Converter={StaticResource HiddenColumnConverter}}" Text="{Binding Title, Mode=OneWay, Converter={StaticResource LabelValueConverter}}">
+                  <TextBlock.ContextMenu>
+                    <ContextMenu IsVisible="{Binding IsMod}">
+                      <MenuItem Header="Rename Tone ID..." Command="{Binding $parent[DataGrid].DataContext.ActionRenameToneId, Mode=OneWay}" CommandParameter="{Binding}"/>
+                      <MenuItem Header="Move to Another Mod..."  Command="{Binding $parent[DataGrid].DataContext.ActionMoveToOtherMod, Mode=OneWay}" CommandParameter="{Binding}"/>
+                    </ContextMenu>
+                  </TextBlock.ContextMenu>
+                </TextBlock>
               </DataTemplate>
             </DataGridTemplateColumn.CellTemplate>
           </DataGridTemplateColumn>
           <DataGridTemplateColumn Header="Record" Width="*">
             <DataGridTemplateColumn.CellTemplate>
               <DataTemplate>
-                <TextBlock Margin="{StaticResource DataGridTextColumnCellTextBlockMargin}" VerticalAlignment="Center" 
-                           Foreground="{Binding TestDispOrder, Converter={StaticResource HiddenColumnConverter}}" Text="{Binding RecordType, Converter={StaticResource RecordTypeConverter}, Mode=OneWay}"></TextBlock>
+                <TextBlock Background="Transparent" Margin="{StaticResource DataGridTextColumnCellTextBlockMargin}" VerticalAlignment="Center" 
+                           Foreground="{Binding TestDispOrder, Converter={StaticResource HiddenColumnConverter}}" Text="{Binding RecordType, Converter={StaticResource RecordTypeConverter}, Mode=OneWay}">
+                  <TextBlock.ContextMenu>
+                    <ContextMenu IsVisible="{Binding IsMod}">
+                      <MenuItem Header="Rename Tone ID..." Command="{Binding $parent[DataGrid].DataContext.ActionRenameToneId, Mode=OneWay}" CommandParameter="{Binding}"/>
+                      <MenuItem Header="Move to Another Mod..."  Command="{Binding $parent[DataGrid].DataContext.ActionMoveToOtherMod, Mode=OneWay}" CommandParameter="{Binding}"/>
+                    </ContextMenu>
+                  </TextBlock.ContextMenu>
+                </TextBlock>
               </DataTemplate>
             </DataGridTemplateColumn.CellTemplate>
           </DataGridTemplateColumn>
           <DataGridTemplateColumn Header="Mod Name" Width="2*">
             <DataGridTemplateColumn.CellTemplate>
               <DataTemplate>
-                <TextBlock Margin="{StaticResource DataGridTextColumnCellTextBlockMargin}" VerticalAlignment="Center" 
-                           Foreground="{Binding TestDispOrder, Converter={StaticResource HiddenColumnConverter}}" Text="{Binding MusicModViewModel.Name, Mode=OneWay}"></TextBlock>
+                <TextBlock Background="Transparent" Margin="{StaticResource DataGridTextColumnCellTextBlockMargin}" VerticalAlignment="Center" 
+                           Foreground="{Binding TestDispOrder, Converter={StaticResource HiddenColumnConverter}}" Text="{Binding MusicModViewModel.Name, Mode=OneWay}">
+                  <TextBlock.ContextMenu>
+                    <ContextMenu IsVisible="{Binding IsMod}">
+                      <MenuItem Header="Rename Tone ID..." Command="{Binding $parent[DataGrid].DataContext.ActionRenameToneId, Mode=OneWay}" CommandParameter="{Binding}"/>
+                      <MenuItem Header="Move to Another Mod..."  Command="{Binding $parent[DataGrid].DataContext.ActionMoveToOtherMod, Mode=OneWay}" CommandParameter="{Binding}"/>
+                    </ContextMenu>
+                  </TextBlock.ContextMenu>
+                </TextBlock>
               </DataTemplate>
             </DataGridTemplateColumn.CellTemplate>
           </DataGridTemplateColumn>

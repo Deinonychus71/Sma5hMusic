@@ -317,6 +317,12 @@ namespace Sma5hMusic.GUI.Mods.Music.Models.AutoMapper
             CreateMap<ViewModels.BgmStreamPropertyEntryViewModel, ViewModels.BgmStreamPropertyEntryViewModel>();
             CreateMap<ViewModels.BgmStreamSetEntryViewModel, ViewModels.BgmStreamSetEntryViewModel>();
             CreateMap<ViewModels.BgmPropertyEntryViewModel, ViewModels.BgmPropertyEntryViewModel>();
+
+            CreateMap<BgmDbRootEntry, BgmDbRootEntry>();
+            CreateMap<BgmAssignedInfoEntry, BgmAssignedInfoEntry>();
+            CreateMap<BgmStreamPropertyEntry, BgmStreamPropertyEntry>();
+            CreateMap<BgmStreamSetEntry, BgmStreamSetEntry>();
+            CreateMap<BgmPropertyEntry, BgmPropertyEntry>();
         }
     }
 }

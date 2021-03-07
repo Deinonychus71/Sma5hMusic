@@ -50,11 +50,8 @@ namespace Sma5hMusic.GUI.Services
 
                 //TODO - "Simple" way to add a song, it should become more flexible
                 //Link all items manually
-                var newBgmPropertyEntry = new BgmPropertyEntry(toneId, filename, musicMod);
-                var newBgmStreamPropertyEntry = new BgmStreamPropertyEntry($"{MusicConstants.InternalIds.STREAM_PREFIX}{toneId}", musicMod) { DataName0 = newBgmPropertyEntry.NameId };
-                var newBgmAssignedInfoEntry = new BgmAssignedInfoEntry($"{MusicConstants.InternalIds.INFO_ID_PREFIX}{toneId}", musicMod) { StreamId = newBgmStreamPropertyEntry.StreamId };
-                var newBgmStreamSetEntry = new BgmStreamSetEntry($"{MusicConstants.InternalIds.STREAM_SET_PREFIX}{toneId}", musicMod) { Info0 = newBgmAssignedInfoEntry.InfoId };
-                var newBgmDbRootEntry = new BgmDbRootEntry($"{MusicConstants.InternalIds.UI_BGM_ID_PREFIX}{toneId}", musicMod) { StreamSetId = newBgmStreamSetEntry.StreamSetId };
+                var musicModEntries = CreateNewMusicModEntriesSet(toneId, filename, musicMod);
+                var newBgmPropertyEntry = musicModEntries.BgmPropertyEntries.FirstOrDefault();
 
                 //Calculate cues
                 var audioCuePoints = await _audioMetadataService.GetCuePoints(filename);
@@ -65,14 +62,7 @@ namespace Sma5hMusic.GUI.Services
                 }
                 _mapper.Map(audioCuePoints, newBgmPropertyEntry);
 
-                //Create mod
-                var musicModEntries = new MusicModEntries();
-                musicModEntries.BgmDbRootEntries.Add(newBgmDbRootEntry);
-                musicModEntries.BgmStreamSetEntries.Add(newBgmStreamSetEntry);
-                musicModEntries.BgmAssignedInfoEntries.Add(newBgmAssignedInfoEntry);
-                musicModEntries.BgmStreamPropertyEntries.Add(newBgmStreamPropertyEntry);
-                musicModEntries.BgmPropertyEntries.Add(newBgmPropertyEntry);
-
+                //Return
                 return await CreateNewMusicMod(musicModEntries, musicMod);
             }
             catch (Exception e)
@@ -86,6 +76,79 @@ namespace Sma5hMusic.GUI.Services
             }, DispatcherPriority.Background);
 
             return string.Empty;
+        }
+
+        public async Task<bool> RenameMusicModToneId(MusicModEntries musicModEntries, IMusicMod musicMod, string newToneId)
+        {
+            //TODO - "Simple" way to add a song, it should become more flexible
+            try
+            {
+                if (musicModEntries.BgmDbRootEntries.Count != 1 ||
+              musicModEntries.BgmAssignedInfoEntries.Count != 1 ||
+              musicModEntries.BgmStreamSetEntries.Count != 1 ||
+              musicModEntries.BgmStreamPropertyEntries.Count != 1 ||
+              musicModEntries.BgmPropertyEntries.Count != 1 ||
+              musicMod == null || string.IsNullOrEmpty(newToneId))
+                {
+                    await Dispatcher.UIThread.InvokeAsync(async () =>
+                    {
+                        await _messageDialog.ShowError("Error", $"This song cannot be renamed.");
+                    }, DispatcherPriority.Background);
+                    return false;
+                }
+
+                var dbRoot = musicModEntries.BgmDbRootEntries.FirstOrDefault();
+                var streamSet = musicModEntries.BgmStreamSetEntries.FirstOrDefault(); ;
+                var assignedInfo = musicModEntries.BgmAssignedInfoEntries.FirstOrDefault();
+                var streamProperty = musicModEntries.BgmStreamPropertyEntries.FirstOrDefault();
+                var bgmProperty = musicModEntries.BgmPropertyEntries.FirstOrDefault();
+
+                _logger.LogInformation("Rename Music Mod from ToneId: {OldToneId} to ToneId: {NewToneId}", bgmProperty.NameId, newToneId);
+
+                var newMusicModEntries = CreateNewMusicModEntriesSet(newToneId, bgmProperty.Filename, musicMod);
+                var newDbRoot = newMusicModEntries.BgmDbRootEntries.FirstOrDefault();
+                var newStreamSet = newMusicModEntries.BgmStreamSetEntries.FirstOrDefault();
+                var newAssignedInfo = newMusicModEntries.BgmAssignedInfoEntries.FirstOrDefault();
+                var newStreamProperty = newMusicModEntries.BgmStreamPropertyEntries.FirstOrDefault();
+                var newBgmProperty = newMusicModEntries.BgmPropertyEntries.FirstOrDefault();
+                var newStreamSetId = newStreamSet.StreamSetId;
+                var newInfoId = newAssignedInfo.InfoId;
+                var newStreamId = newStreamProperty.StreamId;
+                var newNameId = newBgmProperty.NameId;
+                _mapper.Map(dbRoot, newDbRoot);
+                _mapper.Map(streamSet, newStreamSet);
+                _mapper.Map(assignedInfo, newAssignedInfo);
+                _mapper.Map(streamProperty, newStreamProperty);
+                _mapper.Map(bgmProperty, newBgmProperty);
+                //Fix Ids references
+                newDbRoot.StreamSetId = newStreamSetId;
+                newStreamSet.Info0 = newInfoId;
+                newAssignedInfo.StreamId = newStreamId;
+                newStreamProperty.DataName0 = newNameId;
+
+                //Create new song
+                var createdToneId = await CreateNewMusicMod(newMusicModEntries, musicMod);
+                if (!string.IsNullOrEmpty(createdToneId))
+                {
+                    await RemoveMusicModEntries(musicModEntries.GetMusicModDeleteEntries(), musicMod);
+                }
+
+                //Save order
+                await ReorderSongs();
+
+                return true;
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "Error while rename Tone Id");
+            }
+
+            await Dispatcher.UIThread.InvokeAsync(async () =>
+            {
+                await _messageDialog.ShowError("Create Song Entry Error", "There was an error while renaming a Tone Id. Please check the logs.");
+            }, DispatcherPriority.Background);
+
+            return false;
         }
 
         public async Task<string> CreateNewMusicMod(MusicModEntries musicModEntries, IMusicMod musicMod)
@@ -303,7 +366,7 @@ namespace Sma5hMusic.GUI.Services
                     else
                         result = _Sma5hMusicOverride.UpdateCoreBgmEntries(musicModEntries);
 
-                    if(result)
+                    if (result)
                         await ReorderSongs();
                 }
                 catch (Exception e)
@@ -482,7 +545,7 @@ namespace Sma5hMusic.GUI.Services
                 //We save in CoreGameTitle no matter what so it gets loaded
                 //else
                 //{
-                    result = _Sma5hMusicOverride.UpdateGameTitleEntry(gameTitleEntry);
+                result = _Sma5hMusicOverride.UpdateGameTitleEntry(gameTitleEntry);
                 //}
             }
             catch (Exception e)
@@ -808,6 +871,25 @@ namespace Sma5hMusic.GUI.Services
             }
 
             return result;
+        }
+
+        private MusicModEntries CreateNewMusicModEntriesSet(string toneId, string filename, IMusicMod musicMod)
+        {
+            var newBgmPropertyEntry = new BgmPropertyEntry(toneId, filename, musicMod);
+            var newBgmStreamPropertyEntry = new BgmStreamPropertyEntry($"{MusicConstants.InternalIds.STREAM_PREFIX}{toneId}", musicMod) { DataName0 = newBgmPropertyEntry.NameId };
+            var newBgmAssignedInfoEntry = new BgmAssignedInfoEntry($"{MusicConstants.InternalIds.INFO_ID_PREFIX}{toneId}", musicMod) { StreamId = newBgmStreamPropertyEntry.StreamId };
+            var newBgmStreamSetEntry = new BgmStreamSetEntry($"{MusicConstants.InternalIds.STREAM_SET_PREFIX}{toneId}", musicMod) { Info0 = newBgmAssignedInfoEntry.InfoId };
+            var newBgmDbRootEntry = new BgmDbRootEntry($"{MusicConstants.InternalIds.UI_BGM_ID_PREFIX}{toneId}", musicMod) { StreamSetId = newBgmStreamSetEntry.StreamSetId };
+
+            //Create mod
+            var musicModEntries = new MusicModEntries();
+            musicModEntries.BgmDbRootEntries.Add(newBgmDbRootEntry);
+            musicModEntries.BgmStreamSetEntries.Add(newBgmStreamSetEntry);
+            musicModEntries.BgmAssignedInfoEntries.Add(newBgmAssignedInfoEntry);
+            musicModEntries.BgmStreamPropertyEntries.Add(newBgmStreamPropertyEntry);
+            musicModEntries.BgmPropertyEntries.Add(newBgmPropertyEntry);
+
+            return musicModEntries;
         }
     }
 }

@@ -20,5 +20,46 @@ namespace Sma5h.Mods.Music.Models
             BgmPropertyEntries = new List<BgmPropertyEntry>();
             GameTitleEntries = new List<GameTitleEntry>();
         }
+
+        public MusicModDeleteEntries GetMusicModDeleteEntries()
+        {
+            var output = new MusicModDeleteEntries();
+            if(BgmDbRootEntries != null)
+            {
+                foreach(var entry in BgmDbRootEntries)
+                {
+                    output.BgmDbRootEntries.Add(entry.UiBgmId);
+                }
+            }
+            if (BgmAssignedInfoEntries != null)
+            {
+                foreach (var entry in BgmAssignedInfoEntries)
+                {
+                    output.BgmAssignedInfoEntries.Add(entry.InfoId);
+                }
+            }
+            if (BgmStreamSetEntries != null)
+            {
+                foreach (var entry in BgmStreamSetEntries)
+                {
+                    output.BgmStreamSetEntries.Add(entry.StreamSetId);
+                }
+            }
+            if (BgmStreamPropertyEntries != null)
+            {
+                foreach (var entry in BgmStreamPropertyEntries)
+                {
+                    output.BgmStreamPropertyEntries.Add(entry.StreamId);
+                }
+            }
+            if (BgmPropertyEntries != null)
+            {
+                foreach (var entry in BgmPropertyEntries)
+                {
+                    output.BgmPropertyEntries.Add(entry.NameId);
+                }
+            }
+            return output;
+        }
     }
 }

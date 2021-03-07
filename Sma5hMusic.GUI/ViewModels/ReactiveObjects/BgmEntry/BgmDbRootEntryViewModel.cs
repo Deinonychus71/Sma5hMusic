@@ -4,6 +4,7 @@ using ReactiveUI.Fody.Helpers;
 using Sma5h.Mods.Music.Models;
 using Sma5hMusic.GUI.Interfaces;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Sma5hMusic.GUI.ViewModels
 {
@@ -91,11 +92,11 @@ namespace Sma5hMusic.GUI.ViewModels
             UiBgmId = bgmDbRootEntry?.UiBgmId;
         }
 
-        public void StopPlay()
+        public async Task StopPlay()
         {
             if (MusicPlayer != null)
             {
-                MusicPlayer.StopSong();
+                await MusicPlayer.StopSong();
             }
         }
 

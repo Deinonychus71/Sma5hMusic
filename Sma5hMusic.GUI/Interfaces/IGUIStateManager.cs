@@ -8,6 +8,7 @@ namespace Sma5hMusic.GUI.Interfaces
     public interface IGUIStateManager
     {
         Task<string> CreateNewMusicModFromToneId(string toneId, string filename, IMusicMod musicMod);
+        Task<bool> RenameMusicModToneId(MusicModEntries musicModEntries, IMusicMod musicMod, string newToneId);
         Task<string> CreateNewMusicMod(MusicModEntries musicModEntries, IMusicMod musicMod);
         Task<bool> CanAddMusicModEntries(MusicModEntries musicModEntries);
         Task<bool> PersistMusicModEntryChanges(MusicModEntries musicModEntries, IMusicMod musicMod = null);

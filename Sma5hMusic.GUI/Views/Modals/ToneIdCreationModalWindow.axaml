@@ -13,7 +13,7 @@
       <TextBlock>Choose a Tone ID</TextBlock>
     </Border>
     <StackPanel Classes="modalActions" DockPanel.Dock="Bottom">
-      <Button Content="Create" Command="{Binding ActionCreate}" CommandParameter="{Binding $parent[Window]}"></Button>
+      <Button Content="Choose" Command="{Binding ActionCreate}" CommandParameter="{Binding $parent[Window]}"></Button>
       <Button Content="Cancel" Command="{Binding ActionCancel}" CommandParameter="{Binding $parent[Window]}"></Button>
     </StackPanel>
 

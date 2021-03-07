@@ -476,6 +476,7 @@ namespace Sma5hMusic.GUI.Services
             foreach (var bgmEntry in listBgms)
             {
                 bgmEntry.TestDispOrder = i;
+                bgmEntry.GetReferenceEntity().TestDispOrder = i;
                 i += 2;
             }
         }

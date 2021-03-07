@@ -154,7 +154,7 @@ namespace Sma5h.Mods.Music.MusicMods
                 //In case of change of file
                 if (isFileEdit)
                 {
-                    var oldBgmData = _musicModConfig.Games.Select(p => p.Bgms.FirstOrDefault(s => s.ToneId == toneId))?.FirstOrDefault();
+                    var oldBgmData = _musicModConfig.Games.Select(p => p.Bgms.FirstOrDefault(s => s.ToneId == toneId)).Where(p => p != null)?.FirstOrDefault();
                     string oldFilename = Path.Combine(ModPath, oldBgmData.Filename);
                     if (oldFilename.ToLower() != bgmProperty.Filename.ToLower())
                     {

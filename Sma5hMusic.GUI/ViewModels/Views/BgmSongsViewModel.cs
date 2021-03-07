@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
+using Sma5h.Mods.Music.Interfaces;
 using System;
 using System.Collections.ObjectModel;
 using System.Reactive;
@@ -22,6 +23,8 @@ namespace Sma5hMusic.GUI.ViewModels
         private readonly ReadOnlyObservableCollection<BgmDbRootEntryViewModel> _items;
         private readonly Subject<BgmDbRootEntryViewModel> _whenNewRequestToEditBgmEntry;
         private readonly Subject<BgmDbRootEntryViewModel> _whenNewRequestToDeleteBgmEntry;
+        private readonly Subject<BgmDbRootEntryViewModel> _whenNewRequestToRenameToneId;
+        private readonly Subject<BgmDbRootEntryViewModel> _whenNewRequestToMoveToOtherMod;
         private readonly Subject<Unit> _whenNewRequestToReorderBgmEntries;
         private const string DATAOBJECT_FORMAT = "BGM";
         private Action _postReorderSelection;
@@ -30,6 +33,8 @@ namespace Sma5hMusic.GUI.ViewModels
 
         public IObservable<BgmDbRootEntryViewModel> WhenNewRequestToEditBgmEntry { get { return _whenNewRequestToEditBgmEntry; } }
         public IObservable<BgmDbRootEntryViewModel> WhenNewRequestToDeleteBgmEntry { get { return _whenNewRequestToDeleteBgmEntry; } }
+        public IObservable<BgmDbRootEntryViewModel> WhenNewRequestToRenameToneId { get { return _whenNewRequestToRenameToneId; } }
+        public IObservable<BgmDbRootEntryViewModel> WhenNewRequestToMoveToOtherMod { get { return _whenNewRequestToMoveToOtherMod; } }
         public IObservable<Unit> WhenNewRequestToReorderBgmEntries { get { return _whenNewRequestToReorderBgmEntries; } }
 
         public ReadOnlyObservableCollection<BgmDbRootEntryViewModel> Items { get { return _items; } }
@@ -40,6 +45,8 @@ namespace Sma5hMusic.GUI.ViewModels
         public ReactiveCommand<DataGridCellPointerPressedEventArgs, Unit> ActionReorderBgm { get; }
         public ReactiveCommand<UserControl, Unit> ActionInitializeDragAndDrop { get; }
         public ReactiveCommand<BgmDbRootEntryViewModel, Unit> ActionEditBgm { get; }
+        public ReactiveCommand<BgmDbRootEntryViewModel, Unit> ActionRenameToneId { get; }
+        public ReactiveCommand<BgmDbRootEntryViewModel, Unit> ActionMoveToOtherMod { get; }
         public ReactiveCommand<BgmDbRootEntryViewModel, Unit> ActionDeleteBgm { get; }
         public BgmPropertiesViewModel VMBgmProperties { get; }
 
@@ -53,6 +60,8 @@ namespace Sma5hMusic.GUI.ViewModels
             _whenNewRequestToEditBgmEntry = new Subject<BgmDbRootEntryViewModel>();
             _whenNewRequestToDeleteBgmEntry = new Subject<BgmDbRootEntryViewModel>();
             _whenNewRequestToReorderBgmEntries = new Subject<Unit>();
+            _whenNewRequestToRenameToneId = new Subject<BgmDbRootEntryViewModel>();
+            _whenNewRequestToMoveToOtherMod = new Subject<BgmDbRootEntryViewModel>();
 
             observableBgmEntriesList
                 .Sort(SortExpressionComparer<BgmDbRootEntryViewModel>.Ascending(p => p.HiddenInSoundTest).ThenByAscending(p => p.TestDispOrder), SortOptimisations.ComparesImmutableValuesOnly, 8000)
@@ -66,13 +75,15 @@ namespace Sma5hMusic.GUI.ViewModels
             ActionInitializeDragAndDrop = ReactiveCommand.Create<UserControl>(InitializeDragAndDropHandlers);
             ActionEditBgm = ReactiveCommand.Create<BgmDbRootEntryViewModel>(EditBgmEntry);
             ActionDeleteBgm = ReactiveCommand.Create<BgmDbRootEntryViewModel>(DeleteBgmEntry);
+            ActionRenameToneId = ReactiveCommand.Create<BgmDbRootEntryViewModel>(RenameToneId);
+            ActionMoveToOtherMod = ReactiveCommand.Create<BgmDbRootEntryViewModel>(MoveToOtherMod);
 
             //Initialize properties
             var whenSelectedBgmEntryChanged = this.WhenAnyValue(p => p.SelectedBgmEntry);
             VMBgmProperties = ActivatorUtilities.CreateInstance<BgmPropertiesViewModel>(serviceProvider, whenSelectedBgmEntryChanged);
         }
 
-        #region DELETE/EDIT BGM PROPERTIES
+        #region DELETE/EDIT/RENAME BGM PROPERTIES
         public void EditBgmEntry(BgmDbRootEntryViewModel bgmEntry)
         {
             _whenNewRequestToEditBgmEntry.OnNext(bgmEntry);
@@ -80,6 +91,14 @@ namespace Sma5hMusic.GUI.ViewModels
         public void DeleteBgmEntry(BgmDbRootEntryViewModel bgmEntry)
         {
             _whenNewRequestToDeleteBgmEntry.OnNext(bgmEntry);
+        }
+        public void RenameToneId(BgmDbRootEntryViewModel bgmEntry)
+        {
+            _whenNewRequestToRenameToneId.OnNext(bgmEntry);
+        }
+        public void MoveToOtherMod(BgmDbRootEntryViewModel bgmEntry)
+        {
+            _whenNewRequestToMoveToOtherMod.OnNext(bgmEntry);
         }
         #endregion
 
@@ -168,6 +187,16 @@ namespace Sma5hMusic.GUI.ViewModels
             {
                 _whenNewRequestToDeleteBgmEntry?.OnCompleted();
                 _whenNewRequestToDeleteBgmEntry?.Dispose();
+            }
+            if (_whenNewRequestToRenameToneId != null)
+            {
+                _whenNewRequestToRenameToneId?.OnCompleted();
+                _whenNewRequestToRenameToneId?.Dispose();
+            }
+            if (_whenNewRequestToMoveToOtherMod != null)
+            {
+                _whenNewRequestToMoveToOtherMod?.OnCompleted();
+                _whenNewRequestToMoveToOtherMod?.Dispose();
             }
         }
     }
