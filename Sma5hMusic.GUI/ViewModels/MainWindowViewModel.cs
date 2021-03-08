@@ -383,12 +383,7 @@ namespace Sma5hMusic.GUI.ViewModels
                 await _guiStateManager.RenameMusicModToneId(bgmEntryVM.GetMusicModEntries(), vmBgmEntry.MusicMod, _vmToneIdCreation.ToneId);
             }
         }
-
-        public async Task MoveToAnotherMod(BgmDbRootEntryViewModel vmBgmEntry)
-        {
-
-        }
-
+       
         public async Task DeleteBgmEntry(BgmDbRootEntryViewModel vmBgmEntry)
         {
             if (vmBgmEntry != null)
@@ -456,6 +451,14 @@ namespace Sma5hMusic.GUI.ViewModels
             if (result != null)
                 await AddNewOrEditMod(parent, result);
         }
+
+        public async Task MoveToAnotherMod(BgmDbRootEntryViewModel vmBgmEntry)
+        {
+            var result = await _dialogModPicker.ShowPickerDialog(_rootDialog.Window);
+            if (result != null)
+                await _guiStateManager.MoveMusicModEntrySetToAnotherMod(new BgmEntryViewModel(vmBgmEntry).GetMusicModEntries(), vmBgmEntry.MusicMod, result.MusicMod);
+        }
+
         #endregion
 
         #region Playlists Operations

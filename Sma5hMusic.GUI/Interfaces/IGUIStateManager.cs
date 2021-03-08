@@ -7,13 +7,17 @@ namespace Sma5hMusic.GUI.Interfaces
 {
     public interface IGUIStateManager
     {
+        #region Music Mod Entries (Hackish)
         Task<string> CreateNewMusicModFromToneId(string toneId, string filename, IMusicMod musicMod);
         Task<bool> RenameMusicModToneId(MusicModEntries musicModEntries, IMusicMod musicMod, string newToneId);
+        Task<bool> MoveMusicModEntrySetToAnotherMod(MusicModEntries musicModEntries, IMusicMod fromMusicMod, IMusicMod toMusicMod);
+        #endregion
+
         Task<string> CreateNewMusicMod(MusicModEntries musicModEntries, IMusicMod musicMod);
         Task<bool> CanAddMusicModEntries(MusicModEntries musicModEntries);
         Task<bool> PersistMusicModEntryChanges(MusicModEntries musicModEntries, IMusicMod musicMod = null);
         Task<bool> RemoveMusicModEntries(MusicModDeleteEntries musicModDeleteEntries, IMusicMod musicMod = null);
-
+        
         Task<string> CreateNewGameTitleEntry(GameTitleEntry gameTitleEntry);
         Task<bool> PersistGameTitleEntryChange(GameTitleEntry gameTitleEntry);
         Task<bool> RemoveGameTitleEntry(string gameTitleId);
