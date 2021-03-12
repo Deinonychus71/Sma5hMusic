@@ -125,7 +125,7 @@ namespace Sma5hMusic.GUI
                 { "Sma5hMusic:AudioConversionFormatFallBack", "idsp" },
                 { "Sma5hMusic:DefaultLocale", "us_en" }, //Delete? This should now be handled from GUI with DefaultCopyLocale
                 { "Sma5hMusicGUI:Advanced", "false" },
-                { "Sma5hMusicGUI:UIScale", "Normal" },
+                { "Sma5hMusicGUI:UIScale", "Small" },
                 { "Sma5hMusicGUI:UITheme", "Dark" },
                 { "Sma5hMusicGUI:DefaultGUILocale", "us_en" },
                 { "Sma5hMusicGUI:CopyToEmptyLocales", "true" },
