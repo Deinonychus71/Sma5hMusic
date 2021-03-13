@@ -456,7 +456,10 @@ namespace Sma5hMusic.GUI.ViewModels
         {
             var result = await _dialogModPicker.ShowPickerDialog(_rootDialog.Window);
             if (result != null)
+            {
+                await vmBgmEntry.StopPlay();
                 await _guiStateManager.MoveMusicModEntrySetToAnotherMod(new BgmEntryViewModel(vmBgmEntry).GetMusicModEntries(), vmBgmEntry.MusicMod, result.MusicMod);
+            }
         }
 
         #endregion
