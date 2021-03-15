@@ -43,8 +43,8 @@
                            Foreground="{Binding TestDispOrder, Converter={StaticResource HiddenColumnConverter}}" Text="{Binding GameTitleViewModel.SeriesViewModel.Title, Mode=OneWay}">
                   <TextBlock.ContextMenu>
                     <ContextMenu IsVisible="{Binding IsMod}">
-                      <MenuItem Header="Rename Tone ID..." Command="{Binding $parent[DataGrid].DataContext.ActionRenameToneId, Mode=OneWay}" CommandParameter="{Binding}"/>
-                      <MenuItem Header="Move to Another Mod..."  Command="{Binding $parent[DataGrid].DataContext.ActionMoveToOtherMod, Mode=OneWay}" CommandParameter="{Binding}"/>
+                      <MenuItem Header="[EXPERIMENTAL] Rename Tone ID..." Command="{Binding $parent[DataGrid].DataContext.ActionRenameToneId, Mode=OneWay}" CommandParameter="{Binding}"/>
+                      <MenuItem Header="[EXPERIMENTAL] Move to Another Mod..."  Command="{Binding $parent[DataGrid].DataContext.ActionMoveToOtherMod, Mode=OneWay}" CommandParameter="{Binding}"/>
                     </ContextMenu>
                   </TextBlock.ContextMenu>
                 </TextBlock>
@@ -58,8 +58,8 @@
                            Foreground="{Binding TestDispOrder, Converter={StaticResource HiddenColumnConverter}}" Text="{Binding GameTitleViewModel.Title, Mode=OneWay}">
                   <TextBlock.ContextMenu>
                     <ContextMenu IsVisible="{Binding IsMod}">
-                      <MenuItem Header="Rename Tone ID..." Command="{Binding $parent[DataGrid].DataContext.ActionRenameToneId, Mode=OneWay}" CommandParameter="{Binding}"/>
-                      <MenuItem Header="Move to Another Mod..."  Command="{Binding $parent[DataGrid].DataContext.ActionMoveToOtherMod, Mode=OneWay}" CommandParameter="{Binding}"/>
+                      <MenuItem Header="[EXPERIMENTAL] Rename Tone ID..." Command="{Binding $parent[DataGrid].DataContext.ActionRenameToneId, Mode=OneWay}" CommandParameter="{Binding}"/>
+                      <MenuItem Header="[EXPERIMENTAL] Move to Another Mod..."  Command="{Binding $parent[DataGrid].DataContext.ActionMoveToOtherMod, Mode=OneWay}" CommandParameter="{Binding}"/>
                     </ContextMenu>
                   </TextBlock.ContextMenu>
                 </TextBlock>
@@ -73,8 +73,8 @@
                            Foreground="{Binding TestDispOrder, Converter={StaticResource HiddenColumnConverter}}" Text="{Binding Title, Mode=OneWay, Converter={StaticResource LabelValueConverter}}">
                   <TextBlock.ContextMenu>
                     <ContextMenu IsVisible="{Binding IsMod}">
-                      <MenuItem Header="Rename Tone ID..." Command="{Binding $parent[DataGrid].DataContext.ActionRenameToneId, Mode=OneWay}" CommandParameter="{Binding}"/>
-                      <MenuItem Header="Move to Another Mod..."  Command="{Binding $parent[DataGrid].DataContext.ActionMoveToOtherMod, Mode=OneWay}" CommandParameter="{Binding}"/>
+                      <MenuItem Header="[EXPERIMENTAL] Rename Tone ID..." Command="{Binding $parent[DataGrid].DataContext.ActionRenameToneId, Mode=OneWay}" CommandParameter="{Binding}"/>
+                      <MenuItem Header="[EXPERIMENTAL] Move to Another Mod..."  Command="{Binding $parent[DataGrid].DataContext.ActionMoveToOtherMod, Mode=OneWay}" CommandParameter="{Binding}"/>
                     </ContextMenu>
                   </TextBlock.ContextMenu>
                 </TextBlock>
@@ -88,8 +88,8 @@
                            Foreground="{Binding TestDispOrder, Converter={StaticResource HiddenColumnConverter}}" Text="{Binding RecordType, Converter={StaticResource RecordTypeConverter}, Mode=OneWay}">
                   <TextBlock.ContextMenu>
                     <ContextMenu IsVisible="{Binding IsMod}">
-                      <MenuItem Header="Rename Tone ID..." Command="{Binding $parent[DataGrid].DataContext.ActionRenameToneId, Mode=OneWay}" CommandParameter="{Binding}"/>
-                      <MenuItem Header="Move to Another Mod..."  Command="{Binding $parent[DataGrid].DataContext.ActionMoveToOtherMod, Mode=OneWay}" CommandParameter="{Binding}"/>
+                      <MenuItem Header="[EXPERIMENTAL] Rename Tone ID..." Command="{Binding $parent[DataGrid].DataContext.ActionRenameToneId, Mode=OneWay}" CommandParameter="{Binding}"/>
+                      <MenuItem Header="[EXPERIMENTAL] Move to Another Mod..."  Command="{Binding $parent[DataGrid].DataContext.ActionMoveToOtherMod, Mode=OneWay}" CommandParameter="{Binding}"/>
                     </ContextMenu>
                   </TextBlock.ContextMenu>
                 </TextBlock>
@@ -103,8 +103,8 @@
                            Foreground="{Binding TestDispOrder, Converter={StaticResource HiddenColumnConverter}}" Text="{Binding MusicModViewModel.Name, Mode=OneWay}">
                   <TextBlock.ContextMenu>
                     <ContextMenu IsVisible="{Binding IsMod}">
-                      <MenuItem Header="Rename Tone ID..." Command="{Binding $parent[DataGrid].DataContext.ActionRenameToneId, Mode=OneWay}" CommandParameter="{Binding}"/>
-                      <MenuItem Header="Move to Another Mod..."  Command="{Binding $parent[DataGrid].DataContext.ActionMoveToOtherMod, Mode=OneWay}" CommandParameter="{Binding}"/>
+                      <MenuItem Header="[EXPERIMENTAL] Rename Tone ID..." Command="{Binding $parent[DataGrid].DataContext.ActionRenameToneId, Mode=OneWay}" CommandParameter="{Binding}"/>
+                      <MenuItem Header="[EXPERIMENTAL] Move to Another Mod..."  Command="{Binding $parent[DataGrid].DataContext.ActionMoveToOtherMod, Mode=OneWay}" CommandParameter="{Binding}"/>
                     </ContextMenu>
                   </TextBlock.ContextMenu>
                 </TextBlock>
