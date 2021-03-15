@@ -30,7 +30,7 @@ namespace Sma5hMusic.GUI.ViewModels
         private readonly IMapper _mapper;
         private readonly ILogger _logger;
         private readonly IFileDialog _fileDialog;
-        private readonly IAudioMetadataService _audioMetadataService;
+        private readonly IGUIStateManager _guiStateManager;
         private readonly List<ComboItem> _recordTypes;
         private readonly List<ComboItem> _specialCategories;
         private readonly ReadOnlyObservableCollection<SeriesEntryViewModel> _series;
@@ -78,13 +78,13 @@ namespace Sma5hMusic.GUI.ViewModels
         public ReactiveCommand<BgmPropertyEntryViewModel, Unit> ActionCalculateLoopCues { get; }
 
         public BgmPropertiesModalWindowViewModel(IOptions<ApplicationSettings> config, ILogger<BgmPropertiesModalWindowViewModel> logger, IFileDialog fileDialog,
-            IMapper mapper, IAudioMetadataService audioMetadataService, IObservable<IChangeSet<SeriesEntryViewModel, string>> observableSeries, 
+            IMapper mapper, IGUIStateManager guiStateManager, IObservable<IChangeSet<SeriesEntryViewModel, string>> observableSeries, 
             IObservable<IChangeSet<GameTitleEntryViewModel, string>> observableGames, IObservable<IChangeSet<BgmAssignedInfoEntryViewModel, string>> observableBgmAssignedInfoEntries)
         {
             _config = config;
             _logger = logger;
             _mapper = mapper;
-            _audioMetadataService = audioMetadataService;
+            _guiStateManager = guiStateManager;
             _fileDialog = fileDialog;
             _recordTypes = GetRecordTypes();
             _specialCategories = GetSpecialCategories();
@@ -152,9 +152,16 @@ namespace Sma5hMusic.GUI.ViewModels
             var filename = await _fileDialog.OpenFileDialogAudioSingle();
             if (!string.IsNullOrEmpty(filename))
             {
+                var oldFile = BgmPropertyViewModel.Filename;
                 BgmPropertyViewModel.Filename = filename;
-                await BgmPropertyViewModel.MusicPlayer?.ChangeFilename(filename);
-                await CalculateAudioCues(bgmPropertyEntryViewModel);
+                if (await CalculateAudioCues(bgmPropertyEntryViewModel))
+                {
+                    await BgmPropertyViewModel.MusicPlayer?.ChangeFilename(filename);
+                }
+                else
+                {
+                    BgmPropertyViewModel.Filename = oldFile;
+                }
             }
         }
 
@@ -271,16 +278,15 @@ namespace Sma5hMusic.GUI.ViewModels
             SetSpecialCategoryRules(StreamSetViewModel.SpecialCategory);
         }
 
-        private async Task CalculateAudioCues(BgmPropertyEntryViewModel bgmPropertyEntryViewModel)
+        private async Task<bool> CalculateAudioCues(BgmPropertyEntryViewModel bgmPropertyEntryViewModel)
         {
-            //Calculate cues
-            var audioCuePoints = await _audioMetadataService.GetCuePoints(bgmPropertyEntryViewModel.Filename);
-            if (audioCuePoints == null || audioCuePoints.TotalSamples <= 0)
+            var audioCuePoints = await _guiStateManager.UpdateAudioCuePoints(bgmPropertyEntryViewModel.Filename);
+            if (audioCuePoints != null)
             {
-                _logger.LogError("The filename {Filename} didn't have cue points. Make sure audio library is properly installed.", bgmPropertyEntryViewModel.Filename);
-                return;
+                _mapper.Map(audioCuePoints, bgmPropertyEntryViewModel);
+                return true;
             }
-            _mapper.Map(audioCuePoints, bgmPropertyEntryViewModel);
+            return false;
         }
     }
 }

@@ -15,7 +15,6 @@ namespace Sma5h.Mods.Music.MusicMods
 {
     public class AdvancedMusicMod : IMusicMod
     {
-        private readonly IAudioMetadataService _audioMetadataService;
         protected readonly IMapper _mapper;
         protected readonly ILogger _logger;
 
@@ -26,29 +25,26 @@ namespace Sma5h.Mods.Music.MusicMods
         public string ModPath { get; }
         public MusicModInformation Mod => _musicModConfig;
 
-        public AdvancedMusicMod(IAudioMetadataService audioMetadataService, IMapper mapper, ILogger<IMusicMod> logger, string musicModPath)
+        public AdvancedMusicMod(IMapper mapper, ILogger<IMusicMod> logger, string musicModPath)
         {
             ModPath = musicModPath;
-            _audioMetadataService = audioMetadataService;
             _logger = logger;
             _mapper = mapper;
             _musicModConfig = LoadMusicModConfig();
         }
 
-        public AdvancedMusicMod(IAudioMetadataService audioMetadataService, IMapper mapper, ILogger<IMusicMod> logger, string newModPath, MusicModInformation newMod)
+        public AdvancedMusicMod(IMapper mapper, ILogger<IMusicMod> logger, string newModPath, MusicModInformation newMod)
         {
             ModPath = newModPath;
-            _audioMetadataService = audioMetadataService;
             _logger = logger;
             _mapper = mapper;
             _musicModConfig = InitializeNewMod(newModPath, newMod);
             SaveMusicModConfig();
         }
 
-        public AdvancedMusicMod(IAudioMetadataService audioMetadataService, IMapper mapper, ILogger<IMusicMod> logger, string musicModPath, IMusicMod oldMod)
+        public AdvancedMusicMod(IMapper mapper, ILogger<IMusicMod> logger, string musicModPath, IMusicMod oldMod)
         {
             ModPath = musicModPath;
-            _audioMetadataService = audioMetadataService;
             _logger = logger;
             _mapper = mapper;
             _musicModConfig = ConvertOldMod(oldMod);

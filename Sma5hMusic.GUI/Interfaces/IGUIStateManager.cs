@@ -34,6 +34,8 @@ namespace Sma5hMusic.GUI.Interfaces
         Task<bool> WipeAudioCache();
         Task<bool> ReorderSongs();
 
+        Task<AudioCuePoints> UpdateAudioCuePoints(string filename);
+
         string GameVersion { get; }
 
         bool IsGameVersionFound { get; }

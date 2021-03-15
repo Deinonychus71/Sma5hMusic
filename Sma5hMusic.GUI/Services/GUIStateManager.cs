@@ -56,12 +56,9 @@ namespace Sma5hMusic.GUI.Services
                 var newBgmPropertyEntry = musicModEntries.BgmPropertyEntries.FirstOrDefault();
 
                 //Calculate cues
-                var audioCuePoints = await _audioMetadataService.GetCuePoints(filename);
-                if (audioCuePoints == null || audioCuePoints.TotalSamples <= 0)
-                {
-                    _logger.LogError("The filename {Filename} didn't have cue points. Make sure audio library is properly installed.", filename);
+                var audioCuePoints = await UpdateAudioCuePoints(filename);
+                if (audioCuePoints == null)
                     throw new Exception();
-                }
                 _mapper.Map(audioCuePoints, newBgmPropertyEntry);
 
                 //Return
@@ -239,7 +236,7 @@ namespace Sma5hMusic.GUI.Services
                             newMusicModEntries.GameTitleEntries.Add(gameTitle);
                             result = await PersistMusicModEntryChanges(newMusicModEntries, toMusicMod);
                         }
-                        
+
                     }
                 }
             }
@@ -859,6 +856,29 @@ namespace Sma5hMusic.GUI.Services
             return result;
         }
         #endregion
+
+        public async Task<AudioCuePoints> UpdateAudioCuePoints(string filename)
+        {
+            //Calculate cues
+            var audioCuePoints = await _audioMetadataService.GetCuePoints(filename);
+            if (audioCuePoints == null || audioCuePoints.TotalSamples <= 0)
+            {
+                await Dispatcher.UIThread.InvokeAsync(async () =>
+                {
+                    await _messageDialog.ShowError("Update Audio Cue Points", $"The filename {filename} didn't have cue points. Make sure audio library is properly installed.");
+                }, DispatcherPriority.Background);
+                return null;
+            }
+            if (audioCuePoints.Frequency < 32000)
+            {
+                await Dispatcher.UIThread.InvokeAsync(async () =>
+                {
+                    await _messageDialog.ShowError("Update Audio Cue Points", $"The frequency of the audio file {filename} must be at least 32Khz.");
+                }, DispatcherPriority.Background);
+                return null;
+            }
+            return audioCuePoints;
+        }
 
         public string GameVersion
         {
