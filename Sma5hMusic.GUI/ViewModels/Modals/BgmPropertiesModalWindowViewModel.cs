@@ -38,8 +38,8 @@ namespace Sma5hMusic.GUI.ViewModels
         private readonly ReadOnlyObservableCollection<string> _assignedInfoIds;
         private readonly Subject<Window> _whenNewRequestToAddGameEntry;
         private bool _isUpdatingSpecialRule = false;
-        private const float _minimumVolume = -20.0f;
-        private const float _maximumVolume = 20.0f;
+        private const float _minimumVolume = -90.0f;
+        private const float _maximumVolume = 90.0f;
         private string _originalFilename;
 
         public IObservable<Window> WhenNewRequestToAddGameEntry { get { return _whenNewRequestToAddGameEntry; } }

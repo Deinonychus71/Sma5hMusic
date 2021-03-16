@@ -10,6 +10,7 @@ namespace Sma5hMusic.GUI.ViewModels
     {
         private readonly IVGMMusicPlayer _musicPlayer;
         public const float DefaultMusicPlayerVolume = 0.5f;
+        private float _audioVolume;
         private const string PLAY = "\u25B6";
         private const string STOP = "\u23F9";
         private bool _isPlaying;
@@ -18,7 +19,19 @@ namespace Sma5hMusic.GUI.ViewModels
 
         public ReactiveCommand<Unit, Unit> ActionPlaySong { get; }
 
-        public float AudioVolume { get; set; }
+        public float AudioVolume
+        {
+            get
+            {
+                return _audioVolume;
+            }
+            set
+            {
+                _audioVolume = value;
+                if (_musicPlayer != null)
+                    _musicPlayer.Volume = _audioVolume;
+            }
+        }
 
         public string Filename { get; private set; }
 
@@ -49,7 +62,7 @@ namespace Sma5hMusic.GUI.ViewModels
                 await StopSong();
             else
                 await PlaySong();
-           // _isExecutingAction = false;
+            // _isExecutingAction = false;
         }
 
         public async Task PlaySong()

@@ -45,7 +45,7 @@ namespace Sma5hMusic.GUI.ViewModels
         public uint Frequency { get { return TotalTimeMs == 0 ? 0 : (uint)((double)TotalSamples / (double)TotalTimeMs * 1000.0); } }
         [Reactive]
         public string Filename { get; set; }
-        [Reactive]
+        //[Reactive]
         public float AudioVolume
         {
             get
@@ -96,7 +96,7 @@ namespace Sma5hMusic.GUI.ViewModels
         {
             if (volume == 0)
                 return MusicPlayerViewModel.DefaultMusicPlayerVolume;
-            return (volume + 20) / 40;
+            return (volume + 90f) / 180;
         }
     }
 }
