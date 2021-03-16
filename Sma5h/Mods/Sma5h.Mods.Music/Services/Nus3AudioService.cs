@@ -124,17 +124,34 @@ namespace Sma5h.Mods.Music.Services
 
             EnsureRequiredFilesAreFound();
 
-            using (var memoryStream = new MemoryStream())
+
+            using (var memoryStreamWrite = new MemoryStream())
             {
-                using (var fileStream = File.Open(_nus3BankTemplateFile, FileMode.Open, FileAccess.Read))
+                long nameIdPosition = 0;
+                using (var memoryStreamRead = new MemoryStream())
                 {
-                    fileStream.CopyTo(memoryStream);
+                    using (var fileStream = File.Open(_nus3BankTemplateFile, FileMode.Open, FileAccess.Read))
+                    {
+                        fileStream.CopyTo(memoryStreamWrite);
+                        fileStream.Position = 0;
+                        fileStream.CopyTo(memoryStreamRead);
+                    }
+
+                    //Automatically retrieve position nameId
+                    using (var w = new BinaryReader(memoryStreamRead))
+                    {
+                        w.BaseStream.Position = 0x98;
+                        var sizeBlock = w.ReadUInt16();
+                        nameIdPosition = w.BaseStream.Position + sizeBlock - 2;
+                    }
                 }
-                var bytes = memoryStream.ToArray();
+
+                var bytes = memoryStreamWrite.ToArray();
                 var found = ByteHelper.Locate(bytes, new byte[] { 0xE8, 0x22, 0x00, 0x00 });
-                using (var w = new BinaryWriter(memoryStream))
+
+                using (var w = new BinaryWriter(memoryStreamWrite))
                 {
-                    w.BaseStream.Position = 0xc8; //NameId
+                    w.BaseStream.Position = nameIdPosition; //NameId
                     w.Write(GetNewNus3BankId());
                     if (found.Length != 3)
                     {
@@ -147,7 +164,7 @@ namespace Sma5h.Mods.Music.Services
                     }
                 }
                 Directory.CreateDirectory(Path.GetDirectoryName(outputMediaFile));
-                File.WriteAllBytes(outputMediaFile, memoryStream.ToArray());
+                File.WriteAllBytes(outputMediaFile, memoryStreamWrite.ToArray());
             }
 
             return true;
