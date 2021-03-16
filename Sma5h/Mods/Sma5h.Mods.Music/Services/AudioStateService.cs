@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using CsvHelper;
+using CsvHelper.Configuration;
 using Force.Crc32;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -14,9 +16,12 @@ using Sma5h.Mods.Music.Interfaces;
 using Sma5h.Mods.Music.Models;
 using Sma5h.ResourceProviders.Constants;
 using Sma5h.ResourceProviders.Prc.Helpers;
+using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace Sma5h.Mods.Music.Services
 {
@@ -37,6 +42,7 @@ namespace Sma5h.Mods.Music.Services
         //private readonly Dictionary<string, BgmDbRootEntry> _deletedBgmEntries; //TODO
         private readonly Dictionary<string, PlaylistEntry> _playlistsEntries;
         private readonly Dictionary<string, StageEntry> _stageEntries;
+        private readonly Dictionary<string, float> _coreVolumes;
 
         public double GameVersion { get; private set; }
 
@@ -57,6 +63,7 @@ namespace Sma5h.Mods.Music.Services
             _bgmPropertyEntries = new Dictionary<string, BgmPropertyEntry>();
             _playlistsEntries = new Dictionary<string, PlaylistEntry>();
             _stageEntries = new Dictionary<string, StageEntry>();
+            _coreVolumes = GetCoreNus3BankVolumes();
         }
 
         #region GET
@@ -653,7 +660,10 @@ namespace Sma5h.Mods.Music.Services
             foreach (var binBgnProperty in daoBinBgmProperty.Entries.Values)
             {
                 var filename = Path.Combine(_config.Value.GameResourcesPath, "stream;", "sound", "bgm", string.Format(MusicConstants.GameResources.NUS3AUDIO_FILE, binBgnProperty.NameId));
-                _bgmPropertyEntries.Add(binBgnProperty.NameId, _mapper.Map(binBgnProperty, new BgmPropertyEntry(binBgnProperty.NameId, filename)));
+                var newBgmPropertyEntry = new BgmPropertyEntry(binBgnProperty.NameId, filename);
+                if (_coreVolumes.ContainsKey(newBgmPropertyEntry.NameId))
+                    newBgmPropertyEntry.AudioVolume = _coreVolumes[newBgmPropertyEntry.NameId];
+                _bgmPropertyEntries.Add(binBgnProperty.NameId, _mapper.Map(binBgnProperty, newBgmPropertyEntry));
             }
 
             //Mapping games
@@ -761,6 +771,35 @@ namespace Sma5h.Mods.Music.Services
                 var msbt = _state.LoadResource<MsbtDatabase>(string.Format(MsbtExtConstants.MSBT_TITLE, locale), true);
                 if (msbt != null)
                     output.Add(locale, msbt);
+            }
+            return output;
+        }
+
+        private Dictionary<string, float> GetCoreNus3BankVolumes()
+        {
+            var output = new Dictionary<string, float>();
+
+            var nusBankResourceFile = Path.Combine(_config.Value.ResourcesPath, MusicConstants.Resources.NUS3BANK_IDS_FILE);
+            if (!File.Exists(nusBankResourceFile))
+                return output;
+
+            _logger.LogDebug("Retrieving NusBank Volumes from CSV {CSVResource}", nusBankResourceFile);
+            using (var reader = new StreamReader(nusBankResourceFile))
+            {
+                var csvConfiguration = new CsvConfiguration(CultureInfo.InvariantCulture)
+                {
+                    PrepareHeaderForMatch = (args) => Regex.Replace(args.Header, @"\s", string.Empty)
+                };
+                using (var csv = new CsvReader(reader, csvConfiguration))
+                {
+                    var records = csv.GetRecords<dynamic>();
+                    foreach (var record in records)
+                    {
+                        var volume = Convert.ToSingle(record.Volume);
+                        var name = (string)record.NUS3BankName;
+                        output.Add(name.TrimStart(MusicConstants.InternalIds.NUS3AUDIO_FILE_PREFIX), volume);
+                    }
+                }
             }
             return output;
         }
