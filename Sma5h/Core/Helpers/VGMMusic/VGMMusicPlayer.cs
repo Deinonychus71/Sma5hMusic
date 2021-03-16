@@ -11,12 +11,15 @@ namespace VGMMusic
     {
         private readonly ILogger _logger;
         private VGMStreamReader _reader;
+        private WaveOutEvent _outputDevice;
         private string _filename;
         private bool _requestStop;
+        private float _volume;
 
         public int TotalTime { get { return _reader != null ? _reader.TotalSecondsToPlay : 0; } }
         public int CurrentTime { get { return _reader != null ? _reader.TotalPlayed : 0; } }
         public bool Loaded { get { return _reader != null && _reader.FileLoaded; } }
+        public float Volume { get { return _volume; } set { _volume = value; SetVolume(value); } }
         public bool IsPlaying { get; private set; }
 
         public VGMMusicPlayer(ILogger<IVGMMusicPlayer> logger)
@@ -89,6 +92,19 @@ namespace VGMMusic
             return false;
         }
 
+        private void SetVolume(float volume)
+        {
+            try
+            {
+                if (_outputDevice != null)
+                    _outputDevice.Volume = volume;
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e.Message, "Error while setting volume: {Volume}", volume);
+            }
+        }
+
         public async Task<bool> Stop()
         {
             if (_reader != null && IsPlaying)
@@ -111,7 +127,21 @@ namespace VGMMusic
         {
             try
             {
-                using (var outputDevice = new WaveOutEvent())
+                _outputDevice = new WaveOutEvent();
+                if (_reader != null)
+                {
+                    _outputDevice.Init(_reader);
+                    _outputDevice.Volume = Volume;
+                    _outputDevice.Play();
+                    IsPlaying = true;
+                    while (_outputDevice.PlaybackState == PlaybackState.Playing && !_requestStop)
+                    {
+                        Thread.Sleep(500);
+                    }
+                }
+                _requestStop = false;
+
+                /*using (var outputDevice = new WaveOutEvent())
                 {
                     if (_reader != null)
                     {
@@ -124,7 +154,7 @@ namespace VGMMusic
                         }
                     }
                 }
-                _requestStop = false;
+                _requestStop = false;*/
             }
             catch (Exception e)
             {
@@ -138,6 +168,8 @@ namespace VGMMusic
 
         private void InternalStop()
         {
+            _outputDevice?.Dispose();
+            _outputDevice = null;
             _reader?.Dispose();
             _reader = null;
             _requestStop = false;

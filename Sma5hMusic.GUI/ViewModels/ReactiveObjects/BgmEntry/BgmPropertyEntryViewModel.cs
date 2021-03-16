@@ -11,6 +11,7 @@ namespace Sma5hMusic.GUI.ViewModels
     public class BgmPropertyEntryViewModel : BgmBaseViewModel<BgmPropertyEntry>
     {
         private readonly IVGMMusicPlayer _vgmPlayer;
+        private float _audioVolume;
         private uint _totalTimeMs;
         private uint _totalSamples;
 
@@ -45,7 +46,19 @@ namespace Sma5hMusic.GUI.ViewModels
         [Reactive]
         public string Filename { get; set; }
         [Reactive]
-        public float AudioVolume { get; set; }
+        public float AudioVolume
+        {
+            get
+            {
+                return _audioVolume;
+            }
+            set
+            {
+                this.RaiseAndSetIfChanged(ref _audioVolume, value);
+                if (MusicPlayer != null)
+                    MusicPlayer.AudioVolume = ConvertVolumeToMusicPlayer(value);
+            }
+        }
 
         //Music player
         public bool DoesFileExist { get; set; }
@@ -60,7 +73,10 @@ namespace Sma5hMusic.GUI.ViewModels
 
             DoesFileExist = File.Exists(Filename);
             if (DoesFileExist)
-                MusicPlayer = new MusicPlayerViewModel(vgmPlayer, Filename);
+                MusicPlayer = new MusicPlayerViewModel(vgmPlayer, Filename)
+                {
+                    AudioVolume = ConvertVolumeToMusicPlayer(bgmPropertyEntry.AudioVolume)
+                };
         }
 
         public override ReactiveObjectBaseViewModel GetCopy()
@@ -74,6 +90,13 @@ namespace Sma5hMusic.GUI.ViewModels
             _mapper.Map(this, original.GetReferenceEntity());
             _mapper.Map(this, original);
             return original;
+        }
+
+        private float ConvertVolumeToMusicPlayer(float volume)
+        {
+            if (volume == 0)
+                return MusicPlayerViewModel.DefaultMusicPlayerVolume;
+            return (volume + 20) / 40;
         }
     }
 }

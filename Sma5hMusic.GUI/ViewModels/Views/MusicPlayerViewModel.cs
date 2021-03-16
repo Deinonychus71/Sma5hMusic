@@ -9,6 +9,7 @@ namespace Sma5hMusic.GUI.ViewModels
     public class MusicPlayerViewModel : ViewModelBase
     {
         private readonly IVGMMusicPlayer _musicPlayer;
+        public const float DefaultMusicPlayerVolume = 0.5f;
         private const string PLAY = "\u25B6";
         private const string STOP = "\u23F9";
         private bool _isPlaying;
@@ -16,6 +17,8 @@ namespace Sma5hMusic.GUI.ViewModels
         private static MusicPlayerViewModel _currentPlayControl;
 
         public ReactiveCommand<Unit, Unit> ActionPlaySong { get; }
+
+        public float AudioVolume { get; set; }
 
         public string Filename { get; private set; }
 
@@ -54,6 +57,7 @@ namespace Sma5hMusic.GUI.ViewModels
             if (_currentPlayControl != null)
                 await _currentPlayControl.StopSong();
 
+            _musicPlayer.Volume = AudioVolume;
             await _musicPlayer.Play(Filename);
             Text = STOP;
             _currentPlayControl = this;
