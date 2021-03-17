@@ -9,7 +9,6 @@ namespace Sma5hMusic.GUI.ViewModels
     public class MusicPlayerViewModel : ViewModelBase
     {
         private readonly IVGMMusicPlayer _musicPlayer;
-        public const float DefaultMusicPlayerVolume = 0.5f;
         private float _audioVolume;
         private const string PLAY = "\u25B6";
         private const string STOP = "\u23F9";
@@ -28,7 +27,7 @@ namespace Sma5hMusic.GUI.ViewModels
             set
             {
                 _audioVolume = value;
-                if (_musicPlayer != null)
+                if (_musicPlayer != null && _isPlaying)
                     _musicPlayer.Volume = _audioVolume;
             }
         }

@@ -2,7 +2,9 @@
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using Sma5h.Mods.Music.Models;
+using Sma5hMusic.GUI.Helpers;
 using Sma5hMusic.GUI.Interfaces;
+using System;
 using System.IO;
 using VGMMusic;
 
@@ -95,8 +97,8 @@ namespace Sma5hMusic.GUI.ViewModels
         private float ConvertVolumeToMusicPlayer(float volume)
         {
             if (volume == 0)
-                return MusicPlayerViewModel.DefaultMusicPlayerVolume;
-            return (volume + 90f) / 180;
+                return Constants.DefaultVolume;
+            return (volume + Constants.MaximumGameVolume) / (Constants.MaximumGameVolume*2f);
         }
     }
 }

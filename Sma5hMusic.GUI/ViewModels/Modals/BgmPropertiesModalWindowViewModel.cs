@@ -38,8 +38,6 @@ namespace Sma5hMusic.GUI.ViewModels
         private readonly ReadOnlyObservableCollection<string> _assignedInfoIds;
         private readonly Subject<Window> _whenNewRequestToAddGameEntry;
         private bool _isUpdatingSpecialRule = false;
-        private const float _minimumVolume = -90.0f;
-        private const float _maximumVolume = 90.0f;
         private string _originalFilename;
 
         public IObservable<Window> WhenNewRequestToAddGameEntry { get { return _whenNewRequestToAddGameEntry; } }
@@ -224,10 +222,10 @@ namespace Sma5hMusic.GUI.ViewModels
         protected override Task<bool> SaveChanges()
         {
             _logger.LogDebug("Save Changes");
-            if (BgmPropertyViewModel.AudioVolume < _minimumVolume)
-                BgmPropertyViewModel.AudioVolume = _minimumVolume;
-            if (BgmPropertyViewModel.AudioVolume > _maximumVolume)
-                BgmPropertyViewModel.AudioVolume = _maximumVolume;
+            if (BgmPropertyViewModel.AudioVolume < Constants.MinimumGameVolume)
+                BgmPropertyViewModel.AudioVolume = Constants.MinimumGameVolume;
+            if (BgmPropertyViewModel.AudioVolume > Constants.MaximumGameVolume)
+                BgmPropertyViewModel.AudioVolume = Constants.MaximumGameVolume;
 
             DbRootViewModel.TestDispOrder = (short)(IsInSoundTest ? DbRootViewModel.TestDispOrder > -1 ? DbRootViewModel.TestDispOrder : short.MaxValue : -1);
             if (SelectedRecordType != null)
