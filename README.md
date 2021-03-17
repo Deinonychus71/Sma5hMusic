@@ -26,7 +26,7 @@ All contributors: https://github.com/vgmstream/vgmstream/graphs/contributors
 ### Setup
 1.  In the "Resources" folder, extract the msbt files in /game/ui/message/ using CrossArc
 2.  In the "Resources" folder, extract ui_bgm_db.prc and ui_gametitle_db.prc in /game/ui/params/database/
-3.  In the "Resources" folder, extract any nus3bank from Ultimate in /nus3bank and rename 'template.nus3bank'
+3.  In the "Resources" folder, extract **bgm_j48_fsg_konosekainoitadakide.nus3bank** nus3bank from Ultimate in /nus3bank and rename 'template.nus3bank'
 4.  In the "Resources" folder, make sure nusbank_ids.csv, param_labels.csv is there
 5.  In the "Tools" folder, make sure VGAudioCli.exe, paracobNET.dll, MsbtEditor.dll, Nus3Audio/nus3audio.exe and BgmProperty/bgm-property.exe/bgm_hashes.txt are there
 

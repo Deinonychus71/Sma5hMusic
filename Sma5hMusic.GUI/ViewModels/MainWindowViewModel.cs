@@ -103,7 +103,7 @@ namespace Sma5hMusic.GUI.ViewModels
             _dialogGlobalSettingsEditor = new ModalDialog<GlobalSettingsModalWindow, GlobalSettingsModalWindowViewModel, GlobalConfigurationViewModel>(vmGlobalSettings);
 
             //Initialize Contextual Menu view
-            VMContextMenu = ActivatorUtilities.CreateInstance<ContextMenuViewModel>(serviceProvider, viewModelManager.ObservableModsEntries, viewModelManager.ObservableLocales);
+            VMContextMenu = ActivatorUtilities.CreateInstance<ContextMenuViewModel>(serviceProvider, viewModelManager.ObservableModsEntries, viewModelManager.ObservableLocales, viewModelManager.ObservableDbRootEntries);
             VMContextMenu.WhenLocaleChanged.Subscribe((locale) => _currentLocale = locale);
             var observableBgmDbRootEntriesList = viewModelManager.ObservableDbRootEntries
                 .DeferUntilLoaded()

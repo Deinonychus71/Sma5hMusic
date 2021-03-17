@@ -4,32 +4,35 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Sma5hMusic.GUI.Views.ContextMenuView">
-  <Menu>
-    <MenuItem Header="Import Songs to..." Items="{Binding Mods}" IsEnabled="True">
-      <MenuItem.Styles>
-        <Style Selector="MenuItem > MenuItem">
-          <Setter Property="Header" Value="{Binding Name}"/>
-          <Setter Property="Command" Value="{Binding $parent[Menu].DataContext.ActionAddNewBgm}"/>
-          <Setter Property="CommandParameter" Value="{Binding .}"/>
-        </Style>
-      </MenuItem.Styles>
-    </MenuItem>
-    <MenuItem Header="Manage..." IsEnabled="True">
-      <MenuItem Header="Create Game" Command="{Binding ActionNewGame}" />
-      <MenuItem Header="Edit a Game" Command="{Binding ActionEditGame}"/>
-      <MenuItem Header="Delete a Game" Command="{Binding ActionDeleteGame}"/>
-      <Separator/>
-      <MenuItem Header="Create a Mod" Command="{Binding ActionNewMod}"/>
-      <MenuItem Header="Edit a Mod" Command="{Binding ActionEditMod}"/>
-    </MenuItem>
-    <MenuItem Header="{Binding WhenLocaleChanged^, Converter={StaticResource LocaleNameConverter}}" Items="{Binding Locales}">
-      <MenuItem.Styles>
-        <Style Selector="MenuItem > MenuItem">
-          <Setter Property="Header" Value="{Binding Label}"/>
-          <Setter Property="Command" Value="{Binding $parent[Menu].DataContext.ChangeLocale}"/>
-          <Setter Property="CommandParameter" Value="{Binding .}"/>
-        </Style>
-      </MenuItem.Styles>
-    </MenuItem>
-  </Menu>
+  <DockPanel>
+    <Menu DockPanel.Dock="Left">
+      <MenuItem Header="Import Songs to..." Items="{Binding Mods}" IsEnabled="True">
+        <MenuItem.Styles>
+          <Style Selector="MenuItem > MenuItem">
+            <Setter Property="Header" Value="{Binding Name}"/>
+            <Setter Property="Command" Value="{Binding $parent[Menu].DataContext.ActionAddNewBgm}"/>
+            <Setter Property="CommandParameter" Value="{Binding .}"/>
+          </Style>
+        </MenuItem.Styles>
+      </MenuItem>
+      <MenuItem Header="Manage..." IsEnabled="True">
+        <MenuItem Header="Create Game" Command="{Binding ActionNewGame}" />
+        <MenuItem Header="Edit a Game" Command="{Binding ActionEditGame}"/>
+        <MenuItem Header="Delete a Game" Command="{Binding ActionDeleteGame}"/>
+        <Separator/>
+        <MenuItem Header="Create a Mod" Command="{Binding ActionNewMod}"/>
+        <MenuItem Header="Edit a Mod" Command="{Binding ActionEditMod}"/>
+      </MenuItem>
+      <MenuItem Header="{Binding WhenLocaleChanged^, Converter={StaticResource LocaleNameConverter}}" Items="{Binding Locales}">
+        <MenuItem.Styles>
+          <Style Selector="MenuItem > MenuItem">
+            <Setter Property="Header" Value="{Binding Label}"/>
+            <Setter Property="Command" Value="{Binding $parent[Menu].DataContext.ChangeLocale}"/>
+            <Setter Property="CommandParameter" Value="{Binding .}"/>
+          </Style>
+        </MenuItem.Styles>
+      </MenuItem>
+    </Menu>
+    <TextBlock HorizontalAlignment="Right" Padding="0,0,20,0" VerticalAlignment="Center" DockPanel.Dock="Right" Text="{Binding NbrBgms}"/>
+  </DockPanel>
 </UserControl>

@@ -7,8 +7,10 @@ using Sma5h.Mods.Music;
 using Sma5h.Mods.Music.Helpers;
 using Sma5h.Mods.Music.Interfaces;
 using Sma5h.Mods.Music.Models;
+using Sma5h.Mods.Music.Models.PlaylistEntryModels;
 using Sma5hMusic.GUI.Interfaces;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -111,12 +113,20 @@ namespace Sma5hMusic.GUI.Services
                     return false;
                 }
 
+                //Backup playlist entries
+                var uiBgmId = musicModEntries.BgmDbRootEntries.FirstOrDefault().UiBgmId;
+                var playlistStates = BackupPlaylistStateFromBgmId(uiBgmId);
+
                 //Create new song
-                var createdToneId = await CreateNewMusicMod(newMusicModEntries, musicMod);
-                if (!string.IsNullOrEmpty(createdToneId))
+                var createdUiBgmId = await CreateNewMusicMod(newMusicModEntries, musicMod);
+                if (!string.IsNullOrEmpty(createdUiBgmId))
                 {
                     result = await RemoveMusicModEntries(musicModEntries.GetMusicModDeleteEntries(), musicMod);
                 }
+
+                //Restore playlists
+                RestorePlaylistStateToBgmId(playlistStates, createdUiBgmId);
+
 
                 //Save order
                 if (result)
@@ -205,6 +215,10 @@ namespace Sma5hMusic.GUI.Services
                         }
                     }
 
+                    //Backup playlist entries
+                    var uiBgmId = musicModEntries.BgmDbRootEntries.FirstOrDefault().UiBgmId;
+                    var playlistStates = BackupPlaylistStateFromBgmId(uiBgmId);
+
                     //Delete old media
                     var deleteMusicModMedia = musicModEntries.GetMusicModDeleteEntries();
                     result = await RemoveMusicModEntries(deleteMusicModMedia, fromMusicMod);
@@ -225,8 +239,11 @@ namespace Sma5hMusic.GUI.Services
                         }
 
                         //Create new entry
-                        var createdToneId = await CreateNewMusicMod(newMusicModEntries, toMusicMod);
-                        result = !string.IsNullOrEmpty(createdToneId);
+                        var createdUiBgmId = await CreateNewMusicMod(newMusicModEntries, toMusicMod);
+                        result = !string.IsNullOrEmpty(createdUiBgmId);
+
+                        //Restore playlists
+                        RestorePlaylistStateToBgmId(playlistStates, createdUiBgmId);
 
                         //Need to call update to add the game title
                         if (result)
@@ -855,6 +872,39 @@ namespace Sma5hMusic.GUI.Services
 
             return result;
         }
+
+        private Dictionary<string, List<PlaylistValueEntry>> BackupPlaylistStateFromBgmId(string uiBgmId)
+        {
+            var playlistStates = new Dictionary<string, List<PlaylistValueEntry>>();
+            foreach (var playlist in _viewModelManager.GetPlaylistsEntriesViewModels())
+            {
+                var playlistValueEntry = playlist.ToPlaylistEntry();
+                foreach (var track in playlistValueEntry.Tracks)
+                {
+                    if (track.UiBgmId == uiBgmId)
+                    {
+                        if (!playlistStates.ContainsKey(playlist.Id))
+                            playlistStates.Add(playlist.Id, new List<PlaylistValueEntry>());
+                        playlistStates[playlist.Id].Add(track);
+                    }
+                }
+            }
+            return playlistStates;
+        }
+
+        private void RestorePlaylistStateToBgmId(Dictionary<string, List<PlaylistValueEntry>> playlistStates, string uiBgmId)
+        {
+            var vmBgmRoot = _viewModelManager.GetBgmDbRootViewModel(uiBgmId);
+            foreach (var playlistState in playlistStates)
+            {
+                var vmPlaylist = _viewModelManager.GetPlaylistViewModel(playlistState.Key);
+                foreach (var value in playlistState.Value)
+                {
+                    vmPlaylist.AddSong(vmBgmRoot, value);
+                }
+            }
+        }
+
         #endregion
 
         public async Task<AudioCuePoints> UpdateAudioCuePoints(string filename)

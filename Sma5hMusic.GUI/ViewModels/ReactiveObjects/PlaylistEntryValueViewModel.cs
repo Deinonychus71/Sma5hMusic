@@ -11,6 +11,8 @@ namespace Sma5hMusic.GUI.ViewModels
         //Necessary for Grid as some values aren't unique
         public string UniqueId { get; set; }
 
+        public bool IsBgmMod { get { return BgmReference.IsMod; } }
+
         public PlaylistEntryViewModel Parent { get; }
 
         [Reactive]

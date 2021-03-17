@@ -14,6 +14,7 @@ namespace Sma5hMusic.GUI.ViewModels
         protected readonly PlaylistEntry _refPlaylistEntry;
         private List<string> _allTracks;
         private bool _cachedTracks = false;
+        private bool _cachedModTracks = false;
 
         //To obtain reactive change for locale
         [Reactive]
@@ -25,6 +26,8 @@ namespace Sma5hMusic.GUI.ViewModels
 
         public List<string> AllTracks { get { return GetAllTracks(); } }
 
+        public List<string> AllModTracks { get { return GetAllModTracks(); } }
+
         public PlaylistEntryViewModel(PlaylistEntry playlistEntry, Dictionary<string, BgmDbRootEntryViewModel> refBgms = null)
         {
             _refPlaylistEntry = playlistEntry;
@@ -34,6 +37,7 @@ namespace Sma5hMusic.GUI.ViewModels
                 Title = playlistEntry.Title;
             Tracks = ToPlaylistValueViewModelsByOrder(refBgms);
             _cachedTracks = false;
+            _cachedModTracks = false;
             for (short i = 0; i < 16; i++)
                 ReorderSongs(i);
         }
@@ -49,6 +53,16 @@ namespace Sma5hMusic.GUI.ViewModels
             {
                 _allTracks = Tracks.SelectMany(p => p.Value).Select(p => p.UiBgmId).Distinct().ToList();
                 _cachedTracks = true;
+            }
+            return _allTracks;
+        }
+
+        public List<string> GetAllModTracks()
+        {
+            if (!_cachedModTracks || _allTracks == null)
+            {
+                _allTracks = Tracks.SelectMany(p => p.Value).Where(p => p.IsBgmMod).Select(p => p.UiBgmId).Distinct().ToList();
+                _cachedModTracks = true;
             }
             return _allTracks;
         }
@@ -78,8 +92,35 @@ namespace Sma5hMusic.GUI.ViewModels
             }
 
             _cachedTracks = false;
+            _cachedModTracks = false;
 
             return output;
+        }
+
+        public void AddSong(BgmDbRootEntryViewModel sourceObj, PlaylistValueEntry playlistValueEntry )
+        {
+            Tracks[0].Add(new PlaylistEntryValueViewModel(this, sourceObj.UiBgmId, playlistValueEntry.Order0, playlistValueEntry.Incidence0, sourceObj));
+            Tracks[1].Add(new PlaylistEntryValueViewModel(this, sourceObj.UiBgmId, playlistValueEntry.Order1, playlistValueEntry.Incidence1, sourceObj));
+            Tracks[2].Add(new PlaylistEntryValueViewModel(this, sourceObj.UiBgmId, playlistValueEntry.Order2, playlistValueEntry.Incidence2, sourceObj));
+            Tracks[3].Add(new PlaylistEntryValueViewModel(this, sourceObj.UiBgmId, playlistValueEntry.Order3, playlistValueEntry.Incidence3, sourceObj));
+            Tracks[4].Add(new PlaylistEntryValueViewModel(this, sourceObj.UiBgmId, playlistValueEntry.Order4, playlistValueEntry.Incidence4, sourceObj));
+            Tracks[5].Add(new PlaylistEntryValueViewModel(this, sourceObj.UiBgmId, playlistValueEntry.Order5, playlistValueEntry.Incidence5, sourceObj));
+            Tracks[6].Add(new PlaylistEntryValueViewModel(this, sourceObj.UiBgmId, playlistValueEntry.Order6, playlistValueEntry.Incidence6, sourceObj));
+            Tracks[7].Add(new PlaylistEntryValueViewModel(this, sourceObj.UiBgmId, playlistValueEntry.Order7, playlistValueEntry.Incidence7, sourceObj));
+            Tracks[8].Add(new PlaylistEntryValueViewModel(this, sourceObj.UiBgmId, playlistValueEntry.Order8, playlistValueEntry.Incidence8, sourceObj));
+            Tracks[9].Add(new PlaylistEntryValueViewModel(this, sourceObj.UiBgmId, playlistValueEntry.Order9, playlistValueEntry.Incidence9, sourceObj));
+            Tracks[10].Add(new PlaylistEntryValueViewModel(this, sourceObj.UiBgmId, playlistValueEntry.Order10, playlistValueEntry.Incidence10, sourceObj));
+            Tracks[11].Add(new PlaylistEntryValueViewModel(this, sourceObj.UiBgmId, playlistValueEntry.Order11, playlistValueEntry.Incidence11, sourceObj));
+            Tracks[12].Add(new PlaylistEntryValueViewModel(this, sourceObj.UiBgmId, playlistValueEntry.Order12, playlistValueEntry.Incidence12, sourceObj));
+            Tracks[13].Add(new PlaylistEntryValueViewModel(this, sourceObj.UiBgmId, playlistValueEntry.Order13, playlistValueEntry.Incidence13, sourceObj));
+            Tracks[14].Add(new PlaylistEntryValueViewModel(this, sourceObj.UiBgmId, playlistValueEntry.Order14, playlistValueEntry.Incidence14, sourceObj));
+            Tracks[15].Add(new PlaylistEntryValueViewModel(this, sourceObj.UiBgmId, playlistValueEntry.Order15, playlistValueEntry.Incidence15, sourceObj));
+
+            for (short i = 0; i < 16; i++)
+                ReorderSongs(i);
+
+            _cachedTracks = false;
+            _cachedModTracks = false;
         }
 
         public void RemoveSong(string bgmId)
@@ -91,6 +132,7 @@ namespace Sma5hMusic.GUI.ViewModels
                     Tracks[i].Remove(refValue);
             }
             _cachedTracks = false;
+            _cachedModTracks = false;
         }
 
         public PlaylistEntry ToPlaylistEntry()
