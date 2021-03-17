@@ -3,8 +3,10 @@ using DynamicData.Binding;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using ReactiveUI;
+using ReactiveUI.Fody.Helpers;
 using Sma5h.Mods.Music;
 using System;
+using System.Linq;
 using System.Collections.ObjectModel;
 using System.Reactive;
 using System.Reactive.Linq;
@@ -15,6 +17,7 @@ namespace Sma5hMusic.GUI.ViewModels
     public class ContextMenuViewModel : ViewModelBase, IDisposable
     {
         private readonly ILogger _logger;
+        private readonly ReadOnlyObservableCollection<BgmDbRootEntryViewModel> _items;
         private readonly ReadOnlyObservableCollection<ModEntryViewModel> _mods;
         private readonly ReadOnlyObservableCollection<LocaleViewModel> _locales;
         private readonly BehaviorSubject<string> _whenLocaleChanged;
@@ -24,6 +27,10 @@ namespace Sma5hMusic.GUI.ViewModels
         private readonly Subject<Unit> _whenNewRequestToEditModEntry;
         private readonly Subject<Unit> _whenNewRequestToEditGameEntry;
         private readonly Subject<Unit> _whenNewRequestToDeleteGameEntry;
+
+        [Reactive]
+        public string NbrBgms { get; private set; }
+
 
         public ReadOnlyObservableCollection<ModEntryViewModel> Mods { get { return _mods; } }
         public ReadOnlyObservableCollection<LocaleViewModel> Locales { get { return _locales; } }
@@ -43,7 +50,8 @@ namespace Sma5hMusic.GUI.ViewModels
 
         public ContextMenuViewModel(IOptions<ApplicationSettings> config, ILogger<BgmSongsViewModel> logger,
             IObservable<IChangeSet<ModEntryViewModel, string>> observableMusicModsList,
-            IObservable<IChangeSet<LocaleViewModel, string>> observableLocalesList)
+            IObservable<IChangeSet<LocaleViewModel, string>> observableLocalesList,
+            IObservable<IChangeSet<BgmDbRootEntryViewModel, string>> observableBgmEntries)
         {
             _logger = logger;
             _whenNewRequestToAddBgmEntry = new Subject<ModEntryViewModel>();
@@ -67,6 +75,15 @@ namespace Sma5hMusic.GUI.ViewModels
                 .Bind(out _locales)
                 .DisposeMany()
                 .Subscribe();
+            //nbr songs
+            observableBgmEntries
+                .DeferUntilLoaded()
+                .Filter(p => p.UiBgmId != "ui_bgm_random")
+                .Bind(out _items)
+                .CountChanged()
+                .Subscribe((o) => {
+                    NbrBgms = $"{_items.Count} songs ({_items.Count(p => p.IsMod)} mods)";
+                });
 
             ActionNewMod = ReactiveCommand.Create(AddNewMod);
             ActionNewGame = ReactiveCommand.Create(AddNewGame);

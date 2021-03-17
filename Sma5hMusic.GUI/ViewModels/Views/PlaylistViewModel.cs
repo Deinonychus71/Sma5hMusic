@@ -65,6 +65,8 @@ namespace Sma5hMusic.GUI.ViewModels
         [Reactive]
         public short SelectedPlaylistOrder { get; private set; }
 
+        [Reactive]
+        public string NbrBgmsPlaylist { get; private set; }
 
         public ReactiveCommand<DataGridCellPointerPressedEventArgs, Unit> ActionReorderPlaylist { get; }
         public ReactiveCommand<DataGridCellPointerPressedEventArgs, Unit> ActionSendToPlaylist { get; }
@@ -125,7 +127,10 @@ namespace Sma5hMusic.GUI.ViewModels
                 .ObserveOn(RxApp.MainThreadScheduler)
                 .Bind(out _selectedPlaylistOrderedEntry)
                 .DisposeMany()
-                .Subscribe((o) => FocusAfterMove());
+                .Subscribe((o) => { 
+                    FocusAfterMove();
+                    NbrBgmsPlaylist = $"{SelectedPlaylistEntry.Tracks.Count} songs ({SelectedPlaylistEntry.AllModTracks.Count} mods)";
+                });
             baseObs
                 .AutoRefresh(p => p.Incidence)
                 .Throttle(TimeSpan.FromSeconds(1))

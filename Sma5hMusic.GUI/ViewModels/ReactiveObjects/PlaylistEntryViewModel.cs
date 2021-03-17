@@ -14,6 +14,7 @@ namespace Sma5hMusic.GUI.ViewModels
         protected readonly PlaylistEntry _refPlaylistEntry;
         private List<string> _allTracks;
         private bool _cachedTracks = false;
+        private bool _cachedModTracks = false;
 
         //To obtain reactive change for locale
         [Reactive]
@@ -25,6 +26,8 @@ namespace Sma5hMusic.GUI.ViewModels
 
         public List<string> AllTracks { get { return GetAllTracks(); } }
 
+        public List<string> AllModTracks { get { return GetAllModTracks(); } }
+
         public PlaylistEntryViewModel(PlaylistEntry playlistEntry, Dictionary<string, BgmDbRootEntryViewModel> refBgms = null)
         {
             _refPlaylistEntry = playlistEntry;
@@ -34,6 +37,7 @@ namespace Sma5hMusic.GUI.ViewModels
                 Title = playlistEntry.Title;
             Tracks = ToPlaylistValueViewModelsByOrder(refBgms);
             _cachedTracks = false;
+            _cachedModTracks = false;
             for (short i = 0; i < 16; i++)
                 ReorderSongs(i);
         }
@@ -49,6 +53,16 @@ namespace Sma5hMusic.GUI.ViewModels
             {
                 _allTracks = Tracks.SelectMany(p => p.Value).Select(p => p.UiBgmId).Distinct().ToList();
                 _cachedTracks = true;
+            }
+            return _allTracks;
+        }
+
+        public List<string> GetAllModTracks()
+        {
+            if (!_cachedModTracks || _allTracks == null)
+            {
+                _allTracks = Tracks.SelectMany(p => p.Value).Where(p => p.IsBgmMod).Select(p => p.UiBgmId).Distinct().ToList();
+                _cachedModTracks = true;
             }
             return _allTracks;
         }
@@ -78,6 +92,7 @@ namespace Sma5hMusic.GUI.ViewModels
             }
 
             _cachedTracks = false;
+            _cachedModTracks = false;
 
             return output;
         }
@@ -105,6 +120,7 @@ namespace Sma5hMusic.GUI.ViewModels
                 ReorderSongs(i);
 
             _cachedTracks = false;
+            _cachedModTracks = false;
         }
 
         public void RemoveSong(string bgmId)
@@ -116,6 +132,7 @@ namespace Sma5hMusic.GUI.ViewModels
                     Tracks[i].Remove(refValue);
             }
             _cachedTracks = false;
+            _cachedModTracks = false;
         }
 
         public PlaylistEntry ToPlaylistEntry()
