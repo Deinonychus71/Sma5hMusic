@@ -8,5 +8,6 @@ namespace Sma5hMusic.GUI.Interfaces
         Task<string[]> OpenFileDialogAudioMultiple(Window parent = null);
         Task<string> OpenFileDialogAudioSingle(Window parent = null);
         Task<string> OpenFolderDialog(Window parent = null);
+        void OpenFolder(string folderPath);
     }
 }

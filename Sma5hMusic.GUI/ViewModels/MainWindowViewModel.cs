@@ -76,6 +76,10 @@ namespace Sma5hMusic.GUI.ViewModels
         public ReactiveCommand<Unit, Unit> ActionOpenThanks { get; }
         public ReactiveCommand<Unit, Unit> ActionOpenWiki { get; }
         public ReactiveCommand<Unit, Unit> ActionOpenGlobalSettings { get; }
+        public ReactiveCommand<Unit, Unit> ActionOpenModsFolder { get; }
+        public ReactiveCommand<Unit, Unit> ActionOpenOutputFolder { get; }
+        public ReactiveCommand<Unit, Unit> ActionOpenResourcesFolder { get; }
+        public ReactiveCommand<Unit, Unit> ActionOpenLogsFolder { get; }
 
         public MainWindowViewModel(IServiceProvider serviceProvider, IViewModelManager viewModelManager, IGUIStateManager guiStateManager, IMapper mapper, IVGMMusicPlayer musicPlayer,
             IDialogWindow rootDialog, IMessageDialog messageDialog, IFileDialog fileDialog, IBuildDialog buildDialog, IOptions<ApplicationSettings> appSettings, ILogger<MainWindowViewModel> logger)
@@ -190,6 +194,10 @@ namespace Sma5hMusic.GUI.ViewModels
             ActionOpenThanks = ReactiveCommand.CreateFromTask(OnThanksOpen);
             ActionOpenWiki = ReactiveCommand.Create(OnWikiOpen);
             ActionOpenGlobalSettings = ReactiveCommand.CreateFromTask(OnGlobalSettingsOpen);
+            ActionOpenModsFolder = ReactiveCommand.Create(() => _fileDialog.OpenFolder(_appSettings.Value.Sma5hMusic.ModPath));
+            ActionOpenOutputFolder = ReactiveCommand.Create(() => _fileDialog.OpenFolder(_appSettings.Value.OutputPath));
+            ActionOpenResourcesFolder = ReactiveCommand.Create(() => _fileDialog.OpenFolder(_appSettings.Value.ResourcesPath));
+            ActionOpenLogsFolder = ReactiveCommand.Create(() => _fileDialog.OpenFolder(_appSettings.Value.LogPath));
         }
 
         #region Actions

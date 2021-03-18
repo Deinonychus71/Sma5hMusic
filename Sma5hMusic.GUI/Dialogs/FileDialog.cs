@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using Sma5hMusic.GUI.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
 
@@ -113,6 +114,20 @@ namespace Sma5hMusic.GUI.Dialogs
             _logger.LogDebug("Selected {Directory}", result);
 
             return result;
+        }
+
+        public void OpenFolder(string folderPath)
+        {
+            if (Directory.Exists(folderPath))
+            {
+                var startInfo = new ProcessStartInfo
+                {
+                    Arguments = folderPath,
+                    FileName = "explorer.exe"
+                };
+
+                Process.Start(startInfo);
+            }
         }
     }
 }

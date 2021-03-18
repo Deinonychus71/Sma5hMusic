@@ -26,6 +26,13 @@
         <Separator></Separator>
         <MenuItem Header="Exit" Command="{Binding ActionExit}"></MenuItem>
       </MenuItem>
+      <MenuItem Header="Folders">
+        <MenuItem Header="Open Mods Folder" Command="{Binding ActionOpenModsFolder}"/>
+        <MenuItem Header="Open Output Folder" Command="{Binding ActionOpenOutputFolder}"/>
+        <Separator></Separator>
+        <MenuItem Header="Open Resources Folder" Command="{Binding ActionOpenResourcesFolder}"/>
+        <MenuItem Header="Open Logs Folder" Command="{Binding ActionOpenLogsFolder}"/>
+      </MenuItem>
       <MenuItem Header="Settings">
         <MenuItem Header="Advanced" Command="{Binding ActionToggleAdvanced}">
           <MenuItem.Icon>
