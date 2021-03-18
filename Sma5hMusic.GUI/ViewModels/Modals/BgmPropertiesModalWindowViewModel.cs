@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Avalonia.Controls;
+using Avalonia.Threading;
 using DynamicData;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -30,6 +31,7 @@ namespace Sma5hMusic.GUI.ViewModels
         private readonly ILogger _logger;
         private readonly IFileDialog _fileDialog;
         private readonly IGUIStateManager _guiStateManager;
+        private readonly List<GameTitleEntryViewModel> _recentGameTitles;
         private readonly List<ComboItem> _recordTypes;
         private readonly List<ComboItem> _specialCategories;
         private readonly ReadOnlyObservableCollection<SeriesEntryViewModel> _series;
@@ -38,6 +40,12 @@ namespace Sma5hMusic.GUI.ViewModels
         private readonly Subject<Window> _whenNewRequestToAddGameEntry;
         private bool _isUpdatingSpecialRule = false;
         private string _originalFilename;
+
+        public IEnumerable<GameTitleEntryViewModel> RecentGameTitles { get { return _recentGameTitles; } }
+        [Reactive]
+        public bool DisplayRecents { get; set; }
+        [Reactive]
+        public GameTitleEntryViewModel SelectedRecentAction { get; set; }
 
         public IObservable<Window> WhenNewRequestToAddGameEntry { get { return _whenNewRequestToAddGameEntry; } }
         public GamePropertiesModalWindowViewModel VMGamePropertiesModal { get; set; }
@@ -86,6 +94,7 @@ namespace Sma5hMusic.GUI.ViewModels
             _recordTypes = GetRecordTypes();
             _specialCategories = GetSpecialCategories();
             _whenNewRequestToAddGameEntry = new Subject<Window>();
+            _recentGameTitles = new List<GameTitleEntryViewModel>();
 
             //Bind observables
             observableSeries
@@ -126,6 +135,7 @@ namespace Sma5hMusic.GUI.ViewModels
             this.WhenAnyValue(p => p.SelectedSpecialCategory).Subscribe(o => SetSpecialCategoryRules(o?.Id));
             this.WhenAnyValue(p => p.SelectedItem.StreamSetViewModel.SpecialCategory).Subscribe(o => SetSpecialCategoryRules(o));
             this.WhenAnyValue(p => p.SelectedGameTitleViewModel).Subscribe((o) => SetGameTitleId(o));
+            this.WhenAnyValue(p => p.SelectedRecentAction).Subscribe(o => HandleRecentAction(o));
 
             //Validation
             this.ValidationRule(p => p.SelectedGameTitleViewModel,
@@ -135,6 +145,19 @@ namespace Sma5hMusic.GUI.ViewModels
             ActionNewGame = ReactiveCommand.Create<Window>(AddNewGame);
             ActionChangeFile = ReactiveCommand.CreateFromTask<BgmPropertyEntryViewModel>(ChangeFile);
             ActionCalculateLoopCues = ReactiveCommand.CreateFromTask<BgmPropertyEntryViewModel>(CalculateAudioCues);
+        }
+
+        private void HandleRecentAction(GameTitleEntryViewModel o)
+        {
+            if (o == null)
+                return;
+
+            SelectedGameTitleViewModel = _games.FirstOrDefault(p => p == o);
+
+            Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                SelectedRecentAction = null;
+            }, DispatcherPriority.Background);
         }
 
         private void AddNewGame(Window window)
@@ -206,7 +229,19 @@ namespace Sma5hMusic.GUI.ViewModels
             if (DbRootViewModel != null)
             {
                 if (gameTitle != null)
-                    DbRootViewModel.UiGameTitleId = gameTitle.UiGameTitleId;
+                {
+                    if (DbRootViewModel.UiGameTitleId != gameTitle.UiGameTitleId)
+                    {
+                        DbRootViewModel.UiGameTitleId = gameTitle.UiGameTitleId;
+                        if (gameTitle != null && !_recentGameTitles.Contains(gameTitle))
+                        {
+                            if (_recentGameTitles.Count > 9)
+                                _recentGameTitles.RemoveAt(_recentGameTitles.Count - 1);
+                            _recentGameTitles.Insert(0, gameTitle);
+                        }
+                        DisplayRecents = _recentGameTitles.Count() > 0;
+                    }
+                }
                 else
                     DbRootViewModel.UiGameTitleId = MusicConstants.InternalIds.GAME_TITLE_ID_DEFAULT;
             }

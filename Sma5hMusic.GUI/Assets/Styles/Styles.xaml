@@ -43,6 +43,9 @@
   <Style Selector=".modalActions > Button">
     <Setter Property="Margin" Value="20,0,20,0"/>
   </Style>
+  <Style Selector="ComboBox.noBorder">
+    <Setter Property="BorderThickness" Value="0"/>
+  </Style>
   <!-- END MODALS -->
 
   <!-- DATAGRID -->

@@ -16,7 +16,7 @@ namespace Sma5hMusic.GUI.ViewModels
         private const string STOP = "\u23F9";
         private bool _isPlaying;
         private bool _isExecutingAction;
-        private bool _inGameVolume;
+        private readonly bool _inGameVolume;
         private static MusicPlayerViewModel _currentPlayControl;
 
         public ReactiveCommand<Unit, Unit> ActionPlaySong { get; }

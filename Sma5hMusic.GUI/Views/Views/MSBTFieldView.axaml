@@ -8,27 +8,24 @@
     <Style Selector="ComboBox:pointerover">
       <Setter Property="BorderThickness" Value="1"/>
     </Style>
-    <Style Selector="ComboBox">
-      <Setter Property="BorderThickness" Value="0"/>
-    </Style>
   </UserControl.Styles>
   <StackPanel>
     <StackPanel Orientation="Horizontal">
-      <ComboBox PlaceholderText="Select a language" SelectedItem="{Binding SelectedLocale}" Items="{Binding Locales}">
+      <ComboBox Classes="noBorder" PlaceholderText="Select a language" SelectedItem="{Binding SelectedLocale}" Items="{Binding Locales}">
         <ComboBox.ItemTemplate>
           <DataTemplate>
             <TextBlock Text="{Binding Label}" />
           </DataTemplate>
         </ComboBox.ItemTemplate>
       </ComboBox>
-      <ComboBox IsVisible="{Binding DisplayRecents}" PlaceholderText="Use Recent Values..." SelectedItem="{Binding SelectedRecentAction, Mode=TwoWay}" Items="{Binding UseRecent}">
+      <ComboBox Classes="noBorder" IsVisible="{Binding DisplayRecents}" PlaceholderText="Use Recent Values..." SelectedItem="{Binding SelectedRecentAction, Mode=TwoWay}" Items="{Binding UseRecent}">
         <ComboBox.ItemTemplate>
           <DataTemplate>
             <TextBlock Text="{Binding}" />
           </DataTemplate>
         </ComboBox.ItemTemplate>
       </ComboBox>
-      <ComboBox PlaceholderText="Copy..." SelectedItem="{Binding SelectedCopyAction, Mode=TwoWay}" Items="{Binding CopyActions}">
+      <ComboBox Classes="noBorder" PlaceholderText="Copy..." SelectedItem="{Binding SelectedCopyAction, Mode=TwoWay}" Items="{Binding CopyActions}">
         <ComboBox.ItemTemplate>
           <DataTemplate>
             <TextBlock Text="{Binding Label}" />

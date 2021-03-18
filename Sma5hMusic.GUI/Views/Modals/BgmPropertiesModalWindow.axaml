@@ -15,6 +15,9 @@
     <Style Selector=".content Button">
       <Setter Property="Background" Value="Transparent"/>
     </Style>
+    <Style Selector="ComboBox:pointerover">
+      <Setter Property="BorderThickness" Value="1"/>
+    </Style>
   </Window.Styles>
 
   <DockPanel Classes="modal" LastChildFill="True" HorizontalAlignment="Stretch">
@@ -57,7 +60,16 @@
               <fields:PropertyField x:Name="GameId" IsRequired="True" Label="Game" ToolTip="Game representing the song. If the game you want isn't in the database, click 'Add New Game Entry'">
                 <fields:PropertyField.FieldContent>
                   <StackPanel>
-                    <Button Content="Create New Game" Command="{Binding ActionNewGame}" CommandParameter="{Binding $parent[Window]}"/>
+                    <StackPanel Orientation="Horizontal">
+                      <Button Content="Create New Game" Command="{Binding ActionNewGame}" CommandParameter="{Binding $parent[Window]}"/>
+                      <ComboBox Classes="noBorder" IsVisible="{Binding DisplayRecents}" PlaceholderText="Use Recent Values..." SelectedItem="{Binding SelectedRecentAction, Mode=TwoWay}" Items="{Binding RecentGameTitles}">
+                        <ComboBox.ItemTemplate>
+                          <DataTemplate>
+                            <TextBlock Text="{Binding Title}" />
+                          </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                      </ComboBox>
+                    </StackPanel>
                     <AutoCompleteBox Items="{Binding Games}" ValueMemberBinding="{Binding Title}" IsTextCompletionEnabled="True" MinimumPrefixLength="2"
                                    MinimumPopulateDelay="0.5" SelectedItem="{Binding SelectedGameTitleViewModel, Mode=TwoWay}" FilterMode="Contains"/>
                   </StackPanel>
