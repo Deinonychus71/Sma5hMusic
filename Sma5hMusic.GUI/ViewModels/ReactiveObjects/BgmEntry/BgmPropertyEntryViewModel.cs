@@ -2,9 +2,7 @@
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using Sma5h.Mods.Music.Models;
-using Sma5hMusic.GUI.Helpers;
 using Sma5hMusic.GUI.Interfaces;
-using System;
 using System.IO;
 using VGMMusic;
 
@@ -13,6 +11,7 @@ namespace Sma5hMusic.GUI.ViewModels
     public class BgmPropertyEntryViewModel : BgmBaseViewModel<BgmPropertyEntry>
     {
         private readonly IVGMMusicPlayer _vgmPlayer;
+        private readonly bool _inGameVolume;
         private float _audioVolume;
         private uint _totalTimeMs;
         private uint _totalSamples;
@@ -58,7 +57,7 @@ namespace Sma5hMusic.GUI.ViewModels
             {
                 this.RaiseAndSetIfChanged(ref _audioVolume, value);
                 if (MusicPlayer != null)
-                    MusicPlayer.AudioVolume = ConvertVolumeToMusicPlayer(value);
+                    MusicPlayer.AudioVolume = value;
             }
         }
 
@@ -66,24 +65,25 @@ namespace Sma5hMusic.GUI.ViewModels
         public bool DoesFileExist { get; set; }
         public MusicPlayerViewModel MusicPlayer { get; set; }
 
-        public BgmPropertyEntryViewModel(IVGMMusicPlayer vgmPlayer, IViewModelManager viewModelManager, IMapper mapper, BgmPropertyEntry bgmPropertyEntry)
+        public BgmPropertyEntryViewModel(IVGMMusicPlayer vgmPlayer, IViewModelManager viewModelManager, IMapper mapper, BgmPropertyEntry bgmPropertyEntry, bool inGameVolume = false)
             : base(viewModelManager, mapper, bgmPropertyEntry)
         {
             _vgmPlayer = vgmPlayer;
+            _inGameVolume = inGameVolume;
             NameId = bgmPropertyEntry.NameId;
             Filename = bgmPropertyEntry.Filename;
 
             DoesFileExist = File.Exists(Filename);
             if (DoesFileExist)
-                MusicPlayer = new MusicPlayerViewModel(vgmPlayer, Filename)
+                MusicPlayer = new MusicPlayerViewModel(vgmPlayer, Filename, inGameVolume)
                 {
-                    AudioVolume = ConvertVolumeToMusicPlayer(bgmPropertyEntry.AudioVolume)
+                    AudioVolume = bgmPropertyEntry.AudioVolume
                 };
         }
 
         public override ReactiveObjectBaseViewModel GetCopy()
         {
-            return _mapper.Map(this, new BgmPropertyEntryViewModel(_vgmPlayer, _viewModelManager, _mapper, GetReferenceEntity()));
+            return _mapper.Map(this, new BgmPropertyEntryViewModel(_vgmPlayer, _viewModelManager, _mapper, GetReferenceEntity(), _inGameVolume));
         }
 
         public override ReactiveObjectBaseViewModel SaveChanges()
@@ -92,13 +92,6 @@ namespace Sma5hMusic.GUI.ViewModels
             _mapper.Map(this, original.GetReferenceEntity());
             _mapper.Map(this, original);
             return original;
-        }
-
-        private float ConvertVolumeToMusicPlayer(float volume)
-        {
-            if (volume == 0)
-                return Constants.DefaultVolume;
-            return (volume + Constants.MaximumGameVolume) / (Constants.MaximumGameVolume*2f);
         }
     }
 }

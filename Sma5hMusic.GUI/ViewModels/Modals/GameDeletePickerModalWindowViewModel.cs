@@ -1,11 +1,11 @@
 ﻿using DynamicData;
 using ReactiveUI;
+using ReactiveUI.Validation.Extensions;
 using Sma5h.Mods.Music.Models;
 using System;
-using System.Linq;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Reactive.Linq;
-using ReactiveUI.Validation.Extensions;
 
 namespace Sma5hMusic.GUI.ViewModels
 {

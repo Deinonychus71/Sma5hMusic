@@ -47,7 +47,7 @@ namespace Sma5hMusic.GUI.ViewModels
 
         private async Task SaveChanges(Window window)
         {
-            if(await SaveChanges())
+            if (await SaveChanges())
                 window.Close(window);
         }
     }

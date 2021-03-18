@@ -43,7 +43,7 @@ namespace Sma5hMusic.GUI.Dialogs
 
         public async Task ShowError(string title, string message, Exception e = null)
         {
-            if(e != null)
+            if (e != null)
                 _logger.LogError(e, "Showing Error: {Title} - {Message}", title, message);
             else
                 _logger.LogError("Showing Error: {Title} - {Message}", title, message);

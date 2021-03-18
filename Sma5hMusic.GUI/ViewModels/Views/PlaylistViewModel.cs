@@ -3,7 +3,6 @@ using Avalonia.Input;
 using DynamicData;
 using DynamicData.Binding;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
@@ -18,7 +17,6 @@ using System.Reactive;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using System.Threading.Tasks;
-using ILogger = Microsoft.Extensions.Logging.ILogger;
 
 namespace Sma5hMusic.GUI.ViewModels
 {
@@ -127,7 +125,8 @@ namespace Sma5hMusic.GUI.ViewModels
                 .ObserveOn(RxApp.MainThreadScheduler)
                 .Bind(out _selectedPlaylistOrderedEntry)
                 .DisposeMany()
-                .Subscribe((o) => { 
+                .Subscribe((o) =>
+                {
                     FocusAfterMove();
                     NbrBgmsPlaylist = $"{SelectedPlaylistEntry.Tracks.Count} songs ({SelectedPlaylistEntry.AllModTracks.Count} mods)";
                 });
@@ -275,7 +274,7 @@ namespace Sma5hMusic.GUI.ViewModels
             _whenNewRequestToUpdatePlaylistsInternal.OnNext(Unit.Default);
         }
 
-        
+
 
         public void FocusAfterMove()
         {

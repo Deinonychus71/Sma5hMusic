@@ -6,8 +6,8 @@ namespace Sma5hMusic.GUI.Helpers
     {
         public const double GUIVersion = 1.31;
 
-        public const float DefaultVolume = 0.5f;
-        public const float MinimumGameVolume = -90.0f;
+        public const float DefaultVolume = 0.8f;
+        public const float MinimumGameVolume = -20.0f;
         public const float MaximumGameVolume = 20.0f;
 
         public class SpecialCategories

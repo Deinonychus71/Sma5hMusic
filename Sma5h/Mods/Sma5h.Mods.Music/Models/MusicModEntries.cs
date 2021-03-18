@@ -24,9 +24,9 @@ namespace Sma5h.Mods.Music.Models
         public MusicModDeleteEntries GetMusicModDeleteEntries()
         {
             var output = new MusicModDeleteEntries();
-            if(BgmDbRootEntries != null)
+            if (BgmDbRootEntries != null)
             {
-                foreach(var entry in BgmDbRootEntries)
+                foreach (var entry in BgmDbRootEntries)
                 {
                     output.BgmDbRootEntries.Add(entry.UiBgmId);
                 }

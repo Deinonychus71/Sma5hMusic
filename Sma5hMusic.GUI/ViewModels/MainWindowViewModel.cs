@@ -1,26 +1,26 @@
 ﻿using AutoMapper;
 using Avalonia.Controls;
+using Avalonia.Threading;
 using DynamicData;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
+using Sma5h.Mods.Music;
+using Sma5h.Mods.Music.Helpers;
 using Sma5hMusic.GUI.Dialogs;
 using Sma5hMusic.GUI.Helpers;
 using Sma5hMusic.GUI.Interfaces;
 using Sma5hMusic.GUI.Views;
 using System;
-using System.Linq;
 using System.IO;
+using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 using VGMMusic;
 using ILogger = Microsoft.Extensions.Logging.ILogger;
-using Microsoft.Extensions.Options;
-using Sma5h.Mods.Music;
-using Avalonia.Threading;
-using Sma5h.Mods.Music.Helpers;
 
 namespace Sma5hMusic.GUI.ViewModels
 {
@@ -77,7 +77,7 @@ namespace Sma5hMusic.GUI.ViewModels
         public ReactiveCommand<Unit, Unit> ActionOpenWiki { get; }
         public ReactiveCommand<Unit, Unit> ActionOpenGlobalSettings { get; }
 
-        public MainWindowViewModel(IServiceProvider serviceProvider, IViewModelManager viewModelManager, IGUIStateManager guiStateManager, IMapper mapper, IVGMMusicPlayer musicPlayer, 
+        public MainWindowViewModel(IServiceProvider serviceProvider, IViewModelManager viewModelManager, IGUIStateManager guiStateManager, IMapper mapper, IVGMMusicPlayer musicPlayer,
             IDialogWindow rootDialog, IMessageDialog messageDialog, IFileDialog fileDialog, IBuildDialog buildDialog, IOptions<ApplicationSettings> appSettings, ILogger<MainWindowViewModel> logger)
         {
             _viewModelManager = viewModelManager;
@@ -235,7 +235,7 @@ namespace Sma5hMusic.GUI.ViewModels
                 return Task.CompletedTask;
             });
         }
-        
+
         public async Task OnInitData()
         {
             IsLoading = true;
@@ -254,7 +254,7 @@ namespace Sma5hMusic.GUI.ViewModels
                     VMContextMenu.ChangeLocale(newDefaultLanguage);
                 }
 
-                if(!_guiStateManager.IsGameVersionFound && !_appSettings.Value.Sma5hMusicGUI.SkipWarningGameVersion)
+                if (!_guiStateManager.IsGameVersionFound && !_appSettings.Value.Sma5hMusicGUI.SkipWarningGameVersion)
                 {
                     await Dispatcher.UIThread.InvokeAsync(async () =>
                     {
@@ -301,7 +301,7 @@ namespace Sma5hMusic.GUI.ViewModels
         {
             var vmGlobalSettings = new GlobalConfigurationViewModel(_mapper, _appSettings.Value);
             var result = await _dialogGlobalSettingsEditor.ShowDialog(_rootDialog.Window, new GlobalConfigurationViewModel(_mapper, _appSettings.Value));
-            if(result != null)
+            if (result != null)
             {
                 await _guiStateManager.UpdateGlobalSettings(vmGlobalSettings.GetReference());
                 IsAdvanced = result.Advanced;
@@ -383,7 +383,7 @@ namespace Sma5hMusic.GUI.ViewModels
                 await _guiStateManager.RenameMusicModToneId(bgmEntryVM.GetMusicModEntries(), vmBgmEntry.MusicMod, _vmToneIdCreation.ToneId);
             }
         }
-       
+
         public async Task DeleteBgmEntry(BgmDbRootEntryViewModel vmBgmEntry)
         {
             if (vmBgmEntry != null)

@@ -29,7 +29,7 @@
         {
             public const string NUS3AUDIO_FILE = "bgm_{0}.nus3audio";
             public const string NUS3BANK_FILE = "bgm_{0}.nus3bank";
-            
+
             public const int ToneIdMinimumSize = 1; //TOVERIFY
             public const int ToneIdMaximumSize = 47;
 

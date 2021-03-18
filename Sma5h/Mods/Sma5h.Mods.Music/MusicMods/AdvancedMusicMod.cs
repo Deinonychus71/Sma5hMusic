@@ -111,7 +111,7 @@ namespace Sma5h.Mods.Music.MusicMods
                 return UpdateGameTitleEntry(musicModEntries.GameTitleEntries.FirstOrDefault());
             }
 
-                //For this specific mod, we want 1 entry of everything
+            //For this specific mod, we want 1 entry of everything
             if (musicModEntries.BgmDbRootEntries.Count < 1 ||
                musicModEntries.BgmAssignedInfoEntries.Count < 1 ||
                musicModEntries.BgmStreamSetEntries.Count < 1 ||
@@ -251,13 +251,13 @@ namespace Sma5h.Mods.Music.MusicMods
 
         public bool UpdateGameTitleEntry(GameTitleEntry gameTitleEntry)
         {
-            if(_musicModConfig?.Games != null)
+            if (_musicModConfig?.Games != null)
             {
                 bool change = false;
 
                 foreach (var game in _musicModConfig.Games)
                 {
-                    if(game.UiGameTitleId == gameTitleEntry.UiGameTitleId)
+                    if (game.UiGameTitleId == gameTitleEntry.UiGameTitleId)
                     {
                         _mapper.Map(gameTitleEntry, game);
                         change = true;

@@ -6,8 +6,8 @@ using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using Sma5h.Mods.Music;
 using System;
-using System.Linq;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
@@ -81,7 +81,8 @@ namespace Sma5hMusic.GUI.ViewModels
                 .Filter(p => p.UiBgmId != "ui_bgm_random")
                 .Bind(out _items)
                 .CountChanged()
-                .Subscribe((o) => {
+                .Subscribe((o) =>
+                {
                     NbrBgms = $"{_items.Count} songs ({_items.Count(p => p.IsMod)} mods)";
                 });
 

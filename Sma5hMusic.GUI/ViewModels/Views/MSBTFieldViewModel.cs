@@ -169,12 +169,12 @@ namespace Sma5hMusic.GUI.ViewModels
 
         public void SaveValueToRecent()
         {
-            foreach(var msbtValue in _msbtValues)
+            foreach (var msbtValue in _msbtValues)
             {
                 var list = _useRecentDict[msbtValue.Key];
                 if (!list.Contains(msbtValue.Value) && !string.IsNullOrEmpty(msbtValue.Value))
                 {
-                    if(list.Count > 9)
+                    if (list.Count > 9)
                         list.RemoveAt(list.Count - 1);
                     list.Insert(0, msbtValue.Value);
                 }

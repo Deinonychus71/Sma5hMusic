@@ -150,7 +150,7 @@ namespace Sma5h.Mods.Music
                 foreach (var playlistConfig in _musicOverrideConfig.PlaylistsOverrides)
                 {
                     var playlist = corePlaylists.FirstOrDefault(p => p.Id == playlistConfig.Key);
-                    if(playlist == null)
+                    if (playlist == null)
                     {
                         var newPlaylist = new PlaylistEntry(playlistConfig.Key, playlistConfig.Value.Title);
                         _audioStateService.AddPlaylistEntry(newPlaylist);
@@ -165,7 +165,7 @@ namespace Sma5h.Mods.Music
                         else
                             _logger.LogWarning("Track with BGM ID {BgmId} from Playlist {Playlist} was not found. This song was removed.", overrideTrack.UiBgmId, playlistConfig.Key);
                     }
-                    
+
                 }
             }
 

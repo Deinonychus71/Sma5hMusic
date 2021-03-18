@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
 using Sma5h.Interfaces;
 using Sma5h.Mods.Music;
 using Sma5h.Mods.Music.Interfaces;

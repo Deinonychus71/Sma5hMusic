@@ -19,6 +19,7 @@ namespace Sma5h.Mods.Music
             public bool CopyToEmptyLocales { get; set; }
             public ushort PlaylistIncidenceDefault { get; set; }
             public bool SkipWarningGameVersion { get; set; }
+            public bool InGameVolume { get; set; }
         }
     }
 }

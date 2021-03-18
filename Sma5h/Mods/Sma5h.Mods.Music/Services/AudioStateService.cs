@@ -286,7 +286,7 @@ namespace Sma5h.Mods.Music.Services
 
         public bool AddGameTitleEntry(GameTitleEntry gameTitleEntry)
         {
-            if(gameTitleEntry.UiGameTitleId.Length > MusicConstants.GameResources.GameTitleMaximumSize ||
+            if (gameTitleEntry.UiGameTitleId.Length > MusicConstants.GameResources.GameTitleMaximumSize ||
                 gameTitleEntry.UiGameTitleId.Length < MusicConstants.GameResources.GameTitleMinimumSize)
             {
                 _logger.LogError("The Game Title ID {GameTitleId} is either too long or too short. Minimum: {GameTitleMinimumValue}, Maximum: {GameTitleMaximumValue}",
@@ -435,9 +435,9 @@ namespace Sma5h.Mods.Music.Services
             foreach (var gameTitle in _gameTitleEntries.Values)
             {
                 //Ensure that the game needs to be added - If no song is using the game, there is no need to compile it.
-                if(gameTitle.Source == EntrySource.Mod)
+                if (gameTitle.Source == EntrySource.Mod)
                 {
-                    if (_bgmDbRootEntries.Values.Count(p => 
+                    if (_bgmDbRootEntries.Values.Count(p =>
                     p.UiGameTitleId == gameTitle.UiGameTitleId ||
                     p.UiGameTitleId1 == gameTitle.UiGameTitleId ||
                     p.UiGameTitleId2 == gameTitle.UiGameTitleId ||
@@ -712,10 +712,10 @@ namespace Sma5h.Mods.Music.Services
         {
             var gameCrcSets = GameResourcesCrcHelper.VersionCrcSets;
             GameVersion = 0.0;
-            foreach(var versionCrcSet in gameCrcSets)
+            foreach (var versionCrcSet in gameCrcSets)
             {
                 bool allMatch = true;
-                foreach(var resource in versionCrcSet.CrcResources)
+                foreach (var resource in versionCrcSet.CrcResources)
                 {
                     var file = Path.Combine(_config.Value.GameResourcesPath, resource.Key);
                     if (File.Exists(file))

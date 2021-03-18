@@ -213,7 +213,7 @@ namespace Sma5hMusic.GUI.Dialogs
             _logger.LogInformation("Cleaning up workspace folder");
             foreach (var fileToDelete in existingFiles)
             {
-                if(IsWorkspaceFile(fileToDelete))
+                if (IsWorkspaceFile(fileToDelete))
                     File.Delete(fileToDelete);
             }
         }

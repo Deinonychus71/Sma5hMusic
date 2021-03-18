@@ -117,9 +117,9 @@ namespace Sma5h.Mods.Music.Services
 
         public async Task<bool> UpdateGameEntry(GameTitleEntry gameTitleEntry)
         {
-            if(_musicMods != null)
+            if (_musicMods != null)
             {
-                foreach(var musicMod in _musicMods)
+                foreach (var musicMod in _musicMods)
                 {
                     var newMusicModEntries = new MusicModEntries();
                     newMusicModEntries.GameTitleEntries.Add(gameTitleEntry);

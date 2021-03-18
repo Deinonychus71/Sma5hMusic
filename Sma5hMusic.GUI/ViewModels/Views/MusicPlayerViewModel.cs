@@ -1,5 +1,7 @@
 ﻿using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
+using Sma5hMusic.GUI.Helpers;
+using System;
 using System.Reactive;
 using System.Threading.Tasks;
 using VGMMusic;
@@ -14,6 +16,7 @@ namespace Sma5hMusic.GUI.ViewModels
         private const string STOP = "\u23F9";
         private bool _isPlaying;
         private bool _isExecutingAction;
+        private bool _inGameVolume;
         private static MusicPlayerViewModel _currentPlayControl;
 
         public ReactiveCommand<Unit, Unit> ActionPlaySong { get; }
@@ -26,7 +29,7 @@ namespace Sma5hMusic.GUI.ViewModels
             }
             set
             {
-                _audioVolume = value;
+                _audioVolume = ConvertVolumeToMusicPlayer(value);
                 if (_musicPlayer != null && _isPlaying)
                     _musicPlayer.Volume = _audioVolume;
             }
@@ -37,9 +40,10 @@ namespace Sma5hMusic.GUI.ViewModels
         [Reactive]
         public string Text { get; set; }
 
-        public MusicPlayerViewModel(IVGMMusicPlayer musicPlayer, string filename)
+        public MusicPlayerViewModel(IVGMMusicPlayer musicPlayer, string filename, bool inGameVolume = false)
         {
             _musicPlayer = musicPlayer;
+            _inGameVolume = inGameVolume;
             Filename = filename;
 
             Text = PLAY;
@@ -81,6 +85,30 @@ namespace Sma5hMusic.GUI.ViewModels
             await _musicPlayer.Stop();
             Text = PLAY;
             _isPlaying = false;
+        }
+
+        private float ConvertVolumeToMusicPlayer(float volume)
+        {
+            if (!_inGameVolume)
+                return Constants.DefaultVolume;
+
+            /*
+             * -15      0.016666668
+             * -10      0.033333335
+             *  -5	    0.06666667
+             *  -2	    0.09166667
+             *  -1	    0.09583333
+             *   0	    0.11093858
+             *   1	    0.12522507
+             *   2	    0.14385904
+             *   5	    0.19510613
+             *   6.2    0.246151
+             *  10	    0.36688885
+             *  15	    0.59292334
+             *  20	    1
+             */
+            var y = 5.29809 / (1 + 45.2203 * Math.Exp(-0.117516 * volume));
+            return y >= 1.0 ? 1.0f : Convert.ToSingle(y);
         }
     }
 }

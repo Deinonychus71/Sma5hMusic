@@ -33,7 +33,8 @@ namespace Sma5hMusic.GUI.Mods.Music.Models.AutoMapper
                     DefaultMSBTLocale = p.DefaultMSBTLocale,
                     CopyToEmptyLocales = p.CopyToEmptyLocales,
                     PlaylistIncidenceDefault = p.PlaylistIncidenceDefault,
-                    SkipWarningGameVersion = p.SkipWarningGameVersion
+                    SkipWarningGameVersion = p.SkipWarningGameVersion,
+                    InGameVolume = p.InGameVolume
                 }))
                 .ForMember(i => i.Sma5hMusicOverride, me => me.MapFrom(p => new Sma5hMusicOverrideOptions.Sma5hMusicOverrideOptionsSection()
                 {
@@ -61,6 +62,7 @@ namespace Sma5hMusic.GUI.Mods.Music.Models.AutoMapper
                 .ForMember(i => i.CopyToEmptyLocales, me => me.MapFrom(p => p.Sma5hMusicGUI.CopyToEmptyLocales))
                 .ForMember(i => i.PlaylistIncidenceDefault, me => me.MapFrom(p => p.Sma5hMusicGUI.PlaylistIncidenceDefault))
                 .ForMember(i => i.SkipWarningGameVersion, me => me.MapFrom(p => p.Sma5hMusicGUI.SkipWarningGameVersion))
+                .ForMember(i => i.InGameVolume, me => me.MapFrom(p => p.Sma5hMusicGUI.InGameVolume))
                 .ForMember(i => i.ModOverridePath, me => me.MapFrom(p => p.Sma5hMusicOverride.ModPath))
                 .ForMember(i => i.TempPath, me => me.MapFrom(p => p.TempPath))
                 .ForMember(i => i.ToolsPath, me => me.MapFrom(p => p.ToolsPath));

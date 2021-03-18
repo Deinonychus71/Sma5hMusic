@@ -102,6 +102,7 @@
             </fields:PropertyField.FieldContent>
           </fields:PropertyField>
           <Button Margin="10,10,0,0" Content="Wipe Audio Cache" Command="{Binding ActionWipeAudioCache}"/>
+          <fields:PropertyBooleanField Label="[EXPERIMENTAL] In-Game Volume" IsChecked="{Binding SelectedItem.InGameVolume}" ToolTip="If turned on, the volume parameter of each song will be used to try to get an accurate playback of how loud a song will be in-game. Typically used to normalize songs from within the GUI." />
         </StackPanel>
       </Grid>
     </Grid>

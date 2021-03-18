@@ -1,8 +1,8 @@
-﻿using System;
-using Avalonia.Markup.Xaml.Styling;
+﻿using Avalonia.Markup.Xaml.Styling;
 using Avalonia.Styling;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using System;
 
 namespace Sma5hMusic.GUI.Helpers
 {

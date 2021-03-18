@@ -6,7 +6,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
-using Sma5h.Mods.Music.Interfaces;
 using System;
 using System.Collections.ObjectModel;
 using System.Reactive;
@@ -131,8 +130,7 @@ namespace Sma5hMusic.GUI.ViewModels
             if (!e.Data.Contains(DATAOBJECT_FORMAT))
                 e.DragEffects = DragDropEffects.None;
 
-            var destinationObj = ((Control)e.Source).DataContext as BgmDbRootEntryViewModel;
-            if (destinationObj != null && destinationObj.HiddenInSoundTest)
+            if (((Control)e.Source).DataContext is BgmDbRootEntryViewModel destinationObj && destinationObj.HiddenInSoundTest)
                 e.DragEffects = DragDropEffects.None;
         }
 

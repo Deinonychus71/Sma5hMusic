@@ -97,7 +97,7 @@ namespace Sma5hMusic.GUI.ViewModels
             return output;
         }
 
-        public void AddSong(BgmDbRootEntryViewModel sourceObj, PlaylistValueEntry playlistValueEntry )
+        public void AddSong(BgmDbRootEntryViewModel sourceObj, PlaylistValueEntry playlistValueEntry)
         {
             Tracks[0].Add(new PlaylistEntryValueViewModel(this, sourceObj.UiBgmId, playlistValueEntry.Order0, playlistValueEntry.Incidence0, sourceObj));
             Tracks[1].Add(new PlaylistEntryValueViewModel(this, sourceObj.UiBgmId, playlistValueEntry.Order1, playlistValueEntry.Incidence1, sourceObj));

@@ -8,7 +8,6 @@ using ReactiveUI.Fody.Helpers;
 using ReactiveUI.Validation.Extensions;
 using Sma5h.Mods.Music;
 using Sma5h.Mods.Music.Helpers;
-using Sma5h.Mods.Music.Interfaces;
 using Sma5hMusic.GUI.Helpers;
 using Sma5hMusic.GUI.Interfaces;
 using Sma5hMusic.GUI.Models;
@@ -76,7 +75,7 @@ namespace Sma5hMusic.GUI.ViewModels
         public ReactiveCommand<BgmPropertyEntryViewModel, Unit> ActionCalculateLoopCues { get; }
 
         public BgmPropertiesModalWindowViewModel(IOptions<ApplicationSettings> config, ILogger<BgmPropertiesModalWindowViewModel> logger, IFileDialog fileDialog,
-            IMapper mapper, IGUIStateManager guiStateManager, IObservable<IChangeSet<SeriesEntryViewModel, string>> observableSeries, 
+            IMapper mapper, IGUIStateManager guiStateManager, IObservable<IChangeSet<SeriesEntryViewModel, string>> observableSeries,
             IObservable<IChangeSet<GameTitleEntryViewModel, string>> observableGames, IObservable<IChangeSet<BgmAssignedInfoEntryViewModel, string>> observableBgmAssignedInfoEntries)
         {
             _config = config;
