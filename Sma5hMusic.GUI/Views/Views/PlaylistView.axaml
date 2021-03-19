@@ -102,16 +102,36 @@
           <DataGridTemplateColumn Width="2*" Header="Game">
             <DataGridTemplateColumn.CellTemplate>
               <DataTemplate>
-                <TextBlock Margin="{StaticResource DataGridTextColumnCellTextBlockMargin}" VerticalAlignment="Center"
-                           Foreground="{Binding Order, Converter={StaticResource HiddenColumnConverter}}" Text="{Binding BgmReference.GameTitleViewModel.Title, Mode=OneWay}"></TextBlock>
+                <TextBlock Background="Transparent" Margin="{StaticResource DataGridTextColumnCellTextBlockMargin}" VerticalAlignment="Center"
+                           Foreground="{Binding Order, Converter={StaticResource HiddenColumnConverter}}" Text="{Binding BgmReference.GameTitleViewModel.Title, Mode=OneWay}">
+                  <TextBlock.ContextMenu>
+                    <ContextMenu IsVisible="{Binding IsMod}">
+                      <MenuItem Header="Set exact incidence value..." Command="{Binding $parent[DataGrid].DataContext.ActionSetIncidence, Mode=OneWay}" CommandParameter="{Binding}"/>
+                      <Separator/>
+                      <MenuItem Header="Copy incidence" Command="{Binding $parent[DataGrid].DataContext.ActionCopyIncidence, Mode=OneWay}" CommandParameter="{Binding}"/>
+                      <MenuItem Header="Paste incidence" IsEnabled="{Binding $parent[DataGrid].DataContext.CopyValueExists}" Command="{Binding $parent[DataGrid].DataContext.ActionPasteIncidence, Mode=OneWay}" CommandParameter="{Binding}"/>
+                      <MenuItem Header="Paste incidence to all other Orders" IsEnabled="{Binding $parent[DataGrid].DataContext.CopyValueExists}" Command="{Binding $parent[DataGrid].DataContext.ActionPasteIncidenceAll, Mode=OneWay}" CommandParameter="{Binding}"/>
+                    </ContextMenu>
+                  </TextBlock.ContextMenu>
+                </TextBlock>
               </DataTemplate>
             </DataGridTemplateColumn.CellTemplate>
           </DataGridTemplateColumn>
           <DataGridTemplateColumn Width="3*" Header="Title">
             <DataGridTemplateColumn.CellTemplate>
               <DataTemplate>
-                <TextBlock Margin="{StaticResource DataGridTextColumnCellTextBlockMargin}" VerticalAlignment="Center"
-                           Foreground="{Binding Order, Converter={StaticResource HiddenColumnConverter}}" Text="{Binding BgmReference.Title, Mode=OneWay, Converter={StaticResource LabelValueConverter}}"></TextBlock>
+                <TextBlock Background="Transparent" Margin="{StaticResource DataGridTextColumnCellTextBlockMargin}" VerticalAlignment="Center"
+                           Foreground="{Binding Order, Converter={StaticResource HiddenColumnConverter}}" Text="{Binding BgmReference.Title, Mode=OneWay, Converter={StaticResource LabelValueConverter}}">
+                  <TextBlock.ContextMenu>
+                    <ContextMenu IsVisible="{Binding IsMod}">
+                      <MenuItem Header="Set exact incidence value..." Command="{Binding $parent[DataGrid].DataContext.ActionSetIncidence, Mode=OneWay}" CommandParameter="{Binding}"/>
+                      <Separator/>
+                      <MenuItem Header="Copy incidence" Command="{Binding $parent[DataGrid].DataContext.ActionCopyIncidence, Mode=OneWay}" CommandParameter="{Binding}"/>
+                      <MenuItem Header="Paste incidence" IsEnabled="{Binding $parent[DataGrid].DataContext.CopyValueExists}" Command="{Binding $parent[DataGrid].DataContext.ActionPasteIncidence, Mode=OneWay}" CommandParameter="{Binding}"/>
+                      <MenuItem Header="Paste incidence to all other Orders" IsEnabled="{Binding $parent[DataGrid].DataContext.CopyValueExists}" Command="{Binding $parent[DataGrid].DataContext.ActionPasteIncidenceAll, Mode=OneWay}" CommandParameter="{Binding}"/>
+                    </ContextMenu>
+                  </TextBlock.ContextMenu>
+                </TextBlock>
               </DataTemplate>
             </DataGridTemplateColumn.CellTemplate>
           </DataGridTemplateColumn>

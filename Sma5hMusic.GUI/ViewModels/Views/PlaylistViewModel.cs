@@ -9,6 +9,7 @@ using ReactiveUI.Fody.Helpers;
 using Sma5h.Mods.Music;
 using Sma5hMusic.GUI.Interfaces;
 using Sma5hMusic.GUI.Models;
+using Sma5hMusic.GUI.Views;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -23,6 +24,7 @@ namespace Sma5hMusic.GUI.ViewModels
     public class PlaylistViewModel : ViewModelBase
     {
         private readonly IOptions<ApplicationSettings> _config;
+        private readonly IDialogWindow _rootDialog;
         private readonly IMessageDialog _messageDialog;
         private readonly ReadOnlyObservableCollection<BgmDbRootEntryViewModel> _bgms;
         private readonly ReadOnlyObservableCollection<PlaylistEntryViewModel> _playlists;
@@ -38,11 +40,14 @@ namespace Sma5hMusic.GUI.ViewModels
         private const string DATAOBJECT_FORMAT_BGM = "BGM";
         private const string DATAOBJECT_FORMAT_PLAYLIST = "PLAYLIST";
         private readonly List<ComboItem> _orderMenu;
+        private ushort _incidenceCopy = ushort.MaxValue;
         private Action _postReorderSelection;
         private DataGrid _refGrid;
 
         public IEnumerable<ComboItem> OrderMenu { get { return _orderMenu; } }
         public ContextMenuViewModel VMContextMenu { get; }
+        [Reactive]
+        public bool CopyValueExists{ get; private set; }
 
         public IObservable<PlaylistEntryViewModel> WhenPlaylistSelected { get { return _whenPlaylistSelected; } }
         public IObservable<ComboItem> WhenPlaylistOrderSelected { get { return _whenPlaylistOrderSelected; } }
@@ -77,11 +82,16 @@ namespace Sma5hMusic.GUI.ViewModels
         public ReactiveCommand<Unit, Unit> ActionEditPlaylist { get; }
         public ReactiveCommand<Unit, Unit> ActionDeletePlaylist { get; }
         public ReactiveCommand<Unit, Unit> ActionAssignPlaylistToStage { get; }
+        public ReactiveCommand<PlaylistEntryValueViewModel, Unit> ActionSetIncidence { get; }
+        public ReactiveCommand<PlaylistEntryValueViewModel, Unit> ActionCopyIncidence { get; }
+        public ReactiveCommand<PlaylistEntryValueViewModel, Unit> ActionPasteIncidence { get; }
+        public ReactiveCommand<PlaylistEntryValueViewModel, Unit> ActionPasteIncidenceAll { get; }
 
-        public PlaylistViewModel(IOptions<ApplicationSettings> config, IMessageDialog messageDialog, IObservable<IChangeSet<BgmDbRootEntryViewModel, string>> observableBgmEntries,
+        public PlaylistViewModel(IOptions<ApplicationSettings> config, IDialogWindow rootDialog, IMessageDialog messageDialog, IObservable<IChangeSet<BgmDbRootEntryViewModel, string>> observableBgmEntries,
             IObservable<IChangeSet<PlaylistEntryViewModel, string>> observablePlaylistEntries, ContextMenuViewModel vmContextMenu)
         {
             _config = config;
+            _rootDialog = rootDialog;
             _messageDialog = messageDialog;
             VMContextMenu = vmContextMenu;
             _orderMenu = GetOrderList();
@@ -151,6 +161,10 @@ namespace Sma5hMusic.GUI.ViewModels
             ActionEditPlaylist = ReactiveCommand.Create(() => EditPlaylist());
             ActionDeletePlaylist = ReactiveCommand.Create(() => DeletePlaylist());
             ActionAssignPlaylistToStage = ReactiveCommand.Create(() => AssignPlaylistToStage());
+            ActionSetIncidence = ReactiveCommand.CreateFromTask<PlaylistEntryValueViewModel>(SetIncidenceValue);
+            ActionCopyIncidence = ReactiveCommand.Create<PlaylistEntryValueViewModel>(CopyIncidenceValue);
+            ActionPasteIncidence = ReactiveCommand.Create<PlaylistEntryValueViewModel>(PasteIncidenceValue);
+            ActionPasteIncidenceAll = ReactiveCommand.Create<PlaylistEntryValueViewModel>(PasteIncidenceValueToAllOrderIds);
 
             //Trigger behavior subjets
             _whenPlaylistSelected = new BehaviorSubject<PlaylistEntryViewModel>(_playlists.FirstOrDefault());
@@ -305,6 +319,43 @@ namespace Sma5hMusic.GUI.ViewModels
             for (int i = 0; i < 16; i++)
                 output.Add(new ComboItem(i.ToString(), $"Order {i}"));
             return output;
+        }
+        #endregion
+
+        #region Incidence Context Menu
+        private async Task SetIncidenceValue(PlaylistEntryValueViewModel vmPlaylistEntryValue)
+        {
+            var vmIncidenceModalPicker = new IncidencePickerModalWindowViewModel() { Incidence = vmPlaylistEntryValue.Incidence };
+            var incidenceModal = new IncidencePickerModalWindow() { DataContext = vmIncidenceModalPicker };
+            var result = await incidenceModal.ShowDialog<IncidencePickerModalWindow>(_rootDialog.Window);
+            if (result != null && vmIncidenceModalPicker.Incidence != ushort.MaxValue)
+            {
+                vmPlaylistEntryValue.Incidence = vmIncidenceModalPicker.Incidence;
+            }
+        }
+
+        private void CopyIncidenceValue(PlaylistEntryValueViewModel vmPlaylistEntryValue)
+        {
+            _incidenceCopy = vmPlaylistEntryValue.Incidence;
+            CopyValueExists = true;
+        }
+
+        private void PasteIncidenceValue(PlaylistEntryValueViewModel vmPlaylistEntryValue)
+        {
+            vmPlaylistEntryValue.Incidence = _incidenceCopy;
+        }
+
+        private void PasteIncidenceValueToAllOrderIds(PlaylistEntryValueViewModel vmPlaylistEntryValue)
+        {
+            if (vmPlaylistEntryValue.Parent == null)
+                return;
+
+            var parent = vmPlaylistEntryValue.Parent;
+            for (short i = 0; i < 16; i++)
+            {
+                var vmPlaylistEntryValueOrder = parent.Tracks[i].FirstOrDefault(p => p.UiBgmId == vmPlaylistEntryValue.UiBgmId);
+                PasteIncidenceValue(vmPlaylistEntryValueOrder);
+            }
         }
         #endregion
 

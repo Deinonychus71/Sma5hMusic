@@ -1,0 +1,30 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        Width="300" Height="200" MinWidth="300"  MinHeight="200"
+        WindowStartupLocation="CenterScreen" ShowInTaskbar="False"
+        x:Class="Sma5hMusic.GUI.Views.IncidencePickerModalWindow"
+        xmlns:fields="clr-namespace:Sma5hMusic.GUI.Views.Fields"
+        Title="Incidence Picker">
+  <DockPanel Classes="modal" LastChildFill="True" HorizontalAlignment="Stretch">
+    <Border Classes="headerTitle" DockPanel.Dock="Top">
+      <TextBlock>Edit Incidence</TextBlock>
+    </Border>
+    <StackPanel Classes="modalActions" DockPanel.Dock="Bottom">
+      <Button Content="Select" Command="{Binding ActionOK}" CommandParameter="{Binding $parent[Window]}"></Button>
+      <Button Content="Cancel" Command="{Binding ActionCancel}" CommandParameter="{Binding $parent[Window]}"></Button>
+    </StackPanel>
+
+    <StackPanel Classes="content">
+      <fields:PropertyField HorizontalContentAlignment="Center" HorizontalAlignment="Center" Label="Incidence" ToolTip="How likely a song is going to be picked. Valid values are between 0 to 10000.">
+        <fields:PropertyField.FieldContent>
+          <StackPanel Orientation="Horizontal">
+            <NumericUpDown Value="{Binding Incidence, Mode=TwoWay}" Maximum="10000" Minimum="0"/>
+          </StackPanel>
+        </fields:PropertyField.FieldContent>
+      </fields:PropertyField>
+    </StackPanel>
+  </DockPanel>
+</Window>
