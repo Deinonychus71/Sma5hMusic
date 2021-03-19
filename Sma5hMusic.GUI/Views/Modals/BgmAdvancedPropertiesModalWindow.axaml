@@ -261,7 +261,7 @@
               <fields:PropertyByteField Label="loop" Value="{Binding StreamPropertyViewModel.Loop, Mode=TwoWay}" ToolTip="[Byte]" />
               <fields:PropertyTextField x:Name="EndPoint" Label="end_point" Text="{Binding StreamPropertyViewModel.EndPoint, Mode=TwoWay}" ToolTip="[String]" />
               <fields:PropertyUShortField Label="fadeout_frame" Value="{Binding StreamPropertyViewModel.FadeOutFrame, Mode=TwoWay}" ToolTip="[UShort]" />
-              <fields:PropertyTextField x:Name="StartPointSuddenDeath" Label="start_point_suddendeath" Text="{Binding StreamPropertyViewModel.StartPointSuddenDeath, Mode=TwoWay}" ToolTip="[String] Indicate when the song should start during deathmatch." />
+              <fields:PropertyTextField x:Name="StartPointSuddenDeath" Label="start_point_suddendeath" Text="{Binding StreamPropertyViewModel.StartPointSuddenDeath, Mode=TwoWay}" ToolTip="[String] Indicate when the song should start during sudden death." />
               <fields:PropertyTextField x:Name="StartPointTransition" Label="start_point_transition" Text="{Binding StreamPropertyViewModel.StartPointTransition, Mode=TwoWay}" ToolTip="[String] Indicate when the song should start while morphing to another stage." />
             </StackPanel>
             <StackPanel Grid.Row="0" Grid.Column="2" HorizontalAlignment="Stretch">
