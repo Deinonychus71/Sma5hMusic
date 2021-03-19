@@ -2,8 +2,8 @@
 {
     public class MusicConstants
     {
-        public const double VersionSma5hMusic = 1.31;
-        public const double VersionSma5hMusicOverride = 1.31;
+        public const double VersionSma5hMusic = 1.4;
+        public const double VersionSma5hMusicOverride = 1.4;
 
         public class MusicModFiles
         {
