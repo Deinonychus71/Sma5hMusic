@@ -22,7 +22,6 @@ namespace Sma5hMusic.GUI.ViewModels
 
         private void CancelChanges(Window w)
         {
-            Incidence = ushort.MaxValue;
             w.Close();
         }
 

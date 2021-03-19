@@ -84,6 +84,7 @@ namespace Sma5hMusic.GUI.ViewModels
         public ReactiveCommand<Window, Unit> ActionNewGame { get; }
         public ReactiveCommand<BgmPropertyEntryViewModel, Unit> ActionChangeFile { get; }
         public ReactiveCommand<BgmPropertyEntryViewModel, Unit> ActionCalculateLoopCues { get; }
+        public ReactiveCommand<Window, Unit> ActionClosing { get; }
 
         public BgmPropertiesModalWindowViewModel(IOptions<ApplicationSettings> config, ILogger<BgmPropertiesModalWindowViewModel> logger, IFileDialog fileDialog,
             IMapper mapper, IGUIStateManager guiStateManager, IObservable<IChangeSet<SeriesEntryViewModel, string>> observableSeries,
@@ -164,6 +165,7 @@ namespace Sma5hMusic.GUI.ViewModels
             ActionNewGame = ReactiveCommand.Create<Window>(AddNewGame);
             ActionChangeFile = ReactiveCommand.CreateFromTask<BgmPropertyEntryViewModel>(ChangeFile);
             ActionCalculateLoopCues = ReactiveCommand.CreateFromTask<BgmPropertyEntryViewModel>(CalculateAudioCues);
+            ActionClosing = ReactiveCommand.Create<Window>(ClosingWindow);
         }
 
         private bool ValidateStreamPropertyTime(string value)
@@ -261,10 +263,9 @@ namespace Sma5hMusic.GUI.ViewModels
             }
         }
 
-        protected override Task CancelChanges()
+        private void ClosingWindow(Window w)
         {
             BgmPropertyViewModel?.MusicPlayer?.ChangeFilename(_originalFilename);
-            return base.CancelChanges();
         }
 
         protected override Task<bool> SaveChanges()
@@ -274,6 +275,8 @@ namespace Sma5hMusic.GUI.ViewModels
                 BgmPropertyViewModel.AudioVolume = Constants.MinimumGameVolume;
             if (BgmPropertyViewModel.AudioVolume > Constants.MaximumGameVolume)
                 BgmPropertyViewModel.AudioVolume = Constants.MaximumGameVolume;
+
+            _originalFilename = BgmPropertyViewModel.Filename;
 
             DbRootViewModel.TestDispOrder = (short)(IsInSoundTest ? DbRootViewModel.TestDispOrder > -1 ? DbRootViewModel.TestDispOrder : short.MaxValue : -1);
             if (SelectedRecordType != null)

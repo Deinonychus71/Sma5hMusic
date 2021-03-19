@@ -26,7 +26,7 @@ namespace Sma5hMusic.GUI.ViewModels
         public ModalBaseViewModel()
         {
             var canExecute = GetValidationRule();
-            ActionCancel = ReactiveCommand.CreateFromTask<Window>(CancelChanges);
+            ActionCancel = ReactiveCommand.Create<Window>(CancelChanges);
             ActionOK = ReactiveCommand.CreateFromTask<Window>(SaveChanges, canExecute);
         }
 
@@ -37,11 +37,9 @@ namespace Sma5hMusic.GUI.ViewModels
 
         protected virtual void LoadItem(T item) { }
         protected virtual Task<bool> SaveChanges() { return Task.FromResult(true); }
-        protected virtual Task CancelChanges() { return Task.CompletedTask; }
 
-        private async Task CancelChanges(Window w)
+        private void CancelChanges(Window w)
         {
-            await CancelChanges();
             w.Close();
         }
 

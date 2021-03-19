@@ -73,7 +73,6 @@ namespace Sma5hMusic.GUI.ViewModels
 
         private void Cancel(Window w)
         {
-            _logger.LogDebug("Clicked Cancel");
             w.Close();
         }
 

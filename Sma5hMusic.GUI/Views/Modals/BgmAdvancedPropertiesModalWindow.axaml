@@ -7,7 +7,14 @@
         x:Class="Sma5hMusic.GUI.Views.BgmAdvancedPropertiesModalWindow"
         WindowStartupLocation="CenterScreen" ShowInTaskbar="False"
         xmlns:fields="clr-namespace:Sma5hMusic.GUI.Views.Fields"
+        xmlns:i="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
+        xmlns:ia="clr-namespace:Avalonia.Xaml.Interactions.Core;assembly=Avalonia.Xaml.Interactions"
         Title="BGM Properties">
+  <i:Interaction.Behaviors>
+    <ia:EventTriggerBehavior EventName="Closing">
+      <ia:InvokeCommandAction Command="{Binding ActionClosing}" CommandParameter="{Binding $self}"/>
+    </ia:EventTriggerBehavior>
+  </i:Interaction.Behaviors>
   <Window.Styles>
     <Style Selector=".content Button:pointerover">
       <Setter Property="Background" Value="Gray"/>

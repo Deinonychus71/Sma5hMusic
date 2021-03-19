@@ -53,7 +53,7 @@ namespace Sma5hMusic.GUI.ViewModels
 
         public async Task ChangeFilename(string filename)
         {
-            if (_isPlaying)
+            if (_isPlaying && Filename != filename)
                 await StopSong();
             Filename = filename;
         }
