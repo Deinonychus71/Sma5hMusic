@@ -24,7 +24,7 @@ namespace Sma5hMusic.GUI.Services
         private readonly IAudioStateService _audioState;
         private readonly IMusicModManagerService _musicModManager;
         private readonly IVGMMusicPlayer _vgmMusicPlayer;
-        private readonly IOptions<ApplicationSettings> _config;
+        private readonly bool _inGameVolume;
         private readonly Dictionary<string, LocaleViewModel> _vmDictLocalesEntries;
         private readonly Dictionary<string, SeriesEntryViewModel> _vmDictSeriesEntries;
         private readonly Dictionary<string, GameTitleEntryViewModel> _vmDictGameTitlesEntries;
@@ -63,7 +63,7 @@ namespace Sma5hMusic.GUI.Services
 
         public ViewModelManager(IOptions<ApplicationSettings> config, IAudioStateService audioStateService, IMusicModManagerService musicModManager, IVGMMusicPlayer vgmMusicPlayer, IMapper mapper, ILogger<IViewModelManager> logger)
         {
-            _config = config;
+            _inGameVolume = config.Value.Sma5hMusicGUI.InGameVolume;
             _mapper = mapper;
             _logger = logger;
             _vgmMusicPlayer = vgmMusicPlayer;
@@ -167,7 +167,7 @@ namespace Sma5hMusic.GUI.Services
             foreach (var vmBgmStreamPropertyEntry in vmBgmStreamPropertyEntriesList)
                 _vmDictBgmStreamPropertyEntries.Add(vmBgmStreamPropertyEntry.StreamId, vmBgmStreamPropertyEntry);
 
-            var vmBgmPropertyEntriesList = _audioState.GetBgmPropertyEntries().Select(p => _mapper.Map(p, new BgmPropertyEntryViewModel(_vgmMusicPlayer, this, _mapper, _config, p))).ToList();
+            var vmBgmPropertyEntriesList = _audioState.GetBgmPropertyEntries().Select(p => _mapper.Map(p, new BgmPropertyEntryViewModel(_vgmMusicPlayer, this, _mapper, p, _inGameVolume))).ToList();
             foreach (var vmBgmPropertyEntry in vmBgmPropertyEntriesList)
                 _vmDictBgmPropertyEntries.Add(vmBgmPropertyEntry.NameId, vmBgmPropertyEntry);
 
@@ -458,7 +458,7 @@ namespace Sma5hMusic.GUI.Services
 
         public bool AddNewBgmPropertyEntryViewModel(BgmPropertyEntry bgmPropertyEntry)
         {
-            var newVM = _mapper.Map(bgmPropertyEntry, new BgmPropertyEntryViewModel(_vgmMusicPlayer, this, _mapper, _config, bgmPropertyEntry));
+            var newVM = _mapper.Map(bgmPropertyEntry, new BgmPropertyEntryViewModel(_vgmMusicPlayer, this, _mapper, bgmPropertyEntry, _inGameVolume));
             _vmDictBgmPropertyEntries.Add(newVM.NameId, newVM);
             _vmObsvBgmPropertyEntries.Add(newVM);
             return true;

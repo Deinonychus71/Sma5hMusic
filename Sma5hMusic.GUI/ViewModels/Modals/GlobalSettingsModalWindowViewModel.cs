@@ -20,7 +20,6 @@ namespace Sma5hMusic.GUI.ViewModels
         public List<string> UIScales => new List<string>() { "Normal", "Small" };
         public List<string> ConversionFormats => new List<string>() { "lopus", "idsp" };
         public List<string> FallBackConversionFormats => new List<string>() { "lopus", "idsp" };
-        public List<int> VolumeBoundaries  => new List<int>() { 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20 };
         public List<ComboItem> Locales => Constants.CONVERTER_LOCALE.Select(p => new ComboItem(p.Key, p.Value)).ToList();
 
         public ReactiveCommand<Unit, Unit> ActionWipeAudioCache { get; }
@@ -28,7 +27,6 @@ namespace Sma5hMusic.GUI.ViewModels
 
         public ComboItem SelectedGUILocale { get; set; }
         public ComboItem SelectedMSBTLocale { get; set; }
-        public int SelectedVolumeBoundaries { get; set; }
 
         public GlobalSettingsModalWindowViewModel(IGUIStateManager guiStateManager, IFileDialog fileDialog)
         {
@@ -118,14 +116,12 @@ namespace Sma5hMusic.GUI.ViewModels
         {
             SelectedGUILocale = Locales.FirstOrDefault(p => p.Id == item?.DefaultGUILocale);
             SelectedMSBTLocale = Locales.FirstOrDefault(p => p.Id == item?.DefaultMSBTLocale);
-            SelectedVolumeBoundaries = VolumeBoundaries.FirstOrDefault(p => p == (item != null ? item.VolumeBoundaries : 12));
         }
 
         protected override Task<bool> SaveChanges()
         {
             SelectedItem.DefaultGUILocale = SelectedGUILocale?.Id;
             SelectedItem.DefaultMSBTLocale = SelectedMSBTLocale?.Id;
-            SelectedItem.VolumeBoundaries = SelectedVolumeBoundaries;
 
             return base.SaveChanges();
         }

@@ -129,7 +129,7 @@
               <fields:PropertyField Label="Volume" ToolTip="Change the volume of the song in game.">
                 <fields:PropertyField.FieldContent>
                   <Grid ColumnDefinitions="*,70">
-                    <Slider TickFrequency="0.1" TickPlacement="Outside" IsSnapToTickEnabled="True" Minimum="{Binding MinimumVolume, Mode=OneTime}" Maximum="{Binding MaximumVolume, Mode=OneTime}" Orientation="Horizontal" Value="{Binding Path=BgmPropertyViewModel.AudioVolume, Mode=TwoWay}"/>
+                    <Slider TickFrequency="0.1" TickPlacement="Outside" IsSnapToTickEnabled="True" Minimum="-20" Maximum="20" Orientation="Horizontal" Value="{Binding Path=BgmPropertyViewModel.AudioVolume, Mode=TwoWay}"/>
                     <StackPanel Grid.Column="1" Margin="2,15,5,0">
                       <TextBox Text="{Binding Path=BgmPropertyViewModel.AudioVolume, Mode=TwoWay}"></TextBox>
                     </StackPanel>

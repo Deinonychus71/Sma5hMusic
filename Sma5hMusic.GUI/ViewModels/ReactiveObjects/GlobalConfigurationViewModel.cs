@@ -14,7 +14,6 @@ namespace Sma5hMusic.GUI.ViewModels
         public string UITheme { get; set; }
         public bool SkipOutputPathCleanupConfirmation { get; set; }
         public bool InGameVolume { get; set; }
-        public int VolumeBoundaries { get; set; }
         public bool EnableAudioCaching { get; set; }
         public string AudioConversionFormat { get; set; }
         public string AudioConversionFormatFallBack { get; set; }

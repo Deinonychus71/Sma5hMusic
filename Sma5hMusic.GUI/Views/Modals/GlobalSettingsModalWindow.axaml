@@ -102,15 +102,7 @@
             </fields:PropertyField.FieldContent>
           </fields:PropertyField>
           <Button Margin="10,10,0,0" Content="Wipe Audio Cache" Command="{Binding ActionWipeAudioCache}"/>
-          <StackPanel Orientation="Horizontal">
-            <fields:PropertyBooleanField Label="[EXPERIMENTAL] In-Game Volume" IsChecked="{Binding SelectedItem.InGameVolume}" ToolTip="If turned on, the volume parameter of each song will be used to try to get an accurate playback of how loud a song will be in-game. Typically used to normalize songs from within the GUI." />
-            <fields:PropertyField Label="Volume boundaries" ToolTip="Pick the minimum and maximum values in the volume slider. Core files values are between -12 and +12. Changing this parameters also affect how loud the volume will be in the GUI if 'In-Game Volume' is turned on.">
-              <fields:PropertyField.FieldContent>
-                <ComboBox Items="{Binding VolumeBoundaries}" SelectedItem="{Binding SelectedVolumeBoundaries}"/>
-              </fields:PropertyField.FieldContent>
-            </fields:PropertyField>
-          </StackPanel>
-
+          <fields:PropertyBooleanField Label="[EXPERIMENTAL] In-Game Volume" IsChecked="{Binding SelectedItem.InGameVolume}" ToolTip="If turned on, the volume parameter of each song will be used to try to get an accurate playback of how loud a song will be in-game. Typically used to normalize songs from within the GUI." />
         </StackPanel>
       </Grid>
     </Grid>

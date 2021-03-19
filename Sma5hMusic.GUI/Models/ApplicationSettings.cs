@@ -20,7 +20,6 @@ namespace Sma5h.Mods.Music
             public ushort PlaylistIncidenceDefault { get; set; }
             public bool SkipWarningGameVersion { get; set; }
             public bool InGameVolume { get; set; }
-            public int VolumeBoundaries { get; set; }
         }
     }
 }

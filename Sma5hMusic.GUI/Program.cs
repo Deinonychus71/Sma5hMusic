@@ -132,7 +132,6 @@ namespace Sma5hMusic.GUI
                 { "Sma5hMusicGUI:PlaylistIncidenceDefault", "0" },
                 { "Sma5hMusicGUI:SkipWarningGameVersion", "false" },
                 { "Sma5hMusicGUI:InGameVolume", "false" },
-                { "Sma5hMusicGUI:VolumeBoundaries", "12" },
                 { "Sma5hMusicOverride:ModPath", $"Mods{Path.DirectorySeparatorChar}MusicOverride" },
             };
         }
