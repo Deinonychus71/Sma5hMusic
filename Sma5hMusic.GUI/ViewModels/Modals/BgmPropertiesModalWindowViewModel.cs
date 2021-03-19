@@ -43,9 +43,6 @@ namespace Sma5hMusic.GUI.ViewModels
         private string _originalGameTitleId;
         private string _originalFilename;
 
-        public int MinimumVolume { get; private set; }
-        public int MaximumVolume { get; private set; }
-
         public IEnumerable<GameTitleEntryViewModel> RecentGameTitles { get { return _recentGameTitles; } }
         [Reactive]
         public bool DisplayRecents { get; set; }
@@ -96,8 +93,6 @@ namespace Sma5hMusic.GUI.ViewModels
             _config = config;
             _logger = logger;
             _mapper = mapper;
-            MinimumVolume = -config.Value.Sma5hMusicGUI.VolumeBoundaries;
-            MaximumVolume = config.Value.Sma5hMusicGUI.VolumeBoundaries;
             _guiStateManager = guiStateManager;
             _fileDialog = fileDialog;
             _recordTypes = GetRecordTypes();
@@ -276,10 +271,10 @@ namespace Sma5hMusic.GUI.ViewModels
         protected override Task<bool> SaveChanges()
         {
             _logger.LogDebug("Save Changes");
-            if (BgmPropertyViewModel.AudioVolume < MinimumVolume)
-                BgmPropertyViewModel.AudioVolume = MinimumVolume;
-            if (BgmPropertyViewModel.AudioVolume > MaximumVolume)
-                BgmPropertyViewModel.AudioVolume = MaximumVolume;
+            if (BgmPropertyViewModel.AudioVolume < Constants.MinimumGameVolume)
+                BgmPropertyViewModel.AudioVolume = Constants.MinimumGameVolume;
+            if (BgmPropertyViewModel.AudioVolume > Constants.MaximumGameVolume)
+                BgmPropertyViewModel.AudioVolume = Constants.MaximumGameVolume;
 
             _originalFilename = BgmPropertyViewModel.Filename;
 

@@ -1,8 +1,6 @@
 ﻿using AutoMapper;
-using Microsoft.Extensions.Options;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
-using Sma5h.Mods.Music;
 using Sma5h.Mods.Music.Models;
 using Sma5hMusic.GUI.Interfaces;
 using System.IO;
@@ -12,8 +10,8 @@ namespace Sma5hMusic.GUI.ViewModels
 {
     public class BgmPropertyEntryViewModel : BgmBaseViewModel<BgmPropertyEntry>
     {
-        private readonly IOptions<ApplicationSettings> _config;
         private readonly IVGMMusicPlayer _vgmPlayer;
+        private readonly bool _inGameVolume;
         private float _audioVolume;
         private uint _totalTimeMs;
         private uint _totalSamples;
@@ -67,17 +65,17 @@ namespace Sma5hMusic.GUI.ViewModels
         public bool DoesFileExist { get; set; }
         public MusicPlayerViewModel MusicPlayer { get; set; }
 
-        public BgmPropertyEntryViewModel(IVGMMusicPlayer vgmPlayer, IViewModelManager viewModelManager, IMapper mapper, IOptions<ApplicationSettings> config, BgmPropertyEntry bgmPropertyEntry)
+        public BgmPropertyEntryViewModel(IVGMMusicPlayer vgmPlayer, IViewModelManager viewModelManager, IMapper mapper, BgmPropertyEntry bgmPropertyEntry, bool inGameVolume = false)
             : base(viewModelManager, mapper, bgmPropertyEntry)
         {
             _vgmPlayer = vgmPlayer;
-            _config = config;
+            _inGameVolume = inGameVolume;
             NameId = bgmPropertyEntry.NameId;
             Filename = bgmPropertyEntry.Filename;
 
             DoesFileExist = File.Exists(Filename);
             if (DoesFileExist)
-                MusicPlayer = new MusicPlayerViewModel(config, vgmPlayer, Filename)
+                MusicPlayer = new MusicPlayerViewModel(vgmPlayer, Filename, inGameVolume)
                 {
                     AudioVolume = bgmPropertyEntry.AudioVolume
                 };
@@ -85,7 +83,7 @@ namespace Sma5hMusic.GUI.ViewModels
 
         public override ReactiveObjectBaseViewModel GetCopy()
         {
-            return _mapper.Map(this, new BgmPropertyEntryViewModel(_vgmPlayer, _viewModelManager, _mapper, _config, GetReferenceEntity()));
+            return _mapper.Map(this, new BgmPropertyEntryViewModel(_vgmPlayer, _viewModelManager, _mapper, GetReferenceEntity(), _inGameVolume));
         }
 
         public override ReactiveObjectBaseViewModel SaveChanges()

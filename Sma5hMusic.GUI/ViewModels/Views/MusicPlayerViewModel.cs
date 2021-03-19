@@ -1,7 +1,5 @@
-﻿using Microsoft.Extensions.Options;
-using ReactiveUI;
+﻿using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
-using Sma5h.Mods.Music;
 using Sma5hMusic.GUI.Helpers;
 using System;
 using System.Reactive;
@@ -19,7 +17,6 @@ namespace Sma5hMusic.GUI.ViewModels
         private bool _isPlaying;
         private bool _isExecutingAction;
         private readonly bool _inGameVolume;
-        private readonly double _multiplicator;
         private static MusicPlayerViewModel _currentPlayControl;
 
         public ReactiveCommand<Unit, Unit> ActionPlaySong { get; }
@@ -43,12 +40,10 @@ namespace Sma5hMusic.GUI.ViewModels
         [Reactive]
         public string Text { get; set; }
 
-        public MusicPlayerViewModel(IOptions<ApplicationSettings> config, IVGMMusicPlayer musicPlayer, string filename)
+        public MusicPlayerViewModel(IVGMMusicPlayer musicPlayer, string filename, bool inGameVolume = false)
         {
             _musicPlayer = musicPlayer;
-            _inGameVolume = config.Value.Sma5hMusicGUI.InGameVolume;
-            _multiplicator = -0.117516 * (20.0 / config.Value.Sma5hMusicGUI.VolumeBoundaries);
-
+            _inGameVolume = inGameVolume;
             Filename = filename;
 
             Text = PLAY;
@@ -112,8 +107,7 @@ namespace Sma5hMusic.GUI.ViewModels
              *  15	    0.59292334
              *  20	    1
              */
-
-            var y = 5.29809 / (1 + 45.2203 * Math.Exp(_multiplicator * volume));
+            var y = 5.29809 / (1 + 45.2203 * Math.Exp(-0.117516 * volume));
             return y >= 1.0 ? 1.0f : Convert.ToSingle(y);
         }
     }
