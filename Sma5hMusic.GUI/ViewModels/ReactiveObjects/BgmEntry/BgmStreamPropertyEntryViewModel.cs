@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using ReactiveUI.Fody.Helpers;
 using Sma5h.Mods.Music.Models;
 using Sma5hMusic.GUI.Interfaces;
 
@@ -13,14 +14,22 @@ namespace Sma5hMusic.GUI.ViewModels
         public string DataName3 { get; set; }
         public string DataName4 { get; set; }
         public byte Loop { get; set; }
+        [Reactive]
         public string EndPoint { get; set; }
         public ushort FadeOutFrame { get; set; }
+        [Reactive]
         public string StartPointSuddenDeath { get; set; }
+        [Reactive]
         public string StartPointTransition { get; set; }
+
+        [Reactive]
         public string StartPoint0 { get; set; }
         public string StartPoint1 { get; set; }
+        [Reactive]
         public string StartPoint2 { get; set; }
+        [Reactive]
         public string StartPoint3 { get; set; }
+        [Reactive]
         public string StartPoint4 { get; set; }
 
         //Getter Helpers

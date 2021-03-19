@@ -19,6 +19,7 @@ using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using ILogger = Microsoft.Extensions.Logging.ILogger;
 
@@ -39,6 +40,7 @@ namespace Sma5hMusic.GUI.ViewModels
         private readonly ReadOnlyObservableCollection<string> _assignedInfoIds;
         private readonly Subject<Window> _whenNewRequestToAddGameEntry;
         private bool _isUpdatingSpecialRule = false;
+        private string _originalGameTitleId;
         private string _originalFilename;
 
         public IEnumerable<GameTitleEntryViewModel> RecentGameTitles { get { return _recentGameTitles; } }
@@ -53,6 +55,7 @@ namespace Sma5hMusic.GUI.ViewModels
         public BgmDbRootEntryViewModel DbRootViewModel { get; private set; }
         public BgmStreamSetEntryViewModel StreamSetViewModel { get; private set; }
         public BgmAssignedInfoEntryViewModel AssignedInfoViewModel { get; private set; }
+        [Reactive]
         public BgmStreamPropertyEntryViewModel StreamPropertyViewModel { get; private set; }
         public BgmPropertyEntryViewModel BgmPropertyViewModel { get; private set; }
 
@@ -141,10 +144,31 @@ namespace Sma5hMusic.GUI.ViewModels
             this.ValidationRule(p => p.SelectedGameTitleViewModel,
                 p => p != null && !string.IsNullOrWhiteSpace(p.UiGameTitleId),
                 "Please select a game.");
+            this.ValidationRule(p => p.StreamPropertyViewModel.StartPoint0,
+                p => ValidateStreamPropertyTime(p), "This value must be of the format '00:00:00.000'");
+            this.ValidationRule(p => p.StreamPropertyViewModel.StartPoint1,
+                p => ValidateStreamPropertyTime(p), "This value must be of the format '00:00:00.000'");
+            this.ValidationRule(p => p.StreamPropertyViewModel.StartPoint2,
+                p => ValidateStreamPropertyTime(p), "This value must be of the format '00:00:00.000'");
+            this.ValidationRule(p => p.StreamPropertyViewModel.StartPoint3,
+                p => ValidateStreamPropertyTime(p), "This value must be of the format '00:00:00.000'");
+            this.ValidationRule(p => p.StreamPropertyViewModel.StartPoint4,
+                p => ValidateStreamPropertyTime(p), "This value must be of the format '00:00:00.000'");
+            this.ValidationRule(p => p.StreamPropertyViewModel.EndPoint,
+                p => ValidateStreamPropertyTime(p), "This value must be of the format '00:00:00.000'");
+            this.ValidationRule(p => p.StreamPropertyViewModel.StartPointSuddenDeath,
+                p => ValidateStreamPropertyTime(p), "This value must be of the format '00:00:00.000'");
+            this.ValidationRule(p => p.StreamPropertyViewModel.StartPointTransition,
+                p => ValidateStreamPropertyTime(p), "This value must be of the format '00:00:00.000'");
 
             ActionNewGame = ReactiveCommand.Create<Window>(AddNewGame);
             ActionChangeFile = ReactiveCommand.CreateFromTask<BgmPropertyEntryViewModel>(ChangeFile);
             ActionCalculateLoopCues = ReactiveCommand.CreateFromTask<BgmPropertyEntryViewModel>(CalculateAudioCues);
+        }
+
+        private bool ValidateStreamPropertyTime(string value)
+        {
+            return string.IsNullOrEmpty(value) || Regex.IsMatch(value, @"^\d{2}:\d{2}:\d{2}.\d{3}$", RegexOptions.Compiled);
         }
 
         private void HandleRecentAction(GameTitleEntryViewModel o)
@@ -230,17 +254,7 @@ namespace Sma5hMusic.GUI.ViewModels
             {
                 if (gameTitle != null)
                 {
-                    if (DbRootViewModel.UiGameTitleId != gameTitle.UiGameTitleId)
-                    {
-                        DbRootViewModel.UiGameTitleId = gameTitle.UiGameTitleId;
-                        if (gameTitle != null && !_recentGameTitles.Contains(gameTitle))
-                        {
-                            if (_recentGameTitles.Count > 9)
-                                _recentGameTitles.RemoveAt(_recentGameTitles.Count - 1);
-                            _recentGameTitles.Insert(0, gameTitle);
-                        }
-                        DisplayRecents = _recentGameTitles.Count() > 0;
-                    }
+                    DbRootViewModel.UiGameTitleId = gameTitle.UiGameTitleId;
                 }
                 else
                     DbRootViewModel.UiGameTitleId = MusicConstants.InternalIds.GAME_TITLE_ID_DEFAULT;
@@ -270,6 +284,18 @@ namespace Sma5hMusic.GUI.ViewModels
             DbRootViewModel.MSBTTitle = SaveMSBTValues(MSBTTitleEditor.MSBTValues);
             DbRootViewModel.MSBTAuthor = SaveMSBTValues(MSBTAuthorEditor.MSBTValues);
             DbRootViewModel.MSBTCopyright = SaveMSBTValues(MSBTCopyrightEditor.MSBTValues);
+
+            if (!string.IsNullOrEmpty(SelectedGameTitleViewModel?.UiGameTitleId) && _originalGameTitleId != SelectedGameTitleViewModel.UiGameTitleId)
+            {
+                if (SelectedGameTitleViewModel != null && !_recentGameTitles.Contains(SelectedGameTitleViewModel))
+                {
+                    if (_recentGameTitles.Count > 9)
+                        _recentGameTitles.RemoveAt(_recentGameTitles.Count - 1);
+                    _recentGameTitles.Insert(0, SelectedGameTitleViewModel);
+                }
+                DisplayRecents = _recentGameTitles.Count() > 0;
+            }
+
             return Task.FromResult(true);
         }
 
@@ -307,6 +333,7 @@ namespace Sma5hMusic.GUI.ViewModels
             IsInSoundTest = DbRootViewModel.TestDispOrder > -1;
             SelectedRecordType = _recordTypes.FirstOrDefault(p => p.Id == DbRootViewModel.RecordType);
             SelectedGameTitleViewModel = _games.FirstOrDefault(p => p.UiGameTitleId == DbRootViewModel.UiGameTitleId);
+            _originalGameTitleId = SelectedGameTitleViewModel?.UiGameTitleId;
             SetSpecialCategoryRules(StreamSetViewModel.SpecialCategory);
         }
 

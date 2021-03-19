@@ -259,17 +259,17 @@
             </StackPanel>
             <StackPanel Grid.Row="0" Grid.Column="1" HorizontalAlignment="Stretch">
               <fields:PropertyByteField Label="loop" Value="{Binding StreamPropertyViewModel.Loop, Mode=TwoWay}" ToolTip="[Byte]" />
-              <fields:PropertyTextField Label="end_point" Text="{Binding StreamPropertyViewModel.EndPoint, Mode=TwoWay}" ToolTip="[String]" />
+              <fields:PropertyTextField x:Name="EndPoint" Label="end_point" Text="{Binding StreamPropertyViewModel.EndPoint, Mode=TwoWay}" ToolTip="[String]" />
               <fields:PropertyUShortField Label="fadeout_frame" Value="{Binding StreamPropertyViewModel.FadeOutFrame, Mode=TwoWay}" ToolTip="[UShort]" />
-              <fields:PropertyTextField Label="start_point_suddendeath" Text="{Binding StreamPropertyViewModel.StartPointSuddenDeath, Mode=TwoWay}" ToolTip="[String]" />
-              <fields:PropertyTextField Label="start_point_transition" Text="{Binding StreamPropertyViewModel.StartPointTransition, Mode=TwoWay}" ToolTip="[String]" />
+              <fields:PropertyTextField x:Name="StartPointSuddenDeath" Label="start_point_suddendeath" Text="{Binding StreamPropertyViewModel.StartPointSuddenDeath, Mode=TwoWay}" ToolTip="[String] Indicate when the song should start during deathmatch." />
+              <fields:PropertyTextField x:Name="StartPointTransition" Label="start_point_transition" Text="{Binding StreamPropertyViewModel.StartPointTransition, Mode=TwoWay}" ToolTip="[String] Indicate when the song should start while morphing to another stage." />
             </StackPanel>
             <StackPanel Grid.Row="0" Grid.Column="2" HorizontalAlignment="Stretch">
-              <fields:PropertyTextField Label="start_point0" Text="{Binding StreamPropertyViewModel.StartPoint0, Mode=TwoWay}" ToolTip="[String]" />
-              <fields:PropertyTextField Label="start_point1" Text="{Binding StreamPropertyViewModel.StartPoint1, Mode=TwoWay}" ToolTip="[String]" />
-              <fields:PropertyTextField Label="start_point2" Text="{Binding StreamPropertyViewModel.StartPoint2, Mode=TwoWay}" ToolTip="[String]" />
-              <fields:PropertyTextField Label="start_point3" Text="{Binding StreamPropertyViewModel.StartPoint3, Mode=TwoWay}" ToolTip="[String]" />
-              <fields:PropertyTextField Label="start_point4" Text="{Binding StreamPropertyViewModel.StartPoint4, Mode=TwoWay}" ToolTip="[String]" />
+              <fields:PropertyTextField x:Name="StartPoint0" Label="start_point0" Text="{Binding StreamPropertyViewModel.StartPoint0, Mode=TwoWay}" ToolTip="[String] Indicate one of the possible starting point of the song when played in the menu." />
+              <fields:PropertyTextField x:Name="StartPoint1" Label="start_point1" Text="{Binding StreamPropertyViewModel.StartPoint1, Mode=TwoWay}" ToolTip="[String] Indicate one of the possible starting point of the song when played in the menu." />
+              <fields:PropertyTextField x:Name="StartPoint2" Label="start_point2" Text="{Binding StreamPropertyViewModel.StartPoint2, Mode=TwoWay}" ToolTip="[String] Indicate one of the possible starting point of the song when played in the menu." />
+              <fields:PropertyTextField x:Name="StartPoint3" Label="start_point3" Text="{Binding StreamPropertyViewModel.StartPoint3, Mode=TwoWay}" ToolTip="[String] Indicate one of the possible starting point of the song when played in the menu." />
+              <fields:PropertyTextField x:Name="StartPoint4" Label="start_point4" Text="{Binding StreamPropertyViewModel.StartPoint4, Mode=TwoWay}" ToolTip="[String] Indicate one of the possible starting point of the song when played in the menu." />
             </StackPanel>
           </Grid>
         </TabItem>
