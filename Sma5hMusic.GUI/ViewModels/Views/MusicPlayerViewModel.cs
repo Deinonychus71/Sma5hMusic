@@ -31,7 +31,7 @@ namespace Sma5hMusic.GUI.ViewModels
             {
                 _audioVolume = ConvertVolumeToMusicPlayer(value);
                 if (_musicPlayer != null && _isPlaying)
-                    _musicPlayer.Volume = _audioVolume;
+                    _musicPlayer.InGameVolume = _audioVolume;
             }
         }
 
@@ -73,7 +73,7 @@ namespace Sma5hMusic.GUI.ViewModels
             if (_currentPlayControl != null)
                 await _currentPlayControl.StopSong();
 
-            _musicPlayer.Volume = AudioVolume;
+            _musicPlayer.InGameVolume = AudioVolume;
             await _musicPlayer.Play(Filename);
             Text = STOP;
             _currentPlayControl = this;

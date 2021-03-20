@@ -8,7 +8,7 @@ namespace VGMMusic
         int CurrentTime { get; }
         bool Loaded { get; }
         bool Play();
-        float Volume { get; set; }
+        float InGameVolume { get; set; }
         Task<bool> Play(string filename);
         Task<VGMAudioCuePoints> GetAudioCuePoints(string filename);
         Task<bool> Stop();

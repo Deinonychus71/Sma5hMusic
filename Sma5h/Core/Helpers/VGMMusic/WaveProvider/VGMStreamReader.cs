@@ -48,7 +48,6 @@ namespace VGMMusic
                 _fileLoaded = false;
                 return;
             }
-
             _fileLoaded = true;
             _sampleRate = VGMStreamNative.GetVGMStreamSampleRate(_vgmstream);
             _channels = VGMStreamNative.GetVGMStreamChannelCount(_vgmstream);

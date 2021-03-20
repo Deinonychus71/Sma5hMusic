@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using NAudio.Wave;
+using NAudio.Wave.SampleProviders;
 using System;
 using System.IO;
 using System.Threading;
@@ -11,16 +12,17 @@ namespace VGMMusic
     {
         private readonly ILogger _logger;
         private VGMStreamReader _reader;
+        private VolumeSampleProvider _sampleProvider;
         private WaveOutEvent _outputDevice;
         private string _filename;
         private bool _requestStop;
-        private float _volume;
+        private float _inGameVolume;
 
         public int TotalTime { get { return _reader != null ? _reader.TotalSecondsToPlay : 0; } }
         public int CurrentTime { get { return _reader != null ? _reader.TotalPlayed : 0; } }
         public bool Loaded { get { return _reader != null && _reader.FileLoaded; } }
-        public float Volume { get { return _volume; } set { _volume = value; SetVolume(value); } }
-        public bool IsPlaying { get; private set; }
+        public float InGameVolume { get { return _inGameVolume; } set { _inGameVolume = value; SetInGameVolume(value); } }
+        public bool IsPlaying { get { return _outputDevice != null && _outputDevice.PlaybackState == PlaybackState.Playing ? true : false; } }
 
         public VGMMusicPlayer(ILogger<IVGMMusicPlayer> logger)
         {
@@ -42,6 +44,8 @@ namespace VGMMusic
 
             //Attempt to load file
             _reader = new VGMStreamReader(filename);
+            _sampleProvider = new VolumeSampleProvider(_reader.ToSampleProvider());
+            _sampleProvider.Volume = 20.0f; // double the amplitude of every sample - may go above 0dB
 
             if (!_reader.FileLoaded)
             {
@@ -78,7 +82,22 @@ namespace VGMMusic
                 return false;
             }
 
-            Task.Run(() => { InternalPlay(); });
+            try
+            {
+                _outputDevice = new WaveOutEvent();
+                if (_reader != null)
+                {
+                    _outputDevice.PlaybackStopped += OnPlaybackStopped;
+                    _outputDevice.Init(_sampleProvider);
+                    _outputDevice.Volume = InGameVolume;
+                    _outputDevice.Play();
+                }
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e.Message, "Error while initializing/playing the song {FileName}", _filename);
+                InternalStop();
+            }
 
             return true;
         }
@@ -92,7 +111,7 @@ namespace VGMMusic
             return false;
         }
 
-        private void SetVolume(float volume)
+        private void SetInGameVolume(float volume)
         {
             try
             {
@@ -109,8 +128,9 @@ namespace VGMMusic
         {
             if (_reader != null && IsPlaying)
             {
+                _outputDevice?.Stop();
                 _requestStop = true;
-                while (IsPlaying && _requestStop)
+                while (IsPlaying || _requestStop)
                 {
                     await Task.Delay(200);
                 }
@@ -123,57 +143,20 @@ namespace VGMMusic
             return true;
         }
 
-        private void InternalPlay()
+        private void OnPlaybackStopped(object sender, StoppedEventArgs e)
         {
-            try
-            {
-                _outputDevice = new WaveOutEvent();
-                if (_reader != null)
-                {
-                    _outputDevice.Init(_reader);
-                    _outputDevice.Volume = Volume;
-                    _outputDevice.Play();
-                    IsPlaying = true;
-                    while (_outputDevice.PlaybackState == PlaybackState.Playing && !_requestStop)
-                    {
-                        Thread.Sleep(500);
-                    }
-                }
-                _requestStop = false;
-
-                /*using (var outputDevice = new WaveOutEvent())
-                {
-                    if (_reader != null)
-                    {
-                        outputDevice.Init(_reader);
-                        outputDevice.Play();
-                        IsPlaying = true;
-                        while (outputDevice.PlaybackState == PlaybackState.Playing && !_requestStop)
-                        {
-                            Thread.Sleep(500);
-                        }
-                    }
-                }
-                _requestStop = false;*/
-            }
-            catch (Exception e)
-            {
-                _logger.LogError(e.Message, "Error while initializing/playing the song {FileName}", _filename);
-            }
-            finally
-            {
-                InternalStop();
-            }
+            InternalStop();
         }
 
         private void InternalStop()
         {
+            if(_outputDevice != null)
+                _outputDevice.PlaybackStopped -= OnPlaybackStopped;
             _outputDevice?.Dispose();
             _outputDevice = null;
             _reader?.Dispose();
             _reader = null;
             _requestStop = false;
-            IsPlaying = false;
         }
 
         public void Dispose()
