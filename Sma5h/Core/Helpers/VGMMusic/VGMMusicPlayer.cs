@@ -3,7 +3,6 @@ using NAudio.Wave;
 using NAudio.Wave.SampleProviders;
 using System;
 using System.IO;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace VGMMusic
@@ -17,17 +16,19 @@ namespace VGMMusic
         private string _filename;
         private bool _requestStop;
         private float _inGameVolume;
+        private float _globalVolume;
 
         public int TotalTime { get { return _reader != null ? _reader.TotalSecondsToPlay : 0; } }
         public int CurrentTime { get { return _reader != null ? _reader.TotalPlayed : 0; } }
         public bool Loaded { get { return _reader != null && _reader.FileLoaded; } }
         public float InGameVolume { get { return _inGameVolume; } set { _inGameVolume = value; SetInGameVolume(value); } }
-        public bool IsPlaying { get { return _outputDevice != null && _outputDevice.PlaybackState == PlaybackState.Playing ? true : false; } }
+        public float GlobalVolume { get { return _globalVolume; } set { _globalVolume = value; SetGlobalVolume(value); } }
+        public bool IsPlaying { get { return _outputDevice != null && _outputDevice.PlaybackState == PlaybackState.Playing; } }
 
         public VGMMusicPlayer(ILogger<IVGMMusicPlayer> logger)
         {
             _logger = logger;
-
+            GlobalVolume = 1.0f;
         }
 
         public async Task<bool> LoadFile(string filename)
@@ -44,8 +45,10 @@ namespace VGMMusic
 
             //Attempt to load file
             _reader = new VGMStreamReader(filename);
-            _sampleProvider = new VolumeSampleProvider(_reader.ToSampleProvider());
-            _sampleProvider.Volume = 20.0f; // double the amplitude of every sample - may go above 0dB
+            _sampleProvider = new VolumeSampleProvider(_reader.ToSampleProvider())
+            {
+                Volume = GlobalVolume
+            };
 
             if (!_reader.FileLoaded)
             {
@@ -120,7 +123,20 @@ namespace VGMMusic
             }
             catch (Exception e)
             {
-                _logger.LogError(e.Message, "Error while setting volume: {Volume}", volume);
+                _logger.LogError(e.Message, "Error while setting in-game volume: {Volume}", volume);
+            }
+        }
+
+        private void SetGlobalVolume(float volume)
+        {
+            try
+            {
+                if (_sampleProvider != null)
+                    _sampleProvider.Volume = GlobalVolume;
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e.Message, "Error while setting global volume: {Volume}", volume);
             }
         }
 

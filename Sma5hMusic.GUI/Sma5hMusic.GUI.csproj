@@ -103,6 +103,9 @@
     <Compile Update="Views\Modals\PlaylistDeletePickerModalWindow.axaml.cs">
       <DependentUpon>PlaylistDeletePickerModalWindow.axaml</DependentUpon>
     </Compile>
+    <Compile Update="Views\Views\MusicButtonView.axaml.cs">
+      <DependentUpon>MusicButtonView.axaml</DependentUpon>
+    </Compile>
     <Compile Update="Views\Views\PlaylistView.axaml.cs">
       <DependentUpon>PlaylistView.axaml</DependentUpon>
     </Compile>
@@ -121,8 +124,8 @@
     <Compile Update="Views\Modals\ModPropertiesModalWindow.axaml.cs">
       <DependentUpon>ModPropertiesModalWindow.axaml</DependentUpon>
     </Compile>
-    <Compile Update="Views\Views\MusicPlayerView.axaml.cs">
-      <DependentUpon>MusicPlayerView.axaml</DependentUpon>
+    <Compile Update="Views\MusicButtonView.axaml.cs">
+      <DependentUpon>MusicButtonView.axaml</DependentUpon>
     </Compile>
   </ItemGroup>
 </Project>

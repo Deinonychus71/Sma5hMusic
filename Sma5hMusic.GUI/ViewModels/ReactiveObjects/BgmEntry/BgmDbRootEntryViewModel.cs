@@ -84,7 +84,7 @@ namespace Sma5hMusic.GUI.ViewModels
         public string ToneId { get { return StreamPropertyViewModel?.DataName0 != null ? StreamPropertyViewModel.DataName0 : null; } }
         public string Filename { get { return BgmPropertyViewModel?.Filename; } }
         public bool DoesFileExist { get { return BgmPropertyViewModel != null && BgmPropertyViewModel.DoesFileExist; } }
-        public MusicPlayerViewModel MusicPlayer { get { return BgmPropertyViewModel?.MusicPlayer; } }
+        public MusicButtonViewModel MusicPlayer { get { return BgmPropertyViewModel?.MusicPlayer; } }
 
         public BgmDbRootEntryViewModel(IViewModelManager viewModelManager, IMapper mapper, BgmDbRootEntry bgmDbRootEntry)
             : base(viewModelManager, mapper, bgmDbRootEntry)

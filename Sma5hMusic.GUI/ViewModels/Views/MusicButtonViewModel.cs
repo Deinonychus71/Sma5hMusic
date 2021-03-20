@@ -8,7 +8,7 @@ using VGMMusic;
 
 namespace Sma5hMusic.GUI.ViewModels
 {
-    public class MusicPlayerViewModel : ViewModelBase
+    public class MusicButtonViewModel : ViewModelBase
     {
         private readonly IVGMMusicPlayer _musicPlayer;
         private float _audioVolume;
@@ -17,7 +17,7 @@ namespace Sma5hMusic.GUI.ViewModels
         private bool _isPlaying;
         private bool _isExecutingAction;
         private readonly bool _inGameVolume;
-        private static MusicPlayerViewModel _currentPlayControl;
+        private static MusicButtonViewModel _currentPlayControl;
 
         public ReactiveCommand<Unit, Unit> ActionPlaySong { get; }
 
@@ -40,7 +40,7 @@ namespace Sma5hMusic.GUI.ViewModels
         [Reactive]
         public string Text { get; set; }
 
-        public MusicPlayerViewModel(IVGMMusicPlayer musicPlayer, string filename, bool inGameVolume = false)
+        public MusicButtonViewModel(IVGMMusicPlayer musicPlayer, string filename, bool inGameVolume = false)
         {
             _musicPlayer = musicPlayer;
             _inGameVolume = inGameVolume;

@@ -3,9 +3,9 @@ using Avalonia.Markup.Xaml;
 
 namespace Sma5hMusic.GUI.Views
 {
-    public class MusicPlayerView : UserControl
+    public class MusicButtonView : UserControl
     {
-        public MusicPlayerView()
+        public MusicButtonView()
         {
             this.InitializeComponent();
         }

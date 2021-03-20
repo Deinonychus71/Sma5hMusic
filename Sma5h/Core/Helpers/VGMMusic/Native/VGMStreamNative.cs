@@ -25,7 +25,7 @@ namespace VGMMusic.Native
                 _vgmStreamLoaded = true;
                 return init_vgmstream(filename);
             }
-            catch (Exception e)
+            catch
             {
                 _vgmStreamLoaded = false;
             }

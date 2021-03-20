@@ -6,9 +6,9 @@ namespace Sma5hMusic.GUI.Views.Fields
 {
     public class PropertyMusicField : PropertyTextField
     {
-        public static readonly StyledProperty<MusicPlayerViewModel> MusicPlayerProperty = AvaloniaProperty.Register<PropertyMusicField, MusicPlayerViewModel>(nameof(MusicPlayer), inherits: true, defaultBindingMode: Avalonia.Data.BindingMode.OneWay);
+        public static readonly StyledProperty<MusicButtonViewModel> MusicPlayerProperty = AvaloniaProperty.Register<PropertyMusicField, MusicButtonViewModel>(nameof(MusicPlayer), inherits: true, defaultBindingMode: Avalonia.Data.BindingMode.OneWay);
 
-        public MusicPlayerViewModel MusicPlayer
+        public MusicButtonViewModel MusicPlayer
         {
             get
             {

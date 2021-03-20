@@ -63,7 +63,7 @@ namespace Sma5hMusic.GUI.ViewModels
 
         //Music player
         public bool DoesFileExist { get; set; }
-        public MusicPlayerViewModel MusicPlayer { get; set; }
+        public MusicButtonViewModel MusicPlayer { get; set; }
 
         public BgmPropertyEntryViewModel(IVGMMusicPlayer vgmPlayer, IViewModelManager viewModelManager, IMapper mapper, BgmPropertyEntry bgmPropertyEntry, bool inGameVolume = false)
             : base(viewModelManager, mapper, bgmPropertyEntry)
@@ -75,7 +75,7 @@ namespace Sma5hMusic.GUI.ViewModels
 
             DoesFileExist = File.Exists(Filename);
             if (DoesFileExist)
-                MusicPlayer = new MusicPlayerViewModel(vgmPlayer, Filename, inGameVolume)
+                MusicPlayer = new MusicButtonViewModel(vgmPlayer, Filename, inGameVolume)
                 {
                     AudioVolume = bgmPropertyEntry.AudioVolume
                 };
