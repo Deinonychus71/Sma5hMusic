@@ -62,6 +62,7 @@ namespace Sma5hMusic.GUI.ViewModels
         [Reactive]
         public bool IsShowingDebug { get; set; }
 
+        public MusicPlayerViewModel VMMusicPlayer { get; }
         public BgmSongsViewModel VMBgmSongs { get; }
         public PlaylistViewModel VMPlaylists { get; }
         public BgmFiltersViewModel VMBgmFilters { get; }
@@ -125,6 +126,7 @@ namespace Sma5hMusic.GUI.ViewModels
             //Initialize main views
             VMBgmSongs = ActivatorUtilities.CreateInstance<BgmSongsViewModel>(serviceProvider, VMBgmFilters.WhenFiltersAreApplied, VMContextMenu);
             VMPlaylists = ActivatorUtilities.CreateInstance<PlaylistViewModel>(serviceProvider, VMBgmFilters.WhenFiltersAreApplied, viewModelManager.ObservablePlaylistsEntries, VMContextMenu);
+            VMMusicPlayer = ActivatorUtilities.CreateInstance<MusicPlayerViewModel>(serviceProvider, viewModelManager.ObservableDbRootEntries);
 
             //Setup ModEditor
             var vmModEditor = ActivatorUtilities.CreateInstance<ModPropertiesModalWindowViewModel>(serviceProvider);

@@ -1,0 +1,15 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             xmlns:fields="clr-namespace:Sma5hMusic.GUI.Views.Fields"
+             x:Class="Sma5hMusic.GUI.Views.MusicPlayerView">
+  <Grid IsVisible="{Binding IsVisible}" RowDefinitions="*,2*,*" ColumnDefinitions="60,*,*">
+    <Button Grid.Row="0" Grid.RowSpan="3" x:Name="btnPlayer" HorizontalContentAlignment="Center" Width="40" Content="{Binding PlaybackButtonText, Mode=OneWay}" FontFamily="Segoe UI Symbol" Command="{Binding ActionPlaySong, Mode=OneWay}"/>
+    <TextBlock Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" Text="{Binding GameTitle}"/>
+    <TextBlock Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" Text="{Binding Title}"/>
+    <TextBlock Grid.Row="2" Grid.Column="1" Text="TIME"></TextBlock>
+    <Slider  Grid.Row="2" Grid.Column="2" Orientation="Horizontal" Margin="0, -25, 0, -25" />
+  </Grid>
+</UserControl>

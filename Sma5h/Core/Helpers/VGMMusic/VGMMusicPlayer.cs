@@ -4,6 +4,7 @@ using NAudio.Wave.SampleProviders;
 using System;
 using System.IO;
 using System.Threading.Tasks;
+using VGMMusic.EventHandlers;
 
 namespace VGMMusic
 {
@@ -17,6 +18,13 @@ namespace VGMMusic
         private bool _requestStop;
         private float _inGameVolume;
         private float _globalVolume;
+
+        public delegate void PlaybackEventHandler(object sender, PlaybackEventArgs e);
+        public delegate void PlaybackPositionEventHandler(object sender, PlaybackPositionEventArgs e);
+        public event PlaybackEventHandler PlaybackStarted;
+        public event PlaybackEventHandler PlaybackPaused;
+        public event PlaybackEventHandler PlaybackStopped;
+        public event PlaybackPositionEventHandler PlaybackPositionChanged;
 
         public int TotalTime { get { return _reader != null ? _reader.TotalSecondsToPlay : 0; } }
         public int CurrentTime { get { return _reader != null ? _reader.TotalPlayed : 0; } }
@@ -94,6 +102,7 @@ namespace VGMMusic
                     _outputDevice.Init(_sampleProvider);
                     _outputDevice.Volume = InGameVolume;
                     _outputDevice.Play();
+                    PlaybackStarted?.Invoke(this, new PlaybackEventArgs(_filename));
                 }
             }
             catch (Exception e)
@@ -145,6 +154,7 @@ namespace VGMMusic
             if (_reader != null && IsPlaying)
             {
                 _outputDevice?.Stop();
+                PlaybackStopped?.Invoke(this, new PlaybackEventArgs(_filename));
                 _requestStop = true;
                 while (IsPlaying || _requestStop)
                 {

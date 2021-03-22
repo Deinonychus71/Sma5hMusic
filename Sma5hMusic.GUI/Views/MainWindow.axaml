@@ -16,8 +16,8 @@
       <ia:InvokeCommandAction Command="{Binding OnInitData}"/>
     </ia:EventTriggerBehavior>
   </i:Interaction.Behaviors>
-  <Grid RowDefinitions="20,65,*,Auto" ColumnDefinitions="*">
-    <Menu Grid.Row="0">
+  <Grid RowDefinitions="20,40,25,*,Auto" ColumnDefinitions="*,300,*">
+    <Menu Grid.Row="0" Grid.ColumnSpan="3">
       <MenuItem Header="Project">
         <MenuItem Header="Build" Command="{Binding ActionBuildNoCache}"/>
         <MenuItem Header="Build [with cache]" Command="{Binding ActionBuild}"/>
@@ -53,7 +53,7 @@
         <MenuItem Header="About" Command="{Binding ActionOpenThanks}"></MenuItem>
       </MenuItem>
     </Menu>
-    <DockPanel Grid.Row="1">
+    <DockPanel Grid.Row="1" Grid.RowSpan="2" Grid.ColumnSpan="3">
       <Image Classes="logo" Source="/Assets/smash_logo.png"/>
       <TextBlock DockPanel.Dock="Left" Classes="title">Sma5h Music</TextBlock>
       <TabStrip DockPanel.Dock="Right" Name="TabsMenu" HorizontalAlignment="Right" Margin="10">
@@ -61,7 +61,7 @@
         <TabStripItem Content="Playlists"/>
       </TabStrip>
     </DockPanel>
-    <Grid Grid.Row="2" ColumnDefinitions="*,5,6*" RowDefinitions="30,30,*">
+    <Grid Grid.Row="3" Grid.ColumnSpan="3" ColumnDefinitions="*,5,6*" RowDefinitions="30,30,*">
       <ContentControl Grid.Column="0" Grid.Row="2" Content="{Binding VMBgmFilters}"></ContentControl>
       <GridSplitter Grid.Column="1" Grid.Row="2" ResizeDirection="Columns"/>
       <Carousel Grid.Column="2" Grid.Row="1" Grid.RowSpan="2" SelectedIndex="{Binding #TabsMenu.SelectedIndex}">
@@ -69,7 +69,8 @@
         <ContentControl Content="{Binding VMPlaylists}"></ContentControl>
       </Carousel>
     </Grid>
-    <vw:DebugConsole IsVisible="{Binding IsShowingDebug}" Grid.Row="2" Grid.RowSpan="2"/>
-    <fields:LoadingView Grid.Row="0" Grid.RowSpan="5" IsVisible="{Binding IsLoading}" Background="Black" Opacity="0.8"/>
+    <vw:DebugConsole IsVisible="{Binding IsShowingDebug}" Grid.Row="3" Grid.RowSpan="2" Grid.ColumnSpan="3"/>
+    <fields:LoadingView Grid.Row="0" Grid.ColumnSpan="3" Grid.RowSpan="6" IsVisible="{Binding IsLoading}" Background="Black" Opacity="0.8"/>
+    <ContentControl Grid.Column="1" Grid.Row="0" Grid.RowSpan="2" Content="{Binding VMMusicPlayer}"/>
   </Grid>
 </Window>
