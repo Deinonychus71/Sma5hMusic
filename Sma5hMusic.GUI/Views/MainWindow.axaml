@@ -47,6 +47,9 @@
         <Separator></Separator>
         <MenuItem Header="Global Settings" Command="{Binding ActionOpenGlobalSettings}"></MenuItem>
       </MenuItem>
+      <MenuItem Header="Tools">
+        <MenuItem Header="Export Song Entries to CSV" Command="{Binding ActionExportSongsCSV}"></MenuItem>
+      </MenuItem>
       <MenuItem Header="About">
         <MenuItem Header="Wiki" Command="{Binding ActionOpenWiki}"></MenuItem>
         <Separator></Separator>

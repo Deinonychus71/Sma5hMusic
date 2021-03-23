@@ -26,6 +26,7 @@ namespace Sma5hMusic.GUI.ViewModels
 {
     public class MainWindowViewModel : ViewModelBase
     {
+        private readonly IDevToolsService _devTools;
         private readonly IGUIStateManager _guiStateManager;
         private readonly IViewModelManager _viewModelManager;
         private readonly IVGMMusicPlayer _musicPlayer;
@@ -80,9 +81,10 @@ namespace Sma5hMusic.GUI.ViewModels
         public ReactiveCommand<Unit, Unit> ActionOpenOutputFolder { get; }
         public ReactiveCommand<Unit, Unit> ActionOpenResourcesFolder { get; }
         public ReactiveCommand<Unit, Unit> ActionOpenLogsFolder { get; }
+        public ReactiveCommand<Unit, Unit> ActionExportSongsCSV { get; }
 
         public MainWindowViewModel(IServiceProvider serviceProvider, IViewModelManager viewModelManager, IGUIStateManager guiStateManager, IMapper mapper, IVGMMusicPlayer musicPlayer,
-            IDialogWindow rootDialog, IMessageDialog messageDialog, IFileDialog fileDialog, IBuildDialog buildDialog, IOptions<ApplicationSettings> appSettings, ILogger<MainWindowViewModel> logger)
+            IDialogWindow rootDialog, IMessageDialog messageDialog, IFileDialog fileDialog, IBuildDialog buildDialog, IOptions<ApplicationSettings> appSettings, IDevToolsService devTools, ILogger<MainWindowViewModel> logger)
         {
             _viewModelManager = viewModelManager;
             _guiStateManager = guiStateManager;
@@ -93,6 +95,7 @@ namespace Sma5hMusic.GUI.ViewModels
             _rootDialog = rootDialog;
             _logger = logger;
             _mapper = mapper;
+            _devTools = devTools;
             _appSettings = appSettings;
             IsLoading = true;
 
@@ -198,6 +201,7 @@ namespace Sma5hMusic.GUI.ViewModels
             ActionOpenOutputFolder = ReactiveCommand.Create(() => _fileDialog.OpenFolder(_appSettings.Value.OutputPath));
             ActionOpenResourcesFolder = ReactiveCommand.Create(() => _fileDialog.OpenFolder(_appSettings.Value.ResourcesPath));
             ActionOpenLogsFolder = ReactiveCommand.Create(() => _fileDialog.OpenFolder(_appSettings.Value.LogPath));
+            ActionExportSongsCSV = ReactiveCommand.CreateFromTask(ExportSongsToCSV);
         }
 
         #region Actions
@@ -324,6 +328,16 @@ namespace Sma5hMusic.GUI.ViewModels
         public void OnConsoleToggle()
         {
             IsShowingDebug = !IsShowingDebug;
+        }
+
+        public async Task ExportSongsToCSV()
+        {
+            var result = await _fileDialog.SaveFileCSVDialog();
+            if (!string.IsNullOrEmpty(result))
+            {
+                if(await _devTools.ExportToCSV(result))
+                    await _messageDialog.ShowError("Done", "The CSV export was completed.");
+            }
         }
         #endregion
 

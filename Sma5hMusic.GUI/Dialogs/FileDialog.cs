@@ -14,16 +14,22 @@ namespace Sma5hMusic.GUI.Dialogs
         private readonly ILogger _logger;
         private readonly IDialogWindow _rootDialogWindow;
         private readonly OpenFileDialog _openFileDialog;
+        private readonly SaveFileDialog _saveFileDialog;
         private readonly OpenFolderDialog _openFolderDialog;
         private string _savedDirectory;
+        private string _savedSaveFileDirectory;
+        private string _savedSaveFileName;
         private string _savedFolderDirectory;
 
         public FileDialog(IDialogWindow rootDialogWindow, ILogger<FileDialog> logger)
         {
             _logger = logger;
             _rootDialogWindow = rootDialogWindow;
+            _savedSaveFileName = "export_songs.csv";
             _savedDirectory = Environment.CurrentDirectory;
+            _savedSaveFileDirectory = Environment.CurrentDirectory;
             _savedFolderDirectory = Environment.CurrentDirectory;
+            _saveFileDialog = new SaveFileDialog();
             _openFileDialog = new OpenFileDialog();
             _openFolderDialog = new OpenFolderDialog();
         }
@@ -93,6 +99,40 @@ namespace Sma5hMusic.GUI.Dialogs
             }
 
             return null;
+        }
+
+        public async Task<string> SaveFileCSVDialog(Window parent = null)
+        {
+            _logger.LogDebug("Opening SaveDialog...");
+
+            _saveFileDialog.Directory = _savedSaveFileDirectory;
+            _saveFileDialog.InitialFileName = _savedSaveFileName;
+            _saveFileDialog.Filters = new List<FileDialogFilter>()
+            {
+                new FileDialogFilter()
+                {
+                    Extensions = new List<string>()
+                    {
+                        "csv"
+                    },
+                    Name = "CSV File"
+                }
+            };
+            _saveFileDialog.Title = "Save CSV";
+
+            string result;
+            if (parent == null)
+                result = await _saveFileDialog.ShowAsync(_rootDialogWindow.Window);
+            else
+                result = await _saveFileDialog.ShowAsync(parent);
+
+            if (!string.IsNullOrEmpty(result))
+            {
+                _savedSaveFileName = Path.GetFileName(result);
+                _savedSaveFileDirectory = Path.GetDirectoryName(result);
+            }
+
+            return result;
         }
 
         public async Task<string> OpenFolderDialog(Window parent = null)
