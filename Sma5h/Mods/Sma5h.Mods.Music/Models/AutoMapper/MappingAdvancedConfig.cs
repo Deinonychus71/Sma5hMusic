@@ -173,7 +173,7 @@ namespace Sma5h.Mods.Music.Models.AutoMapper
                 .ForMember(i => i.MenuChangeFadeInFrame, me => me.MapFrom(p => p.MenuChangeFadeInFrame))
                 .ForMember(i => i.MenuChangeStartDelayFrame, me => me.MapFrom(p => p.MenuChangeStartDelayFrame))
                 .ForMember(i => i.MenuChangeFadeOutFrame, me => me.MapFrom(p => p.MenuChangeFadeOutFrame))
-                .ForMember(i => i.Unk1, me => me.MapFrom(p => p.Unk1));
+                .ForMember(i => i.MenuChangeStopDelayFrame, me => me.MapFrom(p => p.MenuChangeStopDelayFrame));
             CreateMap<MusicMods.AdvancedMusicModModels.BgmAssignedInfoConfig, BgmAssignedInfoEntry>()
                 .ForMember(i => i.InfoId, me => me.Ignore())
                 .ForMember(i => i.StreamId, me => me.MapFrom(p => p.StreamId))
@@ -187,7 +187,7 @@ namespace Sma5h.Mods.Music.Models.AutoMapper
                 .ForMember(i => i.MenuChangeFadeInFrame, me => me.MapFrom(p => p.MenuChangeFadeInFrame))
                 .ForMember(i => i.MenuChangeStartDelayFrame, me => me.MapFrom(p => p.MenuChangeStartDelayFrame))
                 .ForMember(i => i.MenuChangeFadeOutFrame, me => me.MapFrom(p => p.MenuChangeFadeOutFrame))
-                .ForMember(i => i.Unk1, me => me.MapFrom(p => p.Unk1));
+                .ForMember(i => i.MenuChangeStopDelayFrame, me => me.MapFrom(p => p.Unk1 != null ? p.Unk1 : p.MenuChangeStopDelayFrame));
 
             CreateMap<BgmStreamPropertyEntry, MusicMods.AdvancedMusicModModels.BgmStreamPropertyConfig>()
                 .ForMember(i => i.StreamId, me => me.MapFrom(p => p.StreamId))

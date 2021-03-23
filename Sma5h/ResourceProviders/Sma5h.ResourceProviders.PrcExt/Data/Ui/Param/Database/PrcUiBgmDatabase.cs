@@ -246,8 +246,8 @@ namespace Sma5h.Data.Ui.Param.Database
             [PrcHexMapping("menu_change_fadeout_frame")]
             public int MenuChangeFadeOutFrame { get; set; }
 
-            [PrcHexMapping(0x1c6a38c480)]
-            public int Unk1 { get; set; }
+            [PrcHexMapping("menu_change_stop_delay_frame")]
+            public int MenuChangeStopDelayFrame { get; set; }
 
             public override string ToString()
             {

@@ -250,7 +250,7 @@
               <fields:PropertyIntField Label="menu_change_fadein_frame" Value="{Binding AssignedInfoViewModel.MenuChangeFadeInFrame, Mode=TwoWay}" ToolTip="[Int32]" />
               <fields:PropertyIntField Label="menu_change_start_delay_frame" Value="{Binding AssignedInfoViewModel.MenuChangeStartDelayFrame, Mode=TwoWay}" ToolTip="[Int32]" />
               <fields:PropertyIntField Label="menu_change_fadeout_frame" Value="{Binding AssignedInfoViewModel.MenuChangeFadeOutFrame, Mode=TwoWay}" ToolTip="[Int32]" />
-              <fields:PropertyIntField Label="0x1c6a38c480" Value="{Binding AssignedInfoViewModel.Unk1, Mode=TwoWay}" ToolTip="[Int32]" />
+              <fields:PropertyIntField Label="menu_change_stop_delay_frame" Value="{Binding AssignedInfoViewModel.MenuChangeStopDelayFrame, Mode=TwoWay}" ToolTip="[Int32]" />
             </StackPanel>
           </Grid>
         </TabItem>

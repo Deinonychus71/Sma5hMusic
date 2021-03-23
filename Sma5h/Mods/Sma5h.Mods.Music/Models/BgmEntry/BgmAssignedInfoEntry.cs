@@ -17,7 +17,7 @@ namespace Sma5h.Mods.Music.Models
         public int MenuChangeFadeInFrame { get; set; }
         public int MenuChangeStartDelayFrame { get; set; }
         public int MenuChangeFadeOutFrame { get; set; }
-        public int Unk1 { get; set; }
+        public int MenuChangeStopDelayFrame { get; set; }
 
 
         public BgmAssignedInfoEntry(string infoId, IMusicMod musicMod = null)

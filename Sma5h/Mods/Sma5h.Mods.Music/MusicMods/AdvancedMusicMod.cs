@@ -660,8 +660,17 @@ namespace Sma5h.Mods.Music.MusicMods
             [JsonProperty("menu_change_fadeout_frame")]
             public int MenuChangeFadeOutFrame { get; set; }
 
+            [JsonProperty("menu_change_stop_delay_frame")]
+            public int MenuChangeStopDelayFrame { get; set; }
+
+            //Field here to handle older json version that did not have the discovered name
             [JsonProperty("0x1c6a38c480")]
-            public int Unk1 { get; set; }
+            public int? Unk1 { get; set; }
+
+            public bool ShouldSerializeUnk1()
+            {
+                return false;
+            }
         }
 
         public class BgmStreamPropertyConfig

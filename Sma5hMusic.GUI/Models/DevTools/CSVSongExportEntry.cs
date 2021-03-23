@@ -80,7 +80,7 @@ namespace Sma5hMusic.GUI.Models.DevTools
             Map(m => m.AssignedInfo.MenuChangeFadeInFrame).Name("assigned_info.menu_change_fadein_frame").Index(58);
             Map(m => m.AssignedInfo.MenuChangeStartDelayFrame).Name("assigned_info.menu_change_start_delay_frame").Index(59);
             Map(m => m.AssignedInfo.MenuChangeFadeOutFrame).Name("assigned_info.menu_change_fadeout_frame").Index(60);
-            Map(m => m.AssignedInfo.Unk1).Name("assigned_info.menu_change_stop_delay_frame").Index(61);
+            Map(m => m.AssignedInfo.MenuChangeStopDelayFrame).Name("assigned_info.menu_change_stop_delay_frame").Index(61);
             Map(m => m.StreamProperty.StreamId).Name("stream_property.stream_id").Index(62);
             Map(m => m.StreamProperty.DataName0).Name("stream_property.data_name0").Index(63);
             Map(m => m.StreamProperty.DataName1).Name("stream_property.data_name1").Index(64);
@@ -107,7 +107,8 @@ namespace Sma5hMusic.GUI.Models.DevTools
             Map(m => m.BgmProperty.Frequency).Name("bgm_property.frequency").Index(85);
             Map(m => m.BgmProperty.AudioVolume).Name("bgm_property.volume").Index(86);
             Map(m => m.BgmProperty.Filename).Name("bgm_property.filename").Index(87);
-            Map(m => m.DbRoot.ModPath).Name("mod.mod_path").Index(88);
+            Map(m => m.DbRoot.Source).Name("mod.source").Index(88);
+            Map(m => m.DbRoot.ModPath).Name("mod.mod_path").Index(89);
         }
     }
 }
