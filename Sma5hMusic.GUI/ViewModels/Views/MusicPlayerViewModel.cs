@@ -2,6 +2,7 @@
 using ReactiveUI.Fody.Helpers;
 using Sma5hMusic.GUI.Helpers;
 using System;
+using System.Globalization;
 using System.Reactive;
 using System.Threading.Tasks;
 using VGMMusic;
@@ -108,7 +109,7 @@ namespace Sma5hMusic.GUI.ViewModels
              *  20	    1
              */
             var y = 5.29809 / (1 + 45.2203 * Math.Exp(-0.117516 * volume));
-            return y >= 1.0 ? 1.0f : Convert.ToSingle(y);
+            return y >= 1.0 ? 1.0f : Convert.ToSingle(y, CultureInfo.InvariantCulture);
         }
     }
 }

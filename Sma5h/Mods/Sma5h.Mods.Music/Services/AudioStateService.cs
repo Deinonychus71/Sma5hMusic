@@ -795,7 +795,7 @@ namespace Sma5h.Mods.Music.Services
                     var records = csv.GetRecords<dynamic>();
                     foreach (var record in records)
                     {
-                        var volume = Convert.ToSingle(record.Volume);
+                        var volume = Convert.ToSingle(record.Volume, CultureInfo.InvariantCulture);
                         var name = (string)record.NUS3BankName;
                         output.Add(name.TrimStart(MusicConstants.InternalIds.NUS3AUDIO_FILE_PREFIX), volume);
                     }
