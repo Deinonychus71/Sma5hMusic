@@ -12,13 +12,13 @@
         public string SecretStagePlaceId { get; set; }
         public bool CanDemo { get; set; }
         public bool Unk1 { get; set; }
-        public bool Unk2 { get; set; }
-        public bool Unk3 { get; set; }
+        public bool IsUsableFlag { get; set; }
+        public bool IsUsableAmiibo { get; set; }
         public string SecretCommandId { get; set; }
         public string SecretCommandIdJoycon { get; set; }
         public string BgmSetId { get; set; }
         public byte BgmSettingNo { get; set; }
-        public bool Unk4 { get; set; }
+        public bool BgmSelector { get; set; }
         public bool IsDlc { get; set; }
         public bool IsPatch { get; set; }
         public string DlcCharaId { get; set; }

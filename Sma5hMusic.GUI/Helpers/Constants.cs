@@ -4,7 +4,7 @@ namespace Sma5hMusic.GUI.Helpers
 {
     public static class Constants
     {
-        public const double GUIVersion = 1.41;
+        public const double GUIVersion = 1.42;
 
         public const float DefaultVolume = 0.8f;
         public const float MinimumGameVolume = -20.0f;
@@ -15,7 +15,7 @@ namespace Sma5hMusic.GUI.Helpers
             public const string SPECIAL_CATEGORY_PERSONA_STAGE_3_VALUE = "jack_mementoes_p3";
             public const string SPECIAL_CATEGORY_PERSONA_STAGE_4_VALUE = "jack_mementoes_p4";
             public const string SPECIAL_CATEGORY_PERSONA_STAGE_5_VALUE = "jack_mementoes_p5";
-            public const string SPECIAL_CATEGORY_PINCH_VALUE = "0x105274ba4f";
+            public const string SPECIAL_CATEGORY_PINCH_VALUE = "sf_situationlink"; //"0x105274ba4f"
 
             public readonly static Dictionary<string, string> UI_SPECIAL_CATEGORY = new Dictionary<string, string>()
             {

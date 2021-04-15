@@ -189,11 +189,11 @@ namespace Sma5h.Mods.Music.MusicOverride
             [JsonProperty("0x10359e17b0")]
             public bool Unk1 { get; set; }
 
-            [JsonProperty("0x0eafe0fa76")]
-            public bool Unk2 { get; set; }
+            [JsonProperty("is_usable_flag")]
+            public bool IsUsableFlag { get; set; }
 
-            [JsonProperty("0x10005d116c")]
-            public bool Unk3 { get; set; }
+            [JsonProperty("is_usable_amiibo")]
+            public bool IsUsableAmiibo { get; set; }
 
             [JsonProperty("secret_command_id")]
             public string SecretCommandId { get; set; }
@@ -207,8 +207,8 @@ namespace Sma5h.Mods.Music.MusicOverride
             [JsonProperty("bgm_setting_no")]
             public byte BgmSettingNo { get; set; }
 
-            [JsonProperty("0x0cbc118b10")]
-            public bool Unk4 { get; set; }
+            [JsonProperty("bgm_selector")]
+            public bool BgmSelector { get; set; }
 
             [JsonProperty("is_dlc")]
             public bool IsDlc { get; set; }
@@ -218,6 +218,31 @@ namespace Sma5h.Mods.Music.MusicOverride
 
             [JsonProperty("dlc_chara_id")]
             public string DlcCharaId { get; set; }
+
+            //Field here to handle older json version that did not have the discovered name
+            [JsonProperty("0x0eafe0fa76")]
+            public bool? Unk2 { get; set; }
+
+            [JsonProperty("0x10005d116c")]
+            public bool? Unk3 { get; set; }
+
+            [JsonProperty("0x0cbc118b10")]
+            public bool? Unk4 { get; set; }
+
+            public bool ShouldSerializeUnk2()
+            {
+                return false;
+            }
+
+            public bool ShouldSerializeUnk3()
+            {
+                return false;
+            }
+
+            public bool ShouldSerializeUnk4()
+            {
+                return false;
+            }
         }
     }
 }

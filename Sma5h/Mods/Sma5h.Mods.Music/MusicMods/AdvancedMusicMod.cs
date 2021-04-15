@@ -76,6 +76,9 @@ namespace Sma5h.Mods.Music.MusicMods
                         continue;
                     }
 
+                    GetUpdatedBgmAssignedInfoConfig(bgm.AssignedInfo);
+                    GetUpdatedStreamSetConfig(bgm.StreamSet);
+
                     _logger.LogInformation("Mod {MusicMod}: Adding song {Song} ({ToneId})", _musicModConfig.Name, filename, bgm.ToneId);
                     var bgmDbRootEntry = _mapper.Map(bgm.DbRoot, new BgmDbRootEntry(bgm.DbRoot.UiBgmId, this));
                     bgmDbRootEntry.Title = bgm.MSBTLabels.Title;
@@ -390,6 +393,31 @@ namespace Sma5h.Mods.Music.MusicMods
             };
             return newMod;
         }
+
+        public BgmStreamSetConfig GetUpdatedStreamSetConfig(BgmStreamSetConfig bgmStreamSetConfig)
+        {
+            if(!string.IsNullOrEmpty(bgmStreamSetConfig.SpecialCategory) && bgmStreamSetConfig.SpecialCategory.StartsWith("0x") &&
+                MusicConstants.SPECIAL_CATEGORY_LABELS.ContainsKey(bgmStreamSetConfig.SpecialCategory))
+            {
+                bgmStreamSetConfig.SpecialCategory = MusicConstants.SPECIAL_CATEGORY_LABELS[bgmStreamSetConfig.SpecialCategory];
+            }
+            return bgmStreamSetConfig;
+        }
+
+        public BgmAssignedInfoConfig GetUpdatedBgmAssignedInfoConfig(BgmAssignedInfoConfig bgmAssignedInfoConfig)
+        {
+            if (!string.IsNullOrEmpty(bgmAssignedInfoConfig.Condition) && bgmAssignedInfoConfig.Condition.StartsWith("0x") &&
+                MusicConstants.SOUND_CONDITION_LABELS.ContainsKey(bgmAssignedInfoConfig.Condition))
+            {
+                bgmAssignedInfoConfig.Condition = MusicConstants.SOUND_CONDITION_LABELS[bgmAssignedInfoConfig.Condition];
+            }
+            if (!string.IsNullOrEmpty(bgmAssignedInfoConfig.ConditionProcess) && bgmAssignedInfoConfig.ConditionProcess.StartsWith("0x") &&
+                MusicConstants.SOUND_CONDITION_PROCESS_LABELS.ContainsKey(bgmAssignedInfoConfig.ConditionProcess))
+            {
+                bgmAssignedInfoConfig.ConditionProcess = MusicConstants.SOUND_CONDITION_PROCESS_LABELS[bgmAssignedInfoConfig.ConditionProcess];
+            }
+            return bgmAssignedInfoConfig;
+        }
     }
 
     namespace AdvancedMusicModModels
@@ -537,17 +565,39 @@ namespace Sma5h.Mods.Music.MusicMods
             [JsonProperty("is_selectable_stage_make")]
             public bool IsSelectableStageMake { get; set; }
 
-            [JsonProperty("0x18db285704")]
-            public bool Unk1 { get; set; }
+            [JsonProperty("is_selectable_movie_edit")]
+            public bool IsSelectableMovieEdit { get; set; }
 
-            [JsonProperty("0x16fe9a28fe")]
-            public bool Unk2 { get; set; }
+            [JsonProperty("is_selectable_original")]
+            public bool IsSelectableOriginal { get; set; }
 
             [JsonProperty("is_dlc")]
             public bool IsDlc { get; set; }
 
             [JsonProperty("is_patch")]
             public bool IsPatch { get; set; }
+
+            [JsonProperty("dlc_ui_chara_id")]
+            public string DlcUiCharaId { get; set; }
+
+            [JsonProperty("dlc_mii_hat_motif_id")]
+            public string DlcMiiHatMotifId { get; set; }
+
+            [JsonProperty("dlc_mii_body_motif_id")]
+            public string DlcMiiBodyMotifId { get; set; }
+            [JsonProperty("title")]
+            public Dictionary<string, string> Title { get; set; }
+            [JsonProperty("copyright")]
+            public Dictionary<string, string> Copyright { get; set; }
+            [JsonProperty("author")]
+            public Dictionary<string, string> Author { get; set; }
+
+            //Field here to handle older json version that did not have the discovered name
+            [JsonProperty("0x18db285704")]
+            public bool? Unk1 { get; set; }
+
+            [JsonProperty("0x16fe9a28fe")]
+            public bool? Unk2 { get; set; }
 
             [JsonProperty("0x0ff71e57ec")]
             public string Unk3 { get; set; }
@@ -557,12 +607,31 @@ namespace Sma5h.Mods.Music.MusicMods
 
             [JsonProperty("0x1560c0949b")]
             public string Unk5 { get; set; }
-            [JsonProperty("title")]
-            public Dictionary<string, string> Title { get; set; }
-            [JsonProperty("copyright")]
-            public Dictionary<string, string> Copyright { get; set; }
-            [JsonProperty("author")]
-            public Dictionary<string, string> Author { get; set; }
+
+            public bool ShouldSerializeUnk1()
+            {
+                return false;
+            }
+
+            public bool ShouldSerializeUnk2()
+            {
+                return false;
+            }
+
+            public bool ShouldSerializeUnk3()
+            {
+                return false;
+            }
+
+            public bool ShouldSerializeUnk4 ()
+            {
+                return false;
+            }
+
+            public bool ShouldSerializeUnk5()
+            {
+                return false;
+            }
         }
 
         public class BgmStreamSetConfig

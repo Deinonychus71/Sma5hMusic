@@ -45,11 +45,11 @@ namespace Sma5h.Data.Ui.Param.Database
             [PrcHexMapping(0x10359e17b0)]
             public bool Unk1 { get; set; }
 
-            [PrcHexMapping(0x0eafe0fa76)]
-            public bool Unk2 { get; set; }
+            [PrcHexMapping("is_usable_flag")]
+            public bool IsUsableFlag { get; set; }
 
-            [PrcHexMapping(0x10005d116c)]
-            public bool Unk3 { get; set; }
+            [PrcHexMapping("is_usable_amiibo")]
+            public bool IsUsableAmiibo { get; set; }
 
             [PrcHexMapping("secret_command_id", true)]
             public string SecretCommandId { get; set; }
@@ -63,8 +63,8 @@ namespace Sma5h.Data.Ui.Param.Database
             [PrcHexMapping("bgm_setting_no")]
             public byte BgmSettingNo { get; set; }
 
-            [PrcHexMapping(0x0cbc118b10)]
-            public bool Unk4 { get; set; }
+            [PrcHexMapping("bgm_selector")]
+            public bool BgmSelector { get; set; }
 
             [PrcHexMapping("is_dlc")]
             public bool IsDlc { get; set; }

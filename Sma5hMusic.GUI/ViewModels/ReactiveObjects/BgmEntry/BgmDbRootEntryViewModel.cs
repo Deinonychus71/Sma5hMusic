@@ -47,13 +47,13 @@ namespace Sma5hMusic.GUI.ViewModels
         public bool CountTarget { get; set; }
         public byte MenuLoop { get; set; }
         public bool IsSelectableStageMake { get; set; }
-        public bool Unk1 { get; set; }
-        public bool Unk2 { get; set; }
+        public bool IsSelectableMovieEdit { get; set; }
+        public bool IsSelectableOriginal { get; set; }
         public bool IsDlc { get; set; }
         public bool IsPatch { get; set; }
-        public string Unk3 { get; set; }
-        public string Unk4 { get; set; }
-        public string Unk5 { get; set; }
+        public string DlcUiCharaId { get; set; }
+        public string DlcMiiHatMotifId { get; set; }
+        public string DlcMiiBodyMotifId { get; set; }
         public Dictionary<string, string> MSBTTitle { get; set; }
         public Dictionary<string, string> MSBTAuthor { get; set; }
         public Dictionary<string, string> MSBTCopyright { get; set; }

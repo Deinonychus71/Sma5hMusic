@@ -240,7 +240,7 @@ namespace Sma5hMusic.GUI.Dialogs
             var requiredFiles = new List<string>()
             {
                 Path.Combine(config.ResourcesPath, "template.nus3bank"),
-                Path.Combine(config.ResourcesPath, "param_labels.csv"),
+                Path.Combine(config.ResourcesPath, "ParamLabels.csv"),
                 Path.Combine(config.ResourcesPath, "nusbank_ids.csv"),
                 Path.Combine(config.GameResourcesPath, "sound", "config", "bgm_property.bin"),
                 Path.Combine(config.GameResourcesPath, "ui", "param", "database", "ui_bgm_db.prc"),

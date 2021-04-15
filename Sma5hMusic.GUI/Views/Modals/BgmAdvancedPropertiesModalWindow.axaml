@@ -191,15 +191,15 @@
             <StackPanel Grid.Row="0" Grid.Column="2" HorizontalAlignment="Stretch">
               <fields:PropertyByteField Label="menu_loop" Value="{Binding DbRootViewModel.MenuLoop, Mode=TwoWay}" ToolTip="[Byte]" />
               <fields:PropertyBooleanField Label="is_selectable_stage_make" IsChecked="{Binding DbRootViewModel.IsSelectableStageMake, Mode=TwoWay}" ToolTip="[Boolean]" />
-              <fields:PropertyBooleanField Label="0x18db285704" IsChecked="{Binding DbRootViewModel.Unk1, Mode=TwoWay}" ToolTip="[Boolean]" />
-              <fields:PropertyBooleanField Label="0x16fe9a28fe" IsChecked="{Binding DbRootViewModel.Unk2, Mode=TwoWay}" ToolTip="[Boolean]" />
+              <fields:PropertyBooleanField Label="is_selectable_movie_edit" IsChecked="{Binding DbRootViewModel.IsSelectableMovieEdit, Mode=TwoWay}" ToolTip="[Boolean]" />
+              <fields:PropertyBooleanField Label="is_selectable_original" IsChecked="{Binding DbRootViewModel.IsSelectableOriginal, Mode=TwoWay}" ToolTip="[Boolean]" />
               <StackPanel Orientation="Horizontal">
                 <fields:PropertyBooleanField Label="is_dlc" IsChecked="{Binding DbRootViewModel.IsDlc, Mode=TwoWay}" ToolTip="[Boolean]" />
                 <fields:PropertyBooleanField Label="is_patch" IsChecked="{Binding DbRootViewModel.IsPatch, Mode=TwoWay}" ToolTip="[Boolean]" />
               </StackPanel>
-              <fields:PropertyTextField Label="0x0ff71e57ec" Text="{Binding DbRootViewModel.Unk3, Mode=TwoWay}" ToolTip="[Hash40]" />
-              <fields:PropertyTextField Label="0x14341640b8" Text="{Binding DbRootViewModel.Unk4, Mode=TwoWay}" ToolTip="[Hash40]" />
-              <fields:PropertyTextField Label="0x1560c0949b" Text="{Binding DbRootViewModel.Unk5, Mode=TwoWay}" ToolTip="[Hash40]" />
+              <fields:PropertyTextField Label="dlc_ui_chara_id" Text="{Binding DbRootViewModel.DlcUiCharaId, Mode=TwoWay}" ToolTip="[Hash40]" />
+              <fields:PropertyTextField Label="dlc_mii_hat_motif_id" Text="{Binding DbRootViewModel.DlcMiiHatMotifId, Mode=TwoWay}" ToolTip="[Hash40]" />
+              <fields:PropertyTextField Label="dlc_mii_body_motif_id" Text="{Binding DbRootViewModel.DlcMiiBodyMotifId, Mode=TwoWay}" ToolTip="[Hash40]" />
             </StackPanel>
           </Grid>
         </TabItem>

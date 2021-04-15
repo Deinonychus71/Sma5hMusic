@@ -90,7 +90,8 @@ namespace Sma5h.Mods.Music
                     {
                         if (bgmStreamSetEntry.Source == EntrySource.Core && coreStreamSetOverrides.ContainsKey(bgmStreamSetEntry.StreamSetId))
                         {
-                            _mapper.Map(coreStreamSetOverrides[bgmStreamSetEntry.StreamSetId], bgmStreamSetEntry);
+                            var streamSetObj = GetUpdatedStreamSetConfig(coreStreamSetOverrides[bgmStreamSetEntry.StreamSetId]);
+                            _mapper.Map(streamSetObj, bgmStreamSetEntry);
                         }
                     }
                 }
@@ -102,7 +103,8 @@ namespace Sma5h.Mods.Music
                     {
                         if (bgmAssignedInfoEntry.Source == EntrySource.Core && coreAssignedInfoOverrides.ContainsKey(bgmAssignedInfoEntry.InfoId))
                         {
-                            _mapper.Map(coreAssignedInfoOverrides[bgmAssignedInfoEntry.InfoId], bgmAssignedInfoEntry);
+                            var assignedInfoObj = GetUpdatedBgmAssignedInfoConfig(coreAssignedInfoOverrides[bgmAssignedInfoEntry.InfoId]);
+                            _mapper.Map(assignedInfoObj, bgmAssignedInfoEntry);
                         }
                     }
                 }
@@ -330,6 +332,30 @@ namespace Sma5h.Mods.Music
             var overrideJsonFile = Path.Combine(_config.Value.Sma5hMusicOverride.ModPath, MusicConstants.MusicModFiles.MUSIC_OVERRIDE_STAGE_JSON_FILE);
             File.WriteAllText(overrideJsonFile, JsonConvert.SerializeObject(_musicOverrideConfig.StageOverrides, _defaultFormatting));
             return true;
+        }
+        public BgmStreamSetConfig GetUpdatedStreamSetConfig(BgmStreamSetConfig bgmStreamSetConfig)
+        {
+            if (!string.IsNullOrEmpty(bgmStreamSetConfig.SpecialCategory) && bgmStreamSetConfig.SpecialCategory.StartsWith("0x") &&
+                MusicConstants.SPECIAL_CATEGORY_LABELS.ContainsKey(bgmStreamSetConfig.SpecialCategory))
+            {
+                bgmStreamSetConfig.SpecialCategory = MusicConstants.SPECIAL_CATEGORY_LABELS[bgmStreamSetConfig.SpecialCategory];
+            }
+            return bgmStreamSetConfig;
+        }
+
+        public BgmAssignedInfoConfig GetUpdatedBgmAssignedInfoConfig(BgmAssignedInfoConfig bgmAssignedInfoConfig)
+        {
+            if (!string.IsNullOrEmpty(bgmAssignedInfoConfig.Condition) && bgmAssignedInfoConfig.Condition.StartsWith("0x") &&
+                MusicConstants.SOUND_CONDITION_LABELS.ContainsKey(bgmAssignedInfoConfig.Condition))
+            {
+                bgmAssignedInfoConfig.Condition = MusicConstants.SOUND_CONDITION_LABELS[bgmAssignedInfoConfig.Condition];
+            }
+            if (!string.IsNullOrEmpty(bgmAssignedInfoConfig.ConditionProcess) && bgmAssignedInfoConfig.ConditionProcess.StartsWith("0x") &&
+                MusicConstants.SOUND_CONDITION_PROCESS_LABELS.ContainsKey(bgmAssignedInfoConfig.ConditionProcess))
+            {
+                bgmAssignedInfoConfig.ConditionProcess = MusicConstants.SOUND_CONDITION_PROCESS_LABELS[bgmAssignedInfoConfig.ConditionProcess];
+            }
+            return bgmAssignedInfoConfig;
         }
     }
 }

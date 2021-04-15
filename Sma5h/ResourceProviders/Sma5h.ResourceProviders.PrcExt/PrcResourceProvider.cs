@@ -20,7 +20,7 @@ namespace Sma5h.ResourceProviders
             : base(config)
         {
             _logger = logger;
-            var inputFileParamLabels = Path.Combine(config.Value.ResourcesPath, "param_labels.csv");
+            var inputFileParamLabels = Path.Combine(config.Value.ResourcesPath, "ParamLabels.csv");
             _prc = new PrcHelper(GetParamLabels(inputFileParamLabels));
         }
 
@@ -60,16 +60,13 @@ namespace Sma5h.ResourceProviders
             if (!File.Exists(inputFileParamLabels))
                 throw new Exception($"Param Hashes {inputFileParamLabels} doesn't exist.");
 
-            using (var reader = new StreamReader(inputFileParamLabels))
+            var hashLines = File.ReadAllLines(inputFileParamLabels);
+            foreach(var hashLine in hashLines)
             {
-                using (var csv = new CsvReader(reader, CultureInfo.InvariantCulture))
+                if (!string.IsNullOrEmpty(hashLine))
                 {
-                    var records = csv.GetRecords<dynamic>();
-                    foreach (var record in records)
-                    {
-                        var id = Convert.ToUInt64(record.ID, 16);
-                        output.Add(id, record.Label);
-                    }
+                    var hashSplit = hashLine.Split(',');
+                    output.Add(Convert.ToUInt64(hashSplit[0], 16), hashSplit[1]);
                 }
             }
             return output;

@@ -102,11 +102,11 @@ namespace Sma5h.Data.Ui.Param.Database
             [PrcHexMapping("is_selectable_stage_make")]
             public bool IsSelectableStageMake { get; set; }
 
-            [PrcHexMapping(0x18db285704)]
-            public bool Unk1 { get; set; }
+            [PrcHexMapping("is_selectable_movie_edit")]
+            public bool IsSelectableMovieEdit { get; set; }
 
-            [PrcHexMapping(0x16fe9a28fe)]
-            public bool Unk2 { get; set; }
+            [PrcHexMapping("is_selectable_original")]
+            public bool IsSelectableOriginal { get; set; }
 
             [PrcHexMapping("is_dlc")]
             public bool IsDlc { get; set; }
@@ -114,14 +114,14 @@ namespace Sma5h.Data.Ui.Param.Database
             [PrcHexMapping("is_patch")]
             public bool IsPatch { get; set; }
 
-            [PrcHexMapping(0x0ff71e57ec, true)]
-            public string Unk3 { get; set; }
+            [PrcHexMapping("dlc_ui_chara_id", true)]
+            public string DlcUiCharaId { get; set; }
 
-            [PrcHexMapping(0x14341640b8, true)]
-            public string Unk4 { get; set; }
+            [PrcHexMapping("dlc_mii_hat_motif_id", true)]
+            public string DlcMiiHatMotifId { get; set; }
 
-            [PrcHexMapping(0x1560c0949b, true)]
-            public string Unk5 { get; set; }
+            [PrcHexMapping("dlc_mii_body_motif_id", true)]
+            public string DlcMiiBodyMotifId { get; set; }
 
             public override string ToString()
             {
