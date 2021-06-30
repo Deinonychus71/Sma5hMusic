@@ -43,7 +43,8 @@
             "ui_series_dragonquest",
             "ui_series_banjokazooie",
             "ui_series_fatalfury",
-            "ui_series_minecraft"
+            "ui_series_minecraft",
+            "ui_series_demon"
         };
 
         public static string[] DLC_STAGES = new string[]
@@ -55,7 +56,8 @@
             "ui_stage_tantan",
             "ui_stage_pickel",
             "ui_stage_edge",
-            "ui_stage_xeno_alst"
+            "ui_stage_xeno_alst",
+            "ui_stage_demon_dojo"
         };
 
         public static string[] VALID_STAGES = new string[]
@@ -194,6 +196,7 @@
             "ui_stage_pickel_world",
             "ui_stage_ff_cave",
             "ui_stage_xeno_alst",
+            "ui_stage_demon_dojo",
             "ui_stage_battle_field_s"
         };
     }

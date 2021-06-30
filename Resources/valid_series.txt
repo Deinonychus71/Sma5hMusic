@@ -38,3 +38,4 @@ dragonquest
 banjokazooie
 fatalfury
 minecraft
+tekken

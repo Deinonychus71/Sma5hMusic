@@ -74,6 +74,9 @@ namespace Sma5h.Mods.Music
             //Persist DB changes
             _audioStateService.SaveBgmEntriesToStateManager();
 
+            if (useCache)
+                Directory.CreateDirectory(_config.Value.Sma5hMusic.CachePath);
+
             //Save NUS3Audio/Nus3Bank
             foreach (var bgmPropertyEntry in _audioStateService.GetModBgmPropertyEntries())
             {
