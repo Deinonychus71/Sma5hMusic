@@ -2,11 +2,11 @@
 
 namespace Sma5h.Mods.Music.Models.AutoMapper
 {
-    public class MappingAdvancedConfig : Profile
+    public class MappingMusicModConfig : Profile
     {
-        public MappingAdvancedConfig()
+        public MappingMusicModConfig()
         {
-            CreateMap<AudioCuePoints, MusicMods.AdvancedMusicModModels.BgmPropertyEntryConfig>()
+            CreateMap<AudioCuePoints, MusicMods.MusicModModels.BgmPropertyEntryConfig>()
                .ForMember(i => i.LoopEndMs, me => me.MapFrom(p => p.LoopEndMs))
                .ForMember(i => i.LoopEndSample, me => me.MapFrom(p => p.LoopEndSample))
                .ForMember(i => i.LoopStartMs, me => me.MapFrom(p => p.LoopStartMs))
@@ -14,7 +14,7 @@ namespace Sma5h.Mods.Music.Models.AutoMapper
                .ForMember(i => i.NameId, me => me.Ignore())
                .ForMember(i => i.TotalSamples, me => me.MapFrom(p => p.TotalSamples))
                .ForMember(i => i.TotalTimeMs, me => me.MapFrom(p => p.TotalTimeMs));
-            CreateMap<MusicMods.AdvancedMusicModModels.BgmPropertyEntryConfig, AudioCuePoints>()
+            CreateMap<MusicMods.MusicModModels.BgmPropertyEntryConfig, AudioCuePoints>()
                 .ForMember(i => i.LoopEndMs, me => me.MapFrom(p => p.LoopEndMs))
                 .ForMember(i => i.LoopEndSample, me => me.MapFrom(p => p.LoopEndSample))
                 .ForMember(i => i.LoopStartMs, me => me.MapFrom(p => p.LoopStartMs))
@@ -23,7 +23,7 @@ namespace Sma5h.Mods.Music.Models.AutoMapper
                 .ForMember(i => i.TotalSamples, me => me.MapFrom(p => p.TotalSamples))
                 .ForMember(i => i.TotalTimeMs, me => me.MapFrom(p => p.TotalTimeMs));
 
-            CreateMap<GameTitleEntry, MusicMods.AdvancedMusicModModels.GameConfig>()
+            CreateMap<GameTitleEntry, MusicMods.MusicModModels.GameConfig>()
                 .ForMember(i => i.Bgms, me => me.Ignore())
                 .ForMember(i => i.NameId, me => me.MapFrom(p => p.NameId))
                 .ForMember(i => i.Release, me => me.MapFrom(p => p.Release))
@@ -31,7 +31,7 @@ namespace Sma5h.Mods.Music.Models.AutoMapper
                 .ForMember(i => i.UiGameTitleId, me => me.MapFrom(p => p.UiGameTitleId))
                 .ForMember(i => i.UiSeriesId, me => me.MapFrom(p => p.UiSeriesId))
                 .ForMember(i => i.Unk1, me => me.MapFrom(p => p.Unk1));
-            CreateMap<MusicMods.AdvancedMusicModModels.GameConfig, GameTitleEntry>()
+            CreateMap<MusicMods.MusicModModels.GameConfig, GameTitleEntry>()
                 .ForMember(i => i.MSBTTitleKey, me => me.Ignore())
                 .ForMember(i => i.NameId, me => me.MapFrom(p => p.NameId))
                 .ForMember(i => i.Release, me => me.MapFrom(p => p.Release))
@@ -40,7 +40,7 @@ namespace Sma5h.Mods.Music.Models.AutoMapper
                 .ForMember(i => i.UiSeriesId, me => me.MapFrom(p => p.UiSeriesId))
                 .ForMember(i => i.Unk1, me => me.MapFrom(p => p.Unk1));
 
-            CreateMap<BgmPropertyEntry, MusicMods.AdvancedMusicModModels.BgmPropertyEntryConfig>()
+            CreateMap<BgmPropertyEntry, MusicMods.MusicModModels.BgmPropertyEntryConfig>()
                 .ForMember(i => i.LoopEndMs, me => me.MapFrom(p => p.LoopEndMs))
                 .ForMember(i => i.LoopEndSample, me => me.MapFrom(p => p.LoopEndSample))
                 .ForMember(i => i.LoopStartMs, me => me.MapFrom(p => p.LoopStartMs))
@@ -48,7 +48,7 @@ namespace Sma5h.Mods.Music.Models.AutoMapper
                 .ForMember(i => i.NameId, me => me.MapFrom(p => p.NameId))
                 .ForMember(i => i.TotalSamples, me => me.MapFrom(p => p.TotalSamples))
                 .ForMember(i => i.TotalTimeMs, me => me.MapFrom(p => p.TotalTimeMs));
-            CreateMap<MusicMods.AdvancedMusicModModels.BgmPropertyEntryConfig, BgmPropertyEntry>()
+            CreateMap<MusicMods.MusicModModels.BgmPropertyEntryConfig, BgmPropertyEntry>()
                 .ForMember(i => i.LoopEndMs, me => me.MapFrom(p => p.LoopEndMs))
                 .ForMember(i => i.LoopEndSample, me => me.MapFrom(p => p.LoopEndSample))
                 .ForMember(i => i.LoopStartMs, me => me.MapFrom(p => p.LoopStartMs))
@@ -58,7 +58,7 @@ namespace Sma5h.Mods.Music.Models.AutoMapper
                 .ForMember(i => i.TotalTimeMs, me => me.MapFrom(p => p.TotalTimeMs))
                 .ForMember(i => i.Frequency, me => me.Ignore());
 
-            CreateMap<BgmDbRootEntry, MusicMods.AdvancedMusicModModels.BgmDbRootConfig>()
+            CreateMap<BgmDbRootEntry, MusicMods.MusicModModels.BgmDbRootConfig>()
                 .ForMember(i => i.UiBgmId, me => me.MapFrom(p => p.UiBgmId))
                 .ForMember(i => i.StreamSetId, me => me.MapFrom(p => p.StreamSetId))
                 .ForMember(i => i.Rarity, me => me.MapFrom(p => p.Rarity))
@@ -79,17 +79,17 @@ namespace Sma5h.Mods.Music.Models.AutoMapper
                 .ForMember(i => i.CountTarget, me => me.MapFrom(p => p.CountTarget))
                 .ForMember(i => i.MenuLoop, me => me.MapFrom(p => p.MenuLoop))
                 .ForMember(i => i.IsSelectableStageMake, me => me.MapFrom(p => p.IsSelectableStageMake))
-                .ForMember(i => i.Unk1, me => me.MapFrom(p => p.IsSelectableMovieEdit))
-                .ForMember(i => i.Unk2, me => me.MapFrom(p => p.IsSelectableOriginal))
+                .ForMember(i => i.IsSelectableMovieEdit, me => me.MapFrom(p => p.IsSelectableMovieEdit))
+                .ForMember(i => i.IsSelectableMovieEdit, me => me.MapFrom(p => p.IsSelectableOriginal))
                 .ForMember(i => i.IsDlc, me => me.MapFrom(p => p.IsDlc))
                 .ForMember(i => i.IsPatch, me => me.MapFrom(p => p.IsPatch))
-                .ForMember(i => i.Unk3, me => me.MapFrom(p => p.DlcUiCharaId))
-                .ForMember(i => i.Unk4, me => me.MapFrom(p => p.DlcMiiHatMotifId))
-                .ForMember(i => i.Unk5, me => me.MapFrom(p => p.DlcMiiBodyMotifId))
+                .ForMember(i => i.DlcUiCharaId, me => me.MapFrom(p => p.DlcUiCharaId))
+                .ForMember(i => i.DlcMiiHatMotifId, me => me.MapFrom(p => p.DlcMiiHatMotifId))
+                .ForMember(i => i.DlcMiiBodyMotifId, me => me.MapFrom(p => p.DlcMiiBodyMotifId))
                 .ForMember(i => i.Title, me => me.MapFrom(p => p.Title))
                 .ForMember(i => i.Author, me => me.MapFrom(p => p.Author))
                 .ForMember(i => i.Copyright, me => me.MapFrom(p => p.Copyright));
-            CreateMap<MusicMods.AdvancedMusicModModels.BgmDbRootConfig, BgmDbRootEntry>()
+            CreateMap<MusicMods.MusicModModels.BgmDbRootConfig, BgmDbRootEntry>()
                 .ForMember(i => i.UiBgmId, me => me.Ignore())
                 .ForMember(i => i.StreamSetId, me => me.MapFrom(p => p.StreamSetId))
                 .ForMember(i => i.Rarity, me => me.MapFrom(p => p.Rarity))
@@ -110,18 +110,18 @@ namespace Sma5h.Mods.Music.Models.AutoMapper
                 .ForMember(i => i.CountTarget, me => me.MapFrom(p => p.CountTarget))
                 .ForMember(i => i.MenuLoop, me => me.MapFrom(p => p.MenuLoop))
                 .ForMember(i => i.IsSelectableStageMake, me => me.MapFrom(p => p.IsSelectableStageMake))
-                .ForMember(i => i.IsSelectableMovieEdit, me => me.MapFrom(p => p.Unk1 != null ? p.Unk1 : p.IsSelectableMovieEdit))
-                .ForMember(i => i.IsSelectableOriginal, me => me.MapFrom(p => p.Unk2 != null ? p.Unk2 : p.IsSelectableOriginal))
+                .ForMember(i => i.IsSelectableMovieEdit, me => me.MapFrom(p => p.IsSelectableMovieEdit))
+                .ForMember(i => i.IsSelectableOriginal, me => me.MapFrom(p => p.IsSelectableOriginal))
                 .ForMember(i => i.IsDlc, me => me.MapFrom(p => p.IsDlc))
                 .ForMember(i => i.IsPatch, me => me.MapFrom(p => p.IsPatch))
-                .ForMember(i => i.DlcUiCharaId, me => me.MapFrom(p => p.Unk3 != null ? p.Unk3 : p.DlcUiCharaId))
-                .ForMember(i => i.DlcMiiHatMotifId, me => me.MapFrom(p => p.Unk4 != null ? p.Unk4 : p.DlcMiiHatMotifId))
-                .ForMember(i => i.DlcMiiBodyMotifId, me => me.MapFrom(p => p.Unk5 != null ? p.Unk5 : p.DlcMiiBodyMotifId))
+                .ForMember(i => i.DlcUiCharaId, me => me.MapFrom(p => p.DlcUiCharaId))
+                .ForMember(i => i.DlcMiiHatMotifId, me => me.MapFrom(p => p.DlcMiiHatMotifId))
+                .ForMember(i => i.DlcMiiBodyMotifId, me => me.MapFrom(p => p.DlcMiiBodyMotifId))
                 .ForMember(i => i.Title, me => me.MapFrom(p => p.Title))
                 .ForMember(i => i.Author, me => me.MapFrom(p => p.Author))
                 .ForMember(i => i.Copyright, me => me.MapFrom(p => p.Copyright));
 
-            CreateMap<BgmStreamSetEntry, MusicMods.AdvancedMusicModModels.BgmStreamSetConfig>()
+            CreateMap<BgmStreamSetEntry, MusicMods.MusicModModels.BgmStreamSetConfig>()
                 .ForMember(i => i.StreamSetId, me => me.MapFrom(p => p.StreamSetId))
                 .ForMember(i => i.SpecialCategory, me => me.MapFrom(p => p.SpecialCategory))
                 .ForMember(i => i.Info0, me => me.MapFrom(p => p.Info0))
@@ -140,7 +140,7 @@ namespace Sma5h.Mods.Music.Models.AutoMapper
                 .ForMember(i => i.Info13, me => me.MapFrom(p => p.Info13))
                 .ForMember(i => i.Info14, me => me.MapFrom(p => p.Info14))
                 .ForMember(i => i.Info15, me => me.MapFrom(p => p.Info15));
-            CreateMap<MusicMods.AdvancedMusicModModels.BgmStreamSetConfig, BgmStreamSetEntry>()
+            CreateMap<MusicMods.MusicModModels.BgmStreamSetConfig, BgmStreamSetEntry>()
                 .ForMember(i => i.StreamSetId, me => me.Ignore())
                 .ForMember(i => i.SpecialCategory, me => me.MapFrom(p => p.SpecialCategory))
                 .ForMember(i => i.Info0, me => me.MapFrom(p => p.Info0))
@@ -160,7 +160,7 @@ namespace Sma5h.Mods.Music.Models.AutoMapper
                 .ForMember(i => i.Info14, me => me.MapFrom(p => p.Info14))
                 .ForMember(i => i.Info15, me => me.MapFrom(p => p.Info15));
 
-            CreateMap<BgmAssignedInfoEntry, MusicMods.AdvancedMusicModModels.BgmAssignedInfoConfig>()
+            CreateMap<BgmAssignedInfoEntry, MusicMods.MusicModModels.BgmAssignedInfoConfig>()
                 .ForMember(i => i.InfoId, me => me.MapFrom(p => p.InfoId))
                 .ForMember(i => i.StreamId, me => me.MapFrom(p => p.StreamId))
                 .ForMember(i => i.Condition, me => me.MapFrom(p => p.Condition))
@@ -174,7 +174,7 @@ namespace Sma5h.Mods.Music.Models.AutoMapper
                 .ForMember(i => i.MenuChangeStartDelayFrame, me => me.MapFrom(p => p.MenuChangeStartDelayFrame))
                 .ForMember(i => i.MenuChangeFadeOutFrame, me => me.MapFrom(p => p.MenuChangeFadeOutFrame))
                 .ForMember(i => i.MenuChangeStopDelayFrame, me => me.MapFrom(p => p.MenuChangeStopDelayFrame));
-            CreateMap<MusicMods.AdvancedMusicModModels.BgmAssignedInfoConfig, BgmAssignedInfoEntry>()
+            CreateMap<MusicMods.MusicModModels.BgmAssignedInfoConfig, BgmAssignedInfoEntry>()
                 .ForMember(i => i.InfoId, me => me.Ignore())
                 .ForMember(i => i.StreamId, me => me.MapFrom(p => p.StreamId))
                 .ForMember(i => i.Condition, me => me.MapFrom(p => p.Condition))
@@ -187,9 +187,9 @@ namespace Sma5h.Mods.Music.Models.AutoMapper
                 .ForMember(i => i.MenuChangeFadeInFrame, me => me.MapFrom(p => p.MenuChangeFadeInFrame))
                 .ForMember(i => i.MenuChangeStartDelayFrame, me => me.MapFrom(p => p.MenuChangeStartDelayFrame))
                 .ForMember(i => i.MenuChangeFadeOutFrame, me => me.MapFrom(p => p.MenuChangeFadeOutFrame))
-                .ForMember(i => i.MenuChangeStopDelayFrame, me => me.MapFrom(p => p.Unk1 != null ? p.Unk1 : p.MenuChangeStopDelayFrame));
+                .ForMember(i => i.MenuChangeStopDelayFrame, me => me.MapFrom(p => p.MenuChangeStopDelayFrame));
 
-            CreateMap<BgmStreamPropertyEntry, MusicMods.AdvancedMusicModModels.BgmStreamPropertyConfig>()
+            CreateMap<BgmStreamPropertyEntry, MusicMods.MusicModModels.BgmStreamPropertyConfig>()
                 .ForMember(i => i.StreamId, me => me.MapFrom(p => p.StreamId))
                 .ForMember(i => i.DataName0, me => me.MapFrom(p => p.DataName0))
                 .ForMember(i => i.DataName1, me => me.MapFrom(p => p.DataName1))
@@ -206,7 +206,7 @@ namespace Sma5h.Mods.Music.Models.AutoMapper
                 .ForMember(i => i.StartPoint2, me => me.MapFrom(p => p.StartPoint2))
                 .ForMember(i => i.StartPoint3, me => me.MapFrom(p => p.StartPoint3))
                 .ForMember(i => i.StartPoint4, me => me.MapFrom(p => p.StartPoint4));
-            CreateMap<MusicMods.AdvancedMusicModModels.BgmStreamPropertyConfig, BgmStreamPropertyEntry>()
+            CreateMap<MusicMods.MusicModModels.BgmStreamPropertyConfig, BgmStreamPropertyEntry>()
                .ForMember(i => i.StreamId, me => me.Ignore())
                .ForMember(i => i.DataName0, me => me.MapFrom(p => p.DataName0))
                .ForMember(i => i.DataName1, me => me.MapFrom(p => p.DataName1))

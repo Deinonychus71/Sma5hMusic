@@ -6,7 +6,7 @@ using Sma5h.Interfaces;
 using Sma5h.Mods.Music.Helpers;
 using Sma5h.Mods.Music.Interfaces;
 using Sma5h.Mods.Music.Models;
-using Sma5h.Mods.Music.MusicMods.AdvancedMusicModModels;
+using Sma5h.Mods.Music.MusicMods.MusicModModels;
 using Sma5h.Mods.Music.MusicOverride;
 using Sma5h.Mods.Music.MusicOverride.MusicOverrideConfigModels;
 using System.Collections.Generic;
@@ -263,8 +263,9 @@ namespace Sma5h.Mods.Music
             }
             else
                 _logger.LogInformation("File {MusicOverrideFile} does not exist.", overrideCoreGameJsonFile);
-        }
 
+            UpdateOldUnknownValues();
+        }
 
         public bool UpdateSoundTestOrderConfig(Dictionary<string, short> orderEntries)
         {
@@ -333,6 +334,7 @@ namespace Sma5h.Mods.Music
             File.WriteAllText(overrideJsonFile, JsonConvert.SerializeObject(_musicOverrideConfig.StageOverrides, _defaultFormatting));
             return true;
         }
+
         public BgmStreamSetConfig GetUpdatedStreamSetConfig(BgmStreamSetConfig bgmStreamSetConfig)
         {
             if (!string.IsNullOrEmpty(bgmStreamSetConfig.SpecialCategory) && bgmStreamSetConfig.SpecialCategory.StartsWith("0x") &&
@@ -356,6 +358,47 @@ namespace Sma5h.Mods.Music
                 bgmAssignedInfoConfig.ConditionProcess = MusicConstants.SOUND_CONDITION_PROCESS_LABELS[bgmAssignedInfoConfig.ConditionProcess];
             }
             return bgmAssignedInfoConfig;
+        }
+
+        public void UpdateOldUnknownValues()
+        {
+            //Update old BGM values
+            if (_musicOverrideConfig.CoreBgmOverrides != null)
+            {
+                bool found = false;
+                foreach (var bgmBbRootEntry in _musicOverrideConfig.CoreBgmOverrides.CoreBgmDbRootOverrides.Values)
+                {
+                    CrackedHashValueConverter.UpdateBgmDbRootConfig(bgmBbRootEntry);
+                    found = true;
+                }
+                foreach (var bgmAssignedInfoEntry in _musicOverrideConfig.CoreBgmOverrides.CoreBgmAssignedInfoOverrides.Values)
+                {
+                    CrackedHashValueConverter.UpdateAssignedInfoConfig(bgmAssignedInfoEntry);
+                    found = true;
+                }
+                if (found)
+                {
+                    var overrideJsonFile = Path.Combine(_config.Value.Sma5hMusicOverride.ModPath, MusicConstants.MusicModFiles.MUSIC_OVERRIDE_CORE_BGM_JSON_FILE);
+                    File.WriteAllText(overrideJsonFile, JsonConvert.SerializeObject(_musicOverrideConfig.CoreBgmOverrides, _defaultFormatting));
+                }
+            }
+
+            if (_musicOverrideConfig.StageOverrides != null)
+            {
+                bool found = false;
+                foreach (var stageEntry in _musicOverrideConfig.StageOverrides.Values)
+                {
+                    CrackedHashValueConverter.UpdateStageConfig(stageEntry);
+                    found = true;
+                }
+                if (found)
+                {
+                    var overrideJsonFile = Path.Combine(_config.Value.Sma5hMusicOverride.ModPath, MusicConstants.MusicModFiles.MUSIC_OVERRIDE_STAGE_JSON_FILE);
+                    File.WriteAllText(overrideJsonFile, JsonConvert.SerializeObject(_musicOverrideConfig.StageOverrides, _defaultFormatting));
+                }
+            }
+
+            
         }
     }
 }

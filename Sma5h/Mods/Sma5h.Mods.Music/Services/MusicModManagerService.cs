@@ -64,7 +64,7 @@ namespace Sma5h.Mods.Music.Services
             if (!modPath.StartsWith(basePath))
                 modPath = Path.Combine(basePath, modPath);
 
-            var newManagerMod = ActivatorUtilities.CreateInstance<AdvancedMusicMod>(_serviceProvider, modPath, configBase);
+            var newManagerMod = ActivatorUtilities.CreateInstance<MusicMod>(_serviceProvider, modPath, configBase);
             _musicMods.Add(newManagerMod);
             return newManagerMod;
         }
@@ -77,27 +77,14 @@ namespace Sma5h.Mods.Music.Services
             if (File.Exists(jsonBaseFilename))
             {
                 var modBase = LoadJsonBaseMod(jsonBaseFilename);
-                if (modBase.Version == 2)
+                if (modBase.Version == 2 || modBase.Version == 3)
                 {
-                    musicMod = ActivatorUtilities.CreateInstance<AdvancedMusicMod>(_serviceProvider, musicModFolder);
+                    musicMod = ActivatorUtilities.CreateInstance<MusicMod>(_serviceProvider, musicModFolder);
                 }
-                else
-                {
-                    musicMod = ActivatorUtilities.CreateInstance<SimpleMusicMod>(_serviceProvider, musicModFolder);
-                }
-            }
-            else if (File.Exists(Path.Combine(musicModFolder, MusicConstants.MusicModFiles.MUSIC_MOD_METADATA_CSV_FILE)))
-            {
-                musicMod = ActivatorUtilities.CreateInstance<SimpleCSVMusicMod>(_serviceProvider, musicModFolder);
             }
 
             if (musicMod?.Mod == null)
                 return null;
-
-            if (musicMod.Mod.Version != 2)
-            {
-                musicMod = ActivatorUtilities.CreateInstance<AdvancedMusicMod>(_serviceProvider, musicModFolder, musicMod);
-            }
 
             return musicMod;
         }

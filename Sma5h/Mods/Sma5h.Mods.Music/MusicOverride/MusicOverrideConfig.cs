@@ -1,5 +1,5 @@
 ﻿using Newtonsoft.Json;
-using Sma5h.Mods.Music.MusicMods.AdvancedMusicModModels;
+using Sma5h.Mods.Music.MusicMods.MusicModModels;
 using Sma5h.Mods.Music.MusicOverride.MusicOverrideConfigModels;
 using System.Collections.Generic;
 
