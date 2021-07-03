@@ -65,6 +65,7 @@ namespace Sma5hMusic.GUI.ViewModels
 
         public BgmSongsViewModel VMBgmSongs { get; }
         public PlaylistViewModel VMPlaylists { get; }
+        public BgmSoundTestViewModel VMBgmSoundTest { get; }
         public BgmFiltersViewModel VMBgmFilters { get; }
         public ContextMenuViewModel VMContextMenu { get; }
 
@@ -128,6 +129,7 @@ namespace Sma5hMusic.GUI.ViewModels
             //Initialize main views
             VMBgmSongs = ActivatorUtilities.CreateInstance<BgmSongsViewModel>(serviceProvider, VMBgmFilters.WhenFiltersAreApplied, VMContextMenu);
             VMPlaylists = ActivatorUtilities.CreateInstance<PlaylistViewModel>(serviceProvider, VMBgmFilters.WhenFiltersAreApplied, viewModelManager.ObservablePlaylistsEntries, VMContextMenu);
+            VMBgmSoundTest = ActivatorUtilities.CreateInstance<BgmSoundTestViewModel>(serviceProvider, VMBgmFilters.WhenFiltersAreApplied, VMContextMenu);
 
             //Setup ModEditor
             var vmModEditor = ActivatorUtilities.CreateInstance<ModPropertiesModalWindowViewModel>(serviceProvider);

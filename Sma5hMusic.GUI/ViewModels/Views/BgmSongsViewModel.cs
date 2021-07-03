@@ -102,6 +102,11 @@ namespace Sma5hMusic.GUI.ViewModels
         #endregion
 
         #region REORDER
+        public void TestSend(object sender, PointerPressedEventArgs e)
+        {
+            Console.WriteLine("test");
+        }
+
         public void InitializeDragAndDropHandlers(UserControl userControl)
         {
             userControl.AddHandler(DragDrop.DropEvent, Drop);
