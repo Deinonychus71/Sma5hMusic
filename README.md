@@ -2,6 +2,9 @@
 Script to add (not replace) musics for Smash Ultimate
 Based on research & guide by Soneek
 
+* Suggestions are welcome. Please create an issue for it.
+* For bugs please provide reproducible steps. Issues that are not well detailed might be ignored/closed.
+
 ## What is it?
 Sma5h.CLI and Sma5hMusic are a series of tools to import additional tracks to Smash Ultimate. 
 This tool is highly experimental and may not always work as expect.
