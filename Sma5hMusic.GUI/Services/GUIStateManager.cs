@@ -925,19 +925,20 @@ namespace Sma5hMusic.GUI.Services
                 {
                     if (bgmDbRootEntry.IsMod)
                     {
-                        bgmDbRootEntry.IsSelectableOriginal = true;
-                        bgmDbRootEntry.IsSelectableMovieEdit = true;
-                    }
-                }
-                foreach (var musicMod in _musicModManagerService.MusicMods)
-                {
-                    if (!musicMod.UpdateModInformation(musicMod.Mod))
-                    {
-                        await Dispatcher.UIThread.InvokeAsync(async () =>
+                        if (!bgmDbRootEntry.IsSelectableOriginal || !bgmDbRootEntry.IsSelectableMovieEdit)
                         {
-                            await _messageDialog.ShowError("Fix Hidden Songs in Song Selector", "There was an error while updating BGM values.");
-                        }, DispatcherPriority.Background);
-                        return;
+                            bgmDbRootEntry.IsSelectableOriginal = true;
+                            bgmDbRootEntry.IsSelectableMovieEdit = true;
+                            bgmDbRootEntry.SaveChanges();
+                            if (!await bgmDbRootEntry.MusicMod.AddOrUpdateMusicModEntries(new ViewModels.BgmEntryViewModel(bgmDbRootEntry).GetMusicModEntries()))
+                            {
+                                await Dispatcher.UIThread.InvokeAsync(async () =>
+                                {
+                                    await _messageDialog.ShowError("Fix Hidden Songs in Song Selector", "There was an error while updating BGM values.");
+                                }, DispatcherPriority.Background);
+                                return;
+                            }
+                        }
                     }
                 }
 

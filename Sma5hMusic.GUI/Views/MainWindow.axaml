@@ -51,18 +51,18 @@
       <MenuItem Header="Tools">
         <MenuItem Header="Export Song Entries to CSV" Command="{Binding ActionExportSongsCSV}"></MenuItem>
         <Separator></Separator>
-        <MenuItem Header="Enable Song Selector in all Stages" Command="{Binding ActionUpdateBgmSelector}">
-          <MenuItem.CommandParameter>
-            <sys:Boolean>True</sys:Boolean>
-          </MenuItem.CommandParameter>
-        </MenuItem>
-        <MenuItem Header="Disable Song Selector in all Stages" Command="{Binding ActionUpdateBgmSelector}">
-          <MenuItem.CommandParameter>
-            <sys:Boolean>False</sys:Boolean>
-          </MenuItem.CommandParameter>
-        </MenuItem>
-        <Separator></Separator>
-        <MenuItem Header="Fix Scripts">
+        <MenuItem Header="Scripts">
+          <MenuItem Header="Enable Song Selector in all Stages" Command="{Binding ActionUpdateBgmSelector}">
+            <MenuItem.CommandParameter>
+              <sys:Boolean>True</sys:Boolean>
+            </MenuItem.CommandParameter>
+          </MenuItem>
+          <MenuItem Header="Disable Song Selector in all Stages" Command="{Binding ActionUpdateBgmSelector}">
+            <MenuItem.CommandParameter>
+              <sys:Boolean>False</sys:Boolean>
+            </MenuItem.CommandParameter>
+          </MenuItem>
+          <Separator></Separator>
           <MenuItem Header="Fix Hidden Songs in Song Selector" Command="{Binding ActionFixUnknownValues}"></MenuItem>
         </MenuItem>
         <Separator></Separator>
