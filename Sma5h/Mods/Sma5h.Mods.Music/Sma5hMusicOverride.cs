@@ -334,6 +334,17 @@ namespace Sma5h.Mods.Music
             File.WriteAllText(overrideJsonFile, JsonConvert.SerializeObject(_musicOverrideConfig.StageOverrides, _defaultFormatting));
             return true;
         }
+        
+        public bool ResetOverrideFile(string file)
+        {
+            var overrideJsonFile = Path.Combine(_config.Value.Sma5hMusicOverride.ModPath, file);
+            if (File.Exists(overrideJsonFile))
+            {
+                File.Delete(overrideJsonFile);
+                return true;
+            }
+            return false;
+        }
 
         public BgmStreamSetConfig GetUpdatedStreamSetConfig(BgmStreamSetConfig bgmStreamSetConfig)
         {

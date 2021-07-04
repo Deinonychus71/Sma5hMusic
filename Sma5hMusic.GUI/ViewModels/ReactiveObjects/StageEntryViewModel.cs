@@ -19,6 +19,9 @@ namespace Sma5hMusic.GUI.ViewModels
         [Reactive]
         public byte OrderId { get; set; }
 
+        [Reactive]
+        public bool BgmSelector { get; set; }
+
         public StageEntryViewModel() { }
 
         public StageEntryViewModel(StageEntry stageEntry)
@@ -26,6 +29,7 @@ namespace Sma5hMusic.GUI.ViewModels
             _refStageEntry = stageEntry;
             PlaylistId = _refStageEntry.BgmSetId;
             OrderId = _refStageEntry.BgmSettingNo;
+            BgmSelector = _refStageEntry.BgmSelector;
         }
 
         public StageEntry GetStageEntryReference()

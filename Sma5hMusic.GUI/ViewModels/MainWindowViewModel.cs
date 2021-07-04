@@ -82,6 +82,10 @@ namespace Sma5hMusic.GUI.ViewModels
         public ReactiveCommand<Unit, Unit> ActionOpenResourcesFolder { get; }
         public ReactiveCommand<Unit, Unit> ActionOpenLogsFolder { get; }
         public ReactiveCommand<Unit, Unit> ActionExportSongsCSV { get; }
+        public ReactiveCommand<Unit, Unit> ActionFixUnknownValues { get; }
+        public ReactiveCommand<bool, Unit> ActionUpdateBgmSelector { get; }
+        public ReactiveCommand<string, Unit> ActionResetModOverrideFile { get; }
+
 
         public MainWindowViewModel(IServiceProvider serviceProvider, IViewModelManager viewModelManager, IGUIStateManager guiStateManager, IMapper mapper, IVGMMusicPlayer musicPlayer,
             IDialogWindow rootDialog, IMessageDialog messageDialog, IFileDialog fileDialog, IBuildDialog buildDialog, IOptions<ApplicationSettings> appSettings, IDevToolsService devTools, ILogger<MainWindowViewModel> logger)
@@ -202,6 +206,9 @@ namespace Sma5hMusic.GUI.ViewModels
             ActionOpenResourcesFolder = ReactiveCommand.Create(() => _fileDialog.OpenFolder(_appSettings.Value.ResourcesPath));
             ActionOpenLogsFolder = ReactiveCommand.Create(() => _fileDialog.OpenFolder(_appSettings.Value.LogPath));
             ActionExportSongsCSV = ReactiveCommand.CreateFromTask(ExportSongsToCSV);
+            ActionFixUnknownValues = ReactiveCommand.CreateFromTask(FixUnknownValues);
+            ActionUpdateBgmSelector = ReactiveCommand.CreateFromTask<bool>((enabled) => UpdateBgmSelector(enabled));
+            ActionResetModOverrideFile = ReactiveCommand.CreateFromTask<string>((file) => ResetModOverrideFile(file));
         }
 
         #region Actions
@@ -338,6 +345,22 @@ namespace Sma5hMusic.GUI.ViewModels
                 if(await _devTools.ExportToCSV(result))
                     await _messageDialog.ShowError("Done", "The CSV export was completed.");
             }
+        }
+
+        public async Task FixUnknownValues()
+        {
+            await _guiStateManager.FixUnknownValues();
+        }
+
+        public async Task UpdateBgmSelector(bool enable)
+        {
+            await _guiStateManager.UpdateBgmSelectorStages(enable);
+        }
+
+        public async Task ResetModOverrideFile(string file)
+        {
+            if(await _guiStateManager.ResetModOverrideFile(file))
+                await OnInitData();
         }
         #endregion
 

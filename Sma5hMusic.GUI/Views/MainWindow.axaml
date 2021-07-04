@@ -6,6 +6,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d" MinWidth="1280" MinHeight="720" d:DesignWidth="1280" d:DesignHeight="720"
         x:Class="Sma5hMusic.GUI.Views.MainWindow"
+        xmlns:sys="clr-namespace:System;assembly=mscorlib"
         Icon="/Assets/sma5hmusic-logo.ico"
         xmlns:fields="clr-namespace:Sma5hMusic.GUI.Views.Fields"
         xmlns:i="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
@@ -49,6 +50,29 @@
       </MenuItem>
       <MenuItem Header="Tools">
         <MenuItem Header="Export Song Entries to CSV" Command="{Binding ActionExportSongsCSV}"></MenuItem>
+        <Separator></Separator>
+        <MenuItem Header="Enable Song Selector in all Stages" Command="{Binding ActionUpdateBgmSelector}">
+          <MenuItem.CommandParameter>
+            <sys:Boolean>True</sys:Boolean>
+          </MenuItem.CommandParameter>
+        </MenuItem>
+        <MenuItem Header="Disable Song Selector in all Stages" Command="{Binding ActionUpdateBgmSelector}">
+          <MenuItem.CommandParameter>
+            <sys:Boolean>False</sys:Boolean>
+          </MenuItem.CommandParameter>
+        </MenuItem>
+        <Separator></Separator>
+        <MenuItem Header="Fix Scripts">
+          <MenuItem Header="Fix Hidden Songs in Song Selector" Command="{Binding ActionFixUnknownValues}"></MenuItem>
+        </MenuItem>
+        <Separator></Separator>
+        <MenuItem Header="Reset Data">
+          <MenuItem Header="Reset Core Game Songs Metadata (core_bgm_override.json)" Command="{Binding ActionResetModOverrideFile}" CommandParameter="core_bgm_override.json"></MenuItem>
+          <MenuItem Header="Reset Core Game Metadata (core_game_override.json)" Command="{Binding ActionResetModOverrideFile}" CommandParameter="core_game_override.json"></MenuItem>
+          <MenuItem Header="Reset Sound Test Order (order_override.json)" Command="{Binding ActionResetModOverrideFile}" CommandParameter="order_override.json"></MenuItem>
+          <MenuItem Header="Reset Playlists (playlist_override.json)" Command="{Binding ActionResetModOverrideFile}" CommandParameter="playlist_override.json"></MenuItem>
+          <MenuItem Header="Reset Stage Metadata (stage_override.json)" Command="{Binding ActionResetModOverrideFile}" CommandParameter="stage_override.json"></MenuItem>
+        </MenuItem>
       </MenuItem>
       <MenuItem Header="About">
         <MenuItem Header="Wiki" Command="{Binding ActionOpenWiki}"></MenuItem>

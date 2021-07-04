@@ -24,7 +24,7 @@ namespace Sma5hMusic.GUI.Services
         private readonly IMessageDialog _messageDialog;
         private readonly IAudioStateService _audioState;
         private readonly IAudioMetadataService _audioMetadataService;
-        private readonly ISma5hMusicOverride _Sma5hMusicOverride;
+        private readonly ISma5hMusicOverride _sma5hMusicOverride;
         private readonly IMusicModManagerService _musicModManagerService;
         private readonly IViewModelManager _viewModelManager;
         private readonly IOptions<ApplicationSettings> _config;
@@ -36,7 +36,7 @@ namespace Sma5hMusic.GUI.Services
             _mapper = mapper;
             _config = config;
             _messageDialog = messageDialog;
-            _Sma5hMusicOverride = Sma5hMusicOverride;
+            _sma5hMusicOverride = Sma5hMusicOverride;
             _audioState = audioStateService;
             _audioMetadataService = audioMetadataService;
             _musicModManagerService = musicModManagerService;
@@ -488,7 +488,7 @@ namespace Sma5hMusic.GUI.Services
                     if (musicMod != null)
                         result = await musicMod.AddOrUpdateMusicModEntries(musicModEntries);
                     else
-                        result = _Sma5hMusicOverride.UpdateCoreBgmEntries(musicModEntries);
+                        result = _sma5hMusicOverride.UpdateCoreBgmEntries(musicModEntries);
 
                     if (result)
                         await ReorderSongs();
@@ -528,7 +528,7 @@ namespace Sma5hMusic.GUI.Services
                         result = musicMod.RemoveMusicModEntries(musicModDeleteEntries);
                     else
                         _logger.LogError("Deleting Core resources is not supported at this time.");
-                    //    result = _Sma5hMusicOverride.UpdateCoreBgmEntries(musicModEntries); //Not supported for now.
+                    //    result = _sma5hMusicOverride.UpdateCoreBgmEntries(musicModEntries); //Not supported for now.
 
                     if (result)
                     {
@@ -636,7 +636,7 @@ namespace Sma5hMusic.GUI.Services
                 _logger.LogInformation("Remove Game Title {GameTitleId}", gameTitleId);
 
                 _viewModelManager.RemoveGameTitleView(gameTitleId);
-                result = _Sma5hMusicOverride.DeleteGameTitleEntry(gameTitleId);
+                result = _sma5hMusicOverride.DeleteGameTitleEntry(gameTitleId);
             }
             catch (Exception e)
             {
@@ -669,7 +669,7 @@ namespace Sma5hMusic.GUI.Services
                 //We save in CoreGameTitle no matter what so it gets loaded
                 //else
                 //{
-                result = _Sma5hMusicOverride.UpdateGameTitleEntry(gameTitleEntry);
+                result = _sma5hMusicOverride.UpdateGameTitleEntry(gameTitleEntry);
                 //}
             }
             catch (Exception e)
@@ -794,7 +794,7 @@ namespace Sma5hMusic.GUI.Services
 
 
                 var playlists = _viewModelManager.GetPlaylistsEntriesViewModels().ToDictionary(p => p.Id, p => p.ToPlaylistEntry());
-                result = _Sma5hMusicOverride.UpdatePlaylistConfig(playlists);
+                result = _sma5hMusicOverride.UpdatePlaylistConfig(playlists);
             }
             catch (Exception e)
             {
@@ -854,7 +854,7 @@ namespace Sma5hMusic.GUI.Services
                 _logger.LogInformation("Persist Stage Changes");
 
                 var stages = _viewModelManager.GetStagesEntriesViewModels().Select(p => p.GetStageEntryReference()).ToList();
-                result = _Sma5hMusicOverride.UpdateMusicStageOverride(stages);
+                result = _sma5hMusicOverride.UpdateMusicStageOverride(stages);
             }
             catch (Exception e)
             {
@@ -905,6 +905,120 @@ namespace Sma5hMusic.GUI.Services
             }
         }
 
+        #endregion
+
+        #region Fixes
+        public async Task FixUnknownValues()
+        {
+            bool confirm = false;
+            await Dispatcher.UIThread.InvokeAsync(async () =>
+            {
+                confirm = await _messageDialog.ShowWarningConfirm("Fix Hidden Songs in Song Selector", 
+                    "Running this script will set 'is_selectable_original' and 'is_selectable_movie_edit' to true in all your mod bgms. " +
+                    "This can be used to fix an issue where some songs wouldn't show up in the song selector for Battlefield/Final Destination. " +
+                    "It is recommended to back up your mods before running this script. Continue?");
+            }, DispatcherPriority.Background);
+
+            if (confirm)
+            {
+                foreach (var bgmDbRootEntry in _viewModelManager.GetBgmDbRootEntriesViewModels())
+                {
+                    if (bgmDbRootEntry.IsMod)
+                    {
+                        bgmDbRootEntry.IsSelectableOriginal = true;
+                        bgmDbRootEntry.IsSelectableMovieEdit = true;
+                    }
+                }
+                foreach (var musicMod in _musicModManagerService.MusicMods)
+                {
+                    if (!musicMod.UpdateModInformation(musicMod.Mod))
+                    {
+                        await Dispatcher.UIThread.InvokeAsync(async () =>
+                        {
+                            await _messageDialog.ShowError("Fix Hidden Songs in Song Selector", "There was an error while updating BGM values.");
+                        }, DispatcherPriority.Background);
+                        return;
+                    }
+                }
+
+                await Dispatcher.UIThread.InvokeAsync(async () =>
+                {
+                    await _messageDialog.ShowInformation("Fix Hidden Songs in Song Selector", "Done! If Core Bgm were affected, please also use the option 'Reset Modifications to Core Game Songs Metadata'.");
+                }, DispatcherPriority.Background);
+            }
+        }
+        #endregion
+
+        #region Scripts
+        public async Task UpdateBgmSelectorStages(bool enable)
+        {
+            bool confirm = false;
+            await Dispatcher.UIThread.InvokeAsync(async () =>
+            {
+                string state = enable ? "enable" : "disable";
+                confirm = await _messageDialog.ShowWarningConfirm("Update Song Selector Stages",
+                    $"Running will {state} the Song Selector on all stages." +
+                    $"Battlefield / Final Destination values will NOT be affected. Continue?");
+            }, DispatcherPriority.Background);
+
+            if (confirm)
+            {
+                var stages = _viewModelManager.GetStagesEntriesViewModels();
+                foreach (var stageEntryVm in _viewModelManager.GetStagesEntriesViewModels())
+                {
+                    if(stageEntryVm.UiStageId != "ui_stage_battle_field_s" 
+                        && stageEntryVm.UiStageId != "ui_stage_battle_field"
+                        && stageEntryVm.UiStageId != "ui_stage_battle_field_l"
+                        && stageEntryVm.UiStageId != "ui_stage_end")
+                    stageEntryVm.BgmSelector = enable;
+                }
+
+                if (!_sma5hMusicOverride.UpdateMusicStageOverride(stages.Select(p => _mapper.Map(p, p.GetStageEntryReference())).ToList()))
+                {
+                    await Dispatcher.UIThread.InvokeAsync(async () =>
+                    {
+                        await _messageDialog.ShowError("Update Song Selector Stages", "There was an error while updating Song Selector value.");
+                    }, DispatcherPriority.Background);
+                    return;
+                }
+
+                await Dispatcher.UIThread.InvokeAsync(async () =>
+                {
+                    await _messageDialog.ShowInformation("Update Song Selector Stages", "Done!");
+                }, DispatcherPriority.Background);
+            }
+        }
+
+        public async Task<bool> ResetModOverrideFile(string file)
+        {
+            bool confirm = false;
+            await Dispatcher.UIThread.InvokeAsync(async () =>
+            {
+                confirm = await _messageDialog.ShowWarningConfirm("Reset Mod Override File",
+                    $"This script will delete the file '{file}' in your ModOverrides folder and reload your files. This action cannot be reversed. Continue?");
+            }, DispatcherPriority.Background);
+
+            if (confirm)
+            {
+                if (!_sma5hMusicOverride.ResetOverrideFile(file))
+                {
+                    await Dispatcher.UIThread.InvokeAsync(async () =>
+                    {
+                        await _messageDialog.ShowError("Reset Mod Override File", "There was an error while resetting the file.");
+                    }, DispatcherPriority.Background);
+                    return false;
+                }
+
+                await Dispatcher.UIThread.InvokeAsync(async () =>
+                {
+                    await _messageDialog.ShowInformation("Reset Mod Override File", "Done!");
+                }, DispatcherPriority.Background);
+
+                return true;
+            }
+
+            return false;
+        }
         #endregion
 
         public async Task<AudioCuePoints> UpdateAudioCuePoints(string filename)
@@ -1034,7 +1148,7 @@ namespace Sma5hMusic.GUI.Services
             try
             {
                 _viewModelManager.ReorderSongs();
-                result = _Sma5hMusicOverride.UpdateSoundTestOrderConfig(_viewModelManager.GetBgmDbRootEntriesViewModels().ToDictionary(p => p.UiBgmId, p => p.TestDispOrder));
+                result = _sma5hMusicOverride.UpdateSoundTestOrderConfig(_viewModelManager.GetBgmDbRootEntriesViewModels().ToDictionary(p => p.UiBgmId, p => p.TestDispOrder));
             }
             catch (Exception e)
             {

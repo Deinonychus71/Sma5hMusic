@@ -13,6 +13,15 @@ namespace Sma5hMusic.GUI.Interfaces
         Task<bool> MoveMusicModEntrySetToAnotherMod(MusicModEntries musicModEntries, IMusicMod fromMusicMod, IMusicMod toMusicMod);
         #endregion
 
+        #region Fixes
+        Task FixUnknownValues();
+        #endregion
+
+        #region Scripts
+        Task UpdateBgmSelectorStages(bool enable);
+        Task<bool> ResetModOverrideFile(string file);
+        #endregion
+
         Task<string> CreateNewMusicMod(MusicModEntries musicModEntries, IMusicMod musicMod);
         Task<bool> CanAddMusicModEntries(MusicModEntries musicModEntries);
         Task<bool> PersistMusicModEntryChanges(MusicModEntries musicModEntries, IMusicMod musicMod = null);
