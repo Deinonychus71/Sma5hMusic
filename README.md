@@ -1,5 +1,5 @@
 ## Sma5hMusic GUI - What is it?
-Sma5h.CLI and Sma5hMusic are a series of tools to import additional tracks to Smash Ultimate. Based on research & guide by Soneek
+Sma5h.CLI and Sma5hMusic are a series of tools to import additional tracks to Smash Ultimate.
 This tool is highly experimental and may not always work as expected.
 * For detailed setup steps: https://github.com/Deinonychus71/Sma5hMusic/wiki
 * **Always keep backups of your files and savegames.**
