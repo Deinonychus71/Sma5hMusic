@@ -1262,10 +1262,10 @@ namespace Sma5hMusic.GUI.Services
                 if (confirm || !showConfirm)
                 {
                     var modFolder = _config.Value.Sma5hMusic.ModPath;
-                    var modOverrideFolder = _config.Value.Sma5hMusic.ModPath;
+                    var modOverrideFolder = _config.Value.Sma5hMusicOverride.ModPath;
                     var dateFolder = $"backup_{DateTime.Now:yyyy_MM_dd_hh_mm_ss_tt}";
-                    var backupModFolder = Path.Combine(_config.Value.BackupPath, dateFolder, Path.GetDirectoryName(modFolder));
-                    var backupModOverrideFolder = Path.Combine(_config.Value.BackupPath, dateFolder, Path.GetDirectoryName(modOverrideFolder));
+                    var backupModFolder = Path.Combine(_config.Value.BackupPath, dateFolder, modFolder);
+                    var backupModOverrideFolder = Path.Combine(_config.Value.BackupPath, dateFolder, modOverrideFolder);
                     if (Directory.Exists(modFolder))
                         CopyDirHelper.Copy(modFolder, backupModFolder, fullBackup ? "*" : "*.json");
                     if (Directory.Exists(modOverrideFolder))
