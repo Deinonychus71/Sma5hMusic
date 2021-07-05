@@ -908,18 +908,19 @@ namespace Sma5hMusic.GUI.Services
         #endregion
 
         #region Fixes
-        public async Task FixUnknownValues()
+        public async Task<bool> FixUnknownValues()
         {
             bool confirm = false;
             await Dispatcher.UIThread.InvokeAsync(async () =>
             {
-                confirm = await _messageDialog.ShowWarningConfirm("Fix Hidden Songs in Song Selector", 
-                    "Running this script will set 'is_selectable_original' and 'is_selectable_movie_edit' to true in all your mod bgms. " +
-                    "This can be used to fix an issue where some songs wouldn't show up in the song selector for Battlefield/Final Destination. " +
-                    "It is recommended to back up your mods before running this script. Continue?");
+                confirm = await _messageDialog.ShowWarningConfirm("Fix Hidden Songs in Song Selector",
+                    "Running this script will set 'is_selectable_original' and 'is_selectable_movie_edit' to true in all your mod bgms.\r\n" +
+                    "This can be used to fix an issue where some songs wouldn't show up in the song selector for Battlefield/Final Destination.\r\n" +
+                    "A lite backup will be performed before running this script.\r\n" +
+                    "Continue?");
             }, DispatcherPriority.Background);
 
-            if (confirm)
+            if (confirm && await BackupProject(false, false))
             {
                 foreach (var bgmDbRootEntry in _viewModelManager.GetBgmDbRootEntriesViewModels())
                 {
@@ -936,7 +937,7 @@ namespace Sma5hMusic.GUI.Services
                                 {
                                     await _messageDialog.ShowError("Fix Hidden Songs in Song Selector", "There was an error while updating BGM values.");
                                 }, DispatcherPriority.Background);
-                                return;
+                                return true;
                             }
                         }
                     }
@@ -944,9 +945,12 @@ namespace Sma5hMusic.GUI.Services
 
                 await Dispatcher.UIThread.InvokeAsync(async () =>
                 {
-                    await _messageDialog.ShowInformation("Fix Hidden Songs in Song Selector", "Done! If Core Bgm were affected, please also use the option 'Reset Modifications to Core Game Songs Metadata'.");
+                    await _messageDialog.ShowInformation("Fix Hidden Songs in Song Selector", "Done!\r\n If Core Bgm were affected, please also use the option 'Reset Modifications to Core Game Songs Metadata'.");
                 }, DispatcherPriority.Background);
+                return true;
             }
+
+            return false;
         }
         #endregion
 
@@ -958,20 +962,22 @@ namespace Sma5hMusic.GUI.Services
             {
                 string state = enable ? "enable" : "disable";
                 confirm = await _messageDialog.ShowWarningConfirm("Update Song Selector Stages",
-                    $"Running will {state} the Song Selector on all stages." +
-                    $"Battlefield / Final Destination values will NOT be affected. Continue?");
+                    $"Running will {state} the Song Selector on all stages.\r\n" +
+                    $"Battlefield / Final Destination values will NOT be affected.\r\n" +
+                    "A lite backup will be performed before running this script.\r\n" +
+                    "Continue?");
             }, DispatcherPriority.Background);
 
-            if (confirm)
+            if (confirm && await BackupProject(false, false))
             {
                 var stages = _viewModelManager.GetStagesEntriesViewModels();
                 foreach (var stageEntryVm in _viewModelManager.GetStagesEntriesViewModels())
                 {
-                    if(stageEntryVm.UiStageId != "ui_stage_battle_field_s" 
+                    if (stageEntryVm.UiStageId != "ui_stage_battle_field_s"
                         && stageEntryVm.UiStageId != "ui_stage_battle_field"
                         && stageEntryVm.UiStageId != "ui_stage_battle_field_l"
                         && stageEntryVm.UiStageId != "ui_stage_end")
-                    stageEntryVm.BgmSelector = enable;
+                        stageEntryVm.BgmSelector = enable;
                 }
 
                 if (!_sma5hMusicOverride.UpdateMusicStageOverride(stages.Select(p => _mapper.Map(p, p.GetStageEntryReference())).ToList()))
@@ -996,10 +1002,12 @@ namespace Sma5hMusic.GUI.Services
             await Dispatcher.UIThread.InvokeAsync(async () =>
             {
                 confirm = await _messageDialog.ShowWarningConfirm("Reset Mod Override File",
-                    $"This script will delete the file '{file}' in your ModOverrides folder and reload your files. This action cannot be reversed. Continue?");
+                    $"This script will delete the file '{file}' in your ModOverrides folder and reload your files.\r\n" +
+                    "A lite backup will be performed before running this script.\r\n" +
+                    "Continue?");
             }, DispatcherPriority.Background);
 
-            if (confirm)
+            if (confirm && await BackupProject(false, false))
             {
                 if (!_sma5hMusicOverride.ResetOverrideFile(file))
                 {
@@ -1007,7 +1015,7 @@ namespace Sma5hMusic.GUI.Services
                     {
                         await _messageDialog.ShowError("Reset Mod Override File", "There was an error while resetting the file.");
                     }, DispatcherPriority.Background);
-                    return false;
+                    return true;
                 }
 
                 await Dispatcher.UIThread.InvokeAsync(async () =>
@@ -1235,6 +1243,52 @@ namespace Sma5hMusic.GUI.Services
             musicModEntries.BgmPropertyEntries.Add(newBgmPropertyEntry);
 
             return musicModEntries;
+        }
+
+        public async Task<bool> BackupProject(bool fullBackup, bool showConfirm = true)
+        {
+            try
+            {
+                bool confirm = false;
+                if (showConfirm)
+                {
+                    await Dispatcher.UIThread.InvokeAsync(async () =>
+                    {
+                        confirm = await _messageDialog.ShowWarningConfirm("Backup Project",
+                            $"Running a backup might take a while and the UI may become unresponsive. Continue?");
+                    }, DispatcherPriority.Background);
+                }
+
+                if (confirm || !showConfirm)
+                {
+                    var modFolder = _config.Value.Sma5hMusic.ModPath;
+                    var modOverrideFolder = _config.Value.Sma5hMusic.ModPath;
+                    var dateFolder = $"backup_{DateTime.Now:yyyy_MM_dd_hh_mm_ss_tt}";
+                    var backupModFolder = Path.Combine(_config.Value.BackupPath, dateFolder, Path.GetDirectoryName(modFolder));
+                    var backupModOverrideFolder = Path.Combine(_config.Value.BackupPath, dateFolder, Path.GetDirectoryName(modOverrideFolder));
+                    if (Directory.Exists(modFolder))
+                        CopyDirHelper.Copy(modFolder, backupModFolder, fullBackup ? "*" : "*.json");
+                    if (Directory.Exists(modOverrideFolder))
+                        CopyDirHelper.Copy(modOverrideFolder, backupModOverrideFolder, fullBackup ? "*" : "*.json");
+
+                    if (showConfirm)
+                    {
+                        await Dispatcher.UIThread.InvokeAsync(async () =>
+                        {
+                            await _messageDialog.ShowInformation("Backup Project", "Done!");
+                        }, DispatcherPriority.Background);
+                    }
+                }
+                return true;
+            }
+            catch (Exception e)
+            {
+                await Dispatcher.UIThread.InvokeAsync(async () =>
+                {
+                    await _messageDialog.ShowError("Backup Project", "There was an error while performing a backup. Please check the logs.", e);
+                }, DispatcherPriority.Background);
+                return false;
+            }
         }
     }
 }

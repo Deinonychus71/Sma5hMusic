@@ -49,9 +49,22 @@
         <MenuItem Header="Global Settings" Command="{Binding ActionOpenGlobalSettings}"></MenuItem>
       </MenuItem>
       <MenuItem Header="Tools">
-        <MenuItem Header="Export Song Entries to CSV" Command="{Binding ActionExportSongsCSV}"></MenuItem>
+        <MenuItem Header="Backup">
+          <MenuItem Header="Run Full Backup (incl. media files)" Command="{Binding ActionBackupProject}">
+            <MenuItem.CommandParameter>
+              <sys:Boolean>True</sys:Boolean>
+            </MenuItem.CommandParameter>
+          </MenuItem>
+          <MenuItem Header="Run Partial Backup (only .json files)" Command="{Binding ActionBackupProject}">
+            <MenuItem.CommandParameter>
+              <sys:Boolean>False</sys:Boolean>
+            </MenuItem.CommandParameter>
+          </MenuItem>
+        </MenuItem>
         <Separator></Separator>
         <MenuItem Header="Scripts">
+          <MenuItem Header="Export Song Entries to CSV" Command="{Binding ActionExportSongsCSV}"></MenuItem>
+          <Separator></Separator>
           <MenuItem Header="Enable Song Selector in all Stages" Command="{Binding ActionUpdateBgmSelector}">
             <MenuItem.CommandParameter>
               <sys:Boolean>True</sys:Boolean>

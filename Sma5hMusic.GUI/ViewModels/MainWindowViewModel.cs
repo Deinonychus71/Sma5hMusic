@@ -85,6 +85,7 @@ namespace Sma5hMusic.GUI.ViewModels
         public ReactiveCommand<Unit, Unit> ActionFixUnknownValues { get; }
         public ReactiveCommand<bool, Unit> ActionUpdateBgmSelector { get; }
         public ReactiveCommand<string, Unit> ActionResetModOverrideFile { get; }
+        public ReactiveCommand<bool, Unit> ActionBackupProject { get; }
 
 
         public MainWindowViewModel(IServiceProvider serviceProvider, IViewModelManager viewModelManager, IGUIStateManager guiStateManager, IMapper mapper, IVGMMusicPlayer musicPlayer,
@@ -209,6 +210,7 @@ namespace Sma5hMusic.GUI.ViewModels
             ActionFixUnknownValues = ReactiveCommand.CreateFromTask(FixUnknownValues);
             ActionUpdateBgmSelector = ReactiveCommand.CreateFromTask<bool>((enabled) => UpdateBgmSelector(enabled));
             ActionResetModOverrideFile = ReactiveCommand.CreateFromTask<string>((file) => ResetModOverrideFile(file));
+            ActionBackupProject = ReactiveCommand.CreateFromTask<bool>((fullBackup) => _guiStateManager.BackupProject(fullBackup));
         }
 
         #region Actions
@@ -349,7 +351,8 @@ namespace Sma5hMusic.GUI.ViewModels
 
         public async Task FixUnknownValues()
         {
-            await _guiStateManager.FixUnknownValues();
+            if (await _guiStateManager.FixUnknownValues())
+                await OnInitData();
         }
 
         public async Task UpdateBgmSelector(bool enable)

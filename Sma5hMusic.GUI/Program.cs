@@ -114,6 +114,7 @@ namespace Sma5hMusic.GUI
                 { "GameResourcesPath",$"Resources{Path.DirectorySeparatorChar}Game" },
                 { "ResourcesPath", "Resources" },
                 { "OutputPath", "ArcOutput" },
+                { "BackupPath", "Backup" },
                 { "ToolsPath", "Tools" },
                 { "TempPath", "Temp" },
                 { "LogPath", "Log" },
