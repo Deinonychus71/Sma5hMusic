@@ -15,49 +15,30 @@ using System.Reactive.Subjects;
 using System.Threading.Tasks;
 using ILogger = Microsoft.Extensions.Logging.ILogger;
 using System.Collections.Generic;
-using Avalonia.Controls;
-using Avalonia.Markup.Xaml;
+using System.Linq.Expressions;
+using System.Reactive.Concurrency;
+using System.ComponentModel;
+using Sma5hMusic.GUI.ViewModels.ReactiveObjects.OrderTreeViewItems;
+using Avalonia.Interactivity;
+using Avalonia.Controls.Primitives;
 
 namespace Sma5hMusic.GUI.ViewModels
 {
-    public class TestItems
-    {
-        public string Label { get; set; }
-    }
-
-    public class TestItemsTree : TestItems
-    {
-        public List<TestItems> Items { get; set; }
-        public string NbrBgms { get; set; }
-    }
-
-    public class TestItemsValue : TestItems
-    {
-        public string Path { get; set; }
-        public BgmDbRootEntryViewModel BgmEntry { get; set; }
-    }
-
-
     public class BgmSoundTestViewModel : ViewModelBase
     {
         private readonly ILogger _logger;
         private readonly ReadOnlyObservableCollection<BgmDbRootEntryViewModel> _items;
-        private readonly Subject<Unit> _whenNewRequestToReorderBgmEntries;
+        //private readonly Subject<Unit> _whenNewRequestToReorderBgmEntries;
         private const string DATAOBJECT_FORMAT = "BGM";
         private Action _postReorderSelection;
 
         public ContextMenuViewModel VMContextMenu { get; }
 
-        public IObservable<Unit> WhenNewRequestToReorderBgmEntries { get { return _whenNewRequestToReorderBgmEntries; } }
-
-        public ReadOnlyObservableCollection<BgmDbRootEntryViewModel> Items { get { return _items; } }
-
-        public List<TestItems> Items2 { get; set; }
+        //public IObservable<Unit> WhenNewRequestToReorderBgmEntries { get { return _whenNewRequestToReorderBgmEntries; } }
 
         [Reactive]
-        public BgmDbRootEntryViewModel SelectedBgmEntry { get; private set; }
+        public List<OrderItemViewModel> Items { get; set; }
 
-        public ReactiveCommand<DataGridCellPointerPressedEventArgs, Unit> ActionReorderBgm { get; }
         public ReactiveCommand<TreeView, Unit> ActionInitializeDragAndDrop { get; }
 
         public BgmSoundTestViewModel(IServiceProvider serviceProvider, ILogger<BgmSongsViewModel> logger,
@@ -67,10 +48,11 @@ namespace Sma5hMusic.GUI.ViewModels
             VMContextMenu = vmContextMenu;
 
             //Initialize list
-            _whenNewRequestToReorderBgmEntries = new Subject<Unit>();
+            //_whenNewRequestToReorderBgmEntries = new Subject<Unit>();
 
             observableBgmEntriesList
-                .Sort(SortExpressionComparer<BgmDbRootEntryViewModel>.Ascending(p => p.HiddenInSoundTest).ThenByAscending(p => p.TestDispOrder), SortOptimisations.ComparesImmutableValuesOnly, 8000)
+                .Filter(p => !p.HiddenInSoundTest)
+                .Sort(SortExpressionComparer<BgmDbRootEntryViewModel>.Ascending(p => p.TestDispOrder), SortOptimisations.ComparesImmutableValuesOnly, 8000)
                 .TreatMovesAsRemoveAdd()
                 .ObserveOn(RxApp.MainThreadScheduler)
                 .Bind(out _items)
@@ -78,7 +60,7 @@ namespace Sma5hMusic.GUI.ViewModels
                 .Subscribe((o) =>
                 {
                     FocusAfterMove();
-                    Items2 = Items.ChunkBy(p => p.SeriesId).Select<IGrouping<string, BgmDbRootEntryViewModel>, TestItems>(p =>
+                    Items = _items.ChunkBy(p => p.SeriesId).Select<IGrouping<string, BgmDbRootEntryViewModel>, OrderItemViewModel>(p =>
                     {
                         var bgmsPerSeries = p.ToList();
                         var seriesTitle = bgmsPerSeries[0].SeriesViewModel.Title;
@@ -87,7 +69,7 @@ namespace Sma5hMusic.GUI.ViewModels
                         if (bgmsPerSeries.Count == 1)
                         {
                             var gameTitle = bgmsPerSeries[0].GameTitleViewModel.Title;
-                            return new TestItemsValue()
+                            return new OrderItemValueViewModel()
                             {
                                 Path = $"[{seriesTitle}] [{gameTitle}]",
                                 Label = bgmsPerSeries[0].Title,
@@ -101,11 +83,11 @@ namespace Sma5hMusic.GUI.ViewModels
                         if (games.Count == 1)
                         {
                             var gameTitle = games[0];
-                            return new TestItemsTree()
+                            return new OrderItemTreeItemViewModel()
                             {
                                 NbrBgms = $"({bgmsPerSeries.Count} bgms)",
                                 Label = $"[{seriesTitle}] [{games[0]}]",
-                                Items = new List<TestItems>(){ bgmsPerSeries.Select(p => new TestItemsValue()
+                                Items = new List<OrderItemViewModel>(){ bgmsPerSeries.Select(p => new OrderItemValueViewModel()
                                 {
                                     Label = p.Title,
                                     BgmEntry = p
@@ -115,7 +97,7 @@ namespace Sma5hMusic.GUI.ViewModels
                         else
                         {
                             //Case multiple games in the series
-                            var chunkBits = bgmsPerSeries.ChunkBy(s => s.UiGameTitleId).Select<IGrouping<string, BgmDbRootEntryViewModel>, TestItems>(p =>
+                            var chunkBits = bgmsPerSeries.ChunkBy(s => s.UiGameTitleId).Select<IGrouping<string, BgmDbRootEntryViewModel>, OrderItemViewModel>(p =>
                             {
                                 var bgmsPerGame = p.ToList();
                                 var gameTitle = bgmsPerGame[0].GameTitleViewModel.Title;
@@ -123,18 +105,18 @@ namespace Sma5hMusic.GUI.ViewModels
                                 //var gameItemsWithMoreThanOneTrack = gameItems.
                                 if (bgmsPerGame.Count == 1)
                                 {
-                                    return new TestItemsValue()
+                                    return new OrderItemValueViewModel()
                                     {
                                         Path = $"[{gameTitle}]",
                                         Label = bgmsPerGame[0].Title,
                                         BgmEntry = bgmsPerGame[0]
                                     };
                                 }
-                                return new TestItemsTree()
+                                return new OrderItemTreeItemViewModel()
                                 {
                                     NbrBgms = $"({bgmsPerGame.Count} bgms)",
                                     Label = $"[{gameTitle}]", //[{bgmsPerGame[0].Title}...{bgmsPerGame[bgmsPerGame.Count - 1].Title}]
-                                    Items = new List<TestItems>(){ bgmsPerGame.Select(p => new TestItemsValue()
+                                    Items = new List<OrderItemViewModel>(){ bgmsPerGame.Select(p => new OrderItemValueViewModel()
                                     {
                                         Label = p.Title,
                                         BgmEntry = p
@@ -142,7 +124,7 @@ namespace Sma5hMusic.GUI.ViewModels
                                 };
                             }).ToList();
 
-                            return new TestItemsTree()
+                            return new OrderItemTreeItemViewModel()
                             {
                                 NbrBgms = $"({bgmsPerSeries.Count} bgms)",
                                 Label = $"[{seriesTitle}]", //[{games[0]}...{games[games.Count - 1]}]
@@ -152,51 +134,34 @@ namespace Sma5hMusic.GUI.ViewModels
                     }).ToList();
                 });
 
-            ActionReorderBgm = ReactiveCommand.CreateFromTask<DataGridCellPointerPressedEventArgs>(ReorderBgm);
             ActionInitializeDragAndDrop = ReactiveCommand.Create<TreeView> (InitializeDragAndDropHandlers);
         }
 
         #region REORDER
         public void InitializeDragAndDropHandlers(TreeView userControl)
         {
-            userControl.AddHandler(InputElement.PointerPressedEvent, MouseDownHandler, handledEventsToo: true);
-            userControl.AddHandler(InputElement.PointerReleasedEvent, MouseUpHandler, handledEventsToo: true);
+            userControl.AddHandler(InputElement.PointerPressedEvent, MouseDownHandler, RoutingStrategies.Tunnel, true);
             userControl.AddHandler(DragDrop.DropEvent, Drop);
             userControl.AddHandler(DragDrop.DragOverEvent, DragOver);
         }
 
-        private void MouseUpHandler(object sender, PointerReleasedEventArgs e)
-        {
-            System.Diagnostics.Debug.WriteLine("Mouse released.");
-        }
-
         private async void MouseDownHandler(object sender, PointerPressedEventArgs e)
         {
+            var checkForToggle = e.Source;
+            while (checkForToggle != null)
+            {
+                if (checkForToggle is ToggleButton)
+                    return;
+                checkForToggle = checkForToggle.InteractiveParent;
+            }
+
             var control = e.Source as Control;
             var dataSource = control?.DataContext;
-            if(dataSource != null && dataSource is TestItems)
+            if(dataSource != null && dataSource is OrderItemViewModel)
             {
-                Console.WriteLine("test");
-
                 var dragData = new DataObject();
-                dragData.Set("TEST", dataSource);
+                dragData.Set(DATAOBJECT_FORMAT, dataSource);
                 await DragDrop.DoDragDrop(e, dragData, DragDropEffects.Move);
-            }
-        }
-
-        public async Task ReorderBgm(DataGridCellPointerPressedEventArgs e)
-        {
-            if (e.Column.DisplayIndex != 0)
-                return;
-
-            var dragData = new DataObject();
-
-            if (e.Cell.DataContext is BgmDbRootEntryViewModel vmBgmEntry)
-            {
-                dragData.Set(DATAOBJECT_FORMAT, vmBgmEntry);
-
-                if (!vmBgmEntry.HiddenInSoundTest)
-                    await DragDrop.DoDragDrop(e.PointerPressedEventArgs, dragData, DragDropEffects.Move);
             }
         }
 
@@ -206,32 +171,32 @@ namespace Sma5hMusic.GUI.ViewModels
             if (!e.Data.Contains(DATAOBJECT_FORMAT))
                 e.DragEffects = DragDropEffects.None;
 
-            if (((Control)e.Source).DataContext is BgmDbRootEntryViewModel destinationObj && destinationObj.HiddenInSoundTest)
-                e.DragEffects = DragDropEffects.None;
+            //if (((Control)e.Source).DataContext is TestItems destinationObj && destinationObj.HiddenInSoundTest)
+            //   e.DragEffects = DragDropEffects.None;
         }
 
         public void Drop(object sender, DragEventArgs e)
         {
             var source = e.Source;
-            while (!(source is DataGrid))
+            while (!(source is TreeView))
             {
                 source = source.InteractiveParent;
             }
-            var dataGrid = (DataGrid)source;
+            var treeView = (TreeView)source;
 
-            if (((Control)e.Source).DataContext is BgmDbRootEntryViewModel destinationObj
-                && e.Data.Get(DATAOBJECT_FORMAT) is BgmDbRootEntryViewModel sourceObj
-                && !destinationObj.HiddenInSoundTest
+            if (((Control)e.Source).DataContext is OrderItemViewModel destinationObj
+                && e.Data.Get(DATAOBJECT_FORMAT) is OrderItemViewModel sourceObj
                 && sourceObj != destinationObj)
             {
-                var isHigherThanDest = sourceObj.TestDispOrder > destinationObj.TestDispOrder;
+                Console.WriteLine("TEST");
+                /*var isHigherThanDest = sourceObj.TestDispOrder > destinationObj.TestDispOrder;
                 if (isHigherThanDest)
                     sourceObj.TestDispOrder = (short)(destinationObj.TestDispOrder - 1);
                 else
                     sourceObj.TestDispOrder = (short)(destinationObj.TestDispOrder + 1);
-                _postReorderSelection = () => dataGrid.SelectedItem = sourceObj;
+                _postReorderSelection = () => dataGrid.SelectedItem = sourceObj;*/
 
-                _whenNewRequestToReorderBgmEntries.OnNext(Unit.Default);
+                //_whenNewRequestToReorderBgmEntries.OnNext(Unit.Default);
             }
         }
 
@@ -247,11 +212,11 @@ namespace Sma5hMusic.GUI.ViewModels
 
         public void Dispose()
         {
-            if (_whenNewRequestToReorderBgmEntries != null)
-            {
-                _whenNewRequestToReorderBgmEntries?.OnCompleted();
-                _whenNewRequestToReorderBgmEntries?.Dispose();
-            }
+            //if (_whenNewRequestToReorderBgmEntries != null)
+            //{
+            //    _whenNewRequestToReorderBgmEntries?.OnCompleted();
+            //    _whenNewRequestToReorderBgmEntries?.Dispose();
+            //}
         }
     }
 }
