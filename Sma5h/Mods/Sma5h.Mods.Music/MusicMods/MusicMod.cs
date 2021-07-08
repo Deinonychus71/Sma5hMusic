@@ -4,7 +4,7 @@ using Newtonsoft.Json;
 using Sma5h.Mods.Music.Helpers;
 using Sma5h.Mods.Music.Interfaces;
 using Sma5h.Mods.Music.Models;
-using Sma5h.Mods.Music.MusicMods.AdvancedMusicModModels;
+using Sma5h.Mods.Music.MusicMods.MusicModModels;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace Sma5h.Mods.Music.MusicMods
 {
-    public class AdvancedMusicMod : IMusicMod
+    public class MusicMod : IMusicMod
     {
         protected readonly IMapper _mapper;
         protected readonly ILogger _logger;
@@ -25,7 +25,7 @@ namespace Sma5h.Mods.Music.MusicMods
         public string ModPath { get; }
         public MusicModInformation Mod => _musicModConfig;
 
-        public AdvancedMusicMod(IMapper mapper, ILogger<IMusicMod> logger, string musicModPath)
+        public MusicMod(IMapper mapper, ILogger<IMusicMod> logger, string musicModPath)
         {
             ModPath = musicModPath;
             _logger = logger;
@@ -33,23 +33,12 @@ namespace Sma5h.Mods.Music.MusicMods
             _musicModConfig = LoadMusicModConfig();
         }
 
-        public AdvancedMusicMod(IMapper mapper, ILogger<IMusicMod> logger, string newModPath, MusicModInformation newMod)
+        public MusicMod(IMapper mapper, ILogger<IMusicMod> logger, string newModPath, MusicModInformation newMod)
         {
             ModPath = newModPath;
             _logger = logger;
             _mapper = mapper;
             _musicModConfig = InitializeNewMod(newModPath, newMod);
-            SaveMusicModConfig();
-        }
-
-        public AdvancedMusicMod(IMapper mapper, ILogger<IMusicMod> logger, string musicModPath, IMusicMod oldMod)
-        {
-            ModPath = musicModPath;
-            _logger = logger;
-            _mapper = mapper;
-            _musicModConfig = ConvertOldMod(oldMod);
-            var bgms = oldMod.GetMusicModEntries();
-            AddOrUpdateMusicModEntries(bgms).GetAwaiter().GetResult();
             SaveMusicModConfig();
         }
 
@@ -103,7 +92,7 @@ namespace Sma5h.Mods.Music.MusicMods
                 return false;
             }
 
-            //Update game in v2. v3 will have the same update mechanism for everything
+            //Update game in v3. v4 will have the same update mechanism for everything
             if (musicModEntries.BgmDbRootEntries.Count == 0 &&
                musicModEntries.BgmAssignedInfoEntries.Count == 0 &&
                musicModEntries.BgmStreamSetEntries.Count == 0 &&
@@ -121,7 +110,7 @@ namespace Sma5h.Mods.Music.MusicMods
                musicModEntries.BgmStreamPropertyEntries.Count < 1 ||
                musicModEntries.BgmPropertyEntries.Count < 1)
             {
-                _logger.LogError("This update is not compatible with {MusicMod}", nameof(AdvancedMusicMod));
+                _logger.LogError("This update is not compatible with {MusicMod}", nameof(MusicMod));
                 return false;
             }
             if (musicModEntries.BgmDbRootEntries.Count != musicModEntries.BgmAssignedInfoEntries.Count ||
@@ -129,7 +118,7 @@ namespace Sma5h.Mods.Music.MusicMods
                 musicModEntries.BgmDbRootEntries.Count != musicModEntries.BgmStreamPropertyEntries.Count ||
                 musicModEntries.BgmDbRootEntries.Count != musicModEntries.BgmPropertyEntries.Count)
             {
-                _logger.LogError("This update is not compatible with {MusicMod}", nameof(AdvancedMusicMod));
+                _logger.LogError("This update is not compatible with {MusicMod}", nameof(MusicMod));
                 return false;
             }
 
@@ -289,7 +278,7 @@ namespace Sma5h.Mods.Music.MusicMods
                musicModDeleteEntries.BgmStreamPropertyEntries.Count != 1 ||
                musicModDeleteEntries.BgmPropertyEntries.Count != 1)
             {
-                _logger.LogError("This update is not compatible with {MusicMod}", nameof(AdvancedMusicMod));
+                _logger.LogError("This update is not compatible with {MusicMod}", nameof(MusicMod));
                 return false;
             }
 
@@ -352,6 +341,8 @@ namespace Sma5h.Mods.Music.MusicMods
                 _logger.LogDebug("Parsing {MusicModFile} Json File", metadataJsonFile);
                 var output = JsonConvert.DeserializeObject<MusicModConfig>(file);
                 _logger.LogDebug("Parsed {MusicModFile} Json File", metadataJsonFile);
+                if(output.Version == 2)
+                    output = ConvertFromV2Mod(output);
                 return output;
             }
             else
@@ -363,7 +354,7 @@ namespace Sma5h.Mods.Music.MusicMods
             return null;
         }
 
-        protected virtual bool SaveMusicModConfig()
+        protected virtual bool SaveMusicModConfig(MusicModConfig musicModConfig = null)
         {
             //Check if disabled
             if (Path.GetFileName(ModPath).StartsWith("."))
@@ -372,26 +363,30 @@ namespace Sma5h.Mods.Music.MusicMods
                 return false;
             }
 
+            var saveMod = musicModConfig ?? _musicModConfig;
             var metadataJsonFile = Path.Combine(ModPath, MusicConstants.MusicModFiles.MUSIC_MOD_METADATA_JSON_FILE);
-            File.WriteAllText(metadataJsonFile, JsonConvert.SerializeObject(_musicModConfig, Formatting.Indented));
+            File.WriteAllText(metadataJsonFile, JsonConvert.SerializeObject(saveMod, Formatting.Indented));
 
             return true;
         }
 
-        protected MusicModConfig ConvertOldMod(IMusicMod oldModConfig)
+        protected MusicModConfig ConvertFromV2Mod(MusicModConfig v2ModConfig)
         {
-            _logger.LogWarning("Convert Old Mod {ModName} to version 2. A backup file will be created...", oldModConfig.Name);
-
-            var newMod = new MusicModConfig(Guid.NewGuid().ToString())
+            if(v2ModConfig != null)
             {
-                Author = oldModConfig.Mod.Author,
-                Description = oldModConfig.Mod.Description,
-                Website = oldModConfig.Mod.Website,
-                Name = oldModConfig.Name,
-                Version = 2,
-                Games = new List<GameConfig>()
-            };
-            return newMod;
+                _logger.LogWarning("Convert v2 Mod {ModName} to v3.", v2ModConfig.Name);
+                v2ModConfig.Version = 3;
+                foreach (var game in v2ModConfig.Games)
+                {
+                    foreach (var bgm in game.Bgms)
+                    {
+                        CrackedHashValueConverter.UpdateBgmDbRootConfig(bgm.DbRoot);
+                        CrackedHashValueConverter.UpdateAssignedInfoConfig(bgm.AssignedInfo);
+                    }
+                }
+            }
+            SaveMusicModConfig(v2ModConfig);
+            return v2ModConfig;
         }
 
         public BgmStreamSetConfig GetUpdatedStreamSetConfig(BgmStreamSetConfig bgmStreamSetConfig)
@@ -420,7 +415,7 @@ namespace Sma5h.Mods.Music.MusicMods
         }
     }
 
-    namespace AdvancedMusicModModels
+    namespace MusicModModels
     {
         public class MusicModConfig : MusicModInformation
         {
@@ -434,7 +429,7 @@ namespace Sma5h.Mods.Music.MusicMods
             public MusicModConfig(string id)
             {
                 Id = id;
-                Version = 2;
+                Version = 3;
             }
         }
 
@@ -587,6 +582,7 @@ namespace Sma5h.Mods.Music.MusicMods
             public string DlcMiiBodyMotifId { get; set; }
             [JsonProperty("title")]
             public Dictionary<string, string> Title { get; set; }
+
             [JsonProperty("copyright")]
             public Dictionary<string, string> Copyright { get; set; }
             [JsonProperty("author")]

@@ -17,6 +17,9 @@
         //Helper resource files
         public string ResourcesPath { get; set; }
 
+        //Backup
+        public string BackupPath { get; set; }
+
         //Logs
         public string LogPath { get; set; }
 

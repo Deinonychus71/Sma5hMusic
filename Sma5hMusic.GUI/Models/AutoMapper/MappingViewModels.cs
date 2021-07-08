@@ -84,12 +84,13 @@ namespace Sma5hMusic.GUI.Mods.Music.Models.AutoMapper
                 .ForMember(i => i.SecretCommandIdJoycon, me => me.Ignore())
                 .ForMember(i => i.BgmSetId, me => me.MapFrom(p => p.PlaylistId))
                 .ForMember(i => i.BgmSettingNo, me => me.MapFrom(p => p.OrderId))
-                .ForMember(i => i.BgmSelector, me => me.Ignore())
+                .ForMember(i => i.BgmSelector, me => me.MapFrom(p => p.BgmSelector))
                 .ForMember(i => i.IsDlc, me => me.Ignore())
                 .ForMember(i => i.IsPatch, me => me.Ignore())
                 .ForMember(i => i.DlcCharaId, me => me.Ignore());
             CreateMap<StageEntry, GUI.ViewModels.StageEntryViewModel>()
                 .ForMember(i => i.OrderId, me => me.MapFrom(p => p.BgmSettingNo))
+                .ForMember(i => i.BgmSelector, me => me.MapFrom(p => p.BgmSelector))
                 .ForMember(i => i.PlaylistId, me => me.MapFrom(p => p.BgmSetId));
 
             CreateMap<GUI.ViewModels.GameTitleEntryViewModel, GameTitleEntry>()

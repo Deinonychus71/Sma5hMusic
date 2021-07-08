@@ -12,5 +12,7 @@ namespace Sma5h.Mods.Music.Interfaces
         bool DeleteGameTitleEntry(string gameTitleId);
         bool UpdatePlaylistConfig(Dictionary<string, PlaylistEntry> playlistEntries);
         bool UpdateMusicStageOverride(List<StageEntry> stageEntries);
+        bool ResetOverrideFile(string file);
+        void UpdateOldUnknownValues();
     }
 }
