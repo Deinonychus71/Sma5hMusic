@@ -2,14 +2,16 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             xmlns:fields="clr-namespace:Sma5hMusic.GUI.Views.Fields"
              xmlns:i="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
              xmlns:models="clr-namespace:Sma5hMusic.GUI.ViewModels.ReactiveObjects.OrderTreeViewItems;assembly=Sma5hMusic.GUI"
              xmlns:ia="clr-namespace:Avalonia.Xaml.Interactions.Core;assembly=Avalonia.Xaml.Interactions"
-             x:Class="Sma5hMusic.GUI.Views.BgmSoundTestView"
-             x:Name="SongsWindow">
-  <Grid ColumnDefinitions="*" RowDefinitions="30,*">
-    <ContentControl Content="{Binding VMContextMenu}"></ContentControl>
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="Sma5hMusic.GUI.Views.BgmOrderTreeView">
+  <DockPanel>
+    <Border Classes="headerTitle" DockPanel.Dock="Top">
+      <TextBlock>Sound Test Order</TextBlock>
+    </Border>
     <TreeView HorizontalAlignment="Stretch" DragDrop.AllowDrop="True" Focusable="True" Items="{Binding Items, Mode=OneWay}" Grid.Row="1" Grid.Column="0">
       <i:Interaction.Behaviors>
         <ia:EventTriggerBehavior EventName="Initialized">
@@ -24,18 +26,15 @@
           </StackPanel>
         </TreeDataTemplate>
         <!--
-        <TreeDataTemplate DataType="models:TestItems" ItemsSource="{Binding BgmEntry}">
-          <TextBlock Foreground="White" Text="{Binding Label}" />
-        </TreeDataTemplate>-->
         <DataTemplate DataType="models:OrderItemValueViewModel">
-            <StackPanel Orientation="Horizontal">
-              <ContentControl IsVisible="{Binding BgmEntry.DoesFileExist, Mode=OneWay}" Margin="0,-3,10,0" Content="{Binding BgmEntry.MusicPlayer, Mode=OneWay}"/>
-              <TextBlock IsVisible="{Binding Path, Mode=OneWay}" Foreground="#c2c2c2" Margin="0,0,10,0" Text="{Binding Path, Mode=OneWay}" />
-              <TextBlock Text="{Binding Label, Mode=OneWay}" />
-              <TextBlock Text="{Binding Level, Mode=OneWay}" />
-            </StackPanel>
-        </DataTemplate>
+          <StackPanel Orientation="Horizontal">
+            <ContentControl IsVisible="{Binding BgmEntry.DoesFileExist, Mode=OneWay}" Margin="0,-3,10,0" Content="{Binding BgmEntry.MusicPlayer, Mode=OneWay}"/>
+            <TextBlock IsVisible="{Binding Path, Mode=OneWay}" Foreground="#c2c2c2" Margin="0,0,10,0" Text="{Binding Path, Mode=OneWay}" />
+            <TextBlock Text="{Binding Label, Mode=OneWay}" />
+            <TextBlock Text="{Binding Level, Mode=OneWay}" />
+          </StackPanel>
+        </DataTemplate>-->
       </TreeView.DataTemplates>
     </TreeView>
-  </Grid>
+  </DockPanel>
 </UserControl>

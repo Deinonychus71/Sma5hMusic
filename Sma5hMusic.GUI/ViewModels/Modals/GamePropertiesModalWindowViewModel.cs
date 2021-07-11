@@ -60,8 +60,8 @@ namespace Sma5hMusic.GUI.ViewModels
         public ReadOnlyObservableCollection<SeriesEntryViewModel> Series { get { return _series; } }
         public ReadOnlyObservableCollection<GameTitleEntryViewModel> Games { get { return _games; } }
 
-        public GamePropertiesModalWindowViewModel(IOptions<ApplicationSettings> config, ILogger<GamePropertiesModalWindowViewModel> logger, IViewModelManager viewModelManager, IGUIStateManager guiStateManager,
-            IObservable<IChangeSet<SeriesEntryViewModel, string>> observableSeries, IObservable<IChangeSet<GameTitleEntryViewModel, string>> observableGames)
+        public GamePropertiesModalWindowViewModel(IOptions<ApplicationSettings> config, ILogger<GamePropertiesModalWindowViewModel> logger, IViewModelManager viewModelManager, 
+            IGUIStateManager guiStateManager, IObservable<IChangeSet<GameTitleEntryViewModel, string>> observableGames)
         {
             _config = config;
             _logger = logger;
@@ -69,7 +69,7 @@ namespace Sma5hMusic.GUI.ViewModels
             _viewModelManager = viewModelManager;
 
             //Bind observables
-            observableSeries
+            viewModelManager.ObservableSeries.Connect()
                .Sort(SortExpressionComparer<SeriesEntryViewModel>.Ascending(p => p.Title), SortOptimisations.IgnoreEvaluates)
                .ObserveOn(RxApp.MainThreadScheduler)
                .Bind(out _series)

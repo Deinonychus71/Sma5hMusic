@@ -65,7 +65,6 @@ namespace Sma5hMusic.GUI.ViewModels
 
         public BgmSongsViewModel VMBgmSongs { get; }
         public PlaylistViewModel VMPlaylists { get; }
-        public BgmSoundTestViewModel VMBgmSoundTest { get; }
         public BgmFiltersViewModel VMBgmFilters { get; }
         public ContextMenuViewModel VMContextMenu { get; }
 
@@ -116,14 +115,14 @@ namespace Sma5hMusic.GUI.ViewModels
             _dialogGlobalSettingsEditor = new ModalDialog<GlobalSettingsModalWindow, GlobalSettingsModalWindowViewModel, GlobalConfigurationViewModel>(vmGlobalSettings);
 
             //Initialize Contextual Menu view
-            VMContextMenu = ActivatorUtilities.CreateInstance<ContextMenuViewModel>(serviceProvider, viewModelManager.ObservableModsEntries, viewModelManager.ObservableLocales, viewModelManager.ObservableDbRootEntries);
+            VMContextMenu = ActivatorUtilities.CreateInstance<ContextMenuViewModel>(serviceProvider);
             VMContextMenu.WhenLocaleChanged.Subscribe((locale) => _currentLocale = locale);
-            var observableBgmDbRootEntriesList = viewModelManager.ObservableDbRootEntries
+            var observableBgmDbRootEntriesList = viewModelManager.ObservableDbRootEntries.Connect()
                 .DeferUntilLoaded()
                 .Filter(p => p.UiBgmId != "ui_bgm_random")
                 .AutoRefreshOnObservable(p => VMContextMenu.WhenLocaleChanged)
                 .ForEachChange(o => o.Current.LoadLocalized(_currentLocale));
-            var observableGameEntriesList = viewModelManager.ObservableGameTitles
+            var observableGameEntriesList = viewModelManager.ObservableGameTitles.Connect()
                 .DeferUntilLoaded()
                 .AutoRefreshOnObservable(p => VMContextMenu.WhenLocaleChanged)
                 .ForEachChange(o => o.Current.LoadLocalized(_currentLocale));
@@ -132,50 +131,39 @@ namespace Sma5hMusic.GUI.ViewModels
             VMBgmFilters = ActivatorUtilities.CreateInstance<BgmFiltersViewModel>(serviceProvider, observableBgmDbRootEntriesList);
 
             //Initialize main views
-            VMBgmSongs = ActivatorUtilities.CreateInstance<BgmSongsViewModel>(serviceProvider, VMBgmFilters.WhenFiltersAreApplied, VMContextMenu);
-            VMPlaylists = ActivatorUtilities.CreateInstance<PlaylistViewModel>(serviceProvider, VMBgmFilters.WhenFiltersAreApplied, viewModelManager.ObservablePlaylistsEntries, VMContextMenu);
-            VMBgmSoundTest = ActivatorUtilities.CreateInstance<BgmSoundTestViewModel>(serviceProvider, VMBgmFilters.WhenFiltersAreApplied, VMContextMenu);
+            VMBgmSongs = ActivatorUtilities.CreateInstance<BgmSongsViewModel>(serviceProvider, observableBgmDbRootEntriesList, VMBgmFilters.WhenFiltersAreApplied, VMContextMenu);
+            VMPlaylists = ActivatorUtilities.CreateInstance<PlaylistViewModel>(serviceProvider, VMBgmFilters.WhenFiltersAreApplied, VMContextMenu);
 
             //Setup ModEditor
             var vmModEditor = ActivatorUtilities.CreateInstance<ModPropertiesModalWindowViewModel>(serviceProvider);
-            var vmModPicker = ActivatorUtilities.CreateInstance<ModPickerModalWindowViewModel>(serviceProvider,
-               viewModelManager.ObservableModsEntries);
+            var vmModPicker = ActivatorUtilities.CreateInstance<ModPickerModalWindowViewModel>(serviceProvider);
             _dialogModEditor = new ModalDialog<ModPropertiesModalWindow, ModPropertiesModalWindowViewModel, ModEntryViewModel>(vmModEditor);
             _dialogModPicker = new ModalDialog<ModPickerModalWindow, ModPickerModalWindowViewModel, ModEntryViewModel>(vmModPicker);
 
             //Setup GameEditor
-            var vmGameEditor = ActivatorUtilities.CreateInstance<GamePropertiesModalWindowViewModel>(serviceProvider,
-                viewModelManager.ObservableSeries, observableGameEntriesList);
-            var vmGamePicker = ActivatorUtilities.CreateInstance<GamePickerModalWindowViewModel>(serviceProvider,
-                observableGameEntriesList);
-            var vmGameDeletePicker = ActivatorUtilities.CreateInstance<GameDeletePickerModalWindowViewModel>(serviceProvider,
-                observableGameEntriesList, observableBgmDbRootEntriesList);
+            var vmGameEditor = ActivatorUtilities.CreateInstance<GamePropertiesModalWindowViewModel>(serviceProvider, observableGameEntriesList);
+            var vmGamePicker = ActivatorUtilities.CreateInstance<GamePickerModalWindowViewModel>(serviceProvider, observableGameEntriesList);
+            var vmGameDeletePicker = ActivatorUtilities.CreateInstance<GameDeletePickerModalWindowViewModel>(serviceProvider, observableGameEntriesList, observableBgmDbRootEntriesList);
             _dialogGameEditor = new ModalDialog<GamePropertiesModalWindow, GamePropertiesModalWindowViewModel, GameTitleEntryViewModel>(vmGameEditor);
             _dialogGamePicker = new ModalDialog<GamePickerModalWindow, GamePickerModalWindowViewModel, GameTitleEntryViewModel>(vmGamePicker);
             _dialogGameDeletePicker = new ModalDialog<GameDeletePickerModalWindow, GameDeletePickerModalWindowViewModel, GameTitleEntryViewModel>(vmGameDeletePicker);
-            _vmToneIdCreation = ActivatorUtilities.CreateInstance<ToneIdCreationModalWindowModel>(serviceProvider,
-                viewModelManager.ObservableBgmPropertyEntries);
+            _vmToneIdCreation = ActivatorUtilities.CreateInstance<ToneIdCreationModalWindowModel>(serviceProvider);
 
             //Setup BgmEditor
-            var vmBgmEditor = ActivatorUtilities.CreateInstance<BgmPropertiesModalWindowViewModel>(serviceProvider,
-                viewModelManager.ObservableSeries, observableGameEntriesList, viewModelManager.ObservableAssignedInfoEntries);
+            var vmBgmEditor = ActivatorUtilities.CreateInstance<BgmPropertiesModalWindowViewModel>(serviceProvider, observableGameEntriesList);
             vmBgmEditor.VMGamePropertiesModal = vmGameEditor;
             vmBgmEditor.WhenNewRequestToAddGameEntry.Subscribe(async (o) => await AddNewOrEditGame(o));
             _dialogSimpleBgmEditor = new ModalDialog<BgmPropertiesModalWindow, BgmPropertiesModalWindowViewModel, BgmEntryViewModel>(vmBgmEditor);
             _dialogAdvancedBgmEditor = new ModalDialog<BgmAdvancedPropertiesModalWindow, BgmPropertiesModalWindowViewModel, BgmEntryViewModel>(vmBgmEditor);
 
             //Setup PlaylistControls
-            var vmPlaylistPicker = ActivatorUtilities.CreateInstance<PlaylistPickerModalWindowViewModel>(serviceProvider,
-                viewModelManager.ObservablePlaylistsEntries);
-            var vmPlaylistDeletePicker = ActivatorUtilities.CreateInstance<PlaylistDeletePickerModalWindowViewModel>(serviceProvider,
-                viewModelManager.ObservablePlaylistsEntries);
+            var vmPlaylistPicker = ActivatorUtilities.CreateInstance<PlaylistPickerModalWindowViewModel>(serviceProvider);
+            var vmPlaylistDeletePicker = ActivatorUtilities.CreateInstance<PlaylistDeletePickerModalWindowViewModel>(serviceProvider);
             _dialogPlaylistPicker = new ModalDialog<PlaylistPickerModalWindow, PlaylistPickerModalWindowViewModel, PlaylistEntryViewModel>(vmPlaylistPicker);
             _dialogPlaylistDeletePicker = new ModalDialog<PlaylistDeletePickerModalWindow, PlaylistDeletePickerModalWindowViewModel, PlaylistEntryViewModel>(vmPlaylistDeletePicker);
-            var vmPlaylistEditor = ActivatorUtilities.CreateInstance<PlaylistPropertiesModalWindowViewModel>(serviceProvider,
-               viewModelManager.ObservablePlaylistsEntries);
+            var vmPlaylistEditor = ActivatorUtilities.CreateInstance<PlaylistPropertiesModalWindowViewModel>(serviceProvider);
             _dialogPlaylistEditor = new ModalDialog<PlaylistPropertiesModalWindow, PlaylistPropertiesModalWindowViewModel, PlaylistEntryViewModel>(vmPlaylistEditor);
-            _vmStageAssignement = ActivatorUtilities.CreateInstance<PlaylistStageAssignementModalWindowViewModel>(serviceProvider,
-                viewModelManager.ObservablePlaylistsEntries, viewModelManager.ObservableStagesEntries);
+            _vmStageAssignement = ActivatorUtilities.CreateInstance<PlaylistStageAssignementModalWindowViewModel>(serviceProvider);
 
             //Listen to requests from children
             VMContextMenu.WhenNewRequestToAddBgmEntry.Subscribe(async (o) => await AddNewBgmEntry(o));

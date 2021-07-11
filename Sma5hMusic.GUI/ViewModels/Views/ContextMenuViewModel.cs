@@ -5,6 +5,7 @@ using Microsoft.Extensions.Options;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using Sma5h.Mods.Music;
+using Sma5hMusic.GUI.Interfaces;
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -48,10 +49,7 @@ namespace Sma5hMusic.GUI.ViewModels
         public ReactiveCommand<Unit, Unit> ActionDeleteGame { get; }
         public ReactiveCommand<ModEntryViewModel, Unit> ActionAddNewBgm { get; }
 
-        public ContextMenuViewModel(IOptions<ApplicationSettings> config, ILogger<BgmSongsViewModel> logger,
-            IObservable<IChangeSet<ModEntryViewModel, string>> observableMusicModsList,
-            IObservable<IChangeSet<LocaleViewModel, string>> observableLocalesList,
-            IObservable<IChangeSet<BgmDbRootEntryViewModel, string>> observableBgmEntries)
+        public ContextMenuViewModel(IOptions<ApplicationSettings> config, IViewModelManager viewModelManager, ILogger<BgmSongsViewModel> logger)
         {
             _logger = logger;
             _whenNewRequestToAddBgmEntry = new Subject<ModEntryViewModel>();
@@ -63,20 +61,20 @@ namespace Sma5hMusic.GUI.ViewModels
             _whenNewRequestToDeleteGameEntry = new Subject<Unit>();
 
             //List of mods
-            observableMusicModsList
+            viewModelManager.ObservableModsEntries.Connect()
                 .Sort(SortExpressionComparer<ModEntryViewModel>.Ascending(p => p.Name), SortOptimisations.IgnoreEvaluates)
                 .ObserveOn(RxApp.MainThreadScheduler)
                 .Bind(out _mods)
                 .DisposeMany()
                 .Subscribe();
             //locales
-            observableLocalesList
-                .ObserveOn(RxApp.MainThreadScheduler)
+            viewModelManager.ObservableLocales.Connect()
+                 .ObserveOn(RxApp.MainThreadScheduler)
                 .Bind(out _locales)
                 .DisposeMany()
                 .Subscribe();
             //nbr songs
-            observableBgmEntries
+            viewModelManager.ObservableDbRootEntries.Connect()
                 .DeferUntilLoaded()
                 .Filter(p => p.UiBgmId != "ui_bgm_random")
                 .Bind(out _items)

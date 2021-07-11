@@ -12,17 +12,17 @@ namespace Sma5hMusic.GUI.Interfaces
         void Init();
         void ReorderSongs();
 
-        IObservable<IChangeSet<ModEntryViewModel, string>> ObservableModsEntries { get; }
-        IObservable<IChangeSet<LocaleViewModel, string>> ObservableLocales { get; }
-        IObservable<IChangeSet<SeriesEntryViewModel, string>> ObservableSeries { get; }
-        IObservable<IChangeSet<GameTitleEntryViewModel, string>> ObservableGameTitles { get; }
-        IObservable<IChangeSet<BgmDbRootEntryViewModel, string>> ObservableDbRootEntries { get; }
-        IObservable<IChangeSet<BgmStreamSetEntryViewModel, string>> ObservableStreamSetEntries { get; }
-        IObservable<IChangeSet<BgmAssignedInfoEntryViewModel, string>> ObservableAssignedInfoEntries { get; }
-        IObservable<IChangeSet<BgmStreamPropertyEntryViewModel, string>> ObservableStreamPropertyEntries { get; }
-        IObservable<IChangeSet<BgmPropertyEntryViewModel, string>> ObservableBgmPropertyEntries { get; }
-        IObservable<IChangeSet<PlaylistEntryViewModel, string>> ObservablePlaylistsEntries { get; }
-        IObservable<IChangeSet<StageEntryViewModel, string>> ObservableStagesEntries { get; }
+        IObservableCache<ModEntryViewModel, string> ObservableModsEntries { get; }
+        IObservableCache<LocaleViewModel, string> ObservableLocales { get; }
+        IObservableCache<SeriesEntryViewModel, string> ObservableSeries { get; }
+        IObservableCache<GameTitleEntryViewModel, string> ObservableGameTitles { get; }
+        IObservableCache<BgmDbRootEntryViewModel, string> ObservableDbRootEntries { get; }
+        IObservableCache<BgmStreamSetEntryViewModel, string> ObservableStreamSetEntries { get; }
+        IObservableCache<BgmAssignedInfoEntryViewModel, string> ObservableAssignedInfoEntries { get; }
+        IObservableCache<BgmStreamPropertyEntryViewModel, string> ObservableStreamPropertyEntries { get; }
+        IObservableCache<BgmPropertyEntryViewModel, string> ObservableBgmPropertyEntries { get; }
+        IObservableCache<PlaylistEntryViewModel, string> ObservablePlaylistsEntries { get; }
+        IObservableCache<StageEntryViewModel, string> ObservableStagesEntries { get; }
 
         IEnumerable<LocaleViewModel> GetLocalesViewModels();
         IEnumerable<SeriesEntryViewModel> GetSeriesViewModels();

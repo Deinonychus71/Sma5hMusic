@@ -7,6 +7,7 @@ using ReactiveUI.Validation.Extensions;
 using ReactiveUI.Validation.Helpers;
 using Sma5h.Mods.Music.Helpers;
 using Sma5h.Mods.Music.Models;
+using Sma5hMusic.GUI.Interfaces;
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -34,12 +35,12 @@ namespace Sma5hMusic.GUI.ViewModels
 
         public MusicModEntries NewMusicModEntries { get; private set; }
 
-        public ToneIdCreationModalWindowModel(ILogger<ToneIdCreationModalWindowModel> logger, IObservable<IChangeSet<BgmPropertyEntryViewModel, string>> observableBgmPropertyEntries)
+        public ToneIdCreationModalWindowModel(ILogger<ToneIdCreationModalWindowModel> logger, IViewModelManager viewModelManager)
         {
             _logger = logger;
 
             //Bind observables
-            observableBgmPropertyEntries
+            viewModelManager.ObservableBgmPropertyEntries.Connect()
                .ObserveOn(RxApp.MainThreadScheduler)
                .Bind(out _bgmPropertyEntries)
                .DisposeMany()

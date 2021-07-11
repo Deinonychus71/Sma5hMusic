@@ -1,13 +1,15 @@
-﻿using ReactiveUI;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 
 namespace Sma5hMusic.GUI.ViewModels.ReactiveObjects.OrderTreeViewItems
 {
     public class OrderItemTreeItemViewModel : OrderItemViewModel
     {
-        public List<OrderItemViewModel> Items { get; set; }
         public string NbrBgms { get; set; }
+
+        public List<OrderItemViewModel> Items { get; set; }
+
+        public OrderItemTreeItemViewModel()
+        {
+        }
     }
 }

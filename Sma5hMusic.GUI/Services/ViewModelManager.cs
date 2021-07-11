@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using DynamicData;
-using DynamicData.Binding;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Sma5h.Mods.Music;
@@ -9,9 +8,7 @@ using Sma5h.Mods.Music.Models;
 using Sma5hMusic.GUI.Helpers;
 using Sma5hMusic.GUI.Interfaces;
 using Sma5hMusic.GUI.ViewModels;
-using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using VGMMusic;
 
@@ -37,29 +34,17 @@ namespace Sma5hMusic.GUI.Services
         private readonly Dictionary<string, StageEntryViewModel> _vmDictStagesEntries;
         private readonly Dictionary<string, ModEntryViewModel> _vmDictModsEntries;
 
-        private readonly ObservableCollection<LocaleViewModel> _vmObsvLocalesEntries;
-        private readonly ObservableCollection<SeriesEntryViewModel> _vmObsvSeriesEntries;
-        private readonly ObservableCollection<GameTitleEntryViewModel> _vmObsvGameTitlesEntries;
-        private readonly ObservableCollection<BgmDbRootEntryViewModel> _vmObsvBgmDbRootEntries;
-        private readonly ObservableCollection<BgmStreamSetEntryViewModel> _vmObsvBgmStreamSetEntries;
-        private readonly ObservableCollection<BgmAssignedInfoEntryViewModel> _vmObsvBgmAssignedInfoEntries;
-        private readonly ObservableCollection<BgmStreamPropertyEntryViewModel> _vmObsvBgmStreamPropertyEntries;
-        private readonly ObservableCollection<BgmPropertyEntryViewModel> _vmObsvBgmPropertyEntries;
-        private readonly ObservableCollection<PlaylistEntryViewModel> _vmObsvPlaylistsEntries;
-        private readonly ObservableCollection<StageEntryViewModel> _vmObsvStagesEntries;
-        private readonly ObservableCollection<ModEntryViewModel> _vmObsvModsEntries;
-
-        private readonly IObservable<IChangeSet<LocaleViewModel, string>> _vmChangeSetLocales;
-        private readonly IObservable<IChangeSet<SeriesEntryViewModel, string>> _vmChangeSetSeries;
-        private readonly IObservable<IChangeSet<GameTitleEntryViewModel, string>> _vmChangeSetGameTitles;
-        private readonly IObservable<IChangeSet<BgmDbRootEntryViewModel, string>> _vmChangeSetDbRootEntries;
-        private readonly IObservable<IChangeSet<BgmStreamSetEntryViewModel, string>> _vmChangeSetStreamSetEntries;
-        private readonly IObservable<IChangeSet<BgmAssignedInfoEntryViewModel, string>> _vmChangeSetAssignedInfoEntries;
-        private readonly IObservable<IChangeSet<BgmStreamPropertyEntryViewModel, string>> _vmChangeSetStreamPropertyoEntries;
-        private readonly IObservable<IChangeSet<BgmPropertyEntryViewModel, string>> _vmChangeSetBgmPropertyEntries;
-        private readonly IObservable<IChangeSet<PlaylistEntryViewModel, string>> _vmChangeSetPlaylistsEntries;
-        private readonly IObservable<IChangeSet<StageEntryViewModel, string>> _vmChangeSetStagesEntries;
-        private readonly IObservable<IChangeSet<ModEntryViewModel, string>> _vmChangeSetModsEntries;
+        private readonly SourceCache<LocaleViewModel, string> _vmObsvLocalesEntries;
+        private readonly SourceCache<SeriesEntryViewModel, string> _vmObsvSeriesEntries;
+        private readonly SourceCache<GameTitleEntryViewModel, string> _vmObsvGameTitlesEntries;
+        private readonly SourceCache<BgmDbRootEntryViewModel, string> _vmObsvBgmDbRootEntries;
+        private readonly SourceCache<BgmStreamSetEntryViewModel, string> _vmObsvBgmStreamSetEntries;
+        private readonly SourceCache<BgmAssignedInfoEntryViewModel, string> _vmObsvBgmAssignedInfoEntries;
+        private readonly SourceCache<BgmStreamPropertyEntryViewModel, string> _vmObsvBgmStreamPropertyEntries;
+        private readonly SourceCache<BgmPropertyEntryViewModel, string> _vmObsvBgmPropertyEntries;
+        private readonly SourceCache<PlaylistEntryViewModel, string> _vmObsvPlaylistsEntries;
+        private readonly SourceCache<StageEntryViewModel, string> _vmObsvStagesEntries;
+        private readonly SourceCache<ModEntryViewModel, string> _vmObsvModsEntries;
 
         public ViewModelManager(IOptions<ApplicationSettings> config, IAudioStateService audioStateService, IMusicModManagerService musicModManager, IVGMMusicPlayer vgmMusicPlayer, IMapper mapper, ILogger<IViewModelManager> logger)
         {
@@ -81,29 +66,17 @@ namespace Sma5hMusic.GUI.Services
             _vmDictStagesEntries = new Dictionary<string, StageEntryViewModel>();
             _vmDictModsEntries = new Dictionary<string, ModEntryViewModel>();
 
-            _vmObsvLocalesEntries = new ObservableCollection<LocaleViewModel>();
-            _vmObsvSeriesEntries = new ObservableCollection<SeriesEntryViewModel>();
-            _vmObsvGameTitlesEntries = new ObservableCollection<GameTitleEntryViewModel>();
-            _vmObsvBgmDbRootEntries = new ObservableCollection<BgmDbRootEntryViewModel>();
-            _vmObsvBgmStreamSetEntries = new ObservableCollection<BgmStreamSetEntryViewModel>();
-            _vmObsvBgmAssignedInfoEntries = new ObservableCollection<BgmAssignedInfoEntryViewModel>();
-            _vmObsvBgmStreamPropertyEntries = new ObservableCollection<BgmStreamPropertyEntryViewModel>();
-            _vmObsvBgmPropertyEntries = new ObservableCollection<BgmPropertyEntryViewModel>();
-            _vmObsvPlaylistsEntries = new ObservableCollection<PlaylistEntryViewModel>();
-            _vmObsvStagesEntries = new ObservableCollection<StageEntryViewModel>();
-            _vmObsvModsEntries = new ObservableCollection<ModEntryViewModel>();
-
-            _vmChangeSetLocales = _vmObsvLocalesEntries.ToObservableChangeSet(p => p.Id);
-            _vmChangeSetSeries = _vmObsvSeriesEntries.ToObservableChangeSet(p => p.SeriesId);
-            _vmChangeSetGameTitles = _vmObsvGameTitlesEntries.ToObservableChangeSet(p => p.UiGameTitleId);
-            _vmChangeSetDbRootEntries = _vmObsvBgmDbRootEntries.ToObservableChangeSet(p => p.UiBgmId);
-            _vmChangeSetStreamSetEntries = _vmObsvBgmStreamSetEntries.ToObservableChangeSet(p => p.StreamSetId);
-            _vmChangeSetAssignedInfoEntries = _vmObsvBgmAssignedInfoEntries.ToObservableChangeSet(p => p.InfoId);
-            _vmChangeSetStreamPropertyoEntries = _vmObsvBgmStreamPropertyEntries.ToObservableChangeSet(p => p.StreamId);
-            _vmChangeSetBgmPropertyEntries = _vmObsvBgmPropertyEntries.ToObservableChangeSet(p => p.NameId);
-            _vmChangeSetPlaylistsEntries = _vmObsvPlaylistsEntries.ToObservableChangeSet(p => p.Id);
-            _vmChangeSetStagesEntries = _vmObsvStagesEntries.ToObservableChangeSet(p => p.UiStageId);
-            _vmChangeSetModsEntries = _vmObsvModsEntries.ToObservableChangeSet(p => p.Id);
+            _vmObsvLocalesEntries = new SourceCache<LocaleViewModel, string>(p => p.Id);
+            _vmObsvSeriesEntries = new SourceCache<SeriesEntryViewModel, string>(p => p.SeriesId);
+            _vmObsvGameTitlesEntries = new SourceCache<GameTitleEntryViewModel, string>(p => p.UiGameTitleId);
+            _vmObsvBgmDbRootEntries = new SourceCache<BgmDbRootEntryViewModel, string>(p => p.UiBgmId);
+            _vmObsvBgmStreamSetEntries = new SourceCache<BgmStreamSetEntryViewModel, string>(p => p.StreamSetId);
+            _vmObsvBgmAssignedInfoEntries = new SourceCache<BgmAssignedInfoEntryViewModel, string>(p => p.InfoId);
+            _vmObsvBgmStreamPropertyEntries = new SourceCache<BgmStreamPropertyEntryViewModel, string>(p => p.StreamId);
+            _vmObsvBgmPropertyEntries = new SourceCache<BgmPropertyEntryViewModel, string>(p => p.NameId);
+            _vmObsvPlaylistsEntries = new SourceCache<PlaylistEntryViewModel, string>(p => p.Id);
+            _vmObsvStagesEntries = new SourceCache<StageEntryViewModel, string>(p => p.UiStageId);
+            _vmObsvModsEntries = new SourceCache<ModEntryViewModel, string>(p => p.Id);
         }
 
         public void Init()
@@ -179,42 +152,42 @@ namespace Sma5hMusic.GUI.Services
             foreach (var vmStage in stagesList)
                 _vmDictStagesEntries.Add(vmStage.UiStageId, vmStage);
 
-            _vmObsvModsEntries.AddRange(modsList);
+            _vmObsvModsEntries.AddOrUpdate(modsList);
             _logger.LogInformation("Music Mods List Loaded.");
-            _vmObsvLocalesEntries.AddRange(vmLocalesList);
+            _vmObsvLocalesEntries.AddOrUpdate(vmLocalesList);
             _logger.LogInformation("Locales Loaded.");
-            _vmObsvSeriesEntries.AddRange(vmSeriesList);
+            _vmObsvSeriesEntries.AddOrUpdate(vmSeriesList);
             _logger.LogInformation("Series Loaded.");
-            _vmObsvGameTitlesEntries.AddRange(vmGameTitlesList);
+            _vmObsvGameTitlesEntries.AddOrUpdate(vmGameTitlesList);
             _logger.LogInformation("Game Titles Loaded.");
-            _vmObsvBgmDbRootEntries.AddRange(vmBgmDbRootEntriesList);
+            _vmObsvBgmDbRootEntries.AddOrUpdate(vmBgmDbRootEntriesList);
             _logger.LogInformation("BGM DB Root List Loaded.");
-            _vmObsvBgmStreamSetEntries.AddRange(vmBgmStreamSetEntriesList);
+            _vmObsvBgmStreamSetEntries.AddOrUpdate(vmBgmStreamSetEntriesList);
             _logger.LogInformation("BGM Stream Set List Loaded.");
-            _vmObsvBgmAssignedInfoEntries.AddRange(vmBgmAssignedInfoEntriesList);
+            _vmObsvBgmAssignedInfoEntries.AddOrUpdate(vmBgmAssignedInfoEntriesList);
             _logger.LogInformation("BGM Assigned Info List Loaded.");
-            _vmObsvBgmStreamPropertyEntries.AddRange(vmBgmStreamPropertyEntriesList);
+            _vmObsvBgmStreamPropertyEntries.AddOrUpdate(vmBgmStreamPropertyEntriesList);
             _logger.LogInformation("BGM Stream Property List Loaded.");
-            _vmObsvBgmPropertyEntries.AddRange(vmBgmPropertyEntriesList);
+            _vmObsvBgmPropertyEntries.AddOrUpdate(vmBgmPropertyEntriesList);
             _logger.LogInformation("BGM Property List Loaded.");
-            _vmObsvPlaylistsEntries.AddRange(playlistsList);
+            _vmObsvPlaylistsEntries.AddOrUpdate(playlistsList);
             _logger.LogInformation("Playlists Loaded.");
-            _vmObsvStagesEntries.AddRange(stagesList);
+            _vmObsvStagesEntries.AddOrUpdate(stagesList);
             _logger.LogInformation("Stages Loaded.");
         }
 
         #region Observers
-        public IObservable<IChangeSet<LocaleViewModel, string>> ObservableLocales { get { return _vmChangeSetLocales; } }
-        public IObservable<IChangeSet<SeriesEntryViewModel, string>> ObservableSeries { get { return _vmChangeSetSeries; } }
-        public IObservable<IChangeSet<GameTitleEntryViewModel, string>> ObservableGameTitles { get { return _vmChangeSetGameTitles; } }
-        public IObservable<IChangeSet<BgmDbRootEntryViewModel, string>> ObservableDbRootEntries { get { return _vmChangeSetDbRootEntries; } }
-        public IObservable<IChangeSet<BgmStreamSetEntryViewModel, string>> ObservableStreamSetEntries { get { return _vmChangeSetStreamSetEntries; } }
-        public IObservable<IChangeSet<BgmAssignedInfoEntryViewModel, string>> ObservableAssignedInfoEntries { get { return _vmChangeSetAssignedInfoEntries; } }
-        public IObservable<IChangeSet<BgmStreamPropertyEntryViewModel, string>> ObservableStreamPropertyEntries { get { return _vmChangeSetStreamPropertyoEntries; } }
-        public IObservable<IChangeSet<BgmPropertyEntryViewModel, string>> ObservableBgmPropertyEntries { get { return _vmChangeSetBgmPropertyEntries; } }
-        public IObservable<IChangeSet<PlaylistEntryViewModel, string>> ObservablePlaylistsEntries { get { return _vmChangeSetPlaylistsEntries; } }
-        public IObservable<IChangeSet<StageEntryViewModel, string>> ObservableStagesEntries { get { return _vmChangeSetStagesEntries; } }
-        public IObservable<IChangeSet<ModEntryViewModel, string>> ObservableModsEntries { get { return _vmChangeSetModsEntries; } }
+        public IObservableCache<LocaleViewModel, string> ObservableLocales { get { return _vmObsvLocalesEntries; } }
+        public IObservableCache<SeriesEntryViewModel, string> ObservableSeries { get { return _vmObsvSeriesEntries; } }
+        public IObservableCache<GameTitleEntryViewModel, string> ObservableGameTitles { get { return _vmObsvGameTitlesEntries; } }
+        public IObservableCache<BgmDbRootEntryViewModel, string> ObservableDbRootEntries { get { return _vmObsvBgmDbRootEntries; } }
+        public IObservableCache<BgmStreamSetEntryViewModel, string> ObservableStreamSetEntries { get { return _vmObsvBgmStreamSetEntries; } }
+        public IObservableCache<BgmAssignedInfoEntryViewModel, string> ObservableAssignedInfoEntries { get { return _vmObsvBgmAssignedInfoEntries; } }
+        public IObservableCache<BgmStreamPropertyEntryViewModel, string> ObservableStreamPropertyEntries { get { return _vmObsvBgmStreamPropertyEntries; } }
+        public IObservableCache<BgmPropertyEntryViewModel, string> ObservableBgmPropertyEntries { get { return _vmObsvBgmPropertyEntries; } }
+        public IObservableCache<PlaylistEntryViewModel, string> ObservablePlaylistsEntries { get { return _vmObsvPlaylistsEntries; } }
+        public IObservableCache<StageEntryViewModel, string> ObservableStagesEntries { get { return _vmObsvStagesEntries; } }
+        public IObservableCache<ModEntryViewModel, string> ObservableModsEntries { get { return _vmObsvModsEntries; } }
         #endregion
 
         #region GET ALL
@@ -412,7 +385,7 @@ namespace Sma5hMusic.GUI.Services
         {
             var newVM = new ModEntryViewModel(this, _mapper, musicMod);
             _vmDictModsEntries.Add(newVM.Id, newVM);
-            _vmObsvModsEntries.Add(newVM);
+            _vmObsvModsEntries.AddOrUpdate(newVM);
             return true;
         }
 
@@ -420,7 +393,7 @@ namespace Sma5hMusic.GUI.Services
         {
             var newVM = _mapper.Map(gameTitleEntry, new GameTitleEntryViewModel(this, _mapper, gameTitleEntry));
             _vmDictGameTitlesEntries.Add(newVM.UiGameTitleId, newVM);
-            _vmObsvGameTitlesEntries.Add(newVM);
+            _vmObsvGameTitlesEntries.AddOrUpdate(newVM);
             return true;
         }
 
@@ -428,7 +401,7 @@ namespace Sma5hMusic.GUI.Services
         {
             var newVM = _mapper.Map(bgmDbRootEntry, new BgmDbRootEntryViewModel(this, _mapper, bgmDbRootEntry));
             _vmDictBgmDbRootEntries.Add(newVM.UiBgmId, newVM);
-            _vmObsvBgmDbRootEntries.Add(newVM);
+            _vmObsvBgmDbRootEntries.AddOrUpdate(newVM);
             return true;
         }
 
@@ -436,7 +409,7 @@ namespace Sma5hMusic.GUI.Services
         {
             var newVM = _mapper.Map(bgmStreamSetEntry, new BgmStreamSetEntryViewModel(this, _mapper, bgmStreamSetEntry));
             _vmDictBgmStreamSetEntries.Add(newVM.StreamSetId, newVM);
-            _vmObsvBgmStreamSetEntries.Add(newVM);
+            _vmObsvBgmStreamSetEntries.AddOrUpdate(newVM);
             return true;
         }
 
@@ -444,7 +417,7 @@ namespace Sma5hMusic.GUI.Services
         {
             var newVM = _mapper.Map(bgmAssignedInfoEntry, new BgmAssignedInfoEntryViewModel(this, _mapper, bgmAssignedInfoEntry));
             _vmDictBgmAssignedInfoEntries.Add(newVM.InfoId, newVM);
-            _vmObsvBgmAssignedInfoEntries.Add(newVM);
+            _vmObsvBgmAssignedInfoEntries.AddOrUpdate(newVM);
             return true;
         }
 
@@ -452,7 +425,7 @@ namespace Sma5hMusic.GUI.Services
         {
             var newVM = _mapper.Map(bgmStreamPropertyEntry, new BgmStreamPropertyEntryViewModel(this, _mapper, bgmStreamPropertyEntry));
             _vmDictBgmStreamPropertyEntries.Add(newVM.StreamId, newVM);
-            _vmObsvBgmStreamPropertyEntries.Add(newVM);
+            _vmObsvBgmStreamPropertyEntries.AddOrUpdate(newVM);
             return true;
         }
 
@@ -460,7 +433,7 @@ namespace Sma5hMusic.GUI.Services
         {
             var newVM = _mapper.Map(bgmPropertyEntry, new BgmPropertyEntryViewModel(_vgmMusicPlayer, this, _mapper, bgmPropertyEntry, _inGameVolume));
             _vmDictBgmPropertyEntries.Add(newVM.NameId, newVM);
-            _vmObsvBgmPropertyEntries.Add(newVM);
+            _vmObsvBgmPropertyEntries.AddOrUpdate(newVM);
             return true;
         }
 
@@ -468,7 +441,7 @@ namespace Sma5hMusic.GUI.Services
         {
             var newVM = new PlaylistEntryViewModel(playlistEntry, null);
             _vmDictPlaylistsEntries.Add(newVM.Id, newVM);
-            _vmObsvPlaylistsEntries.Add(newVM);
+            _vmObsvPlaylistsEntries.AddOrUpdate(newVM);
             return true;
         }
         #endregion

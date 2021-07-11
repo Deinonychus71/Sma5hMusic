@@ -7,7 +7,7 @@
         xmlns:ia="clr-namespace:Avalonia.Xaml.Interactions.Core;assembly=Avalonia.Xaml.Interactions"
              x:Class="Sma5hMusic.GUI.Views.BgmSongsView"
              x:Name="SongsWindow">
-  <Grid ColumnDefinitions="5*,*" RowDefinitions="30,*">
+  <Grid ColumnDefinitions="5*,5,*" RowDefinitions="30,*">
     <ContentControl Content="{Binding VMContextMenu}"></ContentControl>
     <Grid Grid.Row="1" Grid.Column="0" Classes="list">
       <i:Interaction.Behaviors>
@@ -125,6 +125,7 @@
         </DataGrid.Columns>
       </DataGrid>
     </Grid>
-    <ContentControl Grid.Row="1" Grid.Column="1" Content="{Binding VMBgmProperties}"/>
+    <GridSplitter Grid.Column="1" Grid.RowSpan="2" ResizeDirection="Columns"/>
+    <ContentControl Grid.Row="1" Grid.Column="2" Content="{Binding VMOrderTree}"/>
   </Grid>
 </UserControl>

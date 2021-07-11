@@ -99,10 +99,6 @@
   </Style>
 
   <!-- MUSIC PLAYER -->
-  <Style Selector="Button.btnMusic">
-    <Setter Property="Width" Value="40"/>
-    <Setter Property="Height" Value="40"/>
-  </Style>
   <Style Selector="TreeViewItem Button.btnMusic">
     <Setter Property="Width" Value="20"/>
     <Setter Property="Height" Value="20"/>

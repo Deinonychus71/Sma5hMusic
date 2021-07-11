@@ -99,7 +99,6 @@
       <TabStrip DockPanel.Dock="Right" Name="TabsMenu" HorizontalAlignment="Right" Margin="10">
         <TabStripItem Content="Songs"/>
         <TabStripItem Content="Playlists"/>
-        <TabStripItem Content="Sound Test"/>
       </TabStrip>
     </DockPanel>
     <Grid Grid.Row="2" ColumnDefinitions="*,5,6*" RowDefinitions="30,30,*">
@@ -108,7 +107,6 @@
       <Carousel Grid.Column="2" Grid.Row="1" Grid.RowSpan="2" SelectedIndex="{Binding #TabsMenu.SelectedIndex}">
         <ContentControl Content="{Binding VMBgmSongs}"></ContentControl>
         <ContentControl Content="{Binding VMPlaylists}"></ContentControl>
-        <ContentControl Content="{Binding VMBgmSoundTest}"></ContentControl>
       </Carousel>
     </Grid>
     <vw:DebugConsole IsVisible="{Binding IsShowingDebug}" Grid.Row="2" Grid.RowSpan="2"/>

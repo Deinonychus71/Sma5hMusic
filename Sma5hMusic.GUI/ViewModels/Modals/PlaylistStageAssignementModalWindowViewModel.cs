@@ -4,6 +4,7 @@ using DynamicData.Binding;
 using Microsoft.Extensions.Logging;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
+using Sma5hMusic.GUI.Interfaces;
 using Sma5hMusic.GUI.Models;
 using System;
 using System.Collections.Generic;
@@ -42,26 +43,25 @@ namespace Sma5hMusic.GUI.ViewModels
         public ReactiveCommand<Window, Unit> ActionOK { get; }
 
 
-        public PlaylistStageAssignementModalWindowViewModel(ILogger<ModPickerModalWindowViewModel> logger, IObservable<IChangeSet<PlaylistEntryViewModel, string>> observablePlaylists,
-            IObservable<IChangeSet<StageEntryViewModel, string>> observableStages)
+        public PlaylistStageAssignementModalWindowViewModel(ILogger<ModPickerModalWindowViewModel> logger, IViewModelManager viewModelManager)
         {
             _logger = logger;
             _orders = GetOrderList();
 
             //Bind observables
-            observableStages
+            viewModelManager.ObservableStagesEntries.Connect()
                .ObserveOn(RxApp.MainThreadScheduler)
                .Bind(out _stages)
                .DisposeMany()
                .Subscribe();
-            observablePlaylists
+            viewModelManager.ObservablePlaylistsEntries.Connect()
                .Sort(SortExpressionComparer<PlaylistEntryViewModel>.Ascending(p => p.Title), SortOptimisations.ComparesImmutableValuesOnly, 8000)
                .TreatMovesAsRemoveAdd()
                .ObserveOn(RxApp.MainThreadScheduler)
                .Bind(out _playlists)
                .DisposeMany()
                .Subscribe();
-            observablePlaylists
+            viewModelManager.ObservablePlaylistsEntries.Connect()
                 .AutoRefreshOnObservable(p => this.WhenAnyValue(p => p.SelectedPlaylistEntry))
                 .Filter(p => this.SelectedPlaylistEntry != null && this.SelectedPlaylistEntry.Id == p.Id)
                 .TransformMany(p => p.Tracks, p => p.Value)

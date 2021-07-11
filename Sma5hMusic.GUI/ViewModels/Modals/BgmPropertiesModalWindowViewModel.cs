@@ -87,8 +87,7 @@ namespace Sma5hMusic.GUI.ViewModels
         public ReactiveCommand<Window, Unit> ActionClosing { get; }
 
         public BgmPropertiesModalWindowViewModel(IOptions<ApplicationSettings> config, ILogger<BgmPropertiesModalWindowViewModel> logger, IFileDialog fileDialog,
-            IMapper mapper, IGUIStateManager guiStateManager, IObservable<IChangeSet<SeriesEntryViewModel, string>> observableSeries,
-            IObservable<IChangeSet<GameTitleEntryViewModel, string>> observableGames, IObservable<IChangeSet<BgmAssignedInfoEntryViewModel, string>> observableBgmAssignedInfoEntries)
+            IMapper mapper, IGUIStateManager guiStateManager, IViewModelManager viewModelManager, IObservable<IChangeSet<GameTitleEntryViewModel, string>> observableGames)
         {
             _config = config;
             _logger = logger;
@@ -101,7 +100,7 @@ namespace Sma5hMusic.GUI.ViewModels
             _recentGameTitles = new List<GameTitleEntryViewModel>();
 
             //Bind observables
-            observableSeries
+            viewModelManager.ObservableSeries.Connect()
                .ObserveOn(RxApp.MainThreadScheduler)
                .Bind(out _series)
                .DisposeMany()
@@ -111,7 +110,7 @@ namespace Sma5hMusic.GUI.ViewModels
                .Bind(out _games)
                .DisposeMany()
                .Subscribe();
-            observableBgmAssignedInfoEntries
+            viewModelManager.ObservableAssignedInfoEntries.Connect()
                .Transform(p => p.InfoId)
                .ObserveOn(RxApp.MainThreadScheduler)
                .Bind(out _assignedInfoIds)

@@ -4,5 +4,5 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Sma5hMusic.GUI.Views.MusicPlayerView">
-  <Button x:Name="btnPlayer" Classes="btnMusic"  HorizontalContentAlignment="Center" Content="{Binding Text, Mode=OneWay}" FontFamily="Segoe UI Symbol" Command="{Binding ActionPlaySong, Mode=OneWay}"/>
+  <Button x:Name="btnPlayer" Classes="btnMusic"  HorizontalContentAlignment="Center" Width="40" Content="{Binding Text, Mode=OneWay}" FontFamily="Segoe UI Symbol" Command="{Binding ActionPlaySong, Mode=OneWay}"/>
 </UserControl>

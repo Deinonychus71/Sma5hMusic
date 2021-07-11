@@ -1,6 +1,7 @@
 ﻿using DynamicData;
 using ReactiveUI;
 using Sma5hMusic.GUI.Helpers;
+using Sma5hMusic.GUI.Interfaces;
 using System;
 using System.Collections.ObjectModel;
 using System.Reactive.Linq;
@@ -13,10 +14,10 @@ namespace Sma5hMusic.GUI.ViewModels
 
         public ReadOnlyObservableCollection<PlaylistEntryViewModel> Playlists { get { return _playlist; } }
 
-        public PlaylistDeletePickerModalWindowViewModel(IObservable<IChangeSet<PlaylistEntryViewModel, string>> observablePlaylists)
+        public PlaylistDeletePickerModalWindowViewModel(IViewModelManager viewModelManager)
         {
             //Bind observables
-            observablePlaylists
+            viewModelManager.ObservablePlaylistsEntries.Connect()
                .Filter(p => !Constants.CONVERTER_CORE_PLAYLISTS.ContainsKey(p.Id))
                .ObserveOn(RxApp.MainThreadScheduler)
                .Bind(out _playlist)

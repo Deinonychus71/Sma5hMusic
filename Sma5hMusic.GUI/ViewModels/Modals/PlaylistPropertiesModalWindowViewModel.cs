@@ -36,7 +36,7 @@ namespace Sma5hMusic.GUI.ViewModels
         public ReadOnlyObservableCollection<PlaylistEntryViewModel> Playlists { get { return _playlists; } }
 
         public PlaylistPropertiesModalWindowViewModel(ILogger<ModPropertiesModalWindowViewModel> logger, IViewModelManager viewModelManager,
-            IGUIStateManager guiStateManager, IObservable<IChangeSet<PlaylistEntryViewModel, string>> observablePlaylists)
+            IGUIStateManager guiStateManager)
         {
             _logger = logger;
             _guiStateManager = guiStateManager;
@@ -45,7 +45,7 @@ namespace Sma5hMusic.GUI.ViewModels
             this.WhenAnyValue(p => p.PlaylistTitle).Subscribe((o) => { FormatPlaylistId(o); });
 
             //Bind observables
-            observablePlaylists
+            viewModelManager.ObservablePlaylistsEntries.Connect()
                 .ObserveOn(RxApp.MainThreadScheduler)
                 .Bind(out _playlists)
                 .DisposeMany()

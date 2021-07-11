@@ -48,9 +48,11 @@ namespace Sma5hMusic.GUI.ViewModels
         public ReactiveCommand<BgmDbRootEntryViewModel, Unit> ActionMoveToOtherMod { get; }
         public ReactiveCommand<BgmDbRootEntryViewModel, Unit> ActionDeleteBgm { get; }
         public BgmPropertiesViewModel VMBgmProperties { get; }
+        public BgmOrderTreeViewModel VMOrderTree { get; }
 
         public BgmSongsViewModel(IServiceProvider serviceProvider, ILogger<BgmSongsViewModel> logger,
-            IObservable<IChangeSet<BgmDbRootEntryViewModel, string>> observableBgmEntriesList, ContextMenuViewModel vmContextMenu)
+            IObservable<IChangeSet<BgmDbRootEntryViewModel, string>> observableBgmEntriesNonFilteredList,
+            IObservable<IChangeSet<BgmDbRootEntryViewModel, string>> observableBgmEntriesFilteredList, ContextMenuViewModel vmContextMenu)
         {
             _logger = logger;
             VMContextMenu = vmContextMenu;
@@ -62,7 +64,7 @@ namespace Sma5hMusic.GUI.ViewModels
             _whenNewRequestToRenameToneId = new Subject<BgmDbRootEntryViewModel>();
             _whenNewRequestToMoveToOtherMod = new Subject<BgmDbRootEntryViewModel>();
 
-            observableBgmEntriesList
+            observableBgmEntriesFilteredList
                 .Sort(SortExpressionComparer<BgmDbRootEntryViewModel>.Ascending(p => p.HiddenInSoundTest).ThenByAscending(p => p.TestDispOrder), SortOptimisations.ComparesImmutableValuesOnly, 8000)
                 .TreatMovesAsRemoveAdd()
                 .ObserveOn(RxApp.MainThreadScheduler)
@@ -80,6 +82,7 @@ namespace Sma5hMusic.GUI.ViewModels
             //Initialize properties
             var whenSelectedBgmEntryChanged = this.WhenAnyValue(p => p.SelectedBgmEntry);
             VMBgmProperties = ActivatorUtilities.CreateInstance<BgmPropertiesViewModel>(serviceProvider, whenSelectedBgmEntryChanged);
+            VMOrderTree = ActivatorUtilities.CreateInstance<BgmOrderTreeViewModel>(serviceProvider, observableBgmEntriesNonFilteredList);
         }
 
         #region DELETE/EDIT/RENAME BGM PROPERTIES
@@ -142,10 +145,12 @@ namespace Sma5hMusic.GUI.ViewModels
         public void Drop(object sender, DragEventArgs e)
         {
             var source = e.Source;
-            while (!(source is DataGrid))
+            while (!(source is DataGrid) && source != null)
             {
                 source = source.InteractiveParent;
             }
+            if (source == null)
+                return;
             var dataGrid = (DataGrid)source;
 
             if (((Control)e.Source).DataContext is BgmDbRootEntryViewModel destinationObj

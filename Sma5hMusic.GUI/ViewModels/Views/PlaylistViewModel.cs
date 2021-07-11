@@ -87,8 +87,8 @@ namespace Sma5hMusic.GUI.ViewModels
         public ReactiveCommand<PlaylistEntryValueViewModel, Unit> ActionPasteIncidence { get; }
         public ReactiveCommand<PlaylistEntryValueViewModel, Unit> ActionPasteIncidenceAll { get; }
 
-        public PlaylistViewModel(IOptions<ApplicationSettings> config, IDialogWindow rootDialog, IMessageDialog messageDialog, IObservable<IChangeSet<BgmDbRootEntryViewModel, string>> observableBgmEntries,
-            IObservable<IChangeSet<PlaylistEntryViewModel, string>> observablePlaylistEntries, ContextMenuViewModel vmContextMenu)
+        public PlaylistViewModel(IOptions<ApplicationSettings> config, IDialogWindow rootDialog, IMessageDialog messageDialog, IViewModelManager viewModelManager, 
+            IObservable<IChangeSet<BgmDbRootEntryViewModel, string>> observableBgmEntries, ContextMenuViewModel vmContextMenu)
         {
             _config = config;
             _rootDialog = rootDialog;
@@ -101,6 +101,7 @@ namespace Sma5hMusic.GUI.ViewModels
             _whenNewRequestToEditPlaylist = new Subject<Unit>();
             _whenNewRequestToDeletePlaylist = new Subject<Unit>();
             _whenNewRequestToAssignPlaylistToStage = new Subject<Unit>();
+            var observablePlaylistEntries = viewModelManager.ObservablePlaylistsEntries.Connect();
 
             //Bgms
             observableBgmEntries
