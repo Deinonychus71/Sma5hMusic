@@ -74,8 +74,37 @@ namespace Sma5hMusic.GUI.ViewModels
             foreach (var track in listPlaylistTracks)
             {
                 track.Order = i;
-                i += 2;
+                i++;
             }
+        }
+
+        public void ReorderSongs(short orderId, PlaylistEntryValueViewModel vmPlaylistTrackToReorder, short newPosition)
+        {
+            bool done = false;
+            short i = 0;
+            var vmPlaylistTracks = Tracks[orderId].Where(p => !p.Hidden && p.UiBgmId != vmPlaylistTrackToReorder.UiBgmId).OrderBy(p => p.Order);
+
+            if (newPosition == -1)
+            {
+                vmPlaylistTrackToReorder.Order = i;
+                i++;
+                done = true;
+            }
+
+            foreach (var vmPlaylistTrack in vmPlaylistTracks)
+            {
+                if (!done && i == newPosition)
+                {
+                    vmPlaylistTrackToReorder.Order = i;
+                    i++;
+                    done = true;
+                }
+                vmPlaylistTrack.Order = i;
+                i++;
+            }
+
+            if (!done)
+                vmPlaylistTrackToReorder.Order = i;
         }
 
         public PlaylistEntryValueViewModel AddSong(BgmDbRootEntryViewModel sourceObj, short orderId, short destinationIndex, ushort incidence)

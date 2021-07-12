@@ -149,7 +149,8 @@ namespace Sma5hMusic.GUI.ViewModels
             //Throttle changes
             this.WhenAnyObservable(p => p.WhenNewRequestToUpdatePlaylistsInternal)
                 .Throttle(TimeSpan.FromSeconds(2))
-                .Subscribe((o) => _whenNewRequestToUpdatePlaylists.OnNext(Unit.Default));
+                .Subscribe((o) => { 
+                    _whenNewRequestToUpdatePlaylists.OnNext(Unit.Default); });
 
             ActionReorderPlaylist = ReactiveCommand.CreateFromTask<DataGridCellPointerPressedEventArgs>(ReorderPlaylist);
             ActionSendToPlaylist = ReactiveCommand.CreateFromTask<DataGridCellPointerPressedEventArgs>(SendToPlaylist);
@@ -252,24 +253,27 @@ namespace Sma5hMusic.GUI.ViewModels
 
         public void AddToPlaylist(BgmDbRootEntryViewModel sourceObj, PlaylistEntryValueViewModel destinationObj, ushort incidence)
         {
-            var order = destinationObj != null ? (short)(destinationObj.Order + 1) : (short)999;
+            var order = destinationObj != null ? (short)(destinationObj.Order) : (short)999;
             var newEntry = SelectedPlaylistEntry.AddSong(sourceObj, SelectedPlaylistOrder, order, incidence);
             _postReorderSelection = () => _refGrid.SelectedItem = newEntry;
             SelectedPlaylistEntry.ReorderSongs(SelectedPlaylistOrder);
             _whenNewRequestToUpdatePlaylistsInternal.OnNext(Unit.Default);
+
+            _postReorderSelection = null;
         }
 
         public void ReorderPlaylist(PlaylistEntryValueViewModel sourceObj, PlaylistEntryValueViewModel destinationObj)
         {
             _postReorderSelection = () => _refGrid.SelectedItem = sourceObj;
-            var isHigherThanDest = sourceObj.Order > destinationObj.Order;
-            if (isHigherThanDest)
-                sourceObj.Order = (short)(destinationObj.Order - 1);
-            else
-                sourceObj.Order = (short)(destinationObj.Order + 1);
+            var order = destinationObj.Order;
+            if (sourceObj.Hidden)
+                order++;
             sourceObj.Hidden = false;
-            sourceObj.Parent.ReorderSongs(SelectedPlaylistOrder);
+            sourceObj.Parent.ReorderSongs(SelectedPlaylistOrder, sourceObj, order);
+            
             _whenNewRequestToUpdatePlaylistsInternal.OnNext(Unit.Default);
+
+            _postReorderSelection = null;
         }
 
         public async Task RemoveItem(PlaylistEntryValueViewModel sourceObj)
@@ -294,10 +298,7 @@ namespace Sma5hMusic.GUI.ViewModels
         public void FocusAfterMove()
         {
             if (_postReorderSelection != null)
-            {
                 _postReorderSelection();
-                _postReorderSelection = null;
-            }
         }
         #endregion
 
