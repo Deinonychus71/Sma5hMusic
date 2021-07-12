@@ -1,6 +1,7 @@
 ﻿using Sma5h.Mods.Music;
 using Sma5h.Mods.Music.Interfaces;
 using Sma5h.Mods.Music.Models;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Sma5hMusic.GUI.Interfaces
@@ -42,6 +43,8 @@ namespace Sma5hMusic.GUI.Interfaces
         Task<bool> UpdateGlobalSettings(ApplicationSettings appSettings);
         Task<bool> WipeAudioCache();
         Task<bool> ReorderSongs();
+        Task<bool> ReorderSongs(string bgmEntryToReorder, short newPosition);
+        Task<bool> ReorderSongs(IEnumerable<string> bgmEntriesToReorder, short newPosition);
 
         Task<AudioCuePoints> UpdateAudioCuePoints(string filename);
 

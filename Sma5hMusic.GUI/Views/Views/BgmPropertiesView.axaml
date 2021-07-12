@@ -3,14 +3,44 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:fields="clr-namespace:Sma5hMusic.GUI.Views.Fields"
+             xmlns:i="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
+             xmlns:ia="clr-namespace:Avalonia.Xaml.Interactions.Core;assembly=Avalonia.Xaml.Interactions"
+             xmlns:models="clr-namespace:Sma5hMusic.GUI.ViewModels.ReactiveObjects;assembly=Sma5hMusic.GUI"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Sma5hMusic.GUI.Views.BgmPropertiesView">
   <DockPanel>
     <Border Classes="headerTitle" DockPanel.Dock="Top">
-      <TextBlock>Properties</TextBlock>
+      <TextBlock Text="{Binding Header, Mode=OneWay}"></TextBlock>
     </Border>
-    <TabControl IsVisible="{Binding SelectedBgmEntry, Mode=OneWay, Converter={x:Static ObjectConverters.IsNotNull}}" TabStripPlacement="Bottom" DockPanel.Dock="Top">
-      <TabItem Header="General" FontSize="14">
+    <TabControl TabStripPlacement="Bottom" DockPanel.Dock="Top">
+      <i:Interaction.Behaviors>
+        <ia:EventTriggerBehavior EventName="SelectionChanged">
+          <ia:InvokeCommandAction Command="{Binding ActionSelectedTabChanged, Mode=OneWay}" CommandParameter="{Binding $self}"/>
+        </ia:EventTriggerBehavior>
+      </i:Interaction.Behaviors>
+      <TabItem Header="Sound Test" FontSize="12">
+        <TreeView HorizontalAlignment="Stretch" DragDrop.AllowDrop="True" Focusable="True" Items="{Binding Items, Mode=OneWay}" Grid.Row="1" Grid.Column="0">
+          <TreeView.Styles>
+            <Style Selector="TreeViewItem">
+              <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}"/>
+            </Style>
+          </TreeView.Styles>
+          <i:Interaction.Behaviors>
+            <ia:EventTriggerBehavior EventName="Initialized">
+              <ia:InvokeCommandAction Command="{Binding ActionInitializeDragAndDrop, Mode=OneWay}" CommandParameter="{Binding $self}"/>
+            </ia:EventTriggerBehavior>
+          </i:Interaction.Behaviors>
+          <TreeView.DataTemplates>
+            <TreeDataTemplate DataType="models:OrderItemTreeViewModel" ItemsSource="{Binding Items}">
+              <StackPanel Orientation="Horizontal">
+                <TextBlock Foreground="#c2c2c2" Margin="0,0,10,0" Text="{Binding Label, Mode=OneWay}" />
+                <TextBlock Foreground="#8f8f8f" Text="{Binding NbrBgms, Mode=OneWay}" />
+              </StackPanel>
+            </TreeDataTemplate>
+          </TreeView.DataTemplates>
+        </TreeView>
+      </TabItem>
+      <TabItem IsVisible="{Binding SelectedBgmEntry, Mode=OneWay, Converter={x:Static ObjectConverters.IsNotNull}}" Header="General" FontSize="12">
         <StackPanel Classes="content" HorizontalAlignment="Stretch">
           <fields:PropertyTextField Label="Tone ID" Text="{Binding SelectedBgmEntry.ToneId, Mode=OneWay}" ToolTip="Unique ID of the song" IsReadOnly="True" />
           <fields:PropertyTextField Classes="jpnSupport" Label="Series" Text="{Binding SelectedBgmEntry.SeriesViewModel.Title, Mode=OneWay}" ToolTip="Series of the song in the current locale" IsReadOnly="True" />
@@ -21,7 +51,7 @@
           <fields:PropertyTextField Label="Record Type" Text="{Binding SelectedBgmEntry.RecordType, Mode=OneWay, Converter={StaticResource RecordTypeConverter}}" ToolTip="Record Type of the song. It can be either Original, Remix or New Remix." IsReadOnly="True" />
         </StackPanel>
       </TabItem>
-      <TabItem IsVisible="{Binding SelectedBgmEntry.IsMod}" Header="Mod" FontSize="14">
+      <TabItem IsVisible="{Binding SelectedBgmEntry.IsMod, Mode=OneWay, FallbackValue=False}" Header="Mod" FontSize="12">
         <StackPanel Classes="content" IsVisible="{Binding SelectedBgmEntry.IsMod}" HorizontalAlignment="Stretch">
           <fields:PropertyTextField Label="Mod" Text="{Binding SelectedBgmEntry.MusicModViewModel.Name, Mode=OneWay}" ToolTip="Name of the associated Mod" IsReadOnly="True" />
           <fields:PropertyMusicField Label="Filename" MusicPlayer="{Binding SelectedBgmEntry.MusicPlayer, Mode=OneWay}" Text="{Binding SelectedBgmEntry.Filename, Mode=OneWay, Converter={StaticResource FilePathConverter}}}" ToolTip="Filename of the associated Song" IsReadOnly="True" />

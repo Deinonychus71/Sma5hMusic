@@ -103,9 +103,6 @@
     <Compile Update="Views\Modals\PlaylistDeletePickerModalWindow.axaml.cs">
       <DependentUpon>PlaylistDeletePickerModalWindow.axaml</DependentUpon>
     </Compile>
-    <Compile Update="Views\Views\BgmOrderTreeView.axaml.cs">
-      <DependentUpon>BgmOrderTreeView.axaml</DependentUpon>
-    </Compile>
     <Compile Update="Views\Views\PlaylistView.axaml.cs">
       <DependentUpon>PlaylistView.axaml</DependentUpon>
     </Compile>
