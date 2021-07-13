@@ -6,9 +6,11 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
+using Sma5hMusic.GUI.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
@@ -25,8 +27,7 @@ namespace Sma5hMusic.GUI.ViewModels
         private readonly Subject<BgmDbRootEntryViewModel> _whenNewRequestToDeleteBgmEntry;
         private readonly Subject<BgmDbRootEntryViewModel> _whenNewRequestToRenameToneId;
         private readonly Subject<BgmDbRootEntryViewModel> _whenNewRequestToMoveToOtherMod;
-        private readonly Subject<Tuple<string, short>> _whenNewRequestToReorderBgmEntry;
-        private const string DATAOBJECT_FORMAT = "BGM";
+        private readonly Subject<Tuple<IEnumerable<string>, short>> _whenNewRequestToReorderBgmEntry;
         private Action _postReorderSelection;
 
         public ContextMenuViewModel VMContextMenu { get; }
@@ -35,7 +36,7 @@ namespace Sma5hMusic.GUI.ViewModels
         public IObservable<BgmDbRootEntryViewModel> WhenNewRequestToDeleteBgmEntry { get { return _whenNewRequestToDeleteBgmEntry; } }
         public IObservable<BgmDbRootEntryViewModel> WhenNewRequestToRenameToneId { get { return _whenNewRequestToRenameToneId; } }
         public IObservable<BgmDbRootEntryViewModel> WhenNewRequestToMoveToOtherMod { get { return _whenNewRequestToMoveToOtherMod; } }
-        public IObservable<Tuple<string, short>> WhenNewRequestToReorderBgmEntry { get { return _whenNewRequestToReorderBgmEntry; } }
+        public IObservable<Tuple<IEnumerable<string>, short>> WhenNewRequestToReorderBgmEntry { get { return _whenNewRequestToReorderBgmEntry; } }
         public IObservable<Tuple<IEnumerable<string>, short>> WhenNewRequestToReorderBgmEntries { get; private set; }
 
         public ReadOnlyObservableCollection<BgmDbRootEntryViewModel> Items { get { return _items; } }
@@ -61,7 +62,7 @@ namespace Sma5hMusic.GUI.ViewModels
             //Initialize list
             _whenNewRequestToEditBgmEntry = new Subject<BgmDbRootEntryViewModel>();
             _whenNewRequestToDeleteBgmEntry = new Subject<BgmDbRootEntryViewModel>();
-            _whenNewRequestToReorderBgmEntry = new Subject<Tuple<string, short>>();
+            _whenNewRequestToReorderBgmEntry = new Subject<Tuple<IEnumerable<string>, short>>();
             _whenNewRequestToRenameToneId = new Subject<BgmDbRootEntryViewModel>();
             _whenNewRequestToMoveToOtherMod = new Subject<BgmDbRootEntryViewModel>();
 
@@ -117,21 +118,33 @@ namespace Sma5hMusic.GUI.ViewModels
             if (e.Column.DisplayIndex != 0)
                 return;
 
+            var source = e.Row as IControl;
+            while (!(source is DataGrid) && source != null)
+                source = source.Parent;
+            var dataGrid = source as DataGrid;
+
             var dragData = new DataObject();
-
-            if (e.Cell.DataContext is BgmDbRootEntryViewModel vmBgmEntry)
+            if (dataGrid.SelectedItems.Count > 0)
             {
-                dragData.Set(DATAOBJECT_FORMAT, vmBgmEntry);
-
-                if (!vmBgmEntry.HiddenInSoundTest)
+                var items = new List<BgmDbRootEntryViewModel>();
+                foreach (BgmDbRootEntryViewModel item in dataGrid.SelectedItems)
+                {
+                    if (!item.HiddenInSoundTest)
+                        items.Add(item);
+                }
+                if (items.Count > 0)
+                {
+                    dragData.Set(Constants.DragAndDropDataFormats.DATAOBJECT_FORMAT_BGM_CELL, dataGrid.SelectedItem);
+                    dragData.Set(Constants.DragAndDropDataFormats.DATAOBJECT_FORMAT_BGM, items);
                     await DragDrop.DoDragDrop(e.PointerPressedEventArgs, dragData, DragDropEffects.Move);
+                }
             }
         }
 
         public void DragOver(object sender, DragEventArgs e)
         {
             e.DragEffects &= DragDropEffects.Move;
-            if (!e.Data.Contains(DATAOBJECT_FORMAT))
+            if (!e.Data.Contains(Constants.DragAndDropDataFormats.DATAOBJECT_FORMAT_BGM))
                 e.DragEffects = DragDropEffects.None;
 
             if (((Control)e.Source).DataContext is BgmDbRootEntryViewModel destinationObj && destinationObj.HiddenInSoundTest)
@@ -149,14 +162,31 @@ namespace Sma5hMusic.GUI.ViewModels
                 return;
             var dataGrid = (DataGrid)source;
 
-            if (((Control)e.Source).DataContext is BgmDbRootEntryViewModel destinationObj
-                && e.Data.Get(DATAOBJECT_FORMAT) is BgmDbRootEntryViewModel sourceObj
-                && !destinationObj.HiddenInSoundTest
-                && sourceObj != destinationObj)
+            if (((Control)e.Source).DataContext is BgmDbRootEntryViewModel destinationObj)
             {
-                _whenNewRequestToReorderBgmEntry.OnNext(new Tuple<string, short>(sourceObj.UiBgmId, destinationObj.TestDispOrder));
-                _postReorderSelection = () => dataGrid.SelectedItem = sourceObj;
+                var selectedItems = e.Data.Get(Constants.DragAndDropDataFormats.DATAOBJECT_FORMAT_BGM) as List<BgmDbRootEntryViewModel>;
+                var selectedItem = e.Data.Get(Constants.DragAndDropDataFormats.DATAOBJECT_FORMAT_BGM_CELL) as BgmDbRootEntryViewModel;
+                if (selectedItems != null && selectedItem != null && !destinationObj.HiddenInSoundTest)
+                {
+                    if (selectedItem != destinationObj)
+                    {
+                        var position = destinationObj.TestDispOrder;
+                        if (selectedItem.TestDispOrder < position)
+                            position += (short)(selectedItems.Count - 1);
+                        if (position < 0)
+                            position = 0;
+
+                        _whenNewRequestToReorderBgmEntry.OnNext(new Tuple<IEnumerable<string>, short>(selectedItems.Select(p => p.UiBgmId), position));
+                        _postReorderSelection = () =>
+                        {
+                            dataGrid.SelectedItems.Clear();
+                            selectedItems.ForEach(o => dataGrid.SelectedItems.Add(o));
+                        };
+                    }
+                }
             }
+
+
         }
 
         public void FocusAfterMove()

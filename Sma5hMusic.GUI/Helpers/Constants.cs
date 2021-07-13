@@ -10,6 +10,12 @@ namespace Sma5hMusic.GUI.Helpers
         public const float MinimumGameVolume = -20.0f;
         public const float MaximumGameVolume = 20.0f;
 
+        public class DragAndDropDataFormats
+        {
+            public const string DATAOBJECT_FORMAT_BGM = "BGM";
+            public const string DATAOBJECT_FORMAT_BGM_CELL = "BGM_CELL";
+            public const string DATAOBJECT_FORMAT_TREEVIEW = "TREEVIEW";
+        }
         public class SpecialCategories
         {
             public const string SPECIAL_CATEGORY_PERSONA_STAGE_3_VALUE = "jack_mementoes_p3";

@@ -15,6 +15,7 @@ using ReactiveUI.Fody.Helpers;
 using System.Reactive.Subjects;
 using System.Collections.Generic;
 using Sma5hMusic.GUI.ViewModels.ReactiveObjects;
+using Sma5hMusic.GUI.Helpers;
 
 namespace Sma5hMusic.GUI.ViewModels
 {
@@ -23,7 +24,6 @@ namespace Sma5hMusic.GUI.ViewModels
         private ReadOnlyObservableCollection<BgmDbRootEntryViewModel> _items;
         private readonly Subject<Tuple<IEnumerable<string>, short>> _whenNewRequestToReorderBgmEntries;
         private readonly HashSet<string> _expandedCache;
-        private const string DATAOBJECT_FORMAT = "BGM";
 
         public IObservable<Tuple<IEnumerable<string>, short>> WhenNewRequestToReorderBgmEntries { get { return _whenNewRequestToReorderBgmEntries; } }
 
@@ -138,7 +138,7 @@ namespace Sma5hMusic.GUI.ViewModels
             if (dataSource != null && dataSource is OrderItemTreeViewModel)
             {
                 var dragData = new DataObject();
-                dragData.Set(DATAOBJECT_FORMAT, dataSource);
+                dragData.Set(Constants.DragAndDropDataFormats.DATAOBJECT_FORMAT_TREEVIEW, dataSource);
                 await DragDrop.DoDragDrop(e, dragData, DragDropEffects.Move);
             }
         }
@@ -146,7 +146,7 @@ namespace Sma5hMusic.GUI.ViewModels
         public void DragOver(object sender, DragEventArgs e)
         {
             e.DragEffects &= DragDropEffects.Move;
-            if (!e.Data.Contains(DATAOBJECT_FORMAT))
+            if (!e.Data.Contains(Constants.DragAndDropDataFormats.DATAOBJECT_FORMAT_TREEVIEW))
                 e.DragEffects = DragDropEffects.None;
         }
 
@@ -154,8 +154,7 @@ namespace Sma5hMusic.GUI.ViewModels
         {
             if (((Control)e.Source).DataContext is OrderItemTreeViewModel destinationObj)
             {
-                var dataObject = e.Data.Get(DATAOBJECT_FORMAT);
-                if (dataObject is OrderItemTreeViewModel sourceTreeObj && sourceTreeObj != destinationObj)
+                if (e.Data.Get(Constants.DragAndDropDataFormats.DATAOBJECT_FORMAT_TREEVIEW) is OrderItemTreeViewModel sourceTreeObj && sourceTreeObj != destinationObj)
                 {
                     short position;
                     if (sourceTreeObj.LowerTestDisp < destinationObj.LowerTestDisp)
@@ -165,15 +164,15 @@ namespace Sma5hMusic.GUI.ViewModels
 
                     _whenNewRequestToReorderBgmEntries.OnNext(new Tuple<IEnumerable<string>, short>(sourceTreeObj.BgmEntries.Select(p => p.UiBgmId), position));
                 }
-                else if (dataObject is BgmDbRootEntryViewModel sourceBgmObj)
+                else if (e.Data.Get(Constants.DragAndDropDataFormats.DATAOBJECT_FORMAT_BGM) is List<BgmDbRootEntryViewModel> sourceBgmObj && sourceBgmObj.Count > 0)
                 {
                     short position;
-                    if (sourceBgmObj.TestDispOrder < destinationObj.LowerTestDisp)
+                    if (sourceBgmObj[0].TestDispOrder < destinationObj.LowerTestDisp)
                         position = destinationObj.UpperTestDisp;
                     else
                         position = (short)(destinationObj.UpperTestDisp + 1);
 
-                    _whenNewRequestToReorderBgmEntries.OnNext(new Tuple<IEnumerable<string>, short>(new List<string>() { sourceBgmObj.UiBgmId }, position));
+                    _whenNewRequestToReorderBgmEntries.OnNext(new Tuple<IEnumerable<string>, short>(sourceBgmObj.Select(p => p.UiBgmId), position));
                 }
             }
         }
