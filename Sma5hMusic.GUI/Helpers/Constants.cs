@@ -13,7 +13,6 @@ namespace Sma5hMusic.GUI.Helpers
         public class DragAndDropDataFormats
         {
             public const string DATAOBJECT_FORMAT_BGM = "BGM";
-            public const string DATAOBJECT_FORMAT_BGM_CELL = "BGM_CELL";
             public const string DATAOBJECT_FORMAT_TREEVIEW = "TREEVIEW";
         }
         public class SpecialCategories

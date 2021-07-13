@@ -124,19 +124,28 @@ namespace Sma5hMusic.GUI.ViewModels
             var dataGrid = source as DataGrid;
 
             var dragData = new DataObject();
-            if (dataGrid.SelectedItems.Count > 0)
+            if (e.Cell.DataContext is BgmDbRootEntryViewModel sourceObj)
             {
-                var items = new List<BgmDbRootEntryViewModel>();
-                foreach (BgmDbRootEntryViewModel item in dataGrid.SelectedItems)
+                var syncCheck = dataGrid.SelectedItems.Contains(sourceObj);
+
+                if (dataGrid.SelectedItems.Count == 1 || !syncCheck)
                 {
-                    if (!item.HiddenInSoundTest)
-                        items.Add(item);
-                }
-                if (items.Count > 0)
-                {
-                    dragData.Set(Constants.DragAndDropDataFormats.DATAOBJECT_FORMAT_BGM_CELL, dataGrid.SelectedItem);
-                    dragData.Set(Constants.DragAndDropDataFormats.DATAOBJECT_FORMAT_BGM, items);
+                    dragData.Set(Constants.DragAndDropDataFormats.DATAOBJECT_FORMAT_BGM, new List<BgmDbRootEntryViewModel>() { sourceObj });
                     await DragDrop.DoDragDrop(e.PointerPressedEventArgs, dragData, DragDropEffects.Move);
+                }
+                else if (dataGrid.SelectedItems.Count > 1)
+                {
+                    var items = new List<BgmDbRootEntryViewModel>();
+                    foreach (BgmDbRootEntryViewModel item in dataGrid.SelectedItems)
+                    {
+                        if (!item.HiddenInSoundTest)
+                            items.Add(item);
+                    }
+                    if (items.Count > 0)
+                    {
+                        dragData.Set(Constants.DragAndDropDataFormats.DATAOBJECT_FORMAT_BGM, items);
+                        await DragDrop.DoDragDrop(e.PointerPressedEventArgs, dragData, DragDropEffects.Move);
+                    }
                 }
             }
         }
@@ -165,13 +174,12 @@ namespace Sma5hMusic.GUI.ViewModels
             if (((Control)e.Source).DataContext is BgmDbRootEntryViewModel destinationObj)
             {
                 var selectedItems = e.Data.Get(Constants.DragAndDropDataFormats.DATAOBJECT_FORMAT_BGM) as List<BgmDbRootEntryViewModel>;
-                var selectedItem = e.Data.Get(Constants.DragAndDropDataFormats.DATAOBJECT_FORMAT_BGM_CELL) as BgmDbRootEntryViewModel;
-                if (selectedItems != null && selectedItem != null && !destinationObj.HiddenInSoundTest)
+                if (selectedItems != null && selectedItems.Count > 0 && !destinationObj.HiddenInSoundTest)
                 {
-                    if (selectedItem != destinationObj)
+                    if (selectedItems[0] != destinationObj)
                     {
                         var position = destinationObj.TestDispOrder;
-                        if (selectedItem.TestDispOrder < position)
+                        if (selectedItems[0].TestDispOrder < position)
                             position += (short)(selectedItems.Count - 1);
                         if (position < 0)
                             position = 0;
