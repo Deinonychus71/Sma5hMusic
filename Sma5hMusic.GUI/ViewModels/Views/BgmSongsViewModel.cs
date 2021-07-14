@@ -1,5 +1,6 @@
 ﻿using Avalonia.Controls;
 using Avalonia.Input;
+using Avalonia.Interactivity;
 using DynamicData;
 using DynamicData.Binding;
 using Microsoft.Extensions.DependencyInjection;
@@ -31,6 +32,9 @@ namespace Sma5hMusic.GUI.ViewModels
         private Action _postReorderSelection;
 
         public ContextMenuViewModel VMContextMenu { get; }
+
+        [Reactive]
+        public string Debug { get; set; }
 
         public IObservable<BgmDbRootEntryViewModel> WhenNewRequestToEditBgmEntry { get { return _whenNewRequestToEditBgmEntry; } }
         public IObservable<BgmDbRootEntryViewModel> WhenNewRequestToDeleteBgmEntry { get { return _whenNewRequestToDeleteBgmEntry; } }
@@ -111,6 +115,12 @@ namespace Sma5hMusic.GUI.ViewModels
         {
             userControl.AddHandler(DragDrop.DropEvent, Drop);
             userControl.AddHandler(DragDrop.DragOverEvent, DragOver);
+            userControl.AddHandler(DragDrop.DragLeaveEvent, DragLeaveEvent, RoutingStrategies.Bubble);
+        }
+
+        public void DragLeaveEvent(object sender, RoutedEventArgs e)
+        {
+            RemoveDragDropBorder(e.Source);
         }
 
         public async Task ReorderBgm(DataGridCellPointerPressedEventArgs e)
@@ -152,6 +162,8 @@ namespace Sma5hMusic.GUI.ViewModels
 
         public void DragOver(object sender, DragEventArgs e)
         {
+            AddDragDropBorder(e.Source, e);
+
             e.DragEffects &= DragDropEffects.Move;
             if (!e.Data.Contains(Constants.DragAndDropDataFormats.DATAOBJECT_FORMAT_BGM))
                 e.DragEffects = DragDropEffects.None;
@@ -162,6 +174,8 @@ namespace Sma5hMusic.GUI.ViewModels
 
         public void Drop(object sender, DragEventArgs e)
         {
+            RemoveDragDropBorder(e.Source);
+
             var source = e.Source;
             while (!(source is DataGrid) && source != null)
             {
@@ -203,6 +217,39 @@ namespace Sma5hMusic.GUI.ViewModels
             {
                 _postReorderSelection();
                 _postReorderSelection = null;
+            }
+        }
+
+        private void RemoveDragDropBorder(IInteractive control)
+        {
+            var source = control;
+            while (!(source is DataGridRow) && source != null)
+            {
+                source = source.InteractiveParent;
+            }
+            if (source != null)
+            {
+                var dgRow = (DataGridRow)source;
+                dgRow.Classes.Remove("insertBelow");
+                dgRow.Classes.Remove("insertAbove");
+            }
+        }
+
+        private void AddDragDropBorder(IInteractive control, DragEventArgs e)
+        {
+            var source = control;
+            while (!(source is DataGridRow) && source != null)
+            {
+                source = source.InteractiveParent;
+            }
+            if (source != null)
+            {
+                var dgRow = (DataGridRow)source;
+                var point = e.GetPosition(dgRow);
+                if (point.Y <= 15)
+                    dgRow.Classes.ReplaceOrAdd("insertBelow", "insertAbove");
+                else
+                    dgRow.Classes.ReplaceOrAdd("insertAbove", "insertBelow");
             }
         }
         #endregion
