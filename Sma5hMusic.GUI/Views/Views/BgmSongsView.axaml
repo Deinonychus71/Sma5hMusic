@@ -126,6 +126,8 @@
       </DataGrid>
     </Grid>
     <GridSplitter Grid.Column="1" Grid.RowSpan="2" ResizeDirection="Columns"/>
-    <ContentControl Grid.Row="1" Grid.Column="2" Content="{Binding VMBgmProperties}"/>
+    <TextBlock Text="{Binding Debug}"></TextBlock>
+    <!--
+    <ContentControl Grid.Row="1" Grid.Column="2" Content="{Binding VMBgmProperties}"/>-->
   </Grid>
 </UserControl>
