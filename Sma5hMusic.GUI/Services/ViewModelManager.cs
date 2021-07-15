@@ -463,6 +463,7 @@ namespace Sma5hMusic.GUI.Services
             var maxAffected = newPosition;
 
             var listSelectedVmBgms = new List<BgmDbRootEntryViewModel>();
+            var orderValues = new List<short>();
             foreach (var vmBgmEntry in _vmDictBgmDbRootEntries.Values.Where(p => !p.HiddenInSoundTest && bgmEntriesToReorder.Contains(p.UiBgmId)).OrderBy(p => p.TestDispOrder))
             {
                 listSelectedVmBgms.Add(vmBgmEntry);
@@ -470,30 +471,40 @@ namespace Sma5hMusic.GUI.Services
                     minAffected = vmBgmEntry.TestDispOrder;
                 else if (vmBgmEntry.TestDispOrder > maxAffected)
                     maxAffected = vmBgmEntry.TestDispOrder;
+                orderValues.Add(vmBgmEntry.TestDispOrder);
             }
 
-            var listUnselectedButAffected = _vmDictBgmDbRootEntries.Values
+            var listUnselectedButAffected = new List<BgmDbRootEntryViewModel>();
+            foreach (var vmBgmEntry in _vmDictBgmDbRootEntries.Values
                 .Where(p => !p.HiddenInSoundTest && p.TestDispOrder >= minAffected && p.TestDispOrder <= maxAffected && !bgmEntriesToReorder.Contains(p.UiBgmId))
-                .OrderBy(p => p.TestDispOrder)
-                .ToList();
+                .OrderBy(p => p.TestDispOrder))
+            {
+                listUnselectedButAffected.Add(vmBgmEntry);
+                orderValues.Add(vmBgmEntry.TestDispOrder);
+            }
+
+            orderValues = orderValues.OrderBy(p => p).ToList();
 
             for (short i = minAffected; i <= maxAffected; i++)
             {
                 if (listUnselectedButAffected.Count > 0 && listUnselectedButAffected.First().TestDispOrder < newPosition)
                 {
-                    ReOrderVmBgmEntry(listUnselectedButAffected.First(), i);
+                    ReOrderVmBgmEntry(listUnselectedButAffected[0], orderValues[0]);
+                    orderValues.RemoveAt(0);
                     listUnselectedButAffected.RemoveAt(0);
                 }
                 else
                 {
                     if (listSelectedVmBgms.Count > 0)
                     {
-                        ReOrderVmBgmEntry(listSelectedVmBgms.First(), i);
+                        ReOrderVmBgmEntry(listSelectedVmBgms[0], orderValues[0]);
+                        orderValues.RemoveAt(0);
                         listSelectedVmBgms.RemoveAt(0);
                     }
                     else if (listUnselectedButAffected.Count > 0)
                     {
-                        ReOrderVmBgmEntry(listUnselectedButAffected.First(), i);
+                        ReOrderVmBgmEntry(listUnselectedButAffected[0], orderValues[0]);
+                        orderValues.RemoveAt(0);
                         listUnselectedButAffected.RemoveAt(0);
                     }
                 }

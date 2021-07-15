@@ -10,8 +10,11 @@
   <Grid ColumnDefinitions="3*,5,4*" RowDefinitions="30,*">
     <ContentControl Grid.Row="0" Grid.Column="0" Content="{Binding VMContextMenu}"></ContentControl>
     <Grid Grid.Row="1" Grid.Column="0" Classes="list">
-      <DataGrid Classes="bgmList" Items="{Binding Bgms, Mode=OneWay}">
+      <DataGrid Classes="bgmList" SelectionMode="Extended" Items="{Binding Bgms, Mode=OneWay}">
         <i:Interaction.Behaviors>
+          <ia:EventTriggerBehavior EventName="Initialized">
+            <ia:InvokeCommandAction Command="{Binding ActionInitializeDragAndDropBgm, Mode=OneWay}" CommandParameter="{Binding $self}"/>
+          </ia:EventTriggerBehavior>
           <ia:EventTriggerBehavior EventName="CellPointerPressed">
             <ia:InvokeCommandAction Command="{Binding ActionSendToPlaylist}"/>
           </ia:EventTriggerBehavior>
@@ -75,7 +78,7 @@
       <TextBlock HorizontalAlignment="Right" Padding="0,0,20,0" VerticalAlignment="Center" DockPanel.Dock="Right" Text="{Binding NbrBgmsPlaylist}"/>
     </DockPanel>
     <Grid Grid.Row="1" Grid.Column="2" Classes="list" Margin="0,0,20,0">
-      <DataGrid Background="Transparent" DragDrop.AllowDrop="True" Classes="bgmList" SelectedItem="{Binding SelectedPlaylistValueEntry, Mode=TwoWay}" Items="{Binding SelectedPlaylistOrderedEntry}">
+      <DataGrid Background="Transparent" SelectionMode="Extended" DragDrop.AllowDrop="True" Classes="bgmList" SelectedItem="{Binding SelectedPlaylistValueEntry, Mode=TwoWay}" Items="{Binding SelectedPlaylistOrderedEntry}">
         <i:Interaction.Behaviors>
           <ia:EventTriggerBehavior EventName="CellPointerPressed">
             <ia:InvokeCommandAction Command="{Binding ActionReorderPlaylist}"/>

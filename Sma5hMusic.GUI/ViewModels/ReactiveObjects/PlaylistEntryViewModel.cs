@@ -84,6 +84,7 @@ namespace Sma5hMusic.GUI.ViewModels
             var maxAffected = newPosition;
 
             var listSelectedVmPlaylistTracks = new List<PlaylistEntryValueViewModel>();
+            var orderValues = new List<short>();
             foreach (var vmPlaylistTrack in Tracks[orderId].Where(p => !p.Hidden && vmPlaylistTracksToReorder.Contains(p)).OrderBy(p => p.Order))
             {
                 listSelectedVmPlaylistTracks.Add(vmPlaylistTrack);
@@ -91,46 +92,65 @@ namespace Sma5hMusic.GUI.ViewModels
                     minAffected = vmPlaylistTrack.Order;
                 else if (vmPlaylistTrack.Order > maxAffected)
                     maxAffected = vmPlaylistTrack.Order;
+                orderValues.Add(vmPlaylistTrack.Order);
             }
 
-            var listUnselectedButAffected = Tracks[orderId]
+            var listUnselectedButAffected = new List<PlaylistEntryValueViewModel>();
+            foreach (var vmPlaylistTrack in Tracks[orderId]
                 .Where(p => !p.Hidden && p.Order >= minAffected && p.Order <= maxAffected && !vmPlaylistTracksToReorder.Contains(p))
-                .OrderBy(p => p.Order)
-                .ToList();
+                .OrderBy(p => p.Order))
+            {
+                listUnselectedButAffected.Add(vmPlaylistTrack);
+                orderValues.Add(vmPlaylistTrack.Order);
+            }
+
+            orderValues = orderValues.OrderBy(p => p).ToList();
 
             for (short i = minAffected; i <= maxAffected; i++)
             {
                 if (listUnselectedButAffected.Count > 0 && listUnselectedButAffected.First().Order < newPosition)
                 {
-                    listUnselectedButAffected.First().Order = i;
+                    listUnselectedButAffected[0].Order = orderValues[0];
+                    orderValues.RemoveAt(0);
                     listUnselectedButAffected.RemoveAt(0);
                 }
                 else
                 {
                     if (listSelectedVmPlaylistTracks.Count > 0)
                     {
-                        listUnselectedButAffected.First().Order = i;
+                        listSelectedVmPlaylistTracks[0].Order = orderValues[0];
+                        orderValues.RemoveAt(0);
                         listSelectedVmPlaylistTracks.RemoveAt(0);
                     }
                     else if (listUnselectedButAffected.Count > 0)
                     {
-                        listUnselectedButAffected.First().Order = i;
+                        listUnselectedButAffected[0].Order = orderValues[0];
+                        orderValues.RemoveAt(0);
                         listUnselectedButAffected.RemoveAt(0);
                     }
                 }
             }
         }
 
-        public PlaylistEntryValueViewModel AddSong(BgmDbRootEntryViewModel sourceObj, short orderId, short destinationIndex, ushort incidence)
+        public List<PlaylistEntryValueViewModel> AddSongs(List<BgmDbRootEntryViewModel> sourceObjs, short orderId, short destinationIndex, ushort incidence)
         {
-            PlaylistEntryValueViewModel output = null;
+            var output = new List<PlaylistEntryValueViewModel>();
 
             for (short i = 0; i < 16; i++)
             {
-                var newValue = new PlaylistEntryValueViewModel(this, sourceObj.UiBgmId, destinationIndex, incidence, sourceObj);
-                Tracks[i].Add(newValue);
-                if (i == orderId)
-                    output = newValue;
+                var tracks = Tracks[i].Where(p => !p.Hidden).OrderBy(p => p.Order).ToList();
+                foreach (var track in tracks.Where(p => p.Order >= destinationIndex))
+                    track.Order += (short)sourceObjs.Count;
+
+                short k = destinationIndex;
+                foreach (var sourceObj in sourceObjs)
+                {
+                    var newValue = new PlaylistEntryValueViewModel(this, sourceObj.UiBgmId, k, incidence, sourceObj);
+                    Tracks[i].Add(newValue);
+                    if (i == orderId)
+                        output.Add(newValue);
+                    k++;
+                }
                 ReorderSongs(i);
             }
 
@@ -173,6 +193,7 @@ namespace Sma5hMusic.GUI.ViewModels
                 var refValue = Tracks[i].FirstOrDefault(p => p.UiBgmId == bgmId);
                 if (refValue != null)
                     Tracks[i].Remove(refValue);
+                ReorderSongs(i);
             }
             _cachedTracks = false;
             _cachedModTracks = false;

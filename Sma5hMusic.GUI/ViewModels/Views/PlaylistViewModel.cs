@@ -39,15 +39,17 @@ namespace Sma5hMusic.GUI.ViewModels
         private readonly Subject<Unit> _whenNewRequestToEditPlaylist;
         private readonly Subject<Unit> _whenNewRequestToDeletePlaylist;
         private readonly Subject<Unit> _whenNewRequestToAssignPlaylistToStage;
+        private readonly Subject<Unit> _whenUIUpdateWaitForFocus;
         private readonly List<ComboItem> _orderMenu;
         private ushort _incidenceCopy = ushort.MaxValue;
         private Action _postReorderSelection;
         private DataGrid _refGrid;
+        private DataGrid _refBgmGrid;
 
         public IEnumerable<ComboItem> OrderMenu { get { return _orderMenu; } }
         public ContextMenuViewModel VMContextMenu { get; }
         [Reactive]
-        public bool CopyValueExists{ get; private set; }
+        public bool CopyValueExists { get; private set; }
 
         public IObservable<PlaylistEntryViewModel> WhenPlaylistSelected { get { return _whenPlaylistSelected; } }
         public IObservable<ComboItem> WhenPlaylistOrderSelected { get { return _whenPlaylistOrderSelected; } }
@@ -74,6 +76,7 @@ namespace Sma5hMusic.GUI.ViewModels
         public ReactiveCommand<DataGridCellPointerPressedEventArgs, Unit> ActionReorderPlaylist { get; }
         public ReactiveCommand<DataGridCellPointerPressedEventArgs, Unit> ActionSendToPlaylist { get; }
         public ReactiveCommand<DataGrid, Unit> ActionInitializeDragAndDrop { get; }
+        public ReactiveCommand<DataGrid, Unit> ActionInitializeDragAndDropBgm { get; }
         public ReactiveCommand<PlaylistEntryViewModel, Unit> ActionSelectPlaylist { get; }
         public ReactiveCommand<PlaylistEntryValueViewModel, Unit> ActionDeletePlaylistItem { get; }
         public ReactiveCommand<PlaylistEntryValueViewModel, Unit> ActionHidePlaylistItem { get; }
@@ -87,7 +90,7 @@ namespace Sma5hMusic.GUI.ViewModels
         public ReactiveCommand<PlaylistEntryValueViewModel, Unit> ActionPasteIncidence { get; }
         public ReactiveCommand<PlaylistEntryValueViewModel, Unit> ActionPasteIncidenceAll { get; }
 
-        public PlaylistViewModel(IOptions<ApplicationSettings> config, IDialogWindow rootDialog, IMessageDialog messageDialog, IViewModelManager viewModelManager, 
+        public PlaylistViewModel(IOptions<ApplicationSettings> config, IDialogWindow rootDialog, IMessageDialog messageDialog, IViewModelManager viewModelManager,
             IObservable<IChangeSet<BgmDbRootEntryViewModel, string>> observableBgmEntries, ContextMenuViewModel vmContextMenu)
         {
             _config = config;
@@ -101,6 +104,7 @@ namespace Sma5hMusic.GUI.ViewModels
             _whenNewRequestToEditPlaylist = new Subject<Unit>();
             _whenNewRequestToDeletePlaylist = new Subject<Unit>();
             _whenNewRequestToAssignPlaylistToStage = new Subject<Unit>();
+            _whenUIUpdateWaitForFocus = new Subject<Unit>();
             var observablePlaylistEntries = viewModelManager.ObservablePlaylistsEntries.Connect();
 
             //Bgms
@@ -138,23 +142,33 @@ namespace Sma5hMusic.GUI.ViewModels
                 .DisposeMany()
                 .Subscribe((o) =>
                 {
-                    FocusAfterMove();
-                    NbrBgmsPlaylist = $"{SelectedPlaylistEntry.Tracks.Count} songs ({SelectedPlaylistEntry.AllModTracks.Count} mods)";
+                    _whenUIUpdateWaitForFocus.OnNext(Unit.Default);
+                    NbrBgmsPlaylist = $"{SelectedPlaylistEntry.Tracks.First().Value.Count} songs ({SelectedPlaylistEntry.AllModTracks.Count} mods)";
                 });
-            baseObs
-                .AutoRefresh(p => p.Incidence)
-                .Throttle(TimeSpan.FromSeconds(1))
-                .Subscribe((o) => _whenNewRequestToUpdatePlaylistsInternal.OnNext(Unit.Default));
 
             //Throttle changes
+            baseObs
+               .AutoRefresh(p => p.Incidence)
+               .Throttle(TimeSpan.FromSeconds(1))
+               .Subscribe((o) => _whenNewRequestToUpdatePlaylistsInternal.OnNext(Unit.Default));
             this.WhenAnyObservable(p => p.WhenNewRequestToUpdatePlaylistsInternal)
                 .Throttle(TimeSpan.FromSeconds(2))
-                .Subscribe((o) => { 
-                    _whenNewRequestToUpdatePlaylists.OnNext(Unit.Default); });
+                .Subscribe((o) =>
+                {
+                    _whenNewRequestToUpdatePlaylists.OnNext(Unit.Default);
+                });
+            this.WhenAnyObservable(p => p._whenUIUpdateWaitForFocus)
+                .Throttle(TimeSpan.FromMilliseconds(50))
+                .ObserveOn(RxApp.MainThreadScheduler)
+                .Subscribe((o) =>
+                {
+                    FocusAfterMove();
+                });
 
             ActionReorderPlaylist = ReactiveCommand.CreateFromTask<DataGridCellPointerPressedEventArgs>(ReorderPlaylist);
             ActionSendToPlaylist = ReactiveCommand.CreateFromTask<DataGridCellPointerPressedEventArgs>(SendToPlaylist);
             ActionInitializeDragAndDrop = ReactiveCommand.Create<DataGrid>(InitializeDragAndDropHandlers);
+            ActionInitializeDragAndDropBgm = ReactiveCommand.Create<DataGrid>(InitializeDragAndDropBgmHandlers);
             ActionSelectPlaylist = ReactiveCommand.Create<PlaylistEntryViewModel>(SelectPlaylistId);
             ActionSelectPlaylistOrder = ReactiveCommand.Create<ComboItem>(SelectPlaylistOrder);
             ActionDeletePlaylistItem = ReactiveCommand.CreateFromTask<PlaylistEntryValueViewModel>(RemoveItem);
@@ -179,6 +193,11 @@ namespace Sma5hMusic.GUI.ViewModels
             _refGrid = grid;
             grid.AddHandler(DragDrop.DropEvent, Drop);
             grid.AddHandler(DragDrop.DragOverEvent, DragOver);
+            grid.AddHandler(DataGrid.KeyDownEvent, RemoveItems);
+        }
+        public void InitializeDragAndDropBgmHandlers(DataGrid grid)
+        {
+            _refBgmGrid = grid;
         }
 
         public async Task ReorderPlaylist(DataGridCellPointerPressedEventArgs e)
@@ -186,25 +205,69 @@ namespace Sma5hMusic.GUI.ViewModels
             if (e.Column.DisplayIndex != 0)
                 return;
 
-            var dragData = new DataObject();
-
-            if (e.Cell.DataContext is PlaylistEntryValueViewModel vmPlaylistValue)
+            var dataGrid = VisualTreeHelper.GetControl<DataGrid>(e.Row);
+            if (e.Cell.DataContext is PlaylistEntryValueViewModel sourceObj)
             {
-                dragData.Set(Constants.DragAndDropDataFormats.DATAOBJECT_FORMAT_PLAYLIST, vmPlaylistValue);
-                AddDragDropBordersStyle(e.Row);
-                await DragDrop.DoDragDrop(e.PointerPressedEventArgs, dragData, DragDropEffects.Move);
-                RemoveDragDropBordersStyle(e.Row);
+                var dragData = new DataObject();
+                var syncCheck = dataGrid.SelectedItems.Contains(sourceObj);
+
+                if (dataGrid.SelectedItems.Count == 1 || !syncCheck)
+                {
+                    dragData.Set(Constants.DragAndDropDataFormats.DATAOBJECT_FORMAT_PLAYLIST, new List<PlaylistEntryValueViewModel>() { sourceObj });
+                    AddDragDropBordersStyle(e.Row);
+                    await DragDrop.DoDragDrop(e.PointerPressedEventArgs, dragData, DragDropEffects.Move);
+                    RemoveDragDropBordersStyle(e.Row);
+                }
+                else if (dataGrid.SelectedItems.Count > 1)
+                {
+                    var items = new List<PlaylistEntryValueViewModel>();
+                    foreach (PlaylistEntryValueViewModel item in dataGrid.SelectedItems)
+                    {
+                        if (!item.Hidden)
+                            items.Add(item);
+                    }
+                    if (items.Count > 0)
+                    {
+                        dragData.Set(Constants.DragAndDropDataFormats.DATAOBJECT_FORMAT_PLAYLIST, items);
+                        AddDragDropBordersStyle(e.Row);
+                        await DragDrop.DoDragDrop(e.PointerPressedEventArgs, dragData, DragDropEffects.Move);
+                        RemoveDragDropBordersStyle(e.Row);
+                    }
+                }
             }
         }
 
         public async Task SendToPlaylist(DataGridCellPointerPressedEventArgs e)
         {
-            var dragData = new DataObject();
-
+            var dataGrid = VisualTreeHelper.GetControl<DataGrid>(e.Row);
             if (e.Cell.DataContext is BgmDbRootEntryViewModel vmBgmEntry)
             {
-                dragData.Set(Constants.DragAndDropDataFormats.DATAOBJECT_FORMAT_BGM, vmBgmEntry);
-                await DragDrop.DoDragDrop(e.PointerPressedEventArgs, dragData, DragDropEffects.Move);
+                var dragData = new DataObject();
+                var syncCheck = dataGrid.SelectedItems.Contains(vmBgmEntry);
+
+                if (dataGrid.SelectedItems.Count == 1 || !syncCheck)
+                {
+                    dragData.Set(Constants.DragAndDropDataFormats.DATAOBJECT_FORMAT_BGM, new List<BgmDbRootEntryViewModel>() { vmBgmEntry });
+                    AddDragDropBordersStyle(_refGrid);
+                    await DragDrop.DoDragDrop(e.PointerPressedEventArgs, dragData, DragDropEffects.Move);
+                    RemoveDragDropBordersStyle(_refGrid);
+                }
+                else if (dataGrid.SelectedItems.Count > 1)
+                {
+                    var items = new List<BgmDbRootEntryViewModel>();
+                    foreach (BgmDbRootEntryViewModel item in dataGrid.SelectedItems)
+                    {
+                        if (!item.HiddenInSoundTest)
+                            items.Add(item);
+                    }
+                    if (items.Count > 0)
+                    {
+                        dragData.Set(Constants.DragAndDropDataFormats.DATAOBJECT_FORMAT_BGM, items);
+                        AddDragDropBordersStyle(_refGrid);
+                        await DragDrop.DoDragDrop(e.PointerPressedEventArgs, dragData, DragDropEffects.Move);
+                        RemoveDragDropBordersStyle(_refGrid);
+                    }
+                }
             }
         }
 
@@ -221,30 +284,33 @@ namespace Sma5hMusic.GUI.ViewModels
 
             var dataGrid = VisualTreeHelper.GetControl<DataGrid>(e.Source);
             var dataGridRow = VisualTreeHelper.GetControl<DataGridRow>(e.Source);
-            if (dataGrid == null || dataGridRow == null)
+            if (dataGrid == null)
                 return;
 
-            var destinationObj = ((Control)e.Source).DataContext as PlaylistEntryValueViewModel;
-            if (destinationObj != null)
+            if (dataGridRow != null)
             {
-                var position = destinationObj.Order;
-                var point = e.GetPosition(dataGridRow);
-                if (point.Y >= dataGridRow.Bounds.Height / 2)
-                    position += 1;
+                var destinationObj = ((Control)e.Source).DataContext as PlaylistEntryValueViewModel;
+                if (destinationObj != null)
+                {
+                    var position = destinationObj.Order;
+                    var point = e.GetPosition(dataGridRow);
+                    if (point.Y >= dataGridRow.Bounds.Height / 2)
+                        position += 1;
 
-                if (e.Data.Get(Constants.DragAndDropDataFormats.DATAOBJECT_FORMAT_PLAYLIST) is PlaylistEntryValueViewModel sourcePlaylistObj)
-                {
-                    ReorderPlaylist(sourcePlaylistObj, destinationObj, position);
-                }
-                else
-                {
-                    if (SelectedPlaylistEntry != null && e.Data.Get(Constants.DragAndDropDataFormats.DATAOBJECT_FORMAT_BGM) is BgmDbRootEntryViewModel sourceBgmObj)
+                    if (e.Data.Get(Constants.DragAndDropDataFormats.DATAOBJECT_FORMAT_PLAYLIST) is List<PlaylistEntryValueViewModel> sourcePlaylistObjs && sourcePlaylistObjs.Count > 0)
                     {
-                        AddToPlaylist(sourceBgmObj, destinationObj, _config.Value.Sma5hMusicGUI.PlaylistIncidenceDefault);
+                        ReorderPlaylist(sourcePlaylistObjs, destinationObj, dataGrid, position);
+                    }
+                    else if (SelectedPlaylistEntry != null && e.Data.Get(Constants.DragAndDropDataFormats.DATAOBJECT_FORMAT_BGM) is List<BgmDbRootEntryViewModel> sourceBgmObjs)
+                    {
+                        AddToPlaylist(sourceBgmObjs, dataGrid, position, _config.Value.Sma5hMusicGUI.PlaylistIncidenceDefault);
                     }
                 }
             }
-            
+            else if (SelectedPlaylistEntry != null && e.Data.Get(Constants.DragAndDropDataFormats.DATAOBJECT_FORMAT_BGM) is List<BgmDbRootEntryViewModel> sourceBgmObjs)
+            {
+                AddToPlaylist(sourceBgmObjs, dataGrid, 9999, _config.Value.Sma5hMusicGUI.PlaylistIncidenceDefault);
+            }
         }
         #endregion
 
@@ -269,32 +335,55 @@ namespace Sma5hMusic.GUI.ViewModels
             _whenNewRequestToDeletePlaylist.OnNext(Unit.Default);
         }
 
-        public void AddToPlaylist(BgmDbRootEntryViewModel sourceObj, PlaylistEntryValueViewModel destinationObj, ushort incidence)
+        public void AddToPlaylist(List<BgmDbRootEntryViewModel> sourceObjs, DataGrid playlistDatagrid, short order, ushort incidence)
         {
-            var order = destinationObj != null ? (short)(destinationObj.Order) : (short)999;
-            var newEntry = SelectedPlaylistEntry.AddSong(sourceObj, SelectedPlaylistOrder, order, incidence);
-            _postReorderSelection = () => _refGrid.SelectedItem = newEntry;
+            var newEntries = SelectedPlaylistEntry.AddSongs(sourceObjs, SelectedPlaylistOrder, order, incidence);
+            _postReorderSelection = () =>
+            {
+                _refBgmGrid.SelectedItems.Clear();
+                playlistDatagrid.SelectedItems.Clear();
+                newEntries.ForEach(o => playlistDatagrid.SelectedItems.Add(o));
+            };
             SelectedPlaylistEntry.ReorderSongs(SelectedPlaylistOrder);
             _whenNewRequestToUpdatePlaylistsInternal.OnNext(Unit.Default);
-
-            _postReorderSelection = null;
         }
 
-        public void ReorderPlaylist(PlaylistEntryValueViewModel sourceObj, PlaylistEntryValueViewModel destinationObj, short newPosition)
+        public void ReorderPlaylist(List<PlaylistEntryValueViewModel> sourceObjs, PlaylistEntryValueViewModel destinationObj, DataGrid datagrid, short newPosition)
         {
-            if (sourceObj != destinationObj)
+            if (sourceObjs.Count > 0 && sourceObjs[0] != destinationObj)
             {
+                foreach (var sourceObj in sourceObjs)
+                {
+                    //if (sourceObj.Hidden)
+                    //    order++;
+                    sourceObj.Hidden = false;
+                }
+                if (newPosition < 0)
+                    newPosition = 0;
 
-                _postReorderSelection = () => _refGrid.SelectedItem = sourceObj;
-                //var order = destinationObj.Order;
-                //if (sourceObj.Hidden)
-                //    order++;
-                sourceObj.Hidden = false;
-                sourceObj.Parent.ReorderSongs(SelectedPlaylistOrder, new List<PlaylistEntryValueViewModel>() { sourceObj }, newPosition);
-
+                _postReorderSelection = () =>
+                {
+                    datagrid.SelectedItems.Clear();
+                    sourceObjs.ForEach(o => datagrid.SelectedItems.Add(o));
+                };
+                sourceObjs[0].Parent.ReorderSongs(SelectedPlaylistOrder, new List<PlaylistEntryValueViewModel>() { sourceObjs }, newPosition);
                 _whenNewRequestToUpdatePlaylistsInternal.OnNext(Unit.Default);
+            }
+        }
 
-                _postReorderSelection = null;
+        public async void RemoveItems(object sender, KeyEventArgs e)
+        {
+            if(e.Key == Key.Delete && _refGrid.SelectedItems.Count > 0)
+            {
+                if (await _messageDialog.ShowWarningConfirm($"Delete '{_refGrid.SelectedItems.Count}' tracks?", "Do you really want to remove the selected songs from the playlist? Deleting the song in the playlist does not remove it from the game."))
+                {
+                    var items = new List<PlaylistEntryValueViewModel>();
+                    foreach (PlaylistEntryValueViewModel item in _refGrid.SelectedItems)
+                        items.Add(item);
+                    foreach (PlaylistEntryValueViewModel item in items)
+                        item.Parent.RemoveSong(item.UiBgmId);
+                    _whenNewRequestToUpdatePlaylistsInternal.OnNext(Unit.Default);
+                }
             }
         }
 
@@ -321,6 +410,7 @@ namespace Sma5hMusic.GUI.ViewModels
         {
             if (_postReorderSelection != null)
                 _postReorderSelection();
+            _postReorderSelection = null;
         }
         #endregion
 
@@ -399,6 +489,11 @@ namespace Sma5hMusic.GUI.ViewModels
 
         public void Dispose()
         {
+            if (_whenUIUpdateWaitForFocus != null)
+            {
+                _whenUIUpdateWaitForFocus?.OnCompleted();
+                _whenUIUpdateWaitForFocus?.Dispose();
+            }
             if (_whenNewRequestToUpdatePlaylists != null)
             {
                 _whenNewRequestToUpdatePlaylists?.OnCompleted();
