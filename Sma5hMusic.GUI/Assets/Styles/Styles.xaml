@@ -127,7 +127,6 @@
                      VerticalAlignment="Stretch"
                      Width="1"
                      Fill="{DynamicResource DataGridFillerColumnGridLinesBrush}" />
-
         </Grid>
       </ControlTemplate>
     </Setter>
@@ -136,71 +135,67 @@
     <Setter Property="Focusable" Value="False" />
     <Setter Property="Template">
       <ControlTemplate>
-        <Border Classes="topRow">
-          <Border Classes="topBottom">
-            <DataGridFrozenGrid Name="PART_Root"
+        <Grid RowDefinitions="*,*">
+          <DataGridFrozenGrid Grid.RowSpan="2" Name="PART_Root"
                                 RowDefinitions="*,Auto,Auto"
                                 ColumnDefinitions="Auto,*">
+            <Rectangle Name="BackgroundRectangle"
+                       Grid.RowSpan="2"
+                       Grid.ColumnSpan="2" />
+            <Rectangle x:Name="InvalidVisualElement"
+                       Grid.ColumnSpan="2"
+                       Fill="{DynamicResource DataGridRowInvalidBrush}" />
 
-              <Rectangle Name="BackgroundRectangle"
-                         Grid.RowSpan="2"
-                         Grid.ColumnSpan="2" />
-              <Rectangle x:Name="InvalidVisualElement"
-                         Grid.ColumnSpan="2"
-                         Fill="{DynamicResource DataGridRowInvalidBrush}" />
-
-              <DataGridRowHeader Name="PART_RowHeader"
-                                 Grid.RowSpan="3"
-                                 DataGridFrozenGrid.IsFrozen="True" />
-              <DataGridCellsPresenter Name="PART_CellsPresenter"
+            <DataGridRowHeader Name="PART_RowHeader"
+                               Grid.RowSpan="3"
+                               DataGridFrozenGrid.IsFrozen="True" />
+            <DataGridCellsPresenter Name="PART_CellsPresenter"
+                                    Grid.Column="1"
+                                    DataGridFrozenGrid.IsFrozen="True" />
+            <DataGridDetailsPresenter Name="PART_DetailsPresenter"
+                                      Grid.Row="1"
                                       Grid.Column="1"
-                                      DataGridFrozenGrid.IsFrozen="True" />
-              <DataGridDetailsPresenter Name="PART_DetailsPresenter"
-                                        Grid.Row="1"
-                                        Grid.Column="1"
-                                        Background="{DynamicResource DataGridDetailsPresenterBackgroundBrush}" />
-              <Rectangle Name="PART_BottomGridLine"
-                         Grid.Row="2"
-                         Grid.Column="1"
-                         HorizontalAlignment="Stretch"
-                         Height="1" />
-
-            </DataGridFrozenGrid>
-          </Border>
-        </Border>
+                                      Background="{DynamicResource DataGridDetailsPresenterBackgroundBrush}" />
+            <Rectangle Name="PART_BottomGridLine"
+                       Grid.Row="2"
+                       Grid.Column="1"
+                       HorizontalAlignment="Stretch"
+                       Height="1" />
+          </DataGridFrozenGrid>
+          <Border Grid.Row="0" Classes="topRow" />
+          <Border Grid.Row="1" Classes="topBottom"/>
+        </Grid>
       </ControlTemplate>
     </Setter>
   </Style>
   <Style Selector="DataGrid.bgmList">
     <Setter Property="SelectionMode" Value="Single"/>
     <Setter Property="ColumnHeaderHeight" Value="40"/>
-    <!--<Setter Property="CanUserReorderColumns" Value="True"/>-->
     <Setter Property="CanUserSortColumns" Value="False"/>
     <Setter Property="CanUserResizeColumns" Value="True"/>
-    <!--<Setter Property="CanUserSortColumns" Value="True"/>-->
     <Setter Property="IsReadOnly" Value="True"/>
   </Style>
-  <Style Selector="DataGrid.bgmList DataGridRow Border.topRow">
+  <Style Selector="DataGrid.isDragging DataGridRow Border.topRow">
     <Setter Property="BorderThickness" Value="0,1,0,0"/>
+    <Setter Property="IsVisible" Value="True"/>
+    <Setter Property="Background" Value="Transparent"/>
   </Style>
-  <Style Selector="DataGrid.bgmList DataGridRow Border.topBottom">
+  <Style Selector="DataGrid.isDragging DataGridRow Border.topBottom">
     <Setter Property="BorderThickness" Value="0,0,0,1"/>
+    <Setter Property="IsVisible" Value="True"/>
+    <Setter Property="Background" Value="Transparent"/>
   </Style>
-  <Style Selector="DataGrid.bgmList DataGridRow.insertAbove:pointerover Border.topRow">
+  <Style Selector="DataGrid.isDragging DataGridRow Border.topRow:pointerover">
     <Setter Property="BorderThickness" Value="0,1,0,0"/>
     <Setter Property="BorderBrush" Value="Magenta"/>
+    <Setter Property="IsVisible" Value="True"/>
+    <Setter Property="Background" Value="Transparent"/>
   </Style>
-  <Style Selector="DataGrid.bgmList DataGridRow.insertAbove:pointerover Border.topBottom">
-    <Setter Property="BorderThickness" Value="0,0,0,1"/>
-  </Style>
-
-  <Style Selector="DataGrid.bgmList DataGridRow.insertBelow:pointerover Border.topRow">
-    <Setter Property="BorderThickness" Value="0,1,0,0"/>
-  </Style>
-
-  <Style Selector="DataGrid.bgmList DataGridRow.insertBelow:pointerover Border.topBottom">
+  <Style Selector="DataGrid.isDragging DataGridRow Border.topBottom:pointerover">
     <Setter Property="BorderThickness" Value="0,0,0,1"/>
     <Setter Property="BorderBrush" Value="Magenta"/>
+    <Setter Property="IsVisible" Value="True"/>
+    <Setter Property="Background" Value="Transparent"/>
   </Style>
   <!-- END DATAGRID -->
 

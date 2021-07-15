@@ -115,12 +115,6 @@ namespace Sma5hMusic.GUI.ViewModels
         {
             userControl.AddHandler(DragDrop.DropEvent, Drop);
             userControl.AddHandler(DragDrop.DragOverEvent, DragOver);
-            userControl.AddHandler(DragDrop.DragLeaveEvent, DragLeaveEvent, RoutingStrategies.Bubble);
-        }
-
-        public void DragLeaveEvent(object sender, RoutedEventArgs e)
-        {
-            RemoveDragDropBorder(e.Source);
         }
 
         public async Task ReorderBgm(DataGridCellPointerPressedEventArgs e)
@@ -141,6 +135,7 @@ namespace Sma5hMusic.GUI.ViewModels
                 if (dataGrid.SelectedItems.Count == 1 || !syncCheck)
                 {
                     dragData.Set(Constants.DragAndDropDataFormats.DATAOBJECT_FORMAT_BGM, new List<BgmDbRootEntryViewModel>() { sourceObj });
+                    AddDragDropBordersStyle(e.Row);
                     await DragDrop.DoDragDrop(e.PointerPressedEventArgs, dragData, DragDropEffects.Move);
                 }
                 else if (dataGrid.SelectedItems.Count > 1)
@@ -154,6 +149,7 @@ namespace Sma5hMusic.GUI.ViewModels
                     if (items.Count > 0)
                     {
                         dragData.Set(Constants.DragAndDropDataFormats.DATAOBJECT_FORMAT_BGM, items);
+                        AddDragDropBordersStyle(e.Row);
                         await DragDrop.DoDragDrop(e.PointerPressedEventArgs, dragData, DragDropEffects.Move);
                     }
                 }
@@ -162,7 +158,7 @@ namespace Sma5hMusic.GUI.ViewModels
 
         public void DragOver(object sender, DragEventArgs e)
         {
-            AddDragDropBorder(e.Source, e);
+            AddDragDropBordersStyle(e.Source);
 
             e.DragEffects &= DragDropEffects.Move;
             if (!e.Data.Contains(Constants.DragAndDropDataFormats.DATAOBJECT_FORMAT_BGM))
@@ -174,7 +170,7 @@ namespace Sma5hMusic.GUI.ViewModels
 
         public void Drop(object sender, DragEventArgs e)
         {
-            RemoveDragDropBorder(e.Source);
+            RemoveDragDropBordersStyle(e.Source);
 
             var source = e.Source;
             while (!(source is DataGrid) && source != null)
@@ -220,36 +216,31 @@ namespace Sma5hMusic.GUI.ViewModels
             }
         }
 
-        private void RemoveDragDropBorder(IInteractive control)
+        private void RemoveDragDropBordersStyle(IInteractive control)
         {
             var source = control;
-            while (!(source is DataGridRow) && source != null)
+            while (!(source is DataGrid) && source != null)
             {
                 source = source.InteractiveParent;
             }
             if (source != null)
             {
-                var dgRow = (DataGridRow)source;
-                dgRow.Classes.Remove("insertBelow");
-                dgRow.Classes.Remove("insertAbove");
+                var dg = (DataGrid)source;
+                dg.Classes.Remove("isDragging");
             }
         }
 
-        private void AddDragDropBorder(IInteractive control, DragEventArgs e)
+        private void AddDragDropBordersStyle(IInteractive control)
         {
             var source = control;
-            while (!(source is DataGridRow) && source != null)
+            while (!(source is DataGrid) && source != null)
             {
                 source = source.InteractiveParent;
             }
             if (source != null)
             {
-                var dgRow = (DataGridRow)source;
-                var point = e.GetPosition(dgRow);
-                if (point.Y <= 15)
-                    dgRow.Classes.ReplaceOrAdd("insertBelow", "insertAbove");
-                else
-                    dgRow.Classes.ReplaceOrAdd("insertAbove", "insertBelow");
+                var dg = (DataGrid)source;
+                dg.Classes.Add("isDragging");
             }
         }
         #endregion
