@@ -1,5 +1,6 @@
 ﻿using Avalonia.Controls;
 using Avalonia.Input;
+using Avalonia.Interactivity;
 using DynamicData;
 using DynamicData.Binding;
 using Microsoft.Extensions.DependencyInjection;
@@ -7,6 +8,7 @@ using Microsoft.Extensions.Options;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using Sma5h.Mods.Music;
+using Sma5hMusic.GUI.Helpers;
 using Sma5hMusic.GUI.Interfaces;
 using Sma5hMusic.GUI.Models;
 using Sma5hMusic.GUI.Views;
@@ -37,8 +39,6 @@ namespace Sma5hMusic.GUI.ViewModels
         private readonly Subject<Unit> _whenNewRequestToEditPlaylist;
         private readonly Subject<Unit> _whenNewRequestToDeletePlaylist;
         private readonly Subject<Unit> _whenNewRequestToAssignPlaylistToStage;
-        private const string DATAOBJECT_FORMAT_BGM = "BGM";
-        private const string DATAOBJECT_FORMAT_PLAYLIST = "PLAYLIST";
         private readonly List<ComboItem> _orderMenu;
         private ushort _incidenceCopy = ushort.MaxValue;
         private Action _postReorderSelection;
@@ -190,8 +190,10 @@ namespace Sma5hMusic.GUI.ViewModels
 
             if (e.Cell.DataContext is PlaylistEntryValueViewModel vmPlaylistValue)
             {
-                dragData.Set(DATAOBJECT_FORMAT_PLAYLIST, vmPlaylistValue);
+                dragData.Set(Constants.DragAndDropDataFormats.DATAOBJECT_FORMAT_PLAYLIST, vmPlaylistValue);
+                AddDragDropBordersStyle(e.Row);
                 await DragDrop.DoDragDrop(e.PointerPressedEventArgs, dragData, DragDropEffects.Move);
+                RemoveDragDropBordersStyle(e.Row);
             }
         }
 
@@ -201,7 +203,7 @@ namespace Sma5hMusic.GUI.ViewModels
 
             if (e.Cell.DataContext is BgmDbRootEntryViewModel vmBgmEntry)
             {
-                dragData.Set(DATAOBJECT_FORMAT_BGM, vmBgmEntry);
+                dragData.Set(Constants.DragAndDropDataFormats.DATAOBJECT_FORMAT_BGM, vmBgmEntry);
                 await DragDrop.DoDragDrop(e.PointerPressedEventArgs, dragData, DragDropEffects.Move);
             }
         }
@@ -209,24 +211,40 @@ namespace Sma5hMusic.GUI.ViewModels
         public void DragOver(object sender, DragEventArgs e)
         {
             e.DragEffects &= DragDropEffects.Move;
-            if (SelectedPlaylistEntry == null || !e.Data.Contains(DATAOBJECT_FORMAT_BGM) && !e.Data.Contains(DATAOBJECT_FORMAT_PLAYLIST))
+            if (SelectedPlaylistEntry == null || !e.Data.Contains(Constants.DragAndDropDataFormats.DATAOBJECT_FORMAT_BGM) && !e.Data.Contains(Constants.DragAndDropDataFormats.DATAOBJECT_FORMAT_PLAYLIST))
                 e.DragEffects = DragDropEffects.None;
         }
 
         public void Drop(object sender, DragEventArgs e)
         {
+            RemoveDragDropBordersStyle(e.Source);
+
+            var dataGrid = VisualTreeHelper.GetControl<DataGrid>(e.Source);
+            var dataGridRow = VisualTreeHelper.GetControl<DataGridRow>(e.Source);
+            if (dataGrid == null || dataGridRow == null)
+                return;
+
             var destinationObj = ((Control)e.Source).DataContext as PlaylistEntryValueViewModel;
             if (destinationObj != null)
             {
-                if (e.Data.Get(DATAOBJECT_FORMAT_PLAYLIST) is PlaylistEntryValueViewModel sourcePlaylistObj)
+                var position = destinationObj.Order;
+                var point = e.GetPosition(dataGridRow);
+                if (point.Y >= dataGridRow.Bounds.Height / 2)
+                    position += 1;
+
+                if (e.Data.Get(Constants.DragAndDropDataFormats.DATAOBJECT_FORMAT_PLAYLIST) is PlaylistEntryValueViewModel sourcePlaylistObj)
                 {
-                    ReorderPlaylist(sourcePlaylistObj, destinationObj);
+                    ReorderPlaylist(sourcePlaylistObj, destinationObj, position);
+                }
+                else
+                {
+                    if (SelectedPlaylistEntry != null && e.Data.Get(Constants.DragAndDropDataFormats.DATAOBJECT_FORMAT_BGM) is BgmDbRootEntryViewModel sourceBgmObj)
+                    {
+                        AddToPlaylist(sourceBgmObj, destinationObj, _config.Value.Sma5hMusicGUI.PlaylistIncidenceDefault);
+                    }
                 }
             }
-            if (SelectedPlaylistEntry != null && e.Data.Get(DATAOBJECT_FORMAT_BGM) is BgmDbRootEntryViewModel sourceBgmObj)
-            {
-                AddToPlaylist(sourceBgmObj, destinationObj, _config.Value.Sma5hMusicGUI.PlaylistIncidenceDefault);
-            }
+            
         }
         #endregion
 
@@ -262,18 +280,22 @@ namespace Sma5hMusic.GUI.ViewModels
             _postReorderSelection = null;
         }
 
-        public void ReorderPlaylist(PlaylistEntryValueViewModel sourceObj, PlaylistEntryValueViewModel destinationObj)
+        public void ReorderPlaylist(PlaylistEntryValueViewModel sourceObj, PlaylistEntryValueViewModel destinationObj, short newPosition)
         {
-            _postReorderSelection = () => _refGrid.SelectedItem = sourceObj;
-            var order = destinationObj.Order;
-            if (sourceObj.Hidden)
-                order++;
-            sourceObj.Hidden = false;
-            sourceObj.Parent.ReorderSongs(SelectedPlaylistOrder, sourceObj, order);
-            
-            _whenNewRequestToUpdatePlaylistsInternal.OnNext(Unit.Default);
+            if (sourceObj != destinationObj)
+            {
 
-            _postReorderSelection = null;
+                _postReorderSelection = () => _refGrid.SelectedItem = sourceObj;
+                //var order = destinationObj.Order;
+                //if (sourceObj.Hidden)
+                //    order++;
+                sourceObj.Hidden = false;
+                sourceObj.Parent.ReorderSongs(SelectedPlaylistOrder, new List<PlaylistEntryValueViewModel>() { sourceObj }, newPosition);
+
+                _whenNewRequestToUpdatePlaylistsInternal.OnNext(Unit.Default);
+
+                _postReorderSelection = null;
+            }
         }
 
         public async Task RemoveItem(PlaylistEntryValueViewModel sourceObj)
@@ -321,6 +343,20 @@ namespace Sma5hMusic.GUI.ViewModels
             for (int i = 0; i < 16; i++)
                 output.Add(new ComboItem(i.ToString(), $"Order {i}"));
             return output;
+        }
+
+        private void RemoveDragDropBordersStyle(IInteractive control)
+        {
+            var dataGrid = VisualTreeHelper.GetControl<DataGrid>(control);
+            if (dataGrid != null)
+                dataGrid.Classes.Remove("isDragging");
+        }
+
+        private void AddDragDropBordersStyle(IInteractive control)
+        {
+            var dataGrid = VisualTreeHelper.GetControl<DataGrid>(control);
+            if (dataGrid != null)
+                dataGrid.Classes.Add("isDragging");
         }
         #endregion
 

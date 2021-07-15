@@ -11,7 +11,6 @@ namespace Sma5hMusic.GUI.Interfaces
     {
         void Init();
         void ReorderSongs();
-        void ReorderSongs(string bgmEntryToReorder, short newPosition);
         void ReorderSongs(IEnumerable<string> bgmEntriesToReorder, short newPosition);
 
         IObservableCache<ModEntryViewModel, string> ObservableModsEntries { get; }

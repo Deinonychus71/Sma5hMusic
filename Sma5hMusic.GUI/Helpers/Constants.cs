@@ -14,6 +14,7 @@ namespace Sma5hMusic.GUI.Helpers
         {
             public const string DATAOBJECT_FORMAT_BGM = "BGM";
             public const string DATAOBJECT_FORMAT_TREEVIEW = "TREEVIEW";
+            public const string DATAOBJECT_FORMAT_PLAYLIST = "PLAYLIST";
         }
         public class SpecialCategories
         {

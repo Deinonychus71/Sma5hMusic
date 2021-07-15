@@ -1176,32 +1176,6 @@ namespace Sma5hMusic.GUI.Services
             return result;
         }
 
-        public async Task<bool> ReorderSongs(string bgmEntryToReorder, short newPosition)
-        {
-            bool result;
-
-            try
-            {
-                _viewModelManager.ReorderSongs(bgmEntryToReorder, newPosition);
-                result = _sma5hMusicOverride.UpdateSoundTestOrderConfig(_viewModelManager.GetBgmDbRootEntriesViewModels().ToDictionary(p => p.UiBgmId, p => p.TestDispOrder));
-            }
-            catch (Exception e)
-            {
-                _logger.LogError(e, "Error while updating music mod entries");
-                result = false;
-            }
-
-            if (!result)
-            {
-                await Dispatcher.UIThread.InvokeAsync(async () =>
-                {
-                    await _messageDialog.ShowError("Update Tracks order", "There was an error while persisting some modifications. Please check the logs.");
-                }, DispatcherPriority.Background);
-            }
-
-            return result;
-        }
-
         public async Task<bool> ReorderSongs(IEnumerable<string> bgmEntriesToReorder, short newPosition)
         {
             bool result;

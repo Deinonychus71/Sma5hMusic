@@ -457,44 +457,12 @@ namespace Sma5hMusic.GUI.Services
             }
         }
 
-        public void ReorderSongs(string bgmEntryToReorder, short newPosition)
-        {
-            bool done = false;
-            short i = 0;
-            var listVmBgms = _vmDictBgmDbRootEntries.Values.Where(p => !p.HiddenInSoundTest && p.UiBgmId != bgmEntryToReorder).OrderBy(p => p.TestDispOrder);
-            var vmBgmEntryToReorder = GetBgmDbRootViewModel(bgmEntryToReorder);
-
-            if(newPosition == -1)
-            {
-                ReOrderVmBgmEntry(vmBgmEntryToReorder, i);
-                i++;
-                done = true;
-            }
-
-            foreach (var vmBgmEntry in listVmBgms)
-            {
-                if(!done && i == newPosition)
-                {
-                    ReOrderVmBgmEntry(vmBgmEntryToReorder, i);
-                    i++;
-                    done = true;
-                }
-                ReOrderVmBgmEntry(vmBgmEntry, i);
-                i++;
-            }
-
-            if (!done)
-                ReOrderVmBgmEntry(vmBgmEntryToReorder, i);
-        }
-
         public void ReorderSongs(IEnumerable<string> bgmEntriesToReorder, short newPosition)
         {
-
             var minAffected = newPosition;
             var maxAffected = newPosition;
 
             var listSelectedVmBgms = new List<BgmDbRootEntryViewModel>();
-
             foreach (var vmBgmEntry in _vmDictBgmDbRootEntries.Values.Where(p => !p.HiddenInSoundTest && bgmEntriesToReorder.Contains(p.UiBgmId)).OrderBy(p => p.TestDispOrder))
             {
                 listSelectedVmBgms.Add(vmBgmEntry);
@@ -504,13 +472,10 @@ namespace Sma5hMusic.GUI.Services
                     maxAffected = vmBgmEntry.TestDispOrder;
             }
 
-            //MaxAffected at this point seems to be too high by (# of selected songs - 1)
-
-            var listUnselectedButAffected = new List<BgmDbRootEntryViewModel>();
-            foreach (var vmBgmEntry in _vmDictBgmDbRootEntries.Values.Where(p => !p.HiddenInSoundTest && p.TestDispOrder >= minAffected && p.TestDispOrder <= maxAffected && !bgmEntriesToReorder.Contains(p.UiBgmId)).OrderBy(p => p.TestDispOrder))
-            {
-                listUnselectedButAffected.Add(vmBgmEntry);
-            }
+            var listUnselectedButAffected = _vmDictBgmDbRootEntries.Values
+                .Where(p => !p.HiddenInSoundTest && p.TestDispOrder >= minAffected && p.TestDispOrder <= maxAffected && !bgmEntriesToReorder.Contains(p.UiBgmId))
+                .OrderBy(p => p.TestDispOrder)
+                .ToList();
 
             for (short i = minAffected; i <= maxAffected; i++)
             {
@@ -532,71 +497,7 @@ namespace Sma5hMusic.GUI.Services
                         listUnselectedButAffected.RemoveAt(0);
                     }
                 }
-
-        
             }
-
-            
-
-
-            /*if (bgmEntriesToReorder == null || bgmEntriesToReorder.Count() == 0)
-                return;
-
-            bool done = false;
-            short i = 0;
-            var listVmBgms = new List<BgmDbRootEntryViewModel>();
-            var listVmBgmsToReorder = new List<BgmDbRootEntryViewModel>();
-            foreach(var vmBgmEntry in _vmDictBgmDbRootEntries.Values.Where(p => !p.HiddenInSoundTest).OrderBy(p => p.TestDispOrder))
-            {
-                if (bgmEntriesToReorder.Contains(vmBgmEntry.UiBgmId))
-                    listVmBgmsToReorder.Add(vmBgmEntry);
-                else
-                    listVmBgms.Add(vmBgmEntry);
-            }
-
-            if (listVmBgmsToReorder.Count == 0)
-                return;
-
-            if (listVmBgmsToReorder.Last().TestDispOrder < newPosition)
-            {
-                newPosition -= (short)(listVmBgmsToReorder.Count - 1);
-                if (newPosition < 0)
-                    newPosition = 0;
-            }
-
-            if (newPosition == -1)
-            {
-                foreach (var vmBgmToReorder in listVmBgmsToReorder)
-                {
-                    ReOrderVmBgmEntry(vmBgmToReorder, i);
-                    i++;
-                }
-                done = true;
-            }
-
-            foreach (var vmBgmEntry in listVmBgms)
-            {
-                if (!done && i == newPosition)
-                {
-                    foreach (var vmBgmToReorder in listVmBgmsToReorder)
-                    {
-                        ReOrderVmBgmEntry(vmBgmToReorder, i);
-                        i++;
-                    }
-                    done = true;
-                }
-                ReOrderVmBgmEntry(vmBgmEntry, i);
-                i++;
-            }
-
-            if (!done)
-            {
-                foreach (var vmBgmToReorder in listVmBgmsToReorder)
-                {
-                    ReOrderVmBgmEntry(vmBgmToReorder, i);
-                    i++;
-                }
-            }*/
         }
 
         private void ReOrderVmBgmEntry(BgmDbRootEntryViewModel vmBgmEntry, short position)
