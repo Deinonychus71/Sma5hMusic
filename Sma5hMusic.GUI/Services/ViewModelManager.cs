@@ -489,7 +489,57 @@ namespace Sma5hMusic.GUI.Services
 
         public void ReorderSongs(IEnumerable<string> bgmEntriesToReorder, short newPosition)
         {
-            if (bgmEntriesToReorder == null || bgmEntriesToReorder.Count() == 0)
+
+            var minAffected = newPosition;
+            var maxAffected = newPosition;
+
+            var listSelectedVmBgms = new List<BgmDbRootEntryViewModel>();
+
+            foreach (var vmBgmEntry in _vmDictBgmDbRootEntries.Values.Where(p => !p.HiddenInSoundTest && bgmEntriesToReorder.Contains(p.UiBgmId)).OrderBy(p => p.TestDispOrder))
+            {
+                listSelectedVmBgms.Add(vmBgmEntry);
+                if (vmBgmEntry.TestDispOrder < minAffected)
+                    minAffected = vmBgmEntry.TestDispOrder;
+                else if (vmBgmEntry.TestDispOrder > maxAffected)
+                    maxAffected = vmBgmEntry.TestDispOrder;
+            }
+
+            //MaxAffected at this point seems to be too high by (# of selected songs - 1)
+
+            var listUnselectedButAffected = new List<BgmDbRootEntryViewModel>();
+            foreach (var vmBgmEntry in _vmDictBgmDbRootEntries.Values.Where(p => !p.HiddenInSoundTest && p.TestDispOrder >= minAffected && p.TestDispOrder <= maxAffected && !bgmEntriesToReorder.Contains(p.UiBgmId)).OrderBy(p => p.TestDispOrder))
+            {
+                listUnselectedButAffected.Add(vmBgmEntry);
+            }
+
+            for (short i = minAffected; i <= maxAffected; i++)
+            {
+                if (listUnselectedButAffected.Count > 0 && listUnselectedButAffected.First().TestDispOrder < newPosition)
+                {
+                    ReOrderVmBgmEntry(listUnselectedButAffected.First(), i);
+                    listUnselectedButAffected.RemoveAt(0);
+                }
+                else
+                {
+                    if (listSelectedVmBgms.Count > 0)
+                    {
+                        ReOrderVmBgmEntry(listSelectedVmBgms.First(), i);
+                        listSelectedVmBgms.RemoveAt(0);
+                    }
+                    else if (listUnselectedButAffected.Count > 0)
+                    {
+                        ReOrderVmBgmEntry(listUnselectedButAffected.First(), i);
+                        listUnselectedButAffected.RemoveAt(0);
+                    }
+                }
+
+        
+            }
+
+            
+
+
+            /*if (bgmEntriesToReorder == null || bgmEntriesToReorder.Count() == 0)
                 return;
 
             bool done = false;
@@ -546,7 +596,7 @@ namespace Sma5hMusic.GUI.Services
                     ReOrderVmBgmEntry(vmBgmToReorder, i);
                     i++;
                 }
-            }
+            }*/
         }
 
         private void ReOrderVmBgmEntry(BgmDbRootEntryViewModel vmBgmEntry, short position)
