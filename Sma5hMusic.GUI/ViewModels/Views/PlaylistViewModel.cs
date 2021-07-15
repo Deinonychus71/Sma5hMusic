@@ -206,7 +206,7 @@ namespace Sma5hMusic.GUI.ViewModels
                 return;
 
             var dataGrid = VisualTreeHelper.GetControl<DataGrid>(e.Row);
-            if (e.Cell.DataContext is PlaylistEntryValueViewModel sourceObj)
+            if (e.Cell.DataContext is PlaylistEntryValueViewModel sourceObj && !sourceObj.Hidden)
             {
                 var dragData = new DataObject();
                 var syncCheck = dataGrid.SelectedItems.Contains(sourceObj);
@@ -223,8 +223,9 @@ namespace Sma5hMusic.GUI.ViewModels
                     var items = new List<PlaylistEntryValueViewModel>();
                     foreach (PlaylistEntryValueViewModel item in dataGrid.SelectedItems)
                     {
-                        if (!item.Hidden)
-                            items.Add(item);
+                        if (item.Hidden)
+                            return;
+                        items.Add(item);
                     }
                     if (items.Count > 0)
                     {
@@ -337,6 +338,8 @@ namespace Sma5hMusic.GUI.ViewModels
 
         public void AddToPlaylist(List<BgmDbRootEntryViewModel> sourceObjs, DataGrid playlistDatagrid, short order, ushort incidence)
         {
+            if (order < 0)
+                order = 0;
             var newEntries = SelectedPlaylistEntry.AddSongs(sourceObjs, SelectedPlaylistOrder, order, incidence);
             _postReorderSelection = () =>
             {
@@ -352,12 +355,6 @@ namespace Sma5hMusic.GUI.ViewModels
         {
             if (sourceObjs.Count > 0 && sourceObjs[0] != destinationObj)
             {
-                foreach (var sourceObj in sourceObjs)
-                {
-                    //if (sourceObj.Hidden)
-                    //    order++;
-                    sourceObj.Hidden = false;
-                }
                 if (newPosition < 0)
                     newPosition = 0;
 
@@ -398,13 +395,19 @@ namespace Sma5hMusic.GUI.ViewModels
 
         public void HideItem(PlaylistEntryValueViewModel sourceObj)
         {
-            sourceObj.Hidden = true;
-            sourceObj.Order = -1;
-            sourceObj.Parent.ReorderSongs(SelectedPlaylistOrder);
+            if (!sourceObj.Hidden)
+            {
+                sourceObj.Hidden = true;
+                sourceObj.Order = -1;
+                sourceObj.Parent.ReorderSongs(SelectedPlaylistOrder);
+            }
+            else
+            {
+                sourceObj.Hidden = false;
+                sourceObj.Parent.ReorderAndUnhideSong(SelectedPlaylistOrder, sourceObj);
+            }
             _whenNewRequestToUpdatePlaylistsInternal.OnNext(Unit.Default);
         }
-
-
 
         public void FocusAfterMove()
         {

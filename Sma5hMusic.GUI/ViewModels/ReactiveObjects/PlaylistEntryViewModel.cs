@@ -78,6 +78,18 @@ namespace Sma5hMusic.GUI.ViewModels
             }
         }
 
+        public void ReorderAndUnhideSong(short orderId, PlaylistEntryValueViewModel vmPlaylistTracksToReorder)
+        {
+            short i = 1;
+            var listPlaylistTracks = Tracks[orderId].Where(p => !p.Hidden).OrderBy(p => p.Order);
+            foreach (var track in listPlaylistTracks)
+            {
+                track.Order = i;
+                i++;
+            }
+            vmPlaylistTracksToReorder.Order = 0;
+        }
+
         public void ReorderSongs(short orderId, IEnumerable<PlaylistEntryValueViewModel> vmPlaylistTracksToReorder, short newPosition)
         {
             var minAffected = newPosition;

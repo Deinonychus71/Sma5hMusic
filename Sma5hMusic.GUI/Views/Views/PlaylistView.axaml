@@ -149,7 +149,7 @@
             <DataGridTemplateColumn.CellTemplate>
               <DataTemplate>
                 <StackPanel Orientation="Horizontal">
-                  <Button IsEnabled="{Binding !Hidden}" Width="40" FontFamily="Segoe UI Symbol" HorizontalContentAlignment="Center" Content="&#x1F441;" Command="{Binding $parent[DataGrid].DataContext.ActionHidePlaylistItem, Mode=OneWay}" CommandParameter="{Binding}"/>
+                  <Button Width="40" FontFamily="Segoe UI Symbol" HorizontalContentAlignment="Center" Content="&#x1F441;" Command="{Binding $parent[DataGrid].DataContext.ActionHidePlaylistItem, Mode=OneWay}" CommandParameter="{Binding}"/>
                   <Button Width="40" FontFamily="Segoe UI Symbol" HorizontalContentAlignment="Center" Content="&#x274C;" Command="{Binding $parent[DataGrid].DataContext.ActionDeletePlaylistItem, Mode=OneWay}" CommandParameter="{Binding}"/>
                 </StackPanel>
               </DataTemplate>
