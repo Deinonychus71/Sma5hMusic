@@ -121,13 +121,14 @@ namespace Sma5hMusic.GUI.ViewModels
             if (e.Column.DisplayIndex != 0)
                 return;
 
-            var dataGrid = VisualTreeHelper.GetControl<DataGrid>(e.Row);
+            var dataGrid = VisualTreeHelper.GetControlParent<DataGrid>(e.Row);
             if (e.Cell.DataContext is BgmDbRootEntryViewModel sourceObj)
             {
                 var dragData = new DataObject();
                 var syncCheck = dataGrid.SelectedItems.Contains(sourceObj);
 
-                if (dataGrid.SelectedItems.Count == 1 || !syncCheck)
+                var leftClick = VisualTreeHelper.IsLeftButtonClicked(dataGrid, e.PointerPressedEventArgs);
+                if (dataGrid.SelectedItems.Count == 1 || !syncCheck || leftClick)
                 {
                     dragData.Set(Constants.DragAndDropDataFormats.DATAOBJECT_FORMAT_BGM, new List<BgmDbRootEntryViewModel>() { sourceObj });
                     VisualTreeHelper.AddClassStyle<DataGrid>(dataGrid, VisualTreeHelper.STYLES_CLASS_IS_DRAGGING);
@@ -169,9 +170,9 @@ namespace Sma5hMusic.GUI.ViewModels
 
         public void Drop(object sender, DragEventArgs e)
         {
-            var dataGrid = VisualTreeHelper.GetControl<DataGrid>(e.Source);
+            var dataGrid = VisualTreeHelper.GetControlParent<DataGrid>(e.Source);
             VisualTreeHelper.RemoveClassStyle<DataGrid>(dataGrid, VisualTreeHelper.STYLES_CLASS_IS_DRAGGING);
-            var dataGridRow = VisualTreeHelper.GetControl<DataGridRow>(e.Source);
+            var dataGridRow = VisualTreeHelper.GetControlParent<DataGridRow>(e.Source);
             if (dataGrid == null || dataGridRow == null)
                 return;
 

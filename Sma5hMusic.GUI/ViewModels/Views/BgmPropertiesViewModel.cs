@@ -160,7 +160,7 @@ namespace Sma5hMusic.GUI.ViewModels
 
             if (((Control)e.Source).DataContext is OrderItemTreeViewModel destinationObj)
             {
-                var treeViewItem = VisualTreeHelper.GetControl<TreeViewItem>(e.Source);
+                var treeViewItem = VisualTreeHelper.GetControlParent<TreeViewItem>(e.Source);
                 var point = e.GetPosition(treeViewItem);
                 var position = destinationObj.LowerTestDisp;
                 if (point.Y >= treeViewItem.Bounds.Height / 2)
