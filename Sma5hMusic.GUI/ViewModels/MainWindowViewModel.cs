@@ -104,8 +104,8 @@ namespace Sma5hMusic.GUI.ViewModels
             _appSettings = appSettings;
             IsLoading = true;
 
-            _logger.LogInformation($"GUI v{Constants.GUIVersion} | Game v{_guiStateManager.GameVersion}");
-            Title = $"Sma5hMusic - GUI v{Constants.GUIVersion}";
+            _logger.LogInformation($"GUI v{Constants.GUIVersion}{(!Constants.IsStable ? "b" : "")} | Game v{_guiStateManager.GameVersion}");
+            Title = $"Sma5hMusic - GUI v{Constants.GUIVersion}{(!Constants.IsStable ? "b" : "")}";
 
             //Set values
             IsAdvanced = appSettings.Value.Sma5hMusicGUI.Advanced;
@@ -273,7 +273,7 @@ namespace Sma5hMusic.GUI.ViewModels
                         await _messageDialog.ShowInformation("Game version not found", $"The version of your game could not be identified. It might be that you are using a version that is unsupported or that your game files are customized.");
                     }, DispatcherPriority.Background);
                 }
-                Title = $"Sma5hMusic - GUI v{Constants.GUIVersion} | Game v{_guiStateManager.GameVersion}";
+                Title = $"Sma5hMusic - GUI v{Constants.GUIVersion}{(!Constants.IsStable ? "b" : "")} | Game v{_guiStateManager.GameVersion}";
 
                 IsLoading = false;
             }, (o) =>
@@ -286,7 +286,7 @@ namespace Sma5hMusic.GUI.ViewModels
         public async Task OnThanksOpen()
         {
             await _messageDialog.ShowInformation("About",
-                $"Sma5hMusic - GUI v{Constants.GUIVersion} by deinonychus71\r\n" +
+                $"Sma5hMusic - GUI v{Constants.GUIVersion}{(!Constants.IsStable ? "b" : "")} by deinonychus71\r\n" +
                 $"Mod Sma5hMusic - v{MusicConstants.VersionSma5hMusic} by deinonychus71\r\n" +
                 $"Mod Sma5hMusicOverride - v{MusicConstants.VersionSma5hMusicOverride} by deinonychus71\r\n" +
                 $"Game - v{_guiStateManager.GameVersion}\r\n" +
