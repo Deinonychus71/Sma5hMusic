@@ -50,6 +50,9 @@ namespace Sma5hMusic.GUI.ViewModels
 
             //Bind observables
             viewModelManager.ObservableStagesEntries.Connect()
+               .Sort(SortExpressionComparer<StageEntryViewModel>.Ascending(p => p.Hidden)
+               .ThenByAscending(p => p.TitleHidden).ThenByAscending(p => p.DispOrder), SortOptimisations.ComparesImmutableValuesOnly, 8000)
+               .TreatMovesAsRemoveAdd()
                .ObserveOn(RxApp.MainThreadScheduler)
                .Bind(out _stages)
                .DisposeMany()

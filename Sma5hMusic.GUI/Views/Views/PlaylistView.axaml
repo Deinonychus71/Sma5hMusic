@@ -49,20 +49,11 @@
     <GridSplitter Grid.Row="1" Grid.Column="1" ResizeDirection="Columns"/>
     <DockPanel Grid.Row="0" Grid.Column="2">
       <Menu DockPanel.Dock="Left">
-        <MenuItem Header="{Binding WhenPlaylistSelected^.Title, FallbackValue='Select a playlist...'}" Items="{Binding Playlists}">
+        <MenuItem Header="{Binding WhenStageSelected^.Title, FallbackValue='Select a stage...'}" Items="{Binding Stages}">
           <MenuItem.Styles>
             <Style Selector="MenuItem > MenuItem">
               <Setter Property="Header" Value="{Binding Title}"/>
-              <Setter Property="Command" Value="{Binding $parent[Grid].DataContext.ActionSelectPlaylist}"/>
-              <Setter Property="CommandParameter" Value="{Binding .}"/>
-            </Style>
-          </MenuItem.Styles>
-        </MenuItem>
-        <MenuItem Header="{Binding WhenPlaylistOrderSelected^.Label, FallbackValue='Select an order...'}" Items="{Binding OrderMenu}">
-          <MenuItem.Styles>
-            <Style Selector="MenuItem > MenuItem">
-              <Setter Property="Header" Value="{Binding Label}"/>
-              <Setter Property="Command" Value="{Binding $parent[Grid].DataContext.ActionSelectPlaylistOrder}"/>
+              <Setter Property="Command" Value="{Binding $parent[Grid].DataContext.ActionSelectStage}"/>
               <Setter Property="CommandParameter" Value="{Binding .}"/>
             </Style>
           </MenuItem.Styles>
@@ -71,6 +62,27 @@
           <MenuItem Header="Create new playlist" Command="{Binding ActionCreatePlaylist}"/>
           <MenuItem Header="Edit playlist" Command="{Binding ActionEditPlaylist}"/>
           <MenuItem Header="Delete playlist" Command="{Binding ActionDeletePlaylist}"/>
+          <Separator/>
+          <MenuItem Header="Pick playlist (advanced)">
+            <MenuItem Header="{Binding WhenPlaylistSelected^.Title, FallbackValue='Select a playlist...'}" Items="{Binding Playlists}">
+              <MenuItem.Styles>
+                <Style Selector="MenuItem > MenuItem">
+                  <Setter Property="Header" Value="{Binding Title}"/>
+                  <Setter Property="Command" Value="{Binding $parent[Grid].DataContext.ActionSelectPlaylist}"/>
+                  <Setter Property="CommandParameter" Value="{Binding .}"/>
+                </Style>
+              </MenuItem.Styles>
+            </MenuItem>
+            <MenuItem Header="{Binding WhenPlaylistOrderSelected^.Label, FallbackValue='Select an order...'}" Items="{Binding OrderMenu}">
+              <MenuItem.Styles>
+                <Style Selector="MenuItem > MenuItem">
+                  <Setter Property="Header" Value="{Binding Label}"/>
+                  <Setter Property="Command" Value="{Binding $parent[Grid].DataContext.ActionSelectPlaylistOrder}"/>
+                  <Setter Property="CommandParameter" Value="{Binding .}"/>
+                </Style>
+              </MenuItem.Styles>
+            </MenuItem>
+          </MenuItem>
           <Separator/>
           <MenuItem Header="Assign a Stage to playlist" Command="{Binding ActionAssignPlaylistToStage}"/>
         </MenuItem>

@@ -89,6 +89,7 @@ namespace Sma5hMusic.GUI.Mods.Music.Models.AutoMapper
                 .ForMember(i => i.IsPatch, me => me.Ignore())
                 .ForMember(i => i.DlcCharaId, me => me.Ignore());
             CreateMap<StageEntry, GUI.ViewModels.StageEntryViewModel>()
+                .ForMember(i => i.DispOrder, me => me.MapFrom(p => p.DispOrder))
                 .ForMember(i => i.OrderId, me => me.MapFrom(p => p.BgmSettingNo))
                 .ForMember(i => i.BgmSelector, me => me.MapFrom(p => p.BgmSelector))
                 .ForMember(i => i.PlaylistId, me => me.MapFrom(p => p.BgmSetId));

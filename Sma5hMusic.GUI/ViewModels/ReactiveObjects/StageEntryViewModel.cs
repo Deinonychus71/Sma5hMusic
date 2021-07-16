@@ -13,6 +13,8 @@ namespace Sma5hMusic.GUI.ViewModels
 
         public string Title { get { return Constants.GetStageDisplayName(UiStageId); } }
 
+        public string TitleHidden { get { var name = Title; return name.StartsWith("(H)") ? name : ""; } }
+
         [Reactive]
         public string PlaylistId { get; set; }
 
@@ -22,6 +24,11 @@ namespace Sma5hMusic.GUI.ViewModels
         [Reactive]
         public bool BgmSelector { get; set; }
 
+        [Reactive]
+        public sbyte DispOrder { get; set; }
+
+        public bool Hidden { get { return DispOrder == -1 || Title.StartsWith("(H)"); } }
+
         public StageEntryViewModel() { }
 
         public StageEntryViewModel(StageEntry stageEntry)
@@ -30,6 +37,7 @@ namespace Sma5hMusic.GUI.ViewModels
             PlaylistId = _refStageEntry.BgmSetId;
             OrderId = _refStageEntry.BgmSettingNo;
             BgmSelector = _refStageEntry.BgmSelector;
+            DispOrder = _refStageEntry.DispOrder;
         }
 
         public StageEntry GetStageEntryReference()
