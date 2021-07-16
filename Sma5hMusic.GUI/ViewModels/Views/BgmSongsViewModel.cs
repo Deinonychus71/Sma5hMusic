@@ -1,6 +1,5 @@
 ﻿using Avalonia.Controls;
 using Avalonia.Input;
-using Avalonia.Interactivity;
 using DynamicData;
 using DynamicData.Binding;
 using Microsoft.Extensions.DependencyInjection;
@@ -131,9 +130,11 @@ namespace Sma5hMusic.GUI.ViewModels
                 if (dataGrid.SelectedItems.Count == 1 || !syncCheck)
                 {
                     dragData.Set(Constants.DragAndDropDataFormats.DATAOBJECT_FORMAT_BGM, new List<BgmDbRootEntryViewModel>() { sourceObj });
-                    AddDragDropBordersStyle(e.Row);
+                    VisualTreeHelper.AddClassStyle<DataGrid>(dataGrid, VisualTreeHelper.STYLES_CLASS_IS_DRAGGING);
+                    VMBgmProperties.AddTreeDragDrop();
                     await DragDrop.DoDragDrop(e.PointerPressedEventArgs, dragData, DragDropEffects.Move);
-                    RemoveDragDropBordersStyle(e.Row);
+                    VisualTreeHelper.RemoveClassStyle<DataGrid>(dataGrid, VisualTreeHelper.STYLES_CLASS_IS_DRAGGING);
+                    VMBgmProperties.RemoveTreeDragDrop();
                 }
                 else if (dataGrid.SelectedItems.Count > 1)
                 {
@@ -146,9 +147,11 @@ namespace Sma5hMusic.GUI.ViewModels
                     if (items.Count > 0)
                     {
                         dragData.Set(Constants.DragAndDropDataFormats.DATAOBJECT_FORMAT_BGM, items);
-                        AddDragDropBordersStyle(e.Row);
+                        VisualTreeHelper.AddClassStyle<DataGrid>(dataGrid, VisualTreeHelper.STYLES_CLASS_IS_DRAGGING);
+                        VMBgmProperties.AddTreeDragDrop();
                         await DragDrop.DoDragDrop(e.PointerPressedEventArgs, dragData, DragDropEffects.Move);
-                        RemoveDragDropBordersStyle(e.Row);
+                        VisualTreeHelper.RemoveClassStyle<DataGrid>(dataGrid, VisualTreeHelper.STYLES_CLASS_IS_DRAGGING);
+                        VMBgmProperties.RemoveTreeDragDrop();
                     }
                 }
             }
@@ -156,8 +159,6 @@ namespace Sma5hMusic.GUI.ViewModels
 
         public void DragOver(object sender, DragEventArgs e)
         {
-            AddDragDropBordersStyle(e.Source);
-
             e.DragEffects &= DragDropEffects.Move;
             if (!e.Data.Contains(Constants.DragAndDropDataFormats.DATAOBJECT_FORMAT_BGM))
                 e.DragEffects = DragDropEffects.None;
@@ -168,9 +169,8 @@ namespace Sma5hMusic.GUI.ViewModels
 
         public void Drop(object sender, DragEventArgs e)
         {
-            RemoveDragDropBordersStyle(e.Source);
-
             var dataGrid = VisualTreeHelper.GetControl<DataGrid>(e.Source);
+            VisualTreeHelper.RemoveClassStyle<DataGrid>(dataGrid, VisualTreeHelper.STYLES_CLASS_IS_DRAGGING);
             var dataGridRow = VisualTreeHelper.GetControl<DataGridRow>(e.Source);
             if (dataGrid == null || dataGridRow == null)
                 return;
@@ -207,20 +207,6 @@ namespace Sma5hMusic.GUI.ViewModels
                 _postReorderSelection();
                 _postReorderSelection = null;
             }
-        }
-
-        private void RemoveDragDropBordersStyle(IInteractive control)
-        {
-            var dataGrid = VisualTreeHelper.GetControl<DataGrid>(control);
-            if (dataGrid != null)
-                dataGrid.Classes.Remove("isDragging");
-        }
-
-        private void AddDragDropBordersStyle(IInteractive control)
-        {
-            var dataGrid = VisualTreeHelper.GetControl<DataGrid>(control);
-            if (dataGrid != null)
-                dataGrid.Classes.Add("isDragging");
         }
         #endregion
 

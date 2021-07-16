@@ -214,9 +214,9 @@ namespace Sma5hMusic.GUI.ViewModels
                 if (dataGrid.SelectedItems.Count == 1 || !syncCheck)
                 {
                     dragData.Set(Constants.DragAndDropDataFormats.DATAOBJECT_FORMAT_PLAYLIST, new List<PlaylistEntryValueViewModel>() { sourceObj });
-                    AddDragDropBordersStyle(e.Row);
+                    VisualTreeHelper.AddClassStyle<DataGrid>(dataGrid, VisualTreeHelper.STYLES_CLASS_IS_DRAGGING);
                     await DragDrop.DoDragDrop(e.PointerPressedEventArgs, dragData, DragDropEffects.Move);
-                    RemoveDragDropBordersStyle(e.Row);
+                    VisualTreeHelper.RemoveClassStyle<DataGrid>(dataGrid, VisualTreeHelper.STYLES_CLASS_IS_DRAGGING);
                 }
                 else if (dataGrid.SelectedItems.Count > 1)
                 {
@@ -230,9 +230,9 @@ namespace Sma5hMusic.GUI.ViewModels
                     if (items.Count > 0)
                     {
                         dragData.Set(Constants.DragAndDropDataFormats.DATAOBJECT_FORMAT_PLAYLIST, items);
-                        AddDragDropBordersStyle(e.Row);
+                        VisualTreeHelper.AddClassStyle<DataGrid>(dataGrid, VisualTreeHelper.STYLES_CLASS_IS_DRAGGING);
                         await DragDrop.DoDragDrop(e.PointerPressedEventArgs, dragData, DragDropEffects.Move);
-                        RemoveDragDropBordersStyle(e.Row);
+                        VisualTreeHelper.RemoveClassStyle<DataGrid>(dataGrid, VisualTreeHelper.STYLES_CLASS_IS_DRAGGING);
                     }
                 }
             }
@@ -249,9 +249,9 @@ namespace Sma5hMusic.GUI.ViewModels
                 if (dataGrid.SelectedItems.Count == 1 || !syncCheck)
                 {
                     dragData.Set(Constants.DragAndDropDataFormats.DATAOBJECT_FORMAT_BGM, new List<BgmDbRootEntryViewModel>() { vmBgmEntry });
-                    AddDragDropBordersStyle(_refGrid);
+                    VisualTreeHelper.AddClassStyle<DataGrid>(_refGrid, VisualTreeHelper.STYLES_CLASS_IS_DRAGGING);
                     await DragDrop.DoDragDrop(e.PointerPressedEventArgs, dragData, DragDropEffects.Move);
-                    RemoveDragDropBordersStyle(_refGrid);
+                    VisualTreeHelper.RemoveClassStyle<DataGrid>(_refGrid, VisualTreeHelper.STYLES_CLASS_IS_DRAGGING);
                 }
                 else if (dataGrid.SelectedItems.Count > 1)
                 {
@@ -264,9 +264,9 @@ namespace Sma5hMusic.GUI.ViewModels
                     if (items.Count > 0)
                     {
                         dragData.Set(Constants.DragAndDropDataFormats.DATAOBJECT_FORMAT_BGM, items);
-                        AddDragDropBordersStyle(_refGrid);
+                        VisualTreeHelper.AddClassStyle<DataGrid>(_refGrid, VisualTreeHelper.STYLES_CLASS_IS_DRAGGING);
                         await DragDrop.DoDragDrop(e.PointerPressedEventArgs, dragData, DragDropEffects.Move);
-                        RemoveDragDropBordersStyle(_refGrid);
+                        VisualTreeHelper.RemoveClassStyle<DataGrid>(_refGrid, VisualTreeHelper.STYLES_CLASS_IS_DRAGGING);
                     }
                 }
             }
@@ -281,9 +281,8 @@ namespace Sma5hMusic.GUI.ViewModels
 
         public void Drop(object sender, DragEventArgs e)
         {
-            RemoveDragDropBordersStyle(e.Source);
-
             var dataGrid = VisualTreeHelper.GetControl<DataGrid>(e.Source);
+            VisualTreeHelper.RemoveClassStyle<DataGrid>(dataGrid, VisualTreeHelper.STYLES_CLASS_IS_DRAGGING);
             var dataGridRow = VisualTreeHelper.GetControl<DataGridRow>(e.Source);
             if (dataGrid == null)
                 return;
@@ -436,20 +435,6 @@ namespace Sma5hMusic.GUI.ViewModels
             for (int i = 0; i < 16; i++)
                 output.Add(new ComboItem(i.ToString(), $"Order {i}"));
             return output;
-        }
-
-        private void RemoveDragDropBordersStyle(IInteractive control)
-        {
-            var dataGrid = VisualTreeHelper.GetControl<DataGrid>(control);
-            if (dataGrid != null)
-                dataGrid.Classes.Remove("isDragging");
-        }
-
-        private void AddDragDropBordersStyle(IInteractive control)
-        {
-            var dataGrid = VisualTreeHelper.GetControl<DataGrid>(control);
-            if (dataGrid != null)
-                dataGrid.Classes.Add("isDragging");
         }
         #endregion
 

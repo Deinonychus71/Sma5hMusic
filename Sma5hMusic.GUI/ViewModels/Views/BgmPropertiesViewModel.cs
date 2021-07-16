@@ -24,6 +24,7 @@ namespace Sma5hMusic.GUI.ViewModels
         private ReadOnlyObservableCollection<BgmDbRootEntryViewModel> _items;
         private readonly Subject<Tuple<IEnumerable<string>, short>> _whenNewRequestToReorderBgmEntries;
         private readonly HashSet<string> _expandedCache;
+        private TreeView _treeView;
 
         public IObservable<Tuple<IEnumerable<string>, short>> WhenNewRequestToReorderBgmEntries { get { return _whenNewRequestToReorderBgmEntries; } }
 
@@ -116,6 +117,7 @@ namespace Sma5hMusic.GUI.ViewModels
             userControl.AddHandler(InputElement.PointerPressedEvent, MouseDownHandler, RoutingStrategies.Tunnel, true);
             userControl.AddHandler(DragDrop.DropEvent, Drop);
             userControl.AddHandler(DragDrop.DragOverEvent, DragOver);
+            _treeView = userControl;
         }
 
         public void SelectedTabChangedHandlers(TabControl userControl)
@@ -139,42 +141,50 @@ namespace Sma5hMusic.GUI.ViewModels
             {
                 var dragData = new DataObject();
                 dragData.Set(Constants.DragAndDropDataFormats.DATAOBJECT_FORMAT_TREEVIEW, dataSource);
+                AddTreeDragDrop();
                 await DragDrop.DoDragDrop(e, dragData, DragDropEffects.Move);
+                RemoveTreeDragDrop();
             }
         }
 
         public void DragOver(object sender, DragEventArgs e)
         {
             e.DragEffects &= DragDropEffects.Move;
-            if (!e.Data.Contains(Constants.DragAndDropDataFormats.DATAOBJECT_FORMAT_TREEVIEW))
+            if (!e.Data.Contains(Constants.DragAndDropDataFormats.DATAOBJECT_FORMAT_TREEVIEW) && !e.Data.Contains(Constants.DragAndDropDataFormats.DATAOBJECT_FORMAT_BGM))
                 e.DragEffects = DragDropEffects.None;
         }
 
         public void Drop(object sender, DragEventArgs e)
         {
+            RemoveTreeDragDrop();
+
             if (((Control)e.Source).DataContext is OrderItemTreeViewModel destinationObj)
             {
+                var treeViewItem = VisualTreeHelper.GetControl<TreeViewItem>(e.Source);
+                var point = e.GetPosition(treeViewItem);
+                var position = destinationObj.LowerTestDisp;
+                if (point.Y >= treeViewItem.Bounds.Height / 2)
+                    position = (short)(destinationObj.UpperTestDisp + 1);
+
                 if (e.Data.Get(Constants.DragAndDropDataFormats.DATAOBJECT_FORMAT_TREEVIEW) is OrderItemTreeViewModel sourceTreeObj && sourceTreeObj != destinationObj)
                 {
-                    short position;
-                    if (sourceTreeObj.LowerTestDisp < destinationObj.LowerTestDisp)
-                        position = destinationObj.UpperTestDisp;
-                    else
-                        position = destinationObj.LowerTestDisp;
-
                     _whenNewRequestToReorderBgmEntries.OnNext(new Tuple<IEnumerable<string>, short>(sourceTreeObj.BgmEntries.Select(p => p.UiBgmId), position));
                 }
                 else if (e.Data.Get(Constants.DragAndDropDataFormats.DATAOBJECT_FORMAT_BGM) is List<BgmDbRootEntryViewModel> sourceBgmObj && sourceBgmObj.Count > 0)
                 {
-                    short position;
-                    if (sourceBgmObj[0].TestDispOrder < destinationObj.LowerTestDisp)
-                        position = destinationObj.UpperTestDisp;
-                    else
-                        position = (short)(destinationObj.UpperTestDisp + 1);
-
                     _whenNewRequestToReorderBgmEntries.OnNext(new Tuple<IEnumerable<string>, short>(sourceBgmObj.Select(p => p.UiBgmId), position));
                 }
             }
+        }
+
+        public void AddTreeDragDrop()
+        {
+            VisualTreeHelper.AddClassStyle<TreeView>(_treeView, VisualTreeHelper.STYLES_CLASS_IS_DRAGGING);
+        }
+
+        public void RemoveTreeDragDrop()
+        {
+            VisualTreeHelper.RemoveClassStyle<TreeView>(_treeView, VisualTreeHelper.STYLES_CLASS_IS_DRAGGING);
         }
         #endregion
 
