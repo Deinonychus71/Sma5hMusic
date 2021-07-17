@@ -122,7 +122,7 @@ namespace Sma5hMusic.GUI
                 { "Sma5hMusic:ModPath", $"Mods{Path.DirectorySeparatorChar}MusicMods" },
                 { "Sma5hMusic:CachePath", "Cache" },
                 { "Sma5hMusic:EnableAudioCaching", "false" },
-                { "Sma5hMusic:PlaylistMapping:Enabled", "true" },
+                { "Sma5hMusic:PlaylistMapping:Enabled", "false" },
                 { "Sma5hMusic:PlaylistMapping:Incidence", "0" },
                 { "Sma5hMusic:AudioConversionFormat", "lopus" },
                 { "Sma5hMusic:AudioConversionFormatFallBack", "idsp" },
