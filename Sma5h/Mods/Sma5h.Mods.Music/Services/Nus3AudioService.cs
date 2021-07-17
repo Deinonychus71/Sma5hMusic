@@ -20,19 +20,19 @@ namespace Sma5h.Mods.Music.Services
         private readonly ILogger _logger;
         private readonly IProcessService _processService;
         private readonly IAudioMetadataService _audioMetadataService;
-        private readonly IOptions<Sma5hMusicOptions> _config;
+        private readonly IOptionsMonitor<Sma5hMusicOptions> _config;
         private readonly string _nus3AudioExeFile;
         private readonly string _nus3BankTemplateFile;
         private ushort _lastBankId;
 
-        public Nus3AudioService(IOptions<Sma5hMusicOptions> config, IAudioMetadataService audioMetadataService, IProcessService processService, ILogger<INus3AudioService> logger)
+        public Nus3AudioService(IOptionsMonitor<Sma5hMusicOptions> config, IAudioMetadataService audioMetadataService, IProcessService processService, ILogger<INus3AudioService> logger)
         {
             _logger = logger;
             _processService = processService;
             _audioMetadataService = audioMetadataService;
             _config = config;
-            _nus3AudioExeFile = Path.Combine(config.Value.ToolsPath, MusicConstants.Resources.NUS3AUDIO_EXE_FILE);
-            _nus3BankTemplateFile = Path.Combine(config.Value.ResourcesPath, MusicConstants.Resources.NUS3BANK_TEMPLATE_FILE);
+            _nus3AudioExeFile = Path.Combine(config.CurrentValue.ToolsPath, MusicConstants.Resources.NUS3AUDIO_EXE_FILE);
+            _nus3BankTemplateFile = Path.Combine(config.CurrentValue.ResourcesPath, MusicConstants.Resources.NUS3BANK_TEMPLATE_FILE);
 
             var nus3BankIds = GetCoreNus3BankIds();
             _lastBankId = (ushort)(nus3BankIds.Count > 0 ? nus3BankIds.Values.OrderByDescending(p => p).First() : 0);
@@ -188,8 +188,8 @@ namespace Sma5h.Mods.Music.Services
         private bool ConvertIncompatibleFormat(string toneId, ref string inputMediaFile, string outputMediaFile, bool isFallback = false)
         {
             bool result = false;
-            var formatConversation = isFallback ? _config.Value.Sma5hMusic.AudioConversionFormatFallBack : _config.Value.Sma5hMusic.AudioConversionFormat;
-            var tempFile = Path.Combine(_config.Value.TempPath, string.Format(MusicConstants.Resources.NUS3AUDIO_TEMP_FILE, formatConversation));
+            var formatConversation = isFallback ? _config.CurrentValue.Sma5hMusic.AudioConversionFormatFallBack : _config.CurrentValue.Sma5hMusic.AudioConversionFormat;
+            var tempFile = Path.Combine(_config.CurrentValue.TempPath, string.Format(MusicConstants.Resources.NUS3AUDIO_TEMP_FILE, formatConversation));
             if (_audioMetadataService.ConvertAudio(inputMediaFile, tempFile))
             {
                 inputMediaFile = tempFile;
@@ -198,8 +198,8 @@ namespace Sma5h.Mods.Music.Services
             if (File.Exists(tempFile))
                 File.Delete(tempFile);
 
-            if (!result && !isFallback && !string.IsNullOrEmpty(_config.Value.Sma5hMusic.AudioConversionFormatFallBack)
-                && _config.Value.Sma5hMusic.AudioConversionFormat.ToLower() != _config.Value.Sma5hMusic.AudioConversionFormatFallBack.ToLower())
+            if (!result && !isFallback && !string.IsNullOrEmpty(_config.CurrentValue.Sma5hMusic.AudioConversionFormatFallBack)
+                && _config.CurrentValue.Sma5hMusic.AudioConversionFormat.ToLower() != _config.CurrentValue.Sma5hMusic.AudioConversionFormatFallBack.ToLower())
             {
                 _logger.LogWarning("The conversion from {InputMediaFile} to {OutputMediaFile} failed. Trying fallback conversation format.", inputMediaFile, outputMediaFile);
                 return ConvertIncompatibleFormat(toneId, ref inputMediaFile, outputMediaFile, true);
@@ -212,7 +212,7 @@ namespace Sma5h.Mods.Music.Services
         {
             var output = new Dictionary<string, ushort>();
 
-            var nusBankResourceFile = Path.Combine(_config.Value.ResourcesPath, MusicConstants.Resources.NUS3BANK_IDS_FILE);
+            var nusBankResourceFile = Path.Combine(_config.CurrentValue.ResourcesPath, MusicConstants.Resources.NUS3BANK_IDS_FILE);
             if (!File.Exists(nusBankResourceFile))
                 return output;
 

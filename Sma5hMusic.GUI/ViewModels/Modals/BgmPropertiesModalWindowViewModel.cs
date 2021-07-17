@@ -27,7 +27,7 @@ namespace Sma5hMusic.GUI.ViewModels
 {
     public class BgmPropertiesModalWindowViewModel : ModalBaseViewModel<BgmEntryViewModel>
     {
-        private readonly IOptions<ApplicationSettings> _config;
+        private readonly IOptionsMonitor<ApplicationSettings> _config;
         private readonly IMapper _mapper;
         private readonly ILogger _logger;
         private readonly IFileDialog _fileDialog;
@@ -86,7 +86,7 @@ namespace Sma5hMusic.GUI.ViewModels
         public ReactiveCommand<BgmPropertyEntryViewModel, Unit> ActionCalculateLoopCues { get; }
         public ReactiveCommand<Window, Unit> ActionClosing { get; }
 
-        public BgmPropertiesModalWindowViewModel(IOptions<ApplicationSettings> config, ILogger<BgmPropertiesModalWindowViewModel> logger, IFileDialog fileDialog,
+        public BgmPropertiesModalWindowViewModel(IOptionsMonitor<ApplicationSettings> config, ILogger<BgmPropertiesModalWindowViewModel> logger, IFileDialog fileDialog,
             IMapper mapper, IGUIStateManager guiStateManager, IViewModelManager viewModelManager, IObservable<IChangeSet<GameTitleEntryViewModel, string>> observableGames)
         {
             _config = config;
@@ -118,7 +118,7 @@ namespace Sma5hMusic.GUI.ViewModels
                .Subscribe();
 
             //Set up MSBT Fields
-            var defaultLocale = _config.Value.Sma5hMusicGUI.DefaultGUILocale;
+            var defaultLocale = _config.CurrentValue.Sma5hMusicGUI.DefaultGUILocale;
             var defaultLocaleItem = new ComboItem(defaultLocale, Constants.GetLocaleDisplayName(defaultLocale));
             MSBTTitleEditor = new MSBTFieldViewModel()
             {
@@ -304,14 +304,16 @@ namespace Sma5hMusic.GUI.ViewModels
         private Dictionary<string, string> SaveMSBTValues(Dictionary<string, string> msbtValues)
         {
             var output = new Dictionary<string, string>();
+            var copyToEmptyLocales = _config.CurrentValue.Sma5hMusicGUI.CopyToEmptyLocales;
+            var defaultMSBTLocale = _config.CurrentValue.Sma5hMusicGUI.DefaultMSBTLocale;
             if (msbtValues != null)
             {
                 foreach (var msbtValue in msbtValues)
                 {
                     if (!string.IsNullOrEmpty(msbtValue.Value))
                         output.Add(msbtValue.Key, msbtValue.Value);
-                    else if (_config.Value.Sma5hMusicGUI.CopyToEmptyLocales && msbtValues.ContainsKey(_config.Value.Sma5hMusicGUI.DefaultMSBTLocale))
-                        output.Add(msbtValue.Key, msbtValues[_config.Value.Sma5hMusicGUI.DefaultMSBTLocale]);
+                    else if (copyToEmptyLocales && msbtValues.ContainsKey(defaultMSBTLocale))
+                        output.Add(msbtValue.Key, msbtValues[defaultMSBTLocale]);
                 }
             }
             return output;

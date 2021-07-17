@@ -15,14 +15,14 @@ namespace Sma5h
     {
         private readonly IServiceProvider _serviceProvider;
         private readonly ILogger _logger;
-        private readonly IOptions<Sma5hOptions> _config;
+        private readonly IOptionsMonitor<Sma5hOptions> _config;
         private readonly Dictionary<string, IResourceProvider> _resourceProviders;
         private readonly Dictionary<string, IStateManagerDb> _originalResources;
         private readonly Dictionary<string, IStateManagerDb> _resources;
 
         public IEnumerable<IStateManagerDb> Resources { get { return _resources.Values; } }
 
-        public StateManager(IServiceProvider serviceProvider, IOptions<Sma5hOptions> config, ILogger<IStateManager> logger)
+        public StateManager(IServiceProvider serviceProvider, IOptionsMonitor<Sma5hOptions> config, ILogger<IStateManager> logger)
         {
             _serviceProvider = serviceProvider;
             _logger = logger;
@@ -42,7 +42,7 @@ namespace Sma5h
             var resourceProvider = GetResourceProvider(gameRelativeResourcePath);
             if (resourceProvider != null)
             {
-                var gameResourceFile = Path.Combine(_config.Value.GameResourcesPath, gameRelativeResourcePath);
+                var gameResourceFile = Path.Combine(_config.CurrentValue.GameResourcesPath, gameRelativeResourcePath);
                 if (!File.Exists(gameResourceFile))
                 {
                     if (optional)
@@ -83,12 +83,15 @@ namespace Sma5h
 
         public bool WriteChanges()
         {
-            _logger.LogDebug("Write State Changes to {OutputPath}", _config.Value.OutputPath);
+            var outputPath = _config.CurrentValue.OutputPath;
+            var gameResourcesPath = _config.CurrentValue.GameResourcesPath;
+
+            _logger.LogDebug("Write State Changes to {OutputPath}", _config.CurrentValue.OutputPath);
 
             foreach (var resource in _resources)
             {
-                var outputResourceFile = Path.Combine(_config.Value.OutputPath, resource.Key);
-                var inputResourceFile = Path.Combine(_config.Value.GameResourcesPath, resource.Key);
+                var outputResourceFile = Path.Combine(outputPath, resource.Key);
+                var inputResourceFile = Path.Combine(gameResourcesPath, resource.Key);
                 Directory.CreateDirectory(Path.GetDirectoryName(outputResourceFile));
                 var resourceProvider = GetResourceProvider(resource.Key);
 
@@ -103,12 +106,12 @@ namespace Sma5h
 
         public bool Init()
         {
-            _logger.LogInformation("Resources Path: {ResourcesPath}", _config.Value.ResourcesPath);
-            _logger.LogInformation("Output Path: {OutputPath}", _config.Value.OutputPath);
-            _logger.LogInformation("Game Resource Path: {GameResourcesPath}", _config.Value.GameResourcesPath);
-            _logger.LogInformation("Log Path: {LogPath}", _config.Value.LogPath);
-            _logger.LogInformation("Temp Path: {TempPath}", _config.Value.TempPath);
-            _logger.LogInformation("Tools Path: {ToolsPath}", _config.Value.ToolsPath);
+            _logger.LogInformation("Resources Path: {ResourcesPath}", _config.CurrentValue.ResourcesPath);
+            _logger.LogInformation("Output Path: {OutputPath}", _config.CurrentValue.OutputPath);
+            _logger.LogInformation("Game Resource Path: {GameResourcesPath}", _config.CurrentValue.GameResourcesPath);
+            _logger.LogInformation("Log Path: {LogPath}", _config.CurrentValue.LogPath);
+            _logger.LogInformation("Temp Path: {TempPath}", _config.CurrentValue.TempPath);
+            _logger.LogInformation("Tools Path: {ToolsPath}", _config.CurrentValue.ToolsPath);
 
             return true;
         }

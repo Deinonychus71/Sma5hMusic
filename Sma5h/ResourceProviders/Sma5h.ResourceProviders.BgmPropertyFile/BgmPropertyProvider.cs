@@ -22,14 +22,14 @@ namespace Sma5h.ResourceProviders
         private readonly string _bgmPropertyExeFile;
         private readonly string _bgmPropertyHashFile;
 
-        public BgmPropertyProvider(IOptions<Sma5hOptions> config, IProcessService processService, ILogger<BgmPropertyProvider> logger)
+        public BgmPropertyProvider(IOptionsMonitor<Sma5hOptions> config, IProcessService processService, ILogger<BgmPropertyProvider> logger)
             : base(config)
         {
             _logger = logger;
             _ymlHelper = new YmlHelper();
             _processService = processService;
-            _bgmPropertyExeFile = Path.Combine(config.Value.ToolsPath, BgmPropertyFileConstants.BGM_PROPERTY_EXE_FILE);
-            _bgmPropertyHashFile = Path.Combine(config.Value.ToolsPath, BgmPropertyFileConstants.BGM_PROPERTY_HASH_FILE);
+            _bgmPropertyExeFile = Path.Combine(config.CurrentValue.ToolsPath, BgmPropertyFileConstants.BGM_PROPERTY_EXE_FILE);
+            _bgmPropertyHashFile = Path.Combine(config.CurrentValue.ToolsPath, BgmPropertyFileConstants.BGM_PROPERTY_HASH_FILE);
         }
 
         public override T ReadFile<T>(string inputFile)
@@ -45,8 +45,8 @@ namespace Sma5h.ResourceProviders
                 return default;
             }
 
-            Directory.CreateDirectory(_config.Value.TempPath);
-            var tempFile = Path.Combine(_config.Value.TempPath, BgmPropertyFileConstants.BGM_PROPERTY_TEMP_FILE);
+            Directory.CreateDirectory(_config.CurrentValue.TempPath);
+            var tempFile = Path.Combine(_config.CurrentValue.TempPath, BgmPropertyFileConstants.BGM_PROPERTY_TEMP_FILE);
 
             //Retrieve YML from Bgm Property
             try
@@ -84,8 +84,8 @@ namespace Sma5h.ResourceProviders
             if (!typeof(T).IsAssignableFrom(typeof(BinBgmProperty)))
                 throw new Exception($"Tried to use BgmPropertyProvider with wrong mapping type '{nameof(BinBgmProperty)}'");
 
-            Directory.CreateDirectory(_config.Value.TempPath);
-            var tempFile = Path.Combine(_config.Value.TempPath, BgmPropertyFileConstants.BGM_PROPERTY_TEMP_FILE);
+            Directory.CreateDirectory(_config.CurrentValue.TempPath);
+            var tempFile = Path.Combine(_config.CurrentValue.TempPath, BgmPropertyFileConstants.BGM_PROPERTY_TEMP_FILE);
 
             //Serialize
             _ymlHelper.WriteYmlFile(tempFile, ((BinBgmProperty)(object)inputObj).Entries.Values);

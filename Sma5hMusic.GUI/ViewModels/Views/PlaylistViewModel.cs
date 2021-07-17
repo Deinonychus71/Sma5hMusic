@@ -25,7 +25,7 @@ namespace Sma5hMusic.GUI.ViewModels
 {
     public class PlaylistViewModel : ViewModelBase
     {
-        private readonly IOptions<ApplicationSettings> _config;
+        private readonly IOptionsMonitor<ApplicationSettings> _config;
         private readonly IDialogWindow _rootDialog;
         private readonly IMessageDialog _messageDialog;
         private readonly ReadOnlyObservableCollection<BgmDbRootEntryViewModel> _bgms;
@@ -95,7 +95,7 @@ namespace Sma5hMusic.GUI.ViewModels
         public ReactiveCommand<PlaylistEntryValueViewModel, Unit> ActionPasteIncidence { get; }
         public ReactiveCommand<PlaylistEntryValueViewModel, Unit> ActionPasteIncidenceAll { get; }
 
-        public PlaylistViewModel(IOptions<ApplicationSettings> config, IDialogWindow rootDialog, IMessageDialog messageDialog, IViewModelManager viewModelManager,
+        public PlaylistViewModel(IOptionsMonitor<ApplicationSettings> config, IDialogWindow rootDialog, IMessageDialog messageDialog, IViewModelManager viewModelManager,
             IObservable<IChangeSet<BgmDbRootEntryViewModel, string>> observableBgmEntries, ContextMenuViewModel vmContextMenu)
         {
             _config = config;
@@ -320,13 +320,13 @@ namespace Sma5hMusic.GUI.ViewModels
                     }
                     else if (SelectedPlaylistEntry != null && e.Data.Get(Constants.DragAndDropDataFormats.DATAOBJECT_FORMAT_BGM) is List<BgmDbRootEntryViewModel> sourceBgmObjs)
                     {
-                        AddToPlaylist(sourceBgmObjs, dataGrid, position, _config.Value.Sma5hMusicGUI.PlaylistIncidenceDefault);
+                        AddToPlaylist(sourceBgmObjs, dataGrid, position, _config.CurrentValue.Sma5hMusicGUI.PlaylistIncidenceDefault);
                     }
                 }
             }
             else if (SelectedPlaylistEntry != null && e.Data.Get(Constants.DragAndDropDataFormats.DATAOBJECT_FORMAT_BGM) is List<BgmDbRootEntryViewModel> sourceBgmObjs)
             {
-                AddToPlaylist(sourceBgmObjs, dataGrid, 9999, _config.Value.Sma5hMusicGUI.PlaylistIncidenceDefault);
+                AddToPlaylist(sourceBgmObjs, dataGrid, 9999, _config.CurrentValue.Sma5hMusicGUI.PlaylistIncidenceDefault);
             }
         }
         #endregion

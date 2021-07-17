@@ -8,9 +8,9 @@ namespace Sma5h.CLI
     public class WorkspaceManager : IWorkspaceManager
     {
         private readonly ILogger _logger;
-        private readonly IOptions<Sma5hOptions> _config;
+        private readonly IOptionsMonitor<Sma5hOptions> _config;
 
-        public WorkspaceManager(IOptions<Sma5hOptions> config, ILogger<IWorkspaceManager> logger)
+        public WorkspaceManager(IOptionsMonitor<Sma5hOptions> config, ILogger<IWorkspaceManager> logger)
         {
             _logger = logger;
             _config = config;
@@ -23,17 +23,17 @@ namespace Sma5h.CLI
             try
             {
                 //Create workspace
-                if (!Directory.Exists(_config.Value.OutputPath))
+                if (!Directory.Exists(_config.CurrentValue.OutputPath))
                 {
                     _logger.LogDebug("Creating Working folder...");
-                    Directory.CreateDirectory(_config.Value.OutputPath);
+                    Directory.CreateDirectory(_config.CurrentValue.OutputPath);
                 }
 
                 //Reset
-                var existingFiles = Directory.GetFiles(_config.Value.OutputPath, "*", SearchOption.AllDirectories);
+                var existingFiles = Directory.GetFiles(_config.CurrentValue.OutputPath, "*", SearchOption.AllDirectories);
                 if (existingFiles.Length > 0)
                 {
-                    if (!_config.Value.SkipOutputPathCleanupConfirmation)
+                    if (!_config.CurrentValue.SkipOutputPathCleanupConfirmation)
                     {
                         _logger.LogWarning("Files found in the workspace folder, delete? Y/N (Default: N)");
                         var response = Console.ReadKey();

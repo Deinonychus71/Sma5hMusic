@@ -16,7 +16,7 @@ namespace Sma5h.ResourceProviders
     {
         private readonly ILogger _logger;
 
-        public MsbtResourceProvider(IOptions<Sma5hOptions> config, ILogger<MsbtResourceProvider> logger)
+        public MsbtResourceProvider(IOptionsMonitor<Sma5hOptions> config, ILogger<MsbtResourceProvider> logger)
             : base(config)
         {
             _logger = logger;

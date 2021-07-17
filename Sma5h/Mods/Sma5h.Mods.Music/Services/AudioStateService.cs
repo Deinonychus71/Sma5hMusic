@@ -30,7 +30,7 @@ namespace Sma5h.Mods.Music.Services
         private readonly ILogger _logger;
         private readonly IMapper _mapper;
         private readonly IStateManager _state;
-        private readonly IOptions<Sma5hMusicOptions> _config;
+        private readonly IOptionsMonitor<Sma5hMusicOptions> _config;
         private readonly HashSet<string> _seriesEntries;
         private readonly HashSet<string> _localesEntries;
         private readonly Dictionary<string, GameTitleEntry> _gameTitleEntries;
@@ -46,7 +46,7 @@ namespace Sma5h.Mods.Music.Services
 
         public double GameVersion { get; private set; }
 
-        public AudioStateService(IOptions<Sma5hMusicOptions> config, IMapper mapper, IStateManager state, ILogger<IAudioStateService> logger)
+        public AudioStateService(IOptionsMonitor<Sma5hMusicOptions> config, IMapper mapper, IStateManager state, ILogger<IAudioStateService> logger)
         {
             _config = config;
             _mapper = mapper;
@@ -428,7 +428,7 @@ namespace Sma5h.Mods.Music.Services
             var daoMsbtBgms = GetBgmDatabases();
             var daoMsbtTitle = GetGameTitleDatabases();
 
-            var defaultLocale = _config.Value.Sma5hMusic.DefaultLocale; //TODO: Remove? It should now be handled from UI
+            var defaultLocale = _config.CurrentValue.Sma5hMusic.DefaultLocale; //TODO: Remove? It should now be handled from UI
             var coreSeriesGames = paramGameTitleDatabaseRoot.Values.Select(p => p.UiSeriesId).Distinct(); //Not handling series addition right now.
 
             //GameTitle PRC - We don't delete existing games... yet.
@@ -604,6 +604,7 @@ namespace Sma5h.Mods.Music.Services
             _stageEntries.Clear();
 
             //Load Data
+            var gameResourcePath = _config.CurrentValue.GameResourcesPath;
             var daoBinBgmProperty = _state.LoadResource<Data.Sound.Config.BinBgmProperty>(BgmPropertyFileConstants.BGM_PROPERTY_PATH);
             var paramBgmDatabase = _state.LoadResource<PrcUiBgmDatabase>(PrcExtConstants.PRC_UI_BGM_DB_PATH);
             var paramGameTitleDbRoot = _state.LoadResource<PrcUiGameTitleDatabase>(PrcExtConstants.PRC_UI_GAMETITLE_DB_PATH).DbRootEntries;
@@ -659,7 +660,7 @@ namespace Sma5h.Mods.Music.Services
             //Map BinProperty
             foreach (var binBgnProperty in daoBinBgmProperty.Entries.Values)
             {
-                var filename = Path.Combine(_config.Value.GameResourcesPath, "stream;", "sound", "bgm", string.Format(MusicConstants.GameResources.NUS3AUDIO_FILE, binBgnProperty.NameId));
+                var filename = Path.Combine(gameResourcePath, "stream;", "sound", "bgm", string.Format(MusicConstants.GameResources.NUS3AUDIO_FILE, binBgnProperty.NameId));
                 var newBgmPropertyEntry = new BgmPropertyEntry(binBgnProperty.NameId, filename);
                 if (_coreVolumes.ContainsKey(newBgmPropertyEntry.NameId))
                     newBgmPropertyEntry.AudioVolume = _coreVolumes[newBgmPropertyEntry.NameId];
@@ -710,6 +711,7 @@ namespace Sma5h.Mods.Music.Services
 
         public void GuessGameVersion()
         {
+            var gameResourcePath = _config.CurrentValue.GameResourcesPath;
             var gameCrcSets = GameResourcesCrcHelper.VersionCrcSets;
             GameVersion = 0.0;
             foreach (var versionCrcSet in gameCrcSets)
@@ -717,7 +719,7 @@ namespace Sma5h.Mods.Music.Services
                 bool allMatch = true;
                 foreach (var resource in versionCrcSet.CrcResources)
                 {
-                    var file = Path.Combine(_config.Value.GameResourcesPath, resource.Key);
+                    var file = Path.Combine(gameResourcePath, resource.Key);
                     if (File.Exists(file))
                     {
                         var hash = Crc32Algorithm.Compute(File.ReadAllBytes(file));
@@ -779,7 +781,7 @@ namespace Sma5h.Mods.Music.Services
         {
             var output = new Dictionary<string, float>();
 
-            var nusBankResourceFile = Path.Combine(_config.Value.ResourcesPath, MusicConstants.Resources.NUS3BANK_IDS_FILE);
+            var nusBankResourceFile = Path.Combine(_config.CurrentValue.ResourcesPath, MusicConstants.Resources.NUS3BANK_IDS_FILE);
             if (!File.Exists(nusBankResourceFile))
                 return output;
 

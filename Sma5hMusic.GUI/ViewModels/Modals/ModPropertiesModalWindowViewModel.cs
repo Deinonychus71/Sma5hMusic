@@ -17,7 +17,7 @@ namespace Sma5hMusic.GUI.ViewModels
 {
     public class ModPropertiesModalWindowViewModel : ModalBaseViewModel<ModEntryViewModel>
     {
-        private readonly IOptions<Sma5hMusicOptions> _config;
+        private readonly IOptionsMonitor<Sma5hMusicOptions> _config;
         private const string REGEX_REPLACE = @"[^a-zA-Z0-9\-_ \[\]]";
         private readonly string REGEX_VALIDATION = @"^[\w\-. \[\]]+$";
         private readonly ILogger _logger;
@@ -39,7 +39,7 @@ namespace Sma5hMusic.GUI.ViewModels
         public bool IsEdit { get; set; }
 
         public ModPropertiesModalWindowViewModel(ILogger<ModPropertiesModalWindowViewModel> logger, IViewModelManager viewModelManager,
-            IGUIStateManager guiStateManager, IOptions<Sma5hMusicOptions> config)
+            IGUIStateManager guiStateManager, IOptionsMonitor<Sma5hMusicOptions> config)
         {
             _config = config;
             _logger = logger;
@@ -49,7 +49,7 @@ namespace Sma5hMusic.GUI.ViewModels
             this.WhenAnyValue(p => p.ModName).Subscribe((o) => { FormatModPath(o); });
 
             this.ValidationRule(p => p.ModPath,
-                p => !string.IsNullOrEmpty(p) && ((Regex.IsMatch(p, REGEX_VALIDATION) && !Directory.Exists(Path.Combine(_config.Value.Sma5hMusic.ModPath, p))) || IsEdit),
+                p => !string.IsNullOrEmpty(p) && ((Regex.IsMatch(p, REGEX_VALIDATION) && !Directory.Exists(Path.Combine(_config.CurrentValue.Sma5hMusic.ModPath, p))) || IsEdit),
                 $"The folder name is invalid or the folder already exists.");
 
             //Validation

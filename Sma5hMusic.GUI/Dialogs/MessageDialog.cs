@@ -18,11 +18,11 @@ namespace Sma5hMusic.GUI.Dialogs
         private readonly IDialogWindow _rootDialogWindow;
         private readonly Style _style = Style.DarkMode;
 
-        public MessageDialog(IDialogWindow rootDialogWindow, IOptions<ApplicationSettings> appSettings, ILogger<MessageDialog> logger)
+        public MessageDialog(IDialogWindow rootDialogWindow, IOptionsMonitor<ApplicationSettings> appSettings, ILogger<MessageDialog> logger)
         {
             _logger = logger;
             _rootDialogWindow = rootDialogWindow;
-            _style = appSettings.Value.Sma5hMusicGUI.UITheme == Helpers.StylesHelper.UITheme.Dark ? Style.DarkMode : Style.Windows;
+            _style = appSettings.CurrentValue.Sma5hMusicGUI.UITheme == Helpers.StylesHelper.UITheme.Dark ? Style.DarkMode : Style.Windows;
         }
 
         public async Task<bool> ShowWarningConfirm(string title, string message)

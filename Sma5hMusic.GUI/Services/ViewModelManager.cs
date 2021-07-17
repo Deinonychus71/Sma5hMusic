@@ -46,9 +46,9 @@ namespace Sma5hMusic.GUI.Services
         private readonly SourceCache<StageEntryViewModel, string> _vmObsvStagesEntries;
         private readonly SourceCache<ModEntryViewModel, string> _vmObsvModsEntries;
 
-        public ViewModelManager(IOptions<ApplicationSettings> config, IAudioStateService audioStateService, IMusicModManagerService musicModManager, IVGMMusicPlayer vgmMusicPlayer, IMapper mapper, ILogger<IViewModelManager> logger)
+        public ViewModelManager(IOptionsMonitor<ApplicationSettings> config, IAudioStateService audioStateService, IMusicModManagerService musicModManager, IVGMMusicPlayer vgmMusicPlayer, IMapper mapper, ILogger<IViewModelManager> logger)
         {
-            _inGameVolume = config.Value.Sma5hMusicGUI.InGameVolume;
+            _inGameVolume = config.CurrentValue.Sma5hMusicGUI.InGameVolume;
             _mapper = mapper;
             _logger = logger;
             _vgmMusicPlayer = vgmMusicPlayer;

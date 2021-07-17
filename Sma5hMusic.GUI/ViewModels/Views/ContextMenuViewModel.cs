@@ -49,11 +49,11 @@ namespace Sma5hMusic.GUI.ViewModels
         public ReactiveCommand<Unit, Unit> ActionDeleteGame { get; }
         public ReactiveCommand<ModEntryViewModel, Unit> ActionAddNewBgm { get; }
 
-        public ContextMenuViewModel(IOptions<ApplicationSettings> config, IViewModelManager viewModelManager, ILogger<BgmSongsViewModel> logger)
+        public ContextMenuViewModel(IOptionsMonitor<ApplicationSettings> config, IViewModelManager viewModelManager, ILogger<BgmSongsViewModel> logger)
         {
             _logger = logger;
             _whenNewRequestToAddBgmEntry = new Subject<ModEntryViewModel>();
-            _whenLocaleChanged = new BehaviorSubject<string>(config.Value.Sma5hMusicGUI.DefaultGUILocale);
+            _whenLocaleChanged = new BehaviorSubject<string>(config.CurrentValue.Sma5hMusicGUI.DefaultGUILocale);
             _whenNewRequestToAddModEntry = new Subject<Unit>();
             _whenNewRequestToAddGameEntry = new Subject<Unit>();
             _whenNewRequestToEditModEntry = new Subject<Unit>();

@@ -76,6 +76,8 @@ namespace Sma5h.Mods.Music.Helpers
             public const string RECORD_TYPE_DEFAULT = "record_none";
             public const string RARITY_DEFAULT = "bgm_rarity_0";
             public const string SOUND_CONDITION = "sound_condition_none";
+
+            public const string PLAYLIST_AUTO_BGM_SELECTOR = "bgmhiddenselector";
         }
 
         public static string[] VALID_RECORD_TYPES = new string[]
