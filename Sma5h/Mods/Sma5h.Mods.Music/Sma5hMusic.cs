@@ -153,10 +153,12 @@ namespace Sma5h.Mods.Music
                         var mappingConfig = configMapping.ContainsKey(seriesId) ? configMapping[seriesId].Split(',', System.StringSplitOptions.RemoveEmptyEntries) : null;
                         if (mappingConfig != null && mappingConfig.Length > 0)
                         {
-                            foreach (var mappingPlaylist in mappingConfig) {
+                            foreach (var mappingPlaylist in mappingConfig)
+                            {
                                 var bgmplaylist = playlists.Values.Where(p => p.Id == mappingPlaylist).FirstOrDefault();
                                 if (bgmplaylist != null)
                                 {
+                                    modSong.IsSelectableOriginal = true;
                                     short i = (short)bgmplaylist.Tracks.Max(p => p.Order0);
                                     bgmplaylist.Tracks.Add(new PlaylistValueEntry()
                                     {
