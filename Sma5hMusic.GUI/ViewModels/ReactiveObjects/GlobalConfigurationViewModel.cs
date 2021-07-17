@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using ReactiveUI.Fody.Helpers;
 using Sma5h.Mods.Music;
+using System.Collections.Generic;
 
 namespace Sma5hMusic.GUI.ViewModels
 {
@@ -45,6 +46,12 @@ namespace Sma5hMusic.GUI.ViewModels
         public string LogPath { get; set; }
         [Reactive]
         public bool SkipWarningGameVersion { get; set; }
+        [Reactive]
+        public bool PlaylistMappingEnabled { get; set; }
+        [Reactive]
+        public ushort PlaylistMappingIncidence { get; set; }
+        public Dictionary<string, List<string>> PlaylistMapping { get; set; }
+
 
         public ApplicationSettings GetReference()
         {

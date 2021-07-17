@@ -34,7 +34,7 @@ namespace Sma5hMusic.GUI.ViewModels
         private readonly IFileDialog _fileDialog;
         private readonly IDialogWindow _rootDialog;
         private readonly IBuildDialog _buildDialog;
-        private readonly IOptions<ApplicationSettings> _appSettings;
+        private readonly IOptionsMonitor<ApplicationSettings> _appSettings;
         private readonly ILogger _logger;
         private readonly IMapper _mapper;
         private string _currentLocale;
@@ -89,7 +89,7 @@ namespace Sma5hMusic.GUI.ViewModels
 
 
         public MainWindowViewModel(IServiceProvider serviceProvider, IViewModelManager viewModelManager, IGUIStateManager guiStateManager, IMapper mapper, IVGMMusicPlayer musicPlayer,
-            IDialogWindow rootDialog, IMessageDialog messageDialog, IFileDialog fileDialog, IBuildDialog buildDialog, IOptions<ApplicationSettings> appSettings, IDevToolsService devTools, ILogger<MainWindowViewModel> logger)
+            IDialogWindow rootDialog, IMessageDialog messageDialog, IFileDialog fileDialog, IBuildDialog buildDialog, IOptionsMonitor<ApplicationSettings> appSettings, IDevToolsService devTools, ILogger<MainWindowViewModel> logger)
         {
             _viewModelManager = viewModelManager;
             _guiStateManager = guiStateManager;
@@ -108,7 +108,7 @@ namespace Sma5hMusic.GUI.ViewModels
             Title = $"Sma5hMusic - GUI v{Constants.GUIVersion}{(!Constants.IsStable ? "b" : "")}";
 
             //Set values
-            IsAdvanced = appSettings.Value.Sma5hMusicGUI.Advanced;
+            IsAdvanced = appSettings.CurrentValue.Sma5hMusicGUI.Advanced;
 
             //Set global settings
             var vmGlobalSettings = new GlobalSettingsModalWindowViewModel(_guiStateManager, fileDialog);
@@ -198,10 +198,10 @@ namespace Sma5hMusic.GUI.ViewModels
             ActionOpenThanks = ReactiveCommand.CreateFromTask(OnThanksOpen);
             ActionOpenWiki = ReactiveCommand.Create(OnWikiOpen);
             ActionOpenGlobalSettings = ReactiveCommand.CreateFromTask(OnGlobalSettingsOpen);
-            ActionOpenModsFolder = ReactiveCommand.Create(() => _fileDialog.OpenFolder(_appSettings.Value.Sma5hMusic.ModPath));
-            ActionOpenOutputFolder = ReactiveCommand.Create(() => _fileDialog.OpenFolder(_appSettings.Value.OutputPath));
-            ActionOpenResourcesFolder = ReactiveCommand.Create(() => _fileDialog.OpenFolder(_appSettings.Value.ResourcesPath));
-            ActionOpenLogsFolder = ReactiveCommand.Create(() => _fileDialog.OpenFolder(_appSettings.Value.LogPath));
+            ActionOpenModsFolder = ReactiveCommand.Create(() => _fileDialog.OpenFolder(_appSettings.CurrentValue.Sma5hMusic.ModPath));
+            ActionOpenOutputFolder = ReactiveCommand.Create(() => _fileDialog.OpenFolder(_appSettings.CurrentValue.OutputPath));
+            ActionOpenResourcesFolder = ReactiveCommand.Create(() => _fileDialog.OpenFolder(_appSettings.CurrentValue.ResourcesPath));
+            ActionOpenLogsFolder = ReactiveCommand.Create(() => _fileDialog.OpenFolder(_appSettings.CurrentValue.LogPath));
             ActionExportSongsCSV = ReactiveCommand.CreateFromTask(ExportSongsToCSV);
             ActionFixUnknownValues = ReactiveCommand.CreateFromTask(FixUnknownValues);
             ActionUpdateBgmSelector = ReactiveCommand.CreateFromTask<bool>((enabled) => UpdateBgmSelector(enabled));
@@ -271,7 +271,7 @@ namespace Sma5hMusic.GUI.ViewModels
                     VMContextMenu.ChangeLocale(newDefaultLanguage);
                 }
 
-                if (!_guiStateManager.IsGameVersionFound && !_appSettings.Value.Sma5hMusicGUI.SkipWarningGameVersion)
+                if (!_guiStateManager.IsGameVersionFound && !_appSettings.CurrentValue.Sma5hMusicGUI.SkipWarningGameVersion)
                 {
                     await Dispatcher.UIThread.InvokeAsync(async () =>
                     {
@@ -316,8 +316,8 @@ namespace Sma5hMusic.GUI.ViewModels
 
         public async Task OnGlobalSettingsOpen()
         {
-            var vmGlobalSettings = new GlobalConfigurationViewModel(_mapper, _appSettings.Value);
-            var result = await _dialogGlobalSettingsEditor.ShowDialog(_rootDialog.Window, new GlobalConfigurationViewModel(_mapper, _appSettings.Value));
+            var vmGlobalSettings = new GlobalConfigurationViewModel(_mapper, _appSettings.CurrentValue);
+            var result = await _dialogGlobalSettingsEditor.ShowDialog(_rootDialog.Window, new GlobalConfigurationViewModel(_mapper, _appSettings.CurrentValue));
             if (result != null)
             {
                 await _guiStateManager.UpdateGlobalSettings(vmGlobalSettings.GetReference());

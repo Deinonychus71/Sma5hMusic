@@ -15,14 +15,14 @@ namespace Sma5h.Mods.Music.Services
 {
     public class MusicModManagerService : IMusicModManagerService
     {
-        private readonly IOptions<Sma5hMusicOptions> _config;
+        private readonly IOptionsMonitor<Sma5hMusicOptions> _config;
         private readonly ILogger _logger;
         private readonly IServiceProvider _serviceProvider;
         private readonly List<IMusicMod> _musicMods;
 
         public IEnumerable<IMusicMod> MusicMods => _musicMods;
 
-        public MusicModManagerService(IServiceProvider serviceProvider, IOptions<Sma5hMusicOptions> config, ILogger<IMusicModManagerService> logger)
+        public MusicModManagerService(IServiceProvider serviceProvider, IOptionsMonitor<Sma5hMusicOptions> config, ILogger<IMusicModManagerService> logger)
         {
             _config = config;
             _logger = logger;
@@ -34,8 +34,8 @@ namespace Sma5h.Mods.Music.Services
         {
             _musicMods.Clear();
 
-            Directory.CreateDirectory(_config.Value.Sma5hMusic.ModPath);
-            foreach (var musicModPath in Directory.GetDirectories(_config.Value.Sma5hMusic.ModPath, "*", SearchOption.TopDirectoryOnly))
+            Directory.CreateDirectory(_config.CurrentValue.Sma5hMusic.ModPath);
+            foreach (var musicModPath in Directory.GetDirectories(_config.CurrentValue.Sma5hMusic.ModPath, "*", SearchOption.TopDirectoryOnly))
             {
                 //Check if disabled
                 if (Path.GetFileName(musicModPath).StartsWith("."))
@@ -60,7 +60,7 @@ namespace Sma5h.Mods.Music.Services
 
         public IMusicMod AddMusicMod(MusicModInformation configBase, string modPath)
         {
-            var basePath = _config.Value.Sma5hMusic.ModPath;
+            var basePath = _config.CurrentValue.Sma5hMusic.ModPath;
             if (!modPath.StartsWith(basePath))
                 modPath = Path.Combine(basePath, modPath);
 

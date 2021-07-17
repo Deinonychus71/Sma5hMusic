@@ -27,10 +27,10 @@ namespace Sma5hMusic.GUI.Services
         private readonly ISma5hMusicOverride _sma5hMusicOverride;
         private readonly IMusicModManagerService _musicModManagerService;
         private readonly IViewModelManager _viewModelManager;
-        private readonly IOptions<ApplicationSettings> _config;
+        private readonly IOptionsMonitor<ApplicationSettings> _config;
 
         public GUIStateManager(ISma5hMusicOverride Sma5hMusicOverride, IViewModelManager viewModelManager, IAudioStateService audioStateService, IAudioMetadataService audioMetadataService,
-            IOptions<ApplicationSettings> config, IMusicModManagerService musicModManagerService, IMessageDialog messageDialog, IMapper mapper, ILogger<IGUIStateManager> logger)
+            IOptionsMonitor<ApplicationSettings> config, IMusicModManagerService musicModManagerService, IMessageDialog messageDialog, IMapper mapper, ILogger<IGUIStateManager> logger)
         {
             _logger = logger;
             _mapper = mapper;
@@ -1111,9 +1111,9 @@ namespace Sma5hMusic.GUI.Services
             {
                 if (await _messageDialog.ShowWarningConfirm("Wipe Audio Cache", "Are you sure you want to delete the audio cache?"))
                 {
-                    if (Directory.Exists(_config.Value.Sma5hMusic.CachePath))
+                    if (Directory.Exists(_config.CurrentValue.Sma5hMusic.CachePath))
                     {
-                        var existingFiles = Directory.GetFiles(_config.Value.Sma5hMusic.CachePath, "*.nus3audio", SearchOption.AllDirectories);
+                        var existingFiles = Directory.GetFiles(_config.CurrentValue.Sma5hMusic.CachePath, "*.nus3audio", SearchOption.AllDirectories);
                         foreach (var fileToDelete in existingFiles)
                         {
                             File.Delete(fileToDelete);
@@ -1287,11 +1287,11 @@ namespace Sma5hMusic.GUI.Services
 
                 if (confirm || !showConfirm)
                 {
-                    var modFolder = _config.Value.Sma5hMusic.ModPath;
-                    var modOverrideFolder = _config.Value.Sma5hMusicOverride.ModPath;
+                    var modFolder = _config.CurrentValue.Sma5hMusic.ModPath;
+                    var modOverrideFolder = _config.CurrentValue.Sma5hMusicOverride.ModPath;
                     var dateFolder = $"backup_{DateTime.Now:yyyy_MM_dd_hh_mm_ss_tt}";
-                    var backupModFolder = Path.Combine(_config.Value.BackupPath, dateFolder, modFolder);
-                    var backupModOverrideFolder = Path.Combine(_config.Value.BackupPath, dateFolder, modOverrideFolder);
+                    var backupModFolder = Path.Combine(_config.CurrentValue.BackupPath, dateFolder, modFolder);
+                    var backupModOverrideFolder = Path.Combine(_config.CurrentValue.BackupPath, dateFolder, modOverrideFolder);
                     if (Directory.Exists(modFolder))
                         CopyDirHelper.Copy(modFolder, backupModFolder, fullBackup ? "*" : "*.json");
                     if (Directory.Exists(modOverrideFolder))

@@ -16,11 +16,11 @@ namespace Sma5h.ResourceProviders
         private readonly ILogger _logger;
         private readonly PrcHelper _prc;
 
-        public PrcResourceProvider(IOptions<Sma5hOptions> config, ILogger<PrcResourceProvider> logger)
+        public PrcResourceProvider(IOptionsMonitor<Sma5hOptions> config, ILogger<PrcResourceProvider> logger)
             : base(config)
         {
             _logger = logger;
-            var inputFileParamLabels = Path.Combine(config.Value.ResourcesPath, "ParamLabels.csv");
+            var inputFileParamLabels = Path.Combine(config.CurrentValue.ResourcesPath, "ParamLabels.csv");
             _prc = new PrcHelper(GetParamLabels(inputFileParamLabels));
         }
 

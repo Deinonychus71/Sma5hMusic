@@ -18,9 +18,9 @@ namespace Sma5hMusic.GUI.Dialogs
         private readonly IServiceProvider _serviceProvider;
         private readonly IMessageDialog _messageDialog;
         private readonly IStateManager _stateManager;
-        private readonly IOptions<Sma5hOptions> _config;
+        private readonly IOptionsMonitor<Sma5hOptions> _config;
 
-        public BuildDialog(IOptions<Sma5hOptions> config, IServiceProvider serviceProvider,
+        public BuildDialog(IOptionsMonitor<Sma5hOptions> config, IServiceProvider serviceProvider,
             IStateManager stateManager, IMessageDialog messageDialog, ILogger<BuildDialog> logger)
         {
             _logger = logger;
@@ -49,15 +49,15 @@ namespace Sma5hMusic.GUI.Dialogs
                 }
 
                 //Check locale
-                var messagePath = Path.Combine(_config.Value.GameResourcesPath, "ui", "message");
+                var messagePath = Path.Combine(_config.CurrentValue.GameResourcesPath, "ui", "message");
                 Directory.CreateDirectory(messagePath);
-                var localeCheckMsgBgm = Directory.GetFiles(Path.Combine(_config.Value.GameResourcesPath, "ui", "message"), "msg_bgm*.msbt", SearchOption.TopDirectoryOnly);
-                var localeCheckMsgTitle = Directory.GetFiles(Path.Combine(_config.Value.GameResourcesPath, "ui", "message"), "msg_title*.msbt", SearchOption.TopDirectoryOnly);
+                var localeCheckMsgBgm = Directory.GetFiles(Path.Combine(_config.CurrentValue.GameResourcesPath, "ui", "message"), "msg_bgm*.msbt", SearchOption.TopDirectoryOnly);
+                var localeCheckMsgTitle = Directory.GetFiles(Path.Combine(_config.CurrentValue.GameResourcesPath, "ui", "message"), "msg_title*.msbt", SearchOption.TopDirectoryOnly);
                 if (localeCheckMsgBgm.Length == 0 || localeCheckMsgTitle.Length == 0)
                 {
                     await Dispatcher.UIThread.InvokeAsync(async () =>
                     {
-                        await _messageDialog.ShowError("File Check", $"There should be at least one localized msg_bgm.msbt and one msg_title.msbt\r\nresource in {Path.Combine(_config.Value.GameResourcesPath, "ui", "message")}.");
+                        await _messageDialog.ShowError("File Check", $"There should be at least one localized msg_bgm.msbt and one msg_title.msbt\r\nresource in {Path.Combine(_config.CurrentValue.GameResourcesPath, "ui", "message")}.");
                         await callbackError?.Invoke(new Exception("File Check Exception"));
                     }, DispatcherPriority.Background);
                     return;
@@ -169,20 +169,20 @@ namespace Sma5hMusic.GUI.Dialogs
             try
             {
                 //Create workspace
-                if (!Directory.Exists(_config.Value.OutputPath))
+                if (!Directory.Exists(_config.CurrentValue.OutputPath))
                 {
                     _logger.LogDebug("Creating Working folder...");
-                    Directory.CreateDirectory(_config.Value.OutputPath);
+                    Directory.CreateDirectory(_config.CurrentValue.OutputPath);
                 }
 
                 //Reset
-                var existingFiles = Directory.GetFiles(_config.Value.OutputPath, "*", SearchOption.AllDirectories);
+                var existingFiles = Directory.GetFiles(_config.CurrentValue.OutputPath, "*", SearchOption.AllDirectories);
                 if (existingFiles.Length > 0)
                 {
-                    if (!_config.Value.SkipOutputPathCleanupConfirmation)
+                    if (!_config.CurrentValue.SkipOutputPathCleanupConfirmation)
                     {
                         _logger.LogWarning("Files found in the workspace folder.");
-                        if (await _messageDialog.ShowWarningConfirm("Clean Output folder?", $"Your folder {_config.Value.OutputPath} must be empty before building the mod.\r\nProceed?"))
+                        if (await _messageDialog.ShowWarningConfirm("Clean Output folder?", $"Your folder {_config.CurrentValue.OutputPath} must be empty before building the mod.\r\nProceed?"))
                         {
                             CleaningWorkspaceFolder(existingFiles);
                         }
@@ -235,7 +235,7 @@ namespace Sma5hMusic.GUI.Dialogs
 
         private List<string> GetRequiredFiles()
         {
-            var config = _config.Value;
+            var config = _config.CurrentValue;
 
             var requiredFiles = new List<string>()
             {

@@ -5,9 +5,9 @@ namespace Sma5h
 {
     public abstract class BaseResourceProvider : IResourceProvider
     {
-        protected IOptions<Sma5hOptions> _config;
+        protected IOptionsMonitor<Sma5hOptions> _config;
 
-        public BaseResourceProvider(IOptions<Sma5hOptions> config)
+        public BaseResourceProvider(IOptionsMonitor<Sma5hOptions> config)
         {
             _config = config;
         }
