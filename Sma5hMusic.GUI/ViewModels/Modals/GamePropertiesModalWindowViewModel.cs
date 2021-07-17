@@ -151,7 +151,7 @@ namespace Sma5hMusic.GUI.ViewModels
             _refSelectedItem.NameId = UiGameTitleId.TrimStart(MusicConstants.InternalIds.GAME_TITLE_ID_PREFIX);
             _refSelectedItem.Release = Release;
             _refSelectedItem.Unk1 = Unk1;
-            _refSelectedItem.UiSeriesId = SelectedSeries.SeriesId;
+            _refSelectedItem.UiSeriesId = SelectedSeries.UiSeriesId;
 
             return true;
         }

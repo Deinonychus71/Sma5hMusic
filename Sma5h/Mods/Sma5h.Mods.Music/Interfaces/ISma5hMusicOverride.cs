@@ -9,7 +9,9 @@ namespace Sma5h.Mods.Music.Interfaces
         bool UpdateSoundTestOrderConfig(Dictionary<string, short> entries);
         bool UpdateCoreBgmEntries(MusicModEntries musicModEntries);
         bool UpdateGameTitleEntry(GameTitleEntry gameTitleEntry);
+        bool UpdateSeriesEntry(Models.SeriesEntry seriesEntry);
         bool DeleteGameTitleEntry(string gameTitleId);
+        bool DeleteSeriesEntry(string seriesId);
         bool UpdatePlaylistConfig(Dictionary<string, PlaylistEntry> playlistEntries);
         bool UpdateMusicStageOverride(List<StageEntry> stageEntries);
         bool ResetOverrideFile(string file);

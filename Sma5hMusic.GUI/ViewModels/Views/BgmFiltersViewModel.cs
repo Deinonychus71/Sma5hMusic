@@ -73,7 +73,7 @@ namespace Sma5hMusic.GUI.ViewModels
                     (SelectedCoreSongs || (!SelectedCoreSongs && p.Source == EntrySource.Mod)) &&
                     (SelectedMod == null || SelectedMod.DefaultFlag || p.ModId == SelectedMod.Id) &&
                     (SelectedRecordType == null || SelectedRecordType.DefaultFlag || p.RecordType == SelectedRecordType.Id) &&
-                    (SelectedSeries == null || SelectedSeries.AllFlag || p.SeriesId == SelectedSeries.SeriesId) &&
+                    (SelectedSeries == null || SelectedSeries.AllFlag || p.SeriesId == SelectedSeries.UiSeriesId) &&
                     (SelectedGame == null || SelectedGame.AllFlag || p.UiGameTitleId == SelectedGame.UiGameTitleId)
                 );
 
@@ -95,7 +95,7 @@ namespace Sma5hMusic.GUI.ViewModels
                 .Group(p => p.SeriesId, seriesChanged.Select(_ => Unit.Default))
                 .Transform(p => p.Cache.Items.First().SeriesViewModel)
                 .Prepend(_allSeriesChangeSet)
-                .Sort(SortExpressionComparer<SeriesEntryViewModel>.Descending(p => p.AllFlag).ThenByAscending(p => p.SeriesId), SortOptimisations.IgnoreEvaluates)
+                .Sort(SortExpressionComparer<SeriesEntryViewModel>.Descending(p => p.AllFlag).ThenByAscending(p => p.UiSeriesId), SortOptimisations.IgnoreEvaluates)
                 .ObserveOn(RxApp.MainThreadScheduler)
                 .Bind(out _series)
                 .DisposeMany()
@@ -104,7 +104,7 @@ namespace Sma5hMusic.GUI.ViewModels
             var gameChanged = observableBgmEntries.WhenValueChanged(game => game.UiGameTitleId);
             observableBgmEntries
                 .AutoRefreshOnObservable(p => this.WhenAnyValue(p => p.SelectedSeries))
-                .Filter(p => p.SeriesId != null && p.UiGameTitleId != null && (SelectedSeries == null || SelectedSeries.AllFlag || p.SeriesId == SelectedSeries.SeriesId))
+                .Filter(p => p.SeriesId != null && p.UiGameTitleId != null && (SelectedSeries == null || SelectedSeries.AllFlag || p.SeriesId == SelectedSeries.UiSeriesId))
                 .Group(p => p.UiGameTitleId, gameChanged.Select(_ => Unit.Default))
                 .Transform(p => p.Cache.Items.First().GameTitleViewModel)
                 .Prepend(_allGameTitleChangeSet)

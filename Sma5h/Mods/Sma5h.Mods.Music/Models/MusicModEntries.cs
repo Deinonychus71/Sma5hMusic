@@ -10,6 +10,7 @@ namespace Sma5h.Mods.Music.Models
         public List<BgmStreamPropertyEntry> BgmStreamPropertyEntries { get; }
         public List<BgmPropertyEntry> BgmPropertyEntries { get; }
         public List<GameTitleEntry> GameTitleEntries { get; }
+        public List<SeriesEntry> SeriesEntries { get; }
 
         public MusicModEntries()
         {
@@ -19,6 +20,7 @@ namespace Sma5h.Mods.Music.Models
             BgmStreamPropertyEntries = new List<BgmStreamPropertyEntry>();
             BgmPropertyEntries = new List<BgmPropertyEntry>();
             GameTitleEntries = new List<GameTitleEntry>();
+            SeriesEntries = new List<SeriesEntry>();
         }
 
         public MusicModDeleteEntries GetMusicModDeleteEntries()

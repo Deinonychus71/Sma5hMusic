@@ -11,6 +11,7 @@ namespace Sma5h.Mods.Music.MusicOverride
         public Dictionary<string, PlaylistConfig> PlaylistsOverrides { get; set; }
         public Dictionary<string, StageConfig> StageOverrides { get; set; }
         public Dictionary<string, GameConfig> CoreGameOverrides { get; set; }
+        public Dictionary<string, SeriesConfig> CoreSeriesOverrides { get; set; }
         public CoreBgmOverrides CoreBgmOverrides { get; set; }
 
         public MusicOverrideConfig()
@@ -19,6 +20,7 @@ namespace Sma5h.Mods.Music.MusicOverride
             PlaylistsOverrides = new Dictionary<string, PlaylistConfig>();
             StageOverrides = new Dictionary<string, StageConfig>();
             CoreGameOverrides = new Dictionary<string, GameConfig>();
+            CoreSeriesOverrides = new Dictionary<string, SeriesConfig>();
             CoreBgmOverrides = new CoreBgmOverrides();
         }
     }

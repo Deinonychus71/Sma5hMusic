@@ -15,8 +15,8 @@ namespace Sma5h.Mods.Music.Interfaces
         IEnumerable<BgmStreamPropertyEntry> GetModBgmStreamPropertyEntries();
         IEnumerable<BgmPropertyEntry> GetBgmPropertyEntries();
         IEnumerable<BgmPropertyEntry> GetModBgmPropertyEntries();
+        IEnumerable<SeriesEntry> GetSeriesEntries();
         IEnumerable<GameTitleEntry> GetGameTitleEntries();
-        IEnumerable<string> GetSeriesEntries();
         IEnumerable<StageEntry> GetStagesEntries();
         IEnumerable<string> GetLocales();
         IEnumerable<PlaylistEntry> GetPlaylists();
@@ -28,12 +28,14 @@ namespace Sma5h.Mods.Music.Interfaces
         bool CanAddBgmAssignedInfoEntry(string infoId);
         bool CanAddBgmStreamPropertyEntry(string streamId);
         bool CanAddBgmPropertyEntry(string nameId);
+        bool CanAddSeriesEntry(string uiSeriesId);
         bool CanAddGameTitleEntry(string uiGameTitleId);
         bool AddBgmDbRootEntry(BgmDbRootEntry bgmDbRootEntry);
         bool AddBgmStreamSetEntry(BgmStreamSetEntry bgmStreamSetEntry);
         bool AddBgmAssignedInfoEntry(BgmAssignedInfoEntry bgmAssignedInfoEntry);
         bool AddBgmStreamPropertyEntry(BgmStreamPropertyEntry bgmStreamPropertyEntry);
         bool AddBgmPropertyEntry(BgmPropertyEntry bgmPropertyEntry);
+        bool AddSeriesEntry(SeriesEntry seriesEntry);
         bool AddGameTitleEntry(GameTitleEntry gameTitleEntry);
         bool AddPlaylistEntry(PlaylistEntry playlistEntry);
 

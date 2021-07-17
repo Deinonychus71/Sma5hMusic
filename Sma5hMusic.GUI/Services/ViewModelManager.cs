@@ -67,7 +67,7 @@ namespace Sma5hMusic.GUI.Services
             _vmDictModsEntries = new Dictionary<string, ModEntryViewModel>();
 
             _vmObsvLocalesEntries = new SourceCache<LocaleViewModel, string>(p => p.Id);
-            _vmObsvSeriesEntries = new SourceCache<SeriesEntryViewModel, string>(p => p.SeriesId);
+            _vmObsvSeriesEntries = new SourceCache<SeriesEntryViewModel, string>(p => p.UiSeriesId);
             _vmObsvGameTitlesEntries = new SourceCache<GameTitleEntryViewModel, string>(p => p.UiGameTitleId);
             _vmObsvBgmDbRootEntries = new SourceCache<BgmDbRootEntryViewModel, string>(p => p.UiBgmId);
             _vmObsvBgmStreamSetEntries = new SourceCache<BgmStreamSetEntryViewModel, string>(p => p.StreamSetId);
@@ -115,9 +115,9 @@ namespace Sma5hMusic.GUI.Services
             foreach (var vmLocale in vmLocalesList)
                 _vmDictLocalesEntries.Add(vmLocale.Id, vmLocale);
 
-            var vmSeriesList = _audioState.GetSeriesEntries().Select(p => new SeriesEntryViewModel(p)).ToList();
+            var vmSeriesList = _audioState.GetSeriesEntries().Select(p => _mapper.Map(p, new SeriesEntryViewModel(this, _mapper, p))).ToList();
             foreach (var vmSeries in vmSeriesList)
-                _vmDictSeriesEntries.Add(vmSeries.SeriesId, vmSeries);
+                _vmDictSeriesEntries.Add(vmSeries.UiSeriesId, vmSeries);
 
             var vmGameTitlesList = _audioState.GetGameTitleEntries().Select(p => _mapper.Map(p, new GameTitleEntryViewModel(this, _mapper, p))).ToList();
             foreach (var vmGame in vmGameTitlesList)

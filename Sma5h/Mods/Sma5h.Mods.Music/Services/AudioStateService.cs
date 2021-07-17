@@ -8,6 +8,7 @@ using Sma5h.Data;
 using Sma5h.Data.Ui.Param.Database;
 using Sma5h.Data.Ui.Param.Database.PrcUiBgmDatabaseModels;
 using Sma5h.Data.Ui.Param.Database.PrcUiGameTitleDatabaseModels;
+using Sma5h.Data.Ui.Param.Database.PrcUiSeriesDatabaseModels;
 using Sma5h.Data.Ui.Param.Database.PrcUiStageDatabaseModels;
 using Sma5h.Helpers;
 using Sma5h.Interfaces;
@@ -31,8 +32,8 @@ namespace Sma5h.Mods.Music.Services
         private readonly IMapper _mapper;
         private readonly IStateManager _state;
         private readonly IOptions<Sma5hMusicOptions> _config;
-        private readonly HashSet<string> _seriesEntries;
         private readonly HashSet<string> _localesEntries;
+        private readonly Dictionary<string, SeriesEntry> _seriesEntries;
         private readonly Dictionary<string, GameTitleEntry> _gameTitleEntries;
         private readonly Dictionary<string, BgmDbRootEntry> _bgmDbRootEntries;
         private readonly Dictionary<string, BgmStreamSetEntry> _bgmStreamSetEntries;
@@ -53,8 +54,8 @@ namespace Sma5h.Mods.Music.Services
             _logger = logger;
             _state = state;
             //_deletedBgmEntries = new Dictionary<string, BgmDbRootEntry>();
+            _seriesEntries = new Dictionary<string, SeriesEntry>();
             _gameTitleEntries = new Dictionary<string, GameTitleEntry>();
-            _seriesEntries = new HashSet<string>();
             _localesEntries = new HashSet<string>();
             _bgmDbRootEntries = new Dictionary<string, BgmDbRootEntry>();
             _bgmStreamSetEntries = new Dictionary<string, BgmStreamSetEntry>();
@@ -117,6 +118,11 @@ namespace Sma5h.Mods.Music.Services
             return GetBgmPropertyEntries().Where(p => p.Source == EntrySource.Mod);
         }
 
+        public IEnumerable<SeriesEntry> GetSeriesEntries()
+        {
+            return _seriesEntries.Values;
+        }
+
         public IEnumerable<GameTitleEntry> GetGameTitleEntries()
         {
             return _gameTitleEntries.Values;
@@ -125,11 +131,6 @@ namespace Sma5h.Mods.Music.Services
         public IEnumerable<StageEntry> GetStagesEntries()
         {
             return _stageEntries.Values;
-        }
-
-        public IEnumerable<string> GetSeriesEntries()
-        {
-            return _seriesEntries;
         }
 
         public IEnumerable<string> GetLocales()
@@ -167,6 +168,11 @@ namespace Sma5h.Mods.Music.Services
         public bool CanAddBgmPropertyEntry(string nameId)
         {
             return !_bgmPropertyEntries.ContainsKey(nameId);
+        }
+
+        public bool CanAddSeriesEntry(string uiSeriesId)
+        {
+            return !_seriesEntries.ContainsKey(uiSeriesId);
         }
 
         public bool CanAddGameTitleEntry(string uiGameTitleId)
@@ -284,6 +290,24 @@ namespace Sma5h.Mods.Music.Services
             return true;
         }
 
+        public bool AddSeriesEntry(SeriesEntry seriesEntry)
+        {
+            if (seriesEntry.UiSeriesId.Length > MusicConstants.GameResources.SeriesMaximumSize ||
+                seriesEntry.UiSeriesId.Length < MusicConstants.GameResources.SeriesMinimumSize)
+            {
+                _logger.LogError("The Series ID {SeriesId} is either too long or too short. Minimum: {SeriesMinimumSize}, Maximum: {SeriesMaximumSize}",
+                    seriesEntry.UiSeriesId, MusicConstants.GameResources.SeriesMinimumSize, MusicConstants.GameResources.SeriesMaximumSize);
+                return false;
+            }
+
+            //Save Series
+            if (!_seriesEntries.ContainsKey(seriesEntry.UiSeriesId))
+                _seriesEntries.Add(seriesEntry.UiSeriesId, seriesEntry);
+            //It is very well possible that the series already exists.
+
+            return true;
+        }
+
         public bool AddGameTitleEntry(GameTitleEntry gameTitleEntry)
         {
             if (gameTitleEntry.UiGameTitleId.Length > MusicConstants.GameResources.GameTitleMaximumSize ||
@@ -294,13 +318,17 @@ namespace Sma5h.Mods.Music.Services
                 return false;
             }
 
-            //Save GameTitle & Series
+            if (!_seriesEntries.ContainsKey(gameTitleEntry.UiSeriesId))
+            {
+                _logger.LogError("The Game Title ID {GameTitleId} requires Series {SeriesId} but it doesn't seem to exist.",
+                   gameTitleEntry.UiGameTitleId, gameTitleEntry.UiSeriesId);
+                return false;
+            }
+
+            //Save GameTitle
             if (!_gameTitleEntries.ContainsKey(gameTitleEntry.UiGameTitleId))
                 _gameTitleEntries.Add(gameTitleEntry.UiGameTitleId, gameTitleEntry);
             //It is very well possible that the game already exists.
-
-            if (!_seriesEntries.Contains(gameTitleEntry.UiSeriesId))
-                _seriesEntries.Add(gameTitleEntry.UiSeriesId);
 
             return true;
         }
@@ -422,6 +450,7 @@ namespace Sma5h.Mods.Music.Services
 
             //Load Data
             var paramBgmDatabase = _state.LoadResource<PrcUiBgmDatabase>(PrcExtConstants.PRC_UI_BGM_DB_PATH);
+            var paramSeriesDbRoot = _state.LoadResource<PrcUiSeriesDatabase>(PrcExtConstants.PRC_UI_SERIES_DB_PATH).DbRootEntries;
             var paramGameTitleDatabaseRoot = _state.LoadResource<PrcUiGameTitleDatabase>(PrcExtConstants.PRC_UI_GAMETITLE_DB_PATH).DbRootEntries;
             var paramStageDbRoot = _state.LoadResource<PrcUiStageDatabase>(PrcExtConstants.PRC_UI_STAGE_DB_PATH).DbRootEntries;
             var binBgmPropertyEntries = _state.LoadResource<Data.Sound.Config.BinBgmProperty>(BgmPropertyFileConstants.BGM_PROPERTY_PATH).Entries;
@@ -430,6 +459,33 @@ namespace Sma5h.Mods.Music.Services
 
             var defaultLocale = _config.Value.Sma5hMusic.DefaultLocale; //TODO: Remove? It should now be handled from UI
             var coreSeriesGames = paramGameTitleDatabaseRoot.Values.Select(p => p.UiSeriesId).Distinct(); //Not handling series addition right now.
+
+            //Series PRC - We don't delete existing series... yet.
+            foreach (var series in _seriesEntries.Values)
+            {
+                //Ensure that the game needs to be added - If no song is using the game, there is no need to compile it.
+                if (series.Source == EntrySource.Mod)
+                {
+                    if (_gameTitleEntries.Values.Count(p => p.UiSeriesId == series.UiSeriesId) == 0)
+                        continue;
+                }
+
+                paramSeriesDbRoot[series.UiSeriesId] = _mapper.Map<PrcSeriesDbRootEntry>(series);
+
+                if (!string.IsNullOrEmpty(series?.NameId))
+                {
+                    var seriesLabel = series.MSBTTitleKey;
+                    var titleDict = series.MSBTTitle;
+                    foreach (var msbtDb in daoMsbtTitle)
+                    {
+                        var entries = msbtDb.Value.Entries;
+                        if (titleDict.ContainsKey(msbtDb.Key))
+                            entries[seriesLabel] = titleDict[msbtDb.Key];
+                        else if (titleDict.ContainsKey(defaultLocale))
+                            entries[seriesLabel] = titleDict[defaultLocale];
+                    }
+                }
+            }
 
             //GameTitle PRC - We don't delete existing games... yet.
             foreach (var gameTitle in _gameTitleEntries.Values)
@@ -608,6 +664,7 @@ namespace Sma5h.Mods.Music.Services
             var paramBgmDatabase = _state.LoadResource<PrcUiBgmDatabase>(PrcExtConstants.PRC_UI_BGM_DB_PATH);
             var paramGameTitleDbRoot = _state.LoadResource<PrcUiGameTitleDatabase>(PrcExtConstants.PRC_UI_GAMETITLE_DB_PATH).DbRootEntries;
             var paramStageDbRoot = _state.LoadResource<PrcUiStageDatabase>(PrcExtConstants.PRC_UI_STAGE_DB_PATH).DbRootEntries;
+            var paramSeriesDbRoot = _state.LoadResource<PrcUiSeriesDatabase>(PrcExtConstants.PRC_UI_SERIES_DB_PATH).DbRootEntries;
             var daoMsbtBgms = GetBgmDatabases();
             var daoMsbtTitle = GetGameTitleDatabases();
             daoMsbtBgms.Keys.ToList().ForEach(p => _localesEntries.Add(p));
@@ -666,6 +723,26 @@ namespace Sma5h.Mods.Music.Services
                 _bgmPropertyEntries.Add(binBgnProperty.NameId, _mapper.Map(binBgnProperty, newBgmPropertyEntry));
             }
 
+            //Mapping series
+            foreach (var dbRootSeriesEntry in paramSeriesDbRoot.Values)
+            {
+                var seriesId = dbRootSeriesEntry.UiSeriesId;
+                var seriesEntry = new SeriesEntry(seriesId);
+                _seriesEntries.Add(seriesId, _mapper.Map(dbRootSeriesEntry, seriesEntry));
+
+                //MSBT
+                if (!string.IsNullOrEmpty(seriesEntry?.NameId) && seriesEntry.MSBTTitle.Count == 0) //Test for cache
+                {
+                    var seriesLabel = seriesEntry.MSBTTitleKey;
+                    foreach (var msbtDb in daoMsbtTitle)
+                    {
+                        var entries = msbtDb.Value.Entries;
+                        if (entries.ContainsKey(seriesLabel))
+                            seriesEntry.MSBTTitle.Add(msbtDb.Key, entries[seriesLabel]);
+                    }
+                }
+            }
+
             //Mapping games
             foreach (var dbRootGameEntry in paramGameTitleDbRoot.Values)
             {
@@ -673,8 +750,8 @@ namespace Sma5h.Mods.Music.Services
                 var gameEntry = new GameTitleEntry(gameTitleId);
                 _gameTitleEntries.Add(gameTitleId, _mapper.Map(dbRootGameEntry, gameEntry));
 
-                if (!_seriesEntries.Contains(gameEntry.UiSeriesId))
-                    _seriesEntries.Add(gameEntry.UiSeriesId);
+                if (!_seriesEntries.ContainsKey(gameEntry.UiSeriesId))
+                    throw new Exception($"A series entry '{gameEntry.UiSeriesId}' is referenced in game '{gameTitleId}' but does not seem to exist.");
 
                 //MSBT
                 if (!string.IsNullOrEmpty(gameEntry?.NameId) && gameEntry.MSBTTitle.Count == 0) //Test for cache

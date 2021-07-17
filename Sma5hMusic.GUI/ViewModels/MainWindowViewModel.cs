@@ -126,6 +126,11 @@ namespace Sma5hMusic.GUI.ViewModels
                 .DeferUntilLoaded()
                 .AutoRefreshOnObservable(p => VMContextMenu.WhenLocaleChanged)
                 .ForEachChange(o => o.Current.LoadLocalized(_currentLocale));
+            var observableSeriesList = viewModelManager.ObservableSeries.Connect()
+                .DeferUntilLoaded()
+                .AutoRefreshOnObservable(p => VMContextMenu.WhenLocaleChanged)
+                .ForEachChange(o => o.Current.LoadLocalized(_currentLocale))
+                .Subscribe(); //TOREMOVE
 
             //Initialize filters
             VMBgmFilters = ActivatorUtilities.CreateInstance<BgmFiltersViewModel>(serviceProvider, observableBgmDbRootEntriesList);

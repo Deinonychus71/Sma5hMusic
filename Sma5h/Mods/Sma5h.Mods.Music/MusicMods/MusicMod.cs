@@ -50,35 +50,40 @@ namespace Sma5h.Mods.Music.MusicMods
                 return output;
 
             //Process audio mods
-            _logger.LogInformation("Mod {MusicMod} by '{Author}' - {NbrSongs} song(s)", _musicModConfig.Name, _musicModConfig.Author, _musicModConfig.Games.Sum(p => p.Bgms.Count));
+            _logger.LogInformation("Mod {MusicMod} by '{Author}' - {NbrSongs} song(s)", _musicModConfig.Name, _musicModConfig.Author, _musicModConfig.Series.Sum( s => s.Games.Sum(p => p.Bgms.Count)));
 
-            foreach (var game in _musicModConfig.Games)
+            foreach(var series in _musicModConfig.Series)
             {
-                output.GameTitleEntries.Add(_mapper.Map(game, new GameTitleEntry(game.UiGameTitleId, EntrySource.Mod)));
+                output.SeriesEntries.Add(_mapper.Map(series, new SeriesEntry(series.UiSeriesId, EntrySource.Mod)));
 
-                foreach (var bgm in game.Bgms)
+                foreach (var game in series.Games)
                 {
-                    string filename = Path.Combine(ModPath, bgm.Filename);
-                    if (!File.Exists(filename))
+                    output.GameTitleEntries.Add(_mapper.Map(game, new GameTitleEntry(game.UiGameTitleId, EntrySource.Mod)));
+
+                    foreach (var bgm in game.Bgms)
                     {
-                        _logger.LogError("Mod {MusicMod}: Song {Song} ({ToneId}) doesn't exist.", _musicModConfig.Name, filename, bgm.ToneId);
-                        continue;
+                        string filename = Path.Combine(ModPath, bgm.Filename);
+                        if (!File.Exists(filename))
+                        {
+                            _logger.LogError("Mod {MusicMod}: Song {Song} ({ToneId}) doesn't exist.", _musicModConfig.Name, filename, bgm.ToneId);
+                            continue;
+                        }
+
+                        GetUpdatedBgmAssignedInfoConfig(bgm.AssignedInfo);
+                        GetUpdatedStreamSetConfig(bgm.StreamSet);
+
+                        _logger.LogInformation("Mod {MusicMod}: Adding song {Song} ({ToneId})", _musicModConfig.Name, filename, bgm.ToneId);
+                        var bgmDbRootEntry = _mapper.Map(bgm.DbRoot, new BgmDbRootEntry(bgm.DbRoot.UiBgmId, this));
+                        bgmDbRootEntry.Title = bgm.MSBTLabels.Title;
+                        bgmDbRootEntry.Author = bgm.MSBTLabels.Author;
+                        bgmDbRootEntry.Copyright = bgm.MSBTLabels.Copyright;
+                        bgmDbRootEntry.UiGameTitleId = game.UiGameTitleId; //Enforce
+                        output.BgmDbRootEntries.Add(bgmDbRootEntry);
+                        output.BgmStreamSetEntries.Add(_mapper.Map(bgm.StreamSet, new BgmStreamSetEntry(bgm.StreamSet.StreamSetId, this)));
+                        output.BgmAssignedInfoEntries.Add(_mapper.Map(bgm.AssignedInfo, new BgmAssignedInfoEntry(bgm.AssignedInfo.InfoId, this)));
+                        output.BgmStreamPropertyEntries.Add(_mapper.Map(bgm.StreamProperty, new BgmStreamPropertyEntry(bgm.StreamProperty.StreamId, this)));
+                        output.BgmPropertyEntries.Add(_mapper.Map(bgm.BgmProperties, new BgmPropertyEntry(bgm.BgmProperties.NameId, filename, this) { AudioVolume = bgm.NUS3BankConfig.AudioVolume }));
                     }
-
-                    GetUpdatedBgmAssignedInfoConfig(bgm.AssignedInfo);
-                    GetUpdatedStreamSetConfig(bgm.StreamSet);
-
-                    _logger.LogInformation("Mod {MusicMod}: Adding song {Song} ({ToneId})", _musicModConfig.Name, filename, bgm.ToneId);
-                    var bgmDbRootEntry = _mapper.Map(bgm.DbRoot, new BgmDbRootEntry(bgm.DbRoot.UiBgmId, this));
-                    bgmDbRootEntry.Title = bgm.MSBTLabels.Title;
-                    bgmDbRootEntry.Author = bgm.MSBTLabels.Author;
-                    bgmDbRootEntry.Copyright = bgm.MSBTLabels.Copyright;
-                    bgmDbRootEntry.UiGameTitleId = game.UiGameTitleId; //Enforce
-                    output.BgmDbRootEntries.Add(bgmDbRootEntry);
-                    output.BgmStreamSetEntries.Add(_mapper.Map(bgm.StreamSet, new BgmStreamSetEntry(bgm.StreamSet.StreamSetId, this)));
-                    output.BgmAssignedInfoEntries.Add(_mapper.Map(bgm.AssignedInfo, new BgmAssignedInfoEntry(bgm.AssignedInfo.InfoId, this)));
-                    output.BgmStreamPropertyEntries.Add(_mapper.Map(bgm.StreamProperty, new BgmStreamPropertyEntry(bgm.StreamProperty.StreamId, this)));
-                    output.BgmPropertyEntries.Add(_mapper.Map(bgm.BgmProperties, new BgmPropertyEntry(bgm.BgmProperties.NameId, filename, this) { AudioVolume = bgm.NUS3BankConfig.AudioVolume }));
                 }
             }
 
@@ -92,12 +97,24 @@ namespace Sma5h.Mods.Music.MusicMods
                 return false;
             }
 
-            //Update game in v3. v4 will have the same update mechanism for everything
+            //Update game/series in v4. v5 will have the same update mechanism for everything
             if (musicModEntries.BgmDbRootEntries.Count == 0 &&
                musicModEntries.BgmAssignedInfoEntries.Count == 0 &&
                musicModEntries.BgmStreamSetEntries.Count == 0 &&
                musicModEntries.BgmStreamPropertyEntries.Count == 0 &&
                musicModEntries.BgmPropertyEntries.Count == 0 &&
+               musicModEntries.GameTitleEntries.Count == 0 &&
+               musicModEntries.SeriesEntries.Count == 1)
+            {
+                return UpdateSeriesEntry(musicModEntries.SeriesEntries.FirstOrDefault());
+            }
+
+            if (musicModEntries.BgmDbRootEntries.Count == 0 &&
+               musicModEntries.BgmAssignedInfoEntries.Count == 0 &&
+               musicModEntries.BgmStreamSetEntries.Count == 0 &&
+               musicModEntries.BgmStreamPropertyEntries.Count == 0 &&
+               musicModEntries.BgmPropertyEntries.Count == 0 &&
+               musicModEntries.SeriesEntries.Count == 0 &&
                musicModEntries.GameTitleEntries.Count == 1)
             {
                 return UpdateGameTitleEntry(musicModEntries.GameTitleEntries.FirstOrDefault());
@@ -130,19 +147,20 @@ namespace Sma5h.Mods.Music.MusicMods
                 var streamProperty = musicModEntries.BgmStreamPropertyEntries[i];
                 var bgmProperty = musicModEntries.BgmPropertyEntries[i];
                 var gameTitle = musicModEntries.GameTitleEntries.FirstOrDefault(p => p.UiGameTitleId == dbRoot.UiGameTitleId);
+                var seriesEntry = musicModEntries.SeriesEntries.FirstOrDefault(p => p.UiSeriesId == gameTitle?.UiSeriesId);
 
                 _logger.LogInformation("Adding {Filename} file to Mod {ModName}", bgmProperty.Filename, _musicModConfig.Name);
 
                 //Get toneId
                 var toneId = bgmProperty.NameId;
-                var isFileEdit = _musicModConfig.Games.Any(p => p.Bgms.Any(s => s.ToneId == toneId));
+                var isFileEdit = _musicModConfig.Series.Any(s => s.Games.Any(p => p.Bgms.Any(s => s.ToneId == toneId)));
                 var filename = bgmProperty.Filename;
                 var filenameWithoutPath = Path.GetFileName(filename);
 
                 //In case of change of file
                 if (isFileEdit)
                 {
-                    var oldBgmData = _musicModConfig.Games.Select(p => p.Bgms.FirstOrDefault(s => s.ToneId == toneId)).Where(p => p != null)?.FirstOrDefault();
+                    var oldBgmData = _musicModConfig.Series.Select(s => s.Games.Select(p => p.Bgms.FirstOrDefault(s => s.ToneId == toneId)).Where(p => p != null)?.FirstOrDefault())?.FirstOrDefault();
                     string oldFilename = Path.Combine(ModPath, oldBgmData.Filename);
                     if (oldFilename.ToLower() != bgmProperty.Filename.ToLower())
                     {
@@ -181,7 +199,8 @@ namespace Sma5h.Mods.Music.MusicMods
                 }
 
                 //Attempt to retrieve, create none if needed
-                var game = _musicModConfig.Games.Where(p => p.UiGameTitleId == dbRoot.UiGameTitleId).FirstOrDefault();
+                //var series = _musicModConfig.Series.Where(p => p.UiSeriesId == game);
+                var game = _musicModConfig.Series.SelectMany(s => s.Games.Where(p => p.UiGameTitleId == dbRoot.UiGameTitleId)).FirstOrDefault();
                 if (game == null)
                 {
                     if (gameTitle != null)
@@ -191,15 +210,40 @@ namespace Sma5h.Mods.Music.MusicMods
                         game = new GameConfig()
                         {
                             UiGameTitleId = MusicConstants.InternalIds.GAME_TITLE_ID_DEFAULT,
-                            UiSeriesId = MusicConstants.InternalIds.GAME_SERIES_ID_DEFAULT,
+                            UiSeriesId = MusicConstants.InternalIds.SERIES_ID_DEFAULT,
                             Title = new Dictionary<string, string>(),
                             Bgms = new List<BgmConfig>()
                         };
                     }
-                    _musicModConfig.Games.Add(game);
                     if (game.Bgms == null)
                         game.Bgms = new List<BgmConfig>();
                 }
+                else
+                    game = _mapper.Map(gameTitle, game);
+
+                //Remove game from previous series location
+                _musicModConfig.Series.ForEach(g => g.Games.RemoveAll(p => p.UiGameTitleId == game.UiGameTitleId));
+
+                var series = _musicModConfig.Series.Where(p => p.UiSeriesId == game.UiSeriesId).FirstOrDefault();
+                if (series == null)
+                {
+                    if (seriesEntry != null)
+                        series = _mapper.Map<SeriesConfig>(seriesEntry);
+                    if (series == null)
+                    {
+                        series = new SeriesConfig()
+                        {
+                            UiSeriesId = MusicConstants.InternalIds.SERIES_ID_DEFAULT,
+                            DispOrder = -1,
+                            DispOrderSound = -1,
+                            Title = new Dictionary<string, string>(),
+                            Games = new List<GameConfig>()
+                        };
+                    }
+                }
+                else
+                    series = _mapper.Map(seriesEntry, series);
+                series.Games.Add(game);
 
                 var bgmConfig = new BgmConfig()
                 {
@@ -223,12 +267,12 @@ namespace Sma5h.Mods.Music.MusicMods
                 };
 
                 //Remove previous version
-                _musicModConfig.Games.ForEach(g => g.Bgms.RemoveAll(p => p.ToneId == bgmConfig.ToneId));
+                _musicModConfig.Series.ForEach(s => s.Games.ForEach(g => g.Bgms.RemoveAll(p => p.ToneId == bgmConfig.ToneId)));
 
                 game.Bgms.Add(bgmConfig);
 
                 //Remove potential empty groups
-                _musicModConfig.Games.RemoveAll(p => p.Bgms.Count == 0);
+                _musicModConfig.Series.RemoveAll(p => p.Games.Count == 0);
 
                 _logger.LogInformation("Added {Filename} file to Mod {ModName}", filename, _musicModConfig.Name);
             }
@@ -238,29 +282,6 @@ namespace Sma5h.Mods.Music.MusicMods
 
             _logger.LogInformation("Save Changes to Mod {ModName}", _musicModConfig.Name);
 
-            return true;
-        }
-
-        public bool UpdateGameTitleEntry(GameTitleEntry gameTitleEntry)
-        {
-            if (_musicModConfig?.Games != null)
-            {
-                bool change = false;
-
-                foreach (var game in _musicModConfig.Games)
-                {
-                    if (game.UiGameTitleId == gameTitleEntry.UiGameTitleId)
-                    {
-                        _mapper.Map(gameTitleEntry, game);
-                        change = true;
-                    }
-                }
-
-                if (change)
-                {
-                    return SaveMusicModConfig();
-                }
-            }
             return true;
         }
 
@@ -285,9 +306,13 @@ namespace Sma5h.Mods.Music.MusicMods
             var toneId = musicModDeleteEntries.BgmPropertyEntries.FirstOrDefault();
 
             _logger.LogInformation("Remove ToneId {ToneId} from Mod {ModName}", toneId, Mod.Name);
-            var bgms = _musicModConfig.Games.SelectMany(g => g.Bgms.Where(s => s.ToneId == toneId)).ToList();
-            _musicModConfig.Games.ForEach(g => g.Bgms.RemoveAll(p => p.ToneId == toneId));
-            _musicModConfig.Games.RemoveAll(p => p.Bgms.Count == 0);
+            var bgms = _musicModConfig.Series.SelectMany(s => s.Games.SelectMany(g => g.Bgms.Where(s => s.ToneId == toneId))).ToList();
+            _musicModConfig.Series.ForEach(s =>
+            {
+                s.Games.ForEach(g => g.Bgms.RemoveAll(p => p.ToneId == toneId));
+                s.Games.RemoveAll(p => p.Bgms.Count == 0);
+            });
+            _musicModConfig.Series.RemoveAll(p => p.Games.Count == 0);
             SaveMusicModConfig();
             foreach (var bgm in bgms)
             {
@@ -296,6 +321,56 @@ namespace Sma5h.Mods.Music.MusicMods
                 {
                     _logger.LogInformation("Remove File {File} from Mod {ModName}", file, Mod.Name);
                     File.Delete(file);
+                }
+            }
+            return true;
+        }
+
+        public bool UpdateSeriesEntry(SeriesEntry seriesEntry)
+        {
+            if (_musicModConfig?.Series != null)
+            {
+                bool change = false;
+
+                foreach (var series in _musicModConfig.Series)
+                {
+                    if (series.UiSeriesId == seriesEntry.UiSeriesId)
+                    {
+                        _mapper.Map(seriesEntry, series);
+                        change = true;
+                    }
+                }
+
+                if (change)
+                {
+                    return SaveMusicModConfig();
+                }
+            }
+            return true;
+        }
+
+        public bool UpdateGameTitleEntry(GameTitleEntry gameTitleEntry)
+        {
+            if (_musicModConfig?.Series != null)
+            {
+                var games = _musicModConfig.Series.FirstOrDefault(p => p.UiSeriesId == gameTitleEntry.UiSeriesId)?.Games;
+                if (games != null)
+                {
+                    bool change = false;
+
+                    foreach (var game in games)
+                    {
+                        if (game.UiGameTitleId == gameTitleEntry.UiGameTitleId)
+                        {
+                            _mapper.Map(gameTitleEntry, game);
+                            change = true;
+                        }
+                    }
+
+                    if (change)
+                    {
+                        return SaveMusicModConfig();
+                    }
                 }
             }
             return true;
@@ -317,7 +392,7 @@ namespace Sma5h.Mods.Music.MusicMods
                 Name = newMod.Name,
                 Author = newMod.Author,
                 Description = newMod.Description,
-                Games = new List<GameConfig>(),
+                Series = new List<SeriesConfig>(),
                 Website = newMod.Website
             };
 
@@ -343,6 +418,8 @@ namespace Sma5h.Mods.Music.MusicMods
                 _logger.LogDebug("Parsed {MusicModFile} Json File", metadataJsonFile);
                 if(output.Version == 2)
                     output = ConvertFromV2Mod(output);
+                if (output.Version == 3)
+                    output = ConvertFromV3Mod(output);
                 return output;
             }
             else
@@ -370,7 +447,7 @@ namespace Sma5h.Mods.Music.MusicMods
             return true;
         }
 
-        protected MusicModConfig ConvertFromV2Mod(MusicModConfig v2ModConfig)
+        private MusicModConfig ConvertFromV2Mod(MusicModConfig v2ModConfig)
         {
             if(v2ModConfig != null)
             {
@@ -389,7 +466,24 @@ namespace Sma5h.Mods.Music.MusicMods
             return v2ModConfig;
         }
 
-        public BgmStreamSetConfig GetUpdatedStreamSetConfig(BgmStreamSetConfig bgmStreamSetConfig)
+        private MusicModConfig ConvertFromV3Mod(MusicModConfig v3ModConfig)
+        {
+            if (v3ModConfig != null)
+            {
+                _logger.LogWarning("Convert v3 Mod {ModName} to v4.", v3ModConfig.Name);
+                v3ModConfig.Version = 4;
+                v3ModConfig.Series = v3ModConfig.Games.GroupBy(p => p.UiSeriesId).Select(p => new SeriesConfig()
+                {
+                    UiSeriesId = p.Key,
+                    SaveNo = short.MinValue,
+                    Games = p.ToList()
+                }).ToList();
+                v3ModConfig.Games = null;
+            }
+            return v3ModConfig;
+        }
+
+        private BgmStreamSetConfig GetUpdatedStreamSetConfig(BgmStreamSetConfig bgmStreamSetConfig)
         {
             if(!string.IsNullOrEmpty(bgmStreamSetConfig.SpecialCategory) && bgmStreamSetConfig.SpecialCategory.StartsWith("0x") &&
                 MusicConstants.SPECIAL_CATEGORY_LABELS.ContainsKey(bgmStreamSetConfig.SpecialCategory))
@@ -399,7 +493,7 @@ namespace Sma5h.Mods.Music.MusicMods
             return bgmStreamSetConfig;
         }
 
-        public BgmAssignedInfoConfig GetUpdatedBgmAssignedInfoConfig(BgmAssignedInfoConfig bgmAssignedInfoConfig)
+        private BgmAssignedInfoConfig GetUpdatedBgmAssignedInfoConfig(BgmAssignedInfoConfig bgmAssignedInfoConfig)
         {
             if (!string.IsNullOrEmpty(bgmAssignedInfoConfig.Condition) && bgmAssignedInfoConfig.Condition.StartsWith("0x") &&
                 MusicConstants.SOUND_CONDITION_LABELS.ContainsKey(bgmAssignedInfoConfig.Condition))
@@ -423,13 +517,20 @@ namespace Sma5h.Mods.Music.MusicMods
             public override string Id { get; }
             [JsonProperty("version")]
             public override int Version { get; set; }
+            [JsonProperty("series")]
+            public List<SeriesConfig> Series { get; set; }
             [JsonProperty("games")]
             public List<GameConfig> Games { get; set; }
 
             public MusicModConfig(string id)
             {
                 Id = id;
-                Version = 3;
+                Version = 4;
+            }
+
+            public bool ShouldSerializeGames()
+            {
+                return false;
             }
         }
 
@@ -455,6 +556,45 @@ namespace Sma5h.Mods.Music.MusicMods
 
             [JsonProperty("bgms")]
             public List<BgmConfig> Bgms { get; set; }
+        }
+
+        public class SeriesConfig
+        {
+            [JsonProperty("ui_series_id")]
+            public string UiSeriesId { get; set; }
+
+            [JsonProperty("name_id")]
+            public string NameId { get; set; }
+
+            [JsonProperty("disp_order")]
+            public sbyte DispOrder { get; set; }
+
+            [JsonProperty("disp_order_sound")]
+            public sbyte DispOrderSound { get; set; }
+
+            [JsonProperty("save_no")]
+            public short SaveNo { get; set; }
+
+            [JsonProperty("0x1c38302364")]
+            public bool Unk1 { get; set; }
+
+            [JsonProperty("is_dlc")]
+            public bool IsDlc { get; set; }
+
+            [JsonProperty("is_patch")]
+            public bool IsPatch { get; set; }
+
+            [JsonProperty("dlc_chara_id")]
+            public string DlcCharaId { get; set; }
+
+            [JsonProperty("is_use_amiibo_bg")]
+            public bool IsUseAmiiboBg { get; set; }
+
+            [JsonProperty("msbt_title")]
+            public Dictionary<string, string> Title { get; set; }
+
+            [JsonProperty("games")]
+            public List<GameConfig> Games { get; set; }
         }
 
         public class BgmConfig

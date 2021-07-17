@@ -14,6 +14,7 @@ namespace Sma5h.Mods.Music.Helpers
             public const string MUSIC_OVERRIDE_PLAYLIST_JSON_FILE = "playlist_override.json";
             public const string MUSIC_OVERRIDE_CORE_BGM_JSON_FILE = "core_bgm_override.json";
             public const string MUSIC_OVERRIDE_CORE_GAME_JSON_FILE = "core_game_override.json";
+            public const string MUSIC_OVERRIDE_CORE_SERIES_JSON_FILE = "core_series_override.json";
             public const string MUSIC_OVERRIDE_STAGE_JSON_FILE = "stage_override.json";
         }
 
@@ -48,6 +49,9 @@ namespace Sma5h.Mods.Music.Helpers
 
             public const int GameTitleMinimumSize = 14; //TO VERIFY
             public const int GameTitleMaximumSize = 62; //TO VERIFY
+
+            public const int SeriesMinimumSize = 14; //TO VERIFY
+            public const int SeriesMaximumSize = 62; //TO VERIFY
         }
 
         public class InternalIds
@@ -67,11 +71,12 @@ namespace Sma5h.Mods.Music.Helpers
 
             public const string MSBT_GAME_TITLE_PREFIX = "tit_";
             public const string MSBT_GAME_TITLE = "tit_{0}";
+            public const string MSBT_SERIES_TITLE = "tit_series_snd_{0}";
             public const string MSBT_BGM_TITLE = "bgm_title_{0}";
             public const string MSBT_BGM_AUTHOR = "bgm_author_{0}";
             public const string MSBT_BGM_COPYRIGHT = "bgm_copyright_{0}";
 
-            public const string GAME_SERIES_ID_DEFAULT = "ui_series_none";
+            public const string SERIES_ID_DEFAULT = "ui_series_none";
             public const string GAME_TITLE_ID_DEFAULT = "ui_gametitle_none";
             public const string RECORD_TYPE_DEFAULT = "record_none";
             public const string RARITY_DEFAULT = "bgm_rarity_0";

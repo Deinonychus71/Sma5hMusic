@@ -63,6 +63,7 @@ namespace Sma5hMusic.GUI.ViewModels
             output.BgmStreamPropertyEntries.Add(StreamPropertyViewModel.GetReferenceEntity());
             output.BgmPropertyEntries.Add(BgmPropertyViewModel.GetReferenceEntity());
             output.GameTitleEntries.Add(DbRootViewModel.GameTitleViewModel.GetReferenceEntity());
+            output.SeriesEntries.Add(DbRootViewModel.SeriesViewModel.GetReferenceEntity());
             return output;
         }
 

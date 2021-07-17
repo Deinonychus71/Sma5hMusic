@@ -328,6 +328,29 @@ namespace Sma5h.Mods.Music.Models.AutoMapper
                 .ForMember(i => i.IsDlc, me => me.MapFrom(p => p.IsDlc))
                 .ForMember(i => i.IsPatch, me => me.MapFrom(p => p.IsPatch))
                 .ForMember(i => i.DlcCharaId, me => me.MapFrom(p => p.DlcCharaId));
+
+            CreateMap<Sma5h.Data.Ui.Param.Database.PrcUiSeriesDatabaseModels.PrcSeriesDbRootEntry, SeriesEntry>()
+                .ForMember(i => i.UiSeriesId, me => me.MapFrom(p => p.UiSeriesId))
+                .ForMember(i => i.NameId, me => me.MapFrom(p => p.NameId))
+                .ForMember(i => i.DispOrder, me => me.MapFrom(p => p.DispOrder))
+                .ForMember(i => i.DispOrderSound, me => me.MapFrom(p => p.DispOrderSound))
+                .ForMember(i => i.SaveNo, me => me.MapFrom(p => p.SaveNo))
+                .ForMember(i => i.Unk1, me => me.MapFrom(p => p.Unk1))
+                .ForMember(i => i.IsDlc, me => me.MapFrom(p => p.IsDlc))
+                .ForMember(i => i.IsPatch, me => me.MapFrom(p => p.IsPatch))
+                .ForMember(i => i.DlcCharaId, me => me.MapFrom(p => p.DlcCharaId))
+                .ForMember(i => i.IsUseAmiiboBg, me => me.MapFrom(p => p.IsUseAmiiboBg));
+            CreateMap<SeriesEntry, Sma5h.Data.Ui.Param.Database.PrcUiSeriesDatabaseModels.PrcSeriesDbRootEntry>()
+                .ForMember(i => i.UiSeriesId, me => me.MapFrom(p => p.UiSeriesId))
+                .ForMember(i => i.NameId, me => me.MapFrom(p => p.NameId))
+                .ForMember(i => i.DispOrder, me => me.MapFrom(p => p.DispOrder))
+                .ForMember(i => i.DispOrderSound, me => me.MapFrom(p => p.DispOrderSound))
+                .ForMember(i => i.SaveNo, me => me.MapFrom(p => p.SaveNo))
+                .ForMember(i => i.Unk1, me => me.MapFrom(p => p.Unk1))
+                .ForMember(i => i.IsDlc, me => me.MapFrom(p => p.IsDlc))
+                .ForMember(i => i.IsPatch, me => me.MapFrom(p => p.IsPatch))
+                .ForMember(i => i.DlcCharaId, me => me.MapFrom(p => p.DlcCharaId))
+                .ForMember(i => i.IsUseAmiiboBg, me => me.MapFrom(p => p.IsUseAmiiboBg));
         }
     }
 }
