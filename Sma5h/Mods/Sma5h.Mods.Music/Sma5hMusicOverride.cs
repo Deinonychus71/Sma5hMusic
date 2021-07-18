@@ -280,7 +280,7 @@ namespace Sma5h.Mods.Music
                 _logger.LogInformation("File {MusicOverrideFile} does not exist.", overrideCoreGameJsonFile);
 
             //Override Core Game
-            var overrideCoreSeriesJsonFile = Path.Combine(_config.Value.Sma5hMusicOverride.ModPath, MusicConstants.MusicModFiles.MUSIC_OVERRIDE_CORE_SERIES_JSON_FILE);
+            var overrideCoreSeriesJsonFile = Path.Combine(_config.CurrentValue.Sma5hMusicOverride.ModPath, MusicConstants.MusicModFiles.MUSIC_OVERRIDE_CORE_SERIES_JSON_FILE);
             if (File.Exists(overrideCoreSeriesJsonFile))
             {
                 var file = File.ReadAllText(overrideCoreSeriesJsonFile);
@@ -341,7 +341,7 @@ namespace Sma5h.Mods.Music
         public bool UpdateSeriesEntry(Models.SeriesEntry seriesEntry)
         {
             _musicOverrideConfig.CoreSeriesOverrides[seriesEntry.UiSeriesId] = _mapper.Map<SeriesConfig>(seriesEntry);
-            var overrideJsonFile = Path.Combine(_config.Value.Sma5hMusicOverride.ModPath, MusicConstants.MusicModFiles.MUSIC_OVERRIDE_CORE_SERIES_JSON_FILE);
+            var overrideJsonFile = Path.Combine(_config.CurrentValue.Sma5hMusicOverride.ModPath, MusicConstants.MusicModFiles.MUSIC_OVERRIDE_CORE_SERIES_JSON_FILE);
             File.WriteAllText(overrideJsonFile, JsonConvert.SerializeObject(_musicOverrideConfig.CoreSeriesOverrides, _defaultFormatting));
             return true;
         }
@@ -359,7 +359,7 @@ namespace Sma5h.Mods.Music
         {
             if (_musicOverrideConfig.CoreSeriesOverrides.ContainsKey(seriesId))
                 _musicOverrideConfig.CoreSeriesOverrides.Remove(seriesId);
-            var overrideJsonFile = Path.Combine(_config.Value.Sma5hMusicOverride.ModPath, MusicConstants.MusicModFiles.MUSIC_OVERRIDE_CORE_SERIES_JSON_FILE);
+            var overrideJsonFile = Path.Combine(_config.CurrentValue.Sma5hMusicOverride.ModPath, MusicConstants.MusicModFiles.MUSIC_OVERRIDE_CORE_SERIES_JSON_FILE);
             File.WriteAllText(overrideJsonFile, JsonConvert.SerializeObject(_musicOverrideConfig.CoreSeriesOverrides, _defaultFormatting));
             return true;
         }
