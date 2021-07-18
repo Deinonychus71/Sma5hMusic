@@ -67,7 +67,7 @@ namespace Sma5hMusic.GUI.ViewModels
                         }
                     }
 
-                    var items = _items.ChunkBy(p => p.SeriesId).Select(p =>
+                    var items = _items.Where(p => p.GameTitleViewModel != null).ChunkBy(p => p.SeriesId).Select(p =>
                     {
                         var bgmsPerSeries = p.ToList();
                         var seriesTitle = bgmsPerSeries[0].SeriesViewModel.Title;
