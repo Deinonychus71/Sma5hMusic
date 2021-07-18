@@ -70,7 +70,7 @@ namespace Sma5hMusic.GUI.ViewModels
             _whenNewRequestToMoveToOtherMod = new Subject<BgmDbRootEntryViewModel>();
 
             observableBgmEntriesFilteredList
-                .Sort(SortExpressionComparer<BgmDbRootEntryViewModel>.Ascending(p => p.HiddenInSoundTest).ThenByAscending(p => p.TestDispOrder), SortOptimisations.ComparesImmutableValuesOnly, 8000)
+                .Sort(SortExpressionComparer<BgmDbRootEntryViewModel>.Ascending(p => p.HiddenInSoundTest).ThenByAscending(p => p.TestDispOrder), SortOptimisations.None, 8000)
                 .TreatMovesAsRemoveAdd()
                 .ObserveOn(RxApp.MainThreadScheduler)
                 .Bind(out _items)
@@ -192,7 +192,7 @@ namespace Sma5hMusic.GUI.ViewModels
                         _postReorderSelection = () =>
                         {
                             dataGrid.SelectedItems.Clear();
-                            selectedItems.ForEach(o => dataGrid.SelectedItems.Add(o));
+                            selectedItems.ForEach(o => { try { dataGrid.SelectedItems.Add(o); } catch { } });
                         };
                     }
                 }
