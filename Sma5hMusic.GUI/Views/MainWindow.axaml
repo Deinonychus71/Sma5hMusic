@@ -34,20 +34,6 @@
         <MenuItem Header="Open Resources Folder" Command="{Binding ActionOpenResourcesFolder}"/>
         <MenuItem Header="Open Logs Folder" Command="{Binding ActionOpenLogsFolder}"/>
       </MenuItem>
-      <MenuItem Header="Settings">
-        <MenuItem Header="Advanced" Command="{Binding ActionToggleAdvanced}">
-          <MenuItem.Icon>
-            <CheckBox IsEnabled="False" IsChecked="{Binding IsAdvanced, Mode=OneWay}"/>
-          </MenuItem.Icon>
-        </MenuItem>
-        <MenuItem Header="Show Console" Command="{Binding ActionToggleConsole}">
-          <MenuItem.Icon>
-            <CheckBox IsEnabled="False" IsChecked="{Binding IsShowingDebug, Mode=OneWay}"/>
-          </MenuItem.Icon>
-        </MenuItem>
-        <Separator></Separator>
-        <MenuItem Header="Global Settings" Command="{Binding ActionOpenGlobalSettings}"></MenuItem>
-      </MenuItem>
       <MenuItem Header="Tools">
         <MenuItem Header="Backup">
           <MenuItem Header="Run Full Backup (incl. media files)" Command="{Binding ActionBackupProject}">
@@ -86,6 +72,20 @@
           <MenuItem Header="Reset Playlists (playlist_override.json)" Command="{Binding ActionResetModOverrideFile}" CommandParameter="playlist_override.json"></MenuItem>
           <MenuItem Header="Reset Stage Metadata (stage_override.json)" Command="{Binding ActionResetModOverrideFile}" CommandParameter="stage_override.json"></MenuItem>
         </MenuItem>
+      </MenuItem>
+      <MenuItem Header="Settings">
+        <MenuItem Header="Show Advanced BGM Options" Command="{Binding ActionToggleAdvanced}">
+          <MenuItem.Icon>
+            <CheckBox IsEnabled="False" IsChecked="{Binding IsAdvanced, Mode=OneWay}"/>
+          </MenuItem.Icon>
+        </MenuItem>
+        <MenuItem Header="Show Console" Command="{Binding ActionToggleConsole}">
+          <MenuItem.Icon>
+            <CheckBox IsEnabled="False" IsChecked="{Binding IsShowingDebug, Mode=OneWay}"/>
+          </MenuItem.Icon>
+        </MenuItem>
+        <Separator></Separator>
+        <MenuItem Header="Global Settings" Command="{Binding ActionOpenGlobalSettings}"></MenuItem>
       </MenuItem>
       <MenuItem Header="About">
         <MenuItem Header="Wiki" Command="{Binding ActionOpenWiki}"></MenuItem>

@@ -151,10 +151,10 @@ namespace Sma5h.Mods.Music
         private bool ProcessPlaylistAutoMapping()
         {
             //AutoAddToBgmSelector - To Optimize :-)
-            if (_config.CurrentValue.Sma5hMusic.PlaylistMapping.Enabled)
+            if (_config.CurrentValue.Sma5hMusic.PlaylistMapping.GenerationMode == Sma5hMusicOptions.PlaylistGeneration.OnlyMissingSongs)
             {
-                var configIncidence = _config.CurrentValue.Sma5hMusic.PlaylistMapping.Incidence;
-                var configMapping = _config.CurrentValue.Sma5hMusic.PlaylistMapping.Mapping;
+                var configIncidence = _config.CurrentValue.Sma5hMusic.PlaylistMapping.AutoMappingIncidence;
+                var configMapping = _config.CurrentValue.Sma5hMusic.PlaylistMapping.Mapping.ToDictionary(p => p.Key, p => p.Value != null ? p.Value.Split(',', System.StringSplitOptions.RemoveEmptyEntries) : new string[0]);
                 var gameToSeries = _audioStateService.GetGameTitleEntries().ToDictionary(p => p.UiGameTitleId, p => p.UiSeriesId);
                 var playlists = _audioStateService.GetPlaylists().ToDictionary(p => p.Id, p => p);
                 var allModSongInPlaylists = playlists.Values.SelectMany(p => p.Tracks.Select(p2 => p2.UiBgmId)).Distinct();
@@ -164,16 +164,16 @@ namespace Sma5h.Mods.Music
                     var seriesId = gameToSeries.ContainsKey(modSong.UiGameTitleId) && gameToSeries[modSong.UiGameTitleId] != null ? gameToSeries[modSong.UiGameTitleId] : string.Empty;
                     if (!string.IsNullOrWhiteSpace(seriesId))
                     {
-                        var mappingConfig = configMapping.ContainsKey(seriesId) ? configMapping[seriesId].Split(',', System.StringSplitOptions.RemoveEmptyEntries) : null;
+                        var mappingConfig = configMapping.ContainsKey(seriesId) ? configMapping[seriesId] : null;
                         if (mappingConfig != null && mappingConfig.Length > 0)
                         {
                             foreach (var mappingPlaylist in mappingConfig)
                             {
-                                var bgmplaylist = playlists.Values.Where(p => p.Id == mappingPlaylist).FirstOrDefault();
+                                var bgmplaylist = playlists.ContainsKey(mappingPlaylist) ? playlists[mappingPlaylist] : null;
                                 if (bgmplaylist != null)
                                 {
                                     modSong.IsSelectableOriginal = true;
-                                    short i = (short)bgmplaylist.Tracks.Max(p => p.Order0);
+                                    short i = (short)(bgmplaylist.Tracks.Max(p => p.Order0) + 1);
                                     bgmplaylist.Tracks.Add(new PlaylistValueEntry()
                                     {
                                         UiBgmId = modSong.UiBgmId,
@@ -216,6 +216,10 @@ namespace Sma5h.Mods.Music
                         }
                     }
                 }
+            }
+            else if (_config.CurrentValue.Sma5hMusic.PlaylistMapping.GenerationMode == Sma5hMusicOptions.PlaylistGeneration.AllSongs)
+            {
+
             }
 
             return true;

@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+using System.Collections.Generic;
 
 namespace Sma5h.Mods.Music
 {
@@ -19,9 +21,17 @@ namespace Sma5h.Mods.Music
 
         public class Sma5hMusicOptionsAutoPlaylistsSection
         {
-            public bool Enabled { get; set; }
-            public ushort Incidence { get; set; }
+            [JsonConverter(typeof(StringEnumConverter))]
+            public PlaylistGeneration GenerationMode { get; set; }
+            public ushort AutoMappingIncidence { get; set; }
             public Dictionary<string, string> Mapping { get; set; }
+        }
+
+        public enum PlaylistGeneration
+        {
+            Manual = 0,
+            OnlyMissingSongs = 1,
+            AllSongs = 2
         }
     }
 }

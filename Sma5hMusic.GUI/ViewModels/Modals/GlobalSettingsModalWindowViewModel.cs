@@ -1,4 +1,5 @@
 ﻿using ReactiveUI;
+using ReactiveUI.Fody.Helpers;
 using ReactiveUI.Validation.Extensions;
 using Sma5hMusic.GUI.Helpers;
 using Sma5hMusic.GUI.Interfaces;
@@ -15,18 +16,46 @@ namespace Sma5hMusic.GUI.ViewModels
     {
         private readonly IGUIStateManager _guiStateManager;
         private readonly IFileDialog _fileDialog;
+        private PlaylistGenerationItem _selectedPlaylistGenerationItem;
 
         public List<string> UIThemes => new List<string>() { "Dark", "Light" };
         public List<string> UIScales => new List<string>() { "Normal", "Small" };
         public List<string> ConversionFormats => new List<string>() { "lopus", "idsp" };
         public List<string> FallBackConversionFormats => new List<string>() { "lopus", "idsp" };
         public List<ComboItem> Locales => Constants.CONVERTER_LOCALE.Select(p => new ComboItem(p.Key, p.Value)).ToList();
+        public List<PlaylistGenerationItem> PlaylistGenerationModes => new List<PlaylistGenerationItem>()
+        {
+            new PlaylistGenerationItem(PlaylistGeneration.Manual, "Manual"),
+            new PlaylistGenerationItem(PlaylistGeneration.OnlyMissingSongs, "Add Missing Mod Songs"),
+            new PlaylistGenerationItem(PlaylistGeneration.AllSongs, "Add All Songs"),
+        };
 
         public ReactiveCommand<Unit, Unit> ActionWipeAudioCache { get; }
         public ReactiveCommand<string, Unit> ActionOpenFileDialog { get; }
 
         public ComboItem SelectedGUILocale { get; set; }
         public ComboItem SelectedMSBTLocale { get; set; }
+        public PlaylistGenerationItem SelectedPlaylistGenerationItem
+        {
+            get => _selectedPlaylistGenerationItem;
+            set
+            {
+                _selectedPlaylistGenerationItem = value;
+                this.RaisePropertyChanged(nameof(SelectedPlaylistGenerationItem));
+                //this.RaiseAndSetIfChanged(ref _selectedPlaylistGenerationItem, value);
+                if (SelectedItem != null)
+                {
+                    SelectedItem.PlaylistGenerationMode = (PlaylistGeneration)value.Id;
+                    SetPlaylistGenerationItemDescription(SelectedItem);
+                }
+            }
+        }
+        [Reactive]
+        public bool IsPlaylistGenerationModeManual { get; set; }
+        [Reactive]
+        public bool IsPlaylistGenerationModeOnlyMissingSongs { get; set; }
+        [Reactive]
+        public bool IsPlaylistGenerationModeAllSongs { get; set; }
 
         public GlobalSettingsModalWindowViewModel(IGUIStateManager guiStateManager, IFileDialog fileDialog)
         {
@@ -116,6 +145,7 @@ namespace Sma5hMusic.GUI.ViewModels
         {
             SelectedGUILocale = Locales.FirstOrDefault(p => p.Id == item?.DefaultGUILocale);
             SelectedMSBTLocale = Locales.FirstOrDefault(p => p.Id == item?.DefaultMSBTLocale);
+            SelectedPlaylistGenerationItem = PlaylistGenerationModes.FirstOrDefault(p => p.Id == (int?)item?.PlaylistGenerationMode);
         }
 
         protected override Task<bool> SaveChanges()
@@ -124,6 +154,20 @@ namespace Sma5hMusic.GUI.ViewModels
             SelectedItem.DefaultMSBTLocale = SelectedMSBTLocale?.Id;
 
             return base.SaveChanges();
+        }
+
+        private void SetPlaylistGenerationItemDescription(GlobalConfigurationViewModel item)
+        {
+            if (item != null)
+            {
+                IsPlaylistGenerationModeManual = item.PlaylistGenerationMode == PlaylistGeneration.Manual;
+                IsPlaylistGenerationModeOnlyMissingSongs = item.PlaylistGenerationMode == PlaylistGeneration.OnlyMissingSongs;
+                IsPlaylistGenerationModeAllSongs = item.PlaylistGenerationMode == PlaylistGeneration.AllSongs;
+            }
+            else
+            {
+                IsPlaylistGenerationModeManual = IsPlaylistGenerationModeOnlyMissingSongs = IsPlaylistGenerationModeAllSongs = false;
+            }
         }
     }
 }

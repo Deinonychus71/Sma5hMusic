@@ -26,9 +26,9 @@ namespace Sma5hMusic.GUI.Mods.Music.Models.AutoMapper
                     ModPath = p.ModPath,
                     PlaylistMapping = new Sma5hMusicOptions.Sma5hMusicOptionsAutoPlaylistsSection()
                     {
-                        Enabled = p.PlaylistMappingEnabled,
-                        Incidence = p.PlaylistMappingIncidence,
-                        Mapping = p.PlaylistMapping.ToDictionary(k => k.Key, p => string.Join(",", p.Value))
+                        GenerationMode = (Sma5hMusicOptions.PlaylistGeneration)p.PlaylistGenerationMode,
+                        AutoMappingIncidence = p.PlaylistAutoMappingIncidence,
+                        Mapping = p.PlaylistAutoMapping.ToDictionary(k => k.Key, p => string.Join(",", p.Value))
                     }
                 }))
                 .ForMember(i => i.Sma5hMusicGUI, me => me.MapFrom(p => new ApplicationSettings.Sma5hMusicGuiOptionsSection()
@@ -60,9 +60,9 @@ namespace Sma5hMusic.GUI.Mods.Music.Models.AutoMapper
                 .ForMember(i => i.CachePath, me => me.MapFrom(p => p.Sma5hMusic.CachePath))
                 .ForMember(i => i.DefaultSma5hMusicLocale, me => me.MapFrom(p => p.Sma5hMusic.DefaultLocale))
                 .ForMember(i => i.EnableAudioCaching, me => me.MapFrom(p => p.Sma5hMusic.EnableAudioCaching))
-                .ForMember(i => i.PlaylistMappingEnabled, me => me.MapFrom(p => p.Sma5hMusic.PlaylistMapping.Enabled))
-                .ForMember(i => i.PlaylistMappingIncidence, me => me.MapFrom(p => p.Sma5hMusic.PlaylistMapping.Incidence))
-                .ForMember(i => i.PlaylistMapping, me => me.MapFrom(p => p.Sma5hMusic.PlaylistMapping.Mapping.ToDictionary(k => k.Key, p => p.Value.Split(',', StringSplitOptions.RemoveEmptyEntries))))
+                .ForMember(i => i.PlaylistGenerationMode, me => me.MapFrom(p => p.Sma5hMusic.PlaylistMapping.GenerationMode))
+                .ForMember(i => i.PlaylistAutoMappingIncidence, me => me.MapFrom(p => p.Sma5hMusic.PlaylistMapping.AutoMappingIncidence))
+                .ForMember(i => i.PlaylistAutoMapping, me => me.MapFrom(p => p.Sma5hMusic.PlaylistMapping.Mapping.ToDictionary(k => k.Key, p => p.Value.Split(',', StringSplitOptions.RemoveEmptyEntries))))
                 .ForMember(i => i.ModPath, me => me.MapFrom(p => p.Sma5hMusic.ModPath))
                 .ForMember(i => i.UIScale, me => me.MapFrom(p => p.Sma5hMusicGUI.UIScale))
                 .ForMember(i => i.UITheme, me => me.MapFrom(p => p.Sma5hMusicGUI.UITheme))

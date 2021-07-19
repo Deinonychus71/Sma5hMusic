@@ -22,34 +22,46 @@
         <!-- General -->
         <StackPanel Classes="content" Grid.Column="0" Grid.Row="0" HorizontalAlignment="Stretch">
           <Border Classes="contentTitle" DockPanel.Dock="Top">
-            <TextBlock>General</TextBlock>
+            <TextBlock>UI</TextBlock>
           </Border>
-          <fields:PropertyField Label="Theme" ToolTip="Will you choose light or darkness?">
-            <fields:PropertyField.FieldContent>
-              <ComboBox Items="{Binding UIThemes}" SelectedItem="{Binding SelectedItem.UITheme}"/>
-            </fields:PropertyField.FieldContent>
-          </fields:PropertyField>
-          <fields:PropertyField Label="UI Scale" ToolTip="Pick small for smaller resolutions">
-            <fields:PropertyField.FieldContent>
-              <ComboBox Items="{Binding UIScales}" SelectedItem="{Binding SelectedItem.UIScale}"/>
-            </fields:PropertyField.FieldContent>
-          </fields:PropertyField>
-          <fields:PropertyField Label="Default GUI Locale" ToolTip="Default Locale for UI">
-            <fields:PropertyField.FieldContent>
-              <ComboBox Items="{Binding Locales}" SelectedItem="{Binding SelectedGUILocale}">
-                <ComboBox.ItemTemplate>
-                  <DataTemplate>
-                    <TextBlock Text="{Binding Label}"/>
-                  </DataTemplate>
-                </ComboBox.ItemTemplate>
-              </ComboBox>
-            </fields:PropertyField.FieldContent>
-          </fields:PropertyField>
+          <Grid ColumnDefinitions="*,*">
+            <fields:PropertyField Grid.Column="0" Label="Theme" ToolTip="Will you choose light or darkness?">
+              <fields:PropertyField.FieldContent>
+                <ComboBox Items="{Binding UIThemes}" SelectedItem="{Binding SelectedItem.UITheme}"/>
+              </fields:PropertyField.FieldContent>
+            </fields:PropertyField>
+            <fields:PropertyField Grid.Column="1" Label="UI Scale" ToolTip="Pick small for smaller resolutions">
+              <fields:PropertyField.FieldContent>
+                <ComboBox Items="{Binding UIScales}" SelectedItem="{Binding SelectedItem.UIScale}"/>
+              </fields:PropertyField.FieldContent>
+            </fields:PropertyField>
+          </Grid>
+          <Grid ColumnDefinitions="*,*">
+            <fields:PropertyField Grid.Column="0" Label="Default GUI Locale" ToolTip="Default Locale for UI">
+              <fields:PropertyField.FieldContent>
+                <ComboBox Items="{Binding Locales}" SelectedItem="{Binding SelectedGUILocale}">
+                  <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                      <TextBlock Text="{Binding Label}"/>
+                    </DataTemplate>
+                  </ComboBox.ItemTemplate>
+                </ComboBox>
+              </fields:PropertyField.FieldContent>
+            </fields:PropertyField>
+            <fields:PropertyBooleanField Grid.Column="1" Label="Show Advanced BGM options" IsChecked="{Binding SelectedItem.Advanced}" ToolTip="Advanced will let you edit advanced properties for each song." />
+          </Grid>
+          <Grid ColumnDefinitions="*,*">
+            <fields:PropertyBooleanField Grid.Column="0" Label="Skip Cleanup Confirmation" IsChecked="{Binding SelectedItem.SkipOutputPathCleanupConfirmation}" ToolTip="If this is set to on, the program will automatically clean up your output path when building." />
+            <fields:PropertyBooleanField Grid.Column="1" Label="Skip Warning Game Version" IsChecked="{Binding SelectedItem.SkipWarningGameVersion}" ToolTip="If this is set to on, the program will not show a warning to the user if their game resources don't match a version that the tool can recognize." />
+          </Grid>
+          <Border Classes="contentTitle" DockPanel.Dock="Top">
+            <TextBlock>MSBT Automation</TextBlock>
+          </Border>
           <StackPanel Orientation="Horizontal">
             <fields:PropertyBooleanField Label="Automatically Fill Empty Locales" IsChecked="{Binding SelectedItem.CopyToEmptyLocales}" ToolTip="Every locale will get the value of 'Default MSBT Locale' if left empty." />
             <fields:PropertyField IsVisible="{Binding SelectedItem.CopyToEmptyLocales}" Label="Default MSBT Locale" ToolTip="For mod songs/games, empty locales automatically get populated with the value of the default MSBT locale">
               <fields:PropertyField.FieldContent>
-                <ComboBox Items="{Binding Locales}" SelectedItem="{Binding SelectedMSBTLocale}">
+                <ComboBox IsEnabled="{Binding SelectedItem.CopyToEmptyLocales}" Items="{Binding Locales, Mode=OneWay}" SelectedItem="{Binding SelectedMSBTLocale}">
                   <ComboBox.ItemTemplate>
                     <DataTemplate>
                       <TextBlock Text="{Binding Label}"/>
@@ -59,22 +71,68 @@
               </fields:PropertyField.FieldContent>
             </fields:PropertyField>
           </StackPanel>
-          <fields:PropertyField Label="Default Incidence" ToolTip="Default Incidence when adding a new track to playlist.">
-            <fields:PropertyField.FieldContent>
-              <NumericUpDown Value="{Binding SelectedItem.PlaylistIncidenceDefault, Mode=TwoWay}" Maximum="10000" Minimum="0"/>
-            </fields:PropertyField.FieldContent>
-          </fields:PropertyField>
-          <StackPanel Orientation="Horizontal">
-            <fields:PropertyBooleanField Label="Skip Cleanup Confirmation" IsChecked="{Binding SelectedItem.SkipOutputPathCleanupConfirmation}" ToolTip="If this is set to on, the program will automatically clean up your output path when building." />
-            <fields:PropertyBooleanField Label="Skip Warning Game Version" IsChecked="{Binding SelectedItem.SkipWarningGameVersion}" ToolTip="If this is set to on, the program will not show a warning to the user if their game resources don't match a version that the tool can recognize." />
-          </StackPanel>
-          <StackPanel Orientation="Horizontal">
-            <fields:PropertyBooleanField Label="Playlist Auto-Mapping" IsChecked="{Binding SelectedItem.PlaylistMappingEnabled}" ToolTip="At build time, any modded BGM set to visible that isn't already in a playlist will be automatically mapped to a playlist. The series associated to the BGM will be used to determine the best playlist to map it with. This can be further configured in the appsettings.json." />
-            <fields:PropertyBooleanField Label="Advanced" IsChecked="{Binding SelectedItem.Advanced}" ToolTip="Advanced will let you edit advanced properties for each song." />
-          </StackPanel>
+        </StackPanel>
+        <!-- Playlist/Audio Settings -->
+        <StackPanel Classes="content" Grid.Column="1" Grid.Row="0" HorizontalAlignment="Stretch">
+          <Border Classes="contentTitle" DockPanel.Dock="Top">
+            <TextBlock>Playlists</TextBlock>
+          </Border>
+          <Grid ColumnDefinitions="*,*">
+            <fields:PropertyField Grid.Column="0" Label="Playlist Generation Method" ToolTip="Determine how the program should build the playlists">
+              <fields:PropertyField.FieldContent>
+                <ComboBox Items="{Binding PlaylistGenerationModes, Mode=OneWay}" SelectedItem="{Binding SelectedPlaylistGenerationItem}">
+                  <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                      <TextBlock Text="{Binding Label}"/>
+                    </DataTemplate>
+                  </ComboBox.ItemTemplate>
+                </ComboBox>
+              </fields:PropertyField.FieldContent>
+            </fields:PropertyField>
+            <fields:PropertyField Grid.Column="1" Label="Description" ToolTip="Description of the playlist building behavior.">
+              <fields:PropertyField.FieldContent>
+                <Grid>
+                  <TextBlock TextWrapping="Wrap" IsVisible="{Binding IsPlaylistGenerationModeManual}" Text="At build time, the program will build the playlists exactly as configured by the user. If a bgm was not added as part of a playlist it may not be played in-game."/>
+                  <TextBlock TextWrapping="Wrap" IsVisible="{Binding IsPlaylistGenerationModeOnlyMissingSongs}" Text="At build time, any modded BGM set to visible that isn't already in a playlist will be automatically mapped to a playlist. The series associated to the BGMs will be used to determine the best playlist to map it with. This can be further configured in the appsettings.json."/>
+                  <TextBlock TextWrapping="Wrap" IsVisible="{Binding IsPlaylistGenerationModeAllSongs}" Text="At build time, the stage playlists will be generated from scratch and displayed as ordered in Sound Test. The series associated to the BGMs will be used to determine the best playlist to map it with. This can be further configured in the appsettings.json."/>
+                </Grid>
+              </fields:PropertyField.FieldContent>
+            </fields:PropertyField>
+          </Grid>
+          <Grid ColumnDefinitions="*,*">
+            <fields:PropertyField Grid.Column="0" Label="Default Incidence" ToolTip="Indicate how likely a track is to get picked up when selecting a stage. Default Incidence when adding a new track to playlist (Typically for manual mode or menus).">
+              <fields:PropertyField.FieldContent>
+                <NumericUpDown Value="{Binding SelectedItem.PlaylistIncidenceDefault, Mode=TwoWay}" Maximum="10000" Minimum="0"/>
+              </fields:PropertyField.FieldContent>
+            </fields:PropertyField>
+            <fields:PropertyField Grid.Column="1" Label="Auto-Mapping Incidence" ToolTip="Indicate how likely a track is to get picked up when selecting a stage. Incidence when a BGM is automatically inserted to a playlist at build time..">
+              <fields:PropertyField.FieldContent>
+                <NumericUpDown IsEnabled="{Binding !IsPlaylistGenerationModeManual}" Value="{Binding SelectedItem.PlaylistAutoMappingIncidence, Mode=TwoWay}" Maximum="10000" Minimum="0"/>
+              </fields:PropertyField.FieldContent>
+            </fields:PropertyField>
+          </Grid>
+          <Border Classes="contentTitle" DockPanel.Dock="Top">
+            <TextBlock>Audio Conversion</TextBlock>
+          </Border>
+          <Grid ColumnDefinitions="*,*">
+            <fields:PropertyField Grid.Column="0" Label="Conversion Format" ToolTip="If the source file is BRSTM, pick a format to convert to.">
+              <fields:PropertyField.FieldContent>
+                <ComboBox Items="{Binding ConversionFormats}" SelectedItem="{Binding SelectedItem.AudioConversionFormat}"/>
+              </fields:PropertyField.FieldContent>
+            </fields:PropertyField>
+            <fields:PropertyField Grid.Column="1" Label="Conversion Fallback Format" ToolTip="If the source file is BRSTM and the file cannot be converted to the prefered format, pick this format instead.">
+              <fields:PropertyField.FieldContent>
+                <ComboBox Items="{Binding FallBackConversionFormats}" SelectedItem="{Binding SelectedItem.AudioConversionFormatFallBack}"/>
+              </fields:PropertyField.FieldContent>
+            </fields:PropertyField>
+          </Grid>
+          <Grid ColumnDefinitions="*,*">
+            <fields:PropertyBooleanField Grid.Column="0" Label="[EXP.] In-Game Volume" IsChecked="{Binding SelectedItem.InGameVolume}" ToolTip="If turned on, the volume parameter of each song will be used to try to get an accurate playback of how loud a song will be in-game. Typically used to normalize songs from within the GUI." />
+            <Button Grid.Column="1" Margin="10,10,0,0" Content="Wipe Audio Cache" Command="{Binding ActionWipeAudioCache}"/>
+          </Grid>
         </StackPanel>
         <!-- Path -->
-        <StackPanel Classes="content" Grid.Column="1" Grid.Row="0" HorizontalAlignment="Stretch">
+        <StackPanel Classes="content" Grid.Column="2" Grid.Row="0" HorizontalAlignment="Stretch">
           <Border Classes="contentTitle" DockPanel.Dock="Top">
             <TextBlock>Program Paths</TextBlock>
           </Border>
@@ -87,25 +145,6 @@
           <!--<fields:PropertyFolderPickupField Label="Log Directory" ToolTip="Path where logs will go." Text="{Binding SelectedItem.LogPath}" Command="{Binding ActionOpenFileDialog}" CommandParameter="LogPath"/>-->
           <!--<fields:PropertyFolderPickupField Label="Audio Cache Directory" ToolTip="Path where audio cache will go, if enabled." Text="{Binding SelectedItem.CachePath}" Command="{Binding ActionOpenFileDialog}" CommandParameter="CachePath"/>-->
           <!--<fields:PropertyFolderPickupField Label="Temp Directory" ToolTip="Path where some temporary files will go when a build is happening." Text="{Binding SelectedItem.TempPath}" Command="{Binding ActionOpenFileDialog}" CommandParameter="TempPath"/>-->
-        </StackPanel>
-        <!-- Audio Conversion -->
-        <StackPanel Classes="content" Grid.Column="2" Grid.Row="0" HorizontalAlignment="Stretch">
-          <Border Classes="contentTitle" DockPanel.Dock="Top">
-            <TextBlock>Audio Conversion</TextBlock>
-          </Border>
-          <!--<fields:PropertyBooleanField Label="Enable Audio Caching" IsChecked="{Binding SelectedItem.EnableAudioCaching}" ToolTip="If this is on, the songs will be converted once and stored in a cache folder. If you rename the files you may need to clear the cache." />-->
-          <fields:PropertyField Label="Conversion Format" ToolTip="If the source file is BRSTM, pick a format to convert to.">
-            <fields:PropertyField.FieldContent>
-              <ComboBox Items="{Binding ConversionFormats}" SelectedItem="{Binding SelectedItem.AudioConversionFormat}"/>
-            </fields:PropertyField.FieldContent>
-          </fields:PropertyField>
-          <fields:PropertyField Label="Conversion Fallback Format" ToolTip="If the source file is BRSTM and the file cannot be converted to the prefered format, pick this format instead.">
-            <fields:PropertyField.FieldContent>
-              <ComboBox Items="{Binding FallBackConversionFormats}" SelectedItem="{Binding SelectedItem.AudioConversionFormatFallBack}"/>
-            </fields:PropertyField.FieldContent>
-          </fields:PropertyField>
-          <Button Margin="10,10,0,0" Content="Wipe Audio Cache" Command="{Binding ActionWipeAudioCache}"/>
-          <fields:PropertyBooleanField Label="[EXPERIMENTAL] In-Game Volume" IsChecked="{Binding SelectedItem.InGameVolume}" ToolTip="If turned on, the volume parameter of each song will be used to try to get an accurate playback of how loud a song will be in-game. Typically used to normalize songs from within the GUI." />
         </StackPanel>
       </Grid>
     </Grid>
