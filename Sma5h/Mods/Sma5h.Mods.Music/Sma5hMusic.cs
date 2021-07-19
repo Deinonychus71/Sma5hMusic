@@ -225,7 +225,7 @@ namespace Sma5h.Mods.Music
         {
             var dbRoots = _audioStateService.GetBgmDbRootEntries();
             var streamSets = _audioStateService.GetBgmStreamSetEntries();
-            var infoEntries = _audioStateService.GetBgmAssignedInfoEntries().Select(p => p.InfoId);
+            var infoEntries = _audioStateService.GetBgmAssignedInfoEntries().Select(p => p.InfoId).ToHashSet();
             bool passed = true;
             var messages = new List<string>();
             foreach (var streamSet in streamSets)
