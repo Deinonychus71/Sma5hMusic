@@ -150,76 +150,113 @@ namespace Sma5h.Mods.Music
 
         private bool ProcessPlaylistAutoMapping()
         {
+            var generationMode = _config.CurrentValue.Sma5hMusic.PlaylistMapping.GenerationMode;
+
             //AutoAddToBgmSelector - To Optimize :-)
-            if (_config.CurrentValue.Sma5hMusic.PlaylistMapping.GenerationMode == Sma5hMusicOptions.PlaylistGeneration.OnlyMissingSongs)
+            if (generationMode == Sma5hMusicOptions.PlaylistGeneration.OnlyMissingSongs || generationMode == Sma5hMusicOptions.PlaylistGeneration.AllSongs)
             {
                 var configIncidence = _config.CurrentValue.Sma5hMusic.PlaylistMapping.AutoMappingIncidence;
                 var configMapping = _config.CurrentValue.Sma5hMusic.PlaylistMapping.Mapping.ToDictionary(p => p.Key, p => p.Value != null ? p.Value.Split(',', System.StringSplitOptions.RemoveEmptyEntries) : new string[0]);
-                var gameToSeries = _audioStateService.GetGameTitleEntries().ToDictionary(p => p.UiGameTitleId, p => p.UiSeriesId);
                 var playlists = _audioStateService.GetPlaylists().ToDictionary(p => p.Id, p => p);
-                var allModSongInPlaylists = playlists.Values.SelectMany(p => p.Tracks.Select(p2 => p2.UiBgmId)).Distinct();
-                var allModSongs = _audioStateService.GetBgmDbRootEntries().Where(p => p.TestDispOrder >= 0 && p.MusicMod != null && !allModSongInPlaylists.Contains(p.UiBgmId)).OrderBy(p => p.TestDispOrder);
-                foreach (var modSong in allModSongs)
+
+                IEnumerable<BgmDbRootEntry> songsToProcess = null;
+                if (generationMode == Sma5hMusicOptions.PlaylistGeneration.AllSongs)
                 {
-                    var seriesId = gameToSeries.ContainsKey(modSong.UiGameTitleId) && gameToSeries[modSong.UiGameTitleId] != null ? gameToSeries[modSong.UiGameTitleId] : string.Empty;
-                    if (!string.IsNullOrWhiteSpace(seriesId))
+                    //Select all visible songs + clear all tracks
+                    var allAffectedPlaylists = configMapping.Values.SelectMany(p => p).Distinct().ToHashSet();
+                    playlists.Where(p => allAffectedPlaylists.Contains(p.Key)).ToList().ForEach(p => p.Value.Tracks.Clear());
+                    songsToProcess = _audioStateService.GetBgmDbRootEntries().Where(p => p.TestDispOrder >= 0).OrderBy(p => p.TestDispOrder);
+                }
+                else if (generationMode == Sma5hMusicOptions.PlaylistGeneration.OnlyMissingSongs)
+                {
+                    //Select all visible modded songs not in playlist
+                    var allModSongInPlaylists = playlists.Values.SelectMany(p => p.Tracks.Select(p2 => p2.UiBgmId)).Distinct();
+                    songsToProcess = _audioStateService.GetBgmDbRootEntries().Where(p => p.TestDispOrder >= 0 && p.MusicMod != null && !allModSongInPlaylists.Contains(p.UiBgmId)).OrderBy(p => p.TestDispOrder);
+                }
+
+                //Get series from BGM
+                var gameToSeries = _audioStateService.GetGameTitleEntries().ToDictionary(p => p.UiGameTitleId, p => p.UiSeriesId);
+                foreach (var configMappingEntry in configMapping)
+                {
+                    //Filter songs per series/game
+                    IEnumerable<BgmDbRootEntry> songsToProcessMapping = null;
+                    if (configMappingEntry.Key.StartsWith(MusicConstants.InternalIds.GAME_SERIES_ID_PREFIX))
                     {
-                        var mappingConfig = configMapping.ContainsKey(seriesId) ? configMapping[seriesId] : null;
-                        if (mappingConfig != null && mappingConfig.Length > 0)
+                        songsToProcessMapping = songsToProcess.Where(p => p.UiGameTitleId != null && gameToSeries.ContainsKey(p.UiGameTitleId) && configMappingEntry.Key == gameToSeries[p.UiGameTitleId]);
+                    }
+                    else if (configMappingEntry.Key.StartsWith(MusicConstants.InternalIds.GAME_TITLE_ID_PREFIX))
+                    {
+                        songsToProcessMapping = songsToProcess.Where(p => p.UiGameTitleId != null && configMappingEntry.Key == p.UiGameTitleId);
+                    }
+                    else
+                    {
+                        continue;
+                    }
+
+                    //Add to playlist
+                    foreach (var mappingPlaylist in configMappingEntry.Value)
+                    {
+                        var bgmplaylist = playlists.ContainsKey(mappingPlaylist) ? playlists[mappingPlaylist] : null;
+                        if (bgmplaylist != null)
                         {
-                            foreach (var mappingPlaylist in mappingConfig)
+                            foreach (var songToProcessMapping in songsToProcessMapping)
                             {
-                                var bgmplaylist = playlists.ContainsKey(mappingPlaylist) ? playlists[mappingPlaylist] : null;
-                                if (bgmplaylist != null)
+                                songToProcessMapping.IsSelectableOriginal = true;
+                                bgmplaylist.Tracks.Add(new PlaylistValueEntry()
                                 {
-                                    modSong.IsSelectableOriginal = true;
-                                    short i = (short)(bgmplaylist.Tracks.Max(p => p.Order0) + 1);
-                                    bgmplaylist.Tracks.Add(new PlaylistValueEntry()
-                                    {
-                                        UiBgmId = modSong.UiBgmId,
-                                        Incidence0 = configIncidence,
-                                        Incidence1 = configIncidence,
-                                        Incidence2 = configIncidence,
-                                        Incidence3 = configIncidence,
-                                        Incidence4 = configIncidence,
-                                        Incidence5 = configIncidence,
-                                        Incidence6 = configIncidence,
-                                        Incidence7 = configIncidence,
-                                        Incidence8 = configIncidence,
-                                        Incidence9 = configIncidence,
-                                        Incidence10 = configIncidence,
-                                        Incidence11 = configIncidence,
-                                        Incidence12 = configIncidence,
-                                        Incidence13 = configIncidence,
-                                        Incidence14 = configIncidence,
-                                        Incidence15 = configIncidence,
-                                        Order0 = bgmplaylist.Tracks.Max(p => p.Order0),
-                                        Order1 = bgmplaylist.Tracks.Max(p => p.Order1),
-                                        Order2 = bgmplaylist.Tracks.Max(p => p.Order2),
-                                        Order3 = bgmplaylist.Tracks.Max(p => p.Order3),
-                                        Order4 = bgmplaylist.Tracks.Max(p => p.Order4),
-                                        Order5 = bgmplaylist.Tracks.Max(p => p.Order5),
-                                        Order6 = bgmplaylist.Tracks.Max(p => p.Order6),
-                                        Order7 = bgmplaylist.Tracks.Max(p => p.Order7),
-                                        Order8 = bgmplaylist.Tracks.Max(p => p.Order8),
-                                        Order9 = bgmplaylist.Tracks.Max(p => p.Order9),
-                                        Order10 = bgmplaylist.Tracks.Max(p => p.Order10),
-                                        Order11 = bgmplaylist.Tracks.Max(p => p.Order11),
-                                        Order12 = bgmplaylist.Tracks.Max(p => p.Order12),
-                                        Order13 = bgmplaylist.Tracks.Max(p => p.Order13),
-                                        Order14 = bgmplaylist.Tracks.Max(p => p.Order14),
-                                        Order15 = bgmplaylist.Tracks.Max(p => p.Order15)
-                                    });
-                                    _logger.LogInformation("Playlist Auto-Mapping: Added BGM {UiBgmId} to Playlist {BgmPlaylist}.", modSong.UiBgmId, mappingPlaylist);
-                                }
+                                    UiBgmId = songToProcessMapping.UiBgmId,
+                                    Incidence0 = configIncidence,
+                                    Incidence1 = configIncidence,
+                                    Incidence2 = configIncidence,
+                                    Incidence3 = configIncidence,
+                                    Incidence4 = configIncidence,
+                                    Incidence5 = configIncidence,
+                                    Incidence6 = configIncidence,
+                                    Incidence7 = configIncidence,
+                                    Incidence8 = configIncidence,
+                                    Incidence9 = configIncidence,
+                                    Incidence10 = configIncidence,
+                                    Incidence11 = configIncidence,
+                                    Incidence12 = configIncidence,
+                                    Incidence13 = configIncidence,
+                                    Incidence14 = configIncidence,
+                                    Incidence15 = configIncidence,
+                                    Order0 = bgmplaylist.Tracks.Count > 0 ? (short)(bgmplaylist.Tracks.Max(p => p.Order0) + 1) : (short)0,
+                                    Order1 = bgmplaylist.Tracks.Count > 0 ? (short)(bgmplaylist.Tracks.Max(p => p.Order1) + 1) : (short)0,
+                                    Order2 = bgmplaylist.Tracks.Count > 0 ? (short)(bgmplaylist.Tracks.Max(p => p.Order2) + 1) : (short)0,
+                                    Order3 = bgmplaylist.Tracks.Count > 0 ? (short)(bgmplaylist.Tracks.Max(p => p.Order3) + 1) : (short)0,
+                                    Order4 = bgmplaylist.Tracks.Count > 0 ? (short)(bgmplaylist.Tracks.Max(p => p.Order4) + 1) : (short)0,
+                                    Order5 = bgmplaylist.Tracks.Count > 0 ? (short)(bgmplaylist.Tracks.Max(p => p.Order5) + 1) : (short)0,
+                                    Order6 = bgmplaylist.Tracks.Count > 0 ? (short)(bgmplaylist.Tracks.Max(p => p.Order6) + 1) : (short)0,
+                                    Order7 = bgmplaylist.Tracks.Count > 0 ? (short)(bgmplaylist.Tracks.Max(p => p.Order7) + 1) : (short)0,
+                                    Order8 = bgmplaylist.Tracks.Count > 0 ? (short)(bgmplaylist.Tracks.Max(p => p.Order8) + 1) : (short)0,
+                                    Order9 = bgmplaylist.Tracks.Count > 0 ? (short)(bgmplaylist.Tracks.Max(p => p.Order9) + 1) : (short)0,
+                                    Order10 = bgmplaylist.Tracks.Count > 0 ? (short)(bgmplaylist.Tracks.Max(p => p.Order10) + 1) : (short)0,
+                                    Order11 = bgmplaylist.Tracks.Count > 0 ? (short)(bgmplaylist.Tracks.Max(p => p.Order11) + 1) : (short)0,
+                                    Order12 = bgmplaylist.Tracks.Count > 0 ? (short)(bgmplaylist.Tracks.Max(p => p.Order12) + 1) : (short)0,
+                                    Order13 = bgmplaylist.Tracks.Count > 0 ? (short)(bgmplaylist.Tracks.Max(p => p.Order13) + 1) : (short)0,
+                                    Order14 = bgmplaylist.Tracks.Count > 0 ? (short)(bgmplaylist.Tracks.Max(p => p.Order14) + 1) : (short)0,
+                                    Order15 = bgmplaylist.Tracks.Count > 0 ? (short)(bgmplaylist.Tracks.Max(p => p.Order15) + 1) : (short)0
+                                });
+                                _logger.LogInformation("Playlist Auto-Mapping: Added BGM {UiBgmId} to Playlist {BgmPlaylist}.", songToProcessMapping.UiBgmId, mappingPlaylist);
                             }
+                        }
+                        else
+                        {
+                            _logger.LogInformation("Playlist {PlaylistId} wasn't found. Skipping...", mappingPlaylist);
                         }
                     }
                 }
-            }
-            else if (_config.CurrentValue.Sma5hMusic.PlaylistMapping.GenerationMode == Sma5hMusicOptions.PlaylistGeneration.AllSongs)
-            {
 
+                //Check for empty playlists
+                if (generationMode == Sma5hMusicOptions.PlaylistGeneration.AllSongs)
+                {
+                    //Select all visible songs + clear all tracks
+                    var allAffectedPlaylists = configMapping.Values.SelectMany(p => p).Distinct().ToHashSet();
+                    var emptyPlaylist = playlists.Where(p => allAffectedPlaylists.Contains(p.Key) && p.Value.Tracks.Count == 0).ToList();
+                    if (emptyPlaylist != null && emptyPlaylist.Count > 0)
+                        throw new Exception($"Playlist '{emptyPlaylist[0]}' had no tracks after running playlist auto-mapping. This could cause an issue in game");
+                }
             }
 
             return true;

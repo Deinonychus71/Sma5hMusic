@@ -172,7 +172,7 @@ namespace Sma5hMusic.GUI
                 { "ui_series_pikmin", new string[] { "bgmpikmin" } },
                 { "ui_series_famicomrobot", new string[] { "bgmother" } },
                 { "ui_series_doubutsu", new string[] { "bgmanimal" } },
-                { "ui_series_wiifit", new string[] { "bgmwiitfit" } },
+                { "ui_series_wiifit", new string[] { "bgmwiifit" } },
                 { "ui_series_punchout", new string[] { "bgmpunchout" } },
                 { "ui_series_xenoblade", new string[] { "bgmxenoblade", "bgmelement" } },
                 { "ui_series_metalgear", new string[] { "bgmmetalgear" } },

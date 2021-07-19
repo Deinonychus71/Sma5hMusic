@@ -94,7 +94,7 @@
                 <Grid>
                   <TextBlock TextWrapping="Wrap" IsVisible="{Binding IsPlaylistGenerationModeManual}" Text="At build time, the program will build the playlists exactly as configured by the user. If a bgm was not added as part of a playlist it may not be played in-game."/>
                   <TextBlock TextWrapping="Wrap" IsVisible="{Binding IsPlaylistGenerationModeOnlyMissingSongs}" Text="At build time, any modded BGM set to visible that isn't already in a playlist will be automatically mapped to a playlist. The series associated to the BGMs will be used to determine the best playlist to map it with. This can be further configured in the appsettings.json."/>
-                  <TextBlock TextWrapping="Wrap" IsVisible="{Binding IsPlaylistGenerationModeAllSongs}" Text="At build time, the stage playlists will be generated from scratch and displayed as ordered in Sound Test. The series associated to the BGMs will be used to determine the best playlist to map it with. This can be further configured in the appsettings.json."/>
+                  <TextBlock TextWrapping="Wrap" IsVisible="{Binding IsPlaylistGenerationModeAllSongs}" Text="At build time, the stage playlists will be regenerated from scratch and displayed as ordered in Sound Test. The series associated to the BGMs will be used to determine the best playlist to map it with. This can be further configured in the appsettings.json."/>
                 </Grid>
               </fields:PropertyField.FieldContent>
             </fields:PropertyField>
