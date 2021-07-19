@@ -128,6 +128,17 @@ namespace Sma5hMusic.GUI.Dialogs
                         var mods = _serviceProvider.GetServices<ISma5hMod>();
                         foreach (var mod in mods)
                         {
+                            var preCheckResult = mod.BuildPreCheck();
+                            if (!string.IsNullOrEmpty(preCheckResult))
+                            {
+                                await ShowBuildPreCheckFailedError(preCheckResult);
+                                await callbackError?.Invoke(new Exception("Mod Build Exception"));
+                                return;
+                            }
+                        }
+
+                        foreach (var mod in mods)
+                        {
                             if (!mod.Build(useCache))
                             {
                                 await ShowBuildFailedError();
@@ -222,6 +233,15 @@ namespace Sma5hMusic.GUI.Dialogs
         {
             var file = Path.GetFileName(filename).ToLower();
             return file.EndsWith("msbt") || file.EndsWith("nus3audio") || file.EndsWith("nus3bank") || file.EndsWith("prc") || file == "bgm_property.bin";
+        }
+
+        private async Task ShowBuildPreCheckFailedError(string message)
+        {
+            await Dispatcher.UIThread.InvokeAsync(async () =>
+            {
+                await _messageDialog.ShowError("Failed", $"Build failed. {message}");
+
+            }, DispatcherPriority.Background);
         }
 
         private async Task ShowBuildFailedError()

@@ -10,15 +10,13 @@
   <Grid ColumnDefinitions="5*,5,*" RowDefinitions="30,*">
     <ContentControl Content="{Binding VMContextMenu}"></ContentControl>
     <Grid Grid.Row="1" Grid.Column="0" Classes="list">
-      <i:Interaction.Behaviors>
-        <ia:EventTriggerBehavior EventName="Initialized">
-          <ia:InvokeCommandAction Command="{Binding ActionInitializeDragAndDrop, Mode=OneWay}" CommandParameter="{Binding $parent[UserControl]}"/>
-        </ia:EventTriggerBehavior>
-      </i:Interaction.Behaviors>
       <DataGrid DragDrop.AllowDrop="True" SelectionMode="Extended" Classes="bgmList" SelectedItem="{Binding SelectedBgmEntry, Mode=TwoWay}" Items="{Binding Items, Mode=OneWay}">
         <i:Interaction.Behaviors>
           <ia:EventTriggerBehavior EventName="CellPointerPressed">
             <ia:InvokeCommandAction Command="{Binding ActionReorderBgm}"/>
+          </ia:EventTriggerBehavior>
+          <ia:EventTriggerBehavior EventName="Initialized">
+            <ia:InvokeCommandAction Command="{Binding ActionInitializeDragAndDrop, Mode=OneWay}" CommandParameter="{Binding $self}"/>
           </ia:EventTriggerBehavior>
         </i:Interaction.Behaviors>
         <DataGrid.Columns>

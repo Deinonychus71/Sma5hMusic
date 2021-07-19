@@ -1,11 +1,11 @@
 ﻿using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Sma5h.Data.Ui.Param.Database.PrcUiBgmDatabaseModels;
 using Sma5h.Interfaces;
 using Sma5h.Mods.Music.Helpers;
 using Sma5h.Mods.Music.Interfaces;
 using Sma5h.Mods.Music.Models;
 using Sma5h.Mods.Music.Models.PlaylistEntryModels;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -69,6 +69,20 @@ namespace Sma5h.Mods.Music
             }
 
             return true;
+        }
+
+        public override string BuildPreCheck()
+        {
+            try
+            {
+                //Checks
+                CheckBuildSpecialCategory();
+                return string.Empty;
+            }
+            catch (Exception e)
+            {
+                return e.Message;
+            }
         }
 
         public override bool Build(bool useCache)
@@ -205,6 +219,28 @@ namespace Sma5h.Mods.Music
             }
 
             return true;
+        }
+
+        private void CheckBuildSpecialCategory()
+        {
+            var dbRoots = _audioStateService.GetBgmDbRootEntries();
+            var streamSets = _audioStateService.GetBgmStreamSetEntries();
+            var infoEntries = _audioStateService.GetBgmAssignedInfoEntries().Select(p => p.InfoId);
+            bool passed = true;
+            var messages = new List<string>();
+            foreach (var streamSet in streamSets)
+            {
+                if (!string.IsNullOrEmpty(streamSet.Info1) && !infoEntries.Contains(streamSet.Info1))
+                {
+                    var dbRootEntry = dbRoots.FirstOrDefault(p => p.StreamSetId == streamSet.StreamSetId);
+                    var newMessage = $"'{dbRootEntry?.Title["us_en"]}' ({streamSet.StreamSetId}) references '{streamSet.Info1}' in its special category field, but the reference seems broken.\rThis can happen if the '{streamSet.Info1}' was renamed or removed.";
+                    _logger.LogError(newMessage);
+                    messages.Add(newMessage);
+                    passed = false;
+                }
+            }
+            if (!passed)
+                throw new Exception($"Issues were found when running a precheck on the build:\r\r{string.Join("\r\r-", messages)}\r\rPlease check the logs for more information.");
         }
     }
 }

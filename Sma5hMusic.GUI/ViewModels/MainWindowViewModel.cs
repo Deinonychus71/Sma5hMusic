@@ -14,6 +14,7 @@ using Sma5hMusic.GUI.Helpers;
 using Sma5hMusic.GUI.Interfaces;
 using Sma5hMusic.GUI.Views;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reactive;
@@ -174,6 +175,7 @@ namespace Sma5hMusic.GUI.ViewModels
             VMContextMenu.WhenNewRequestToEditModEntry.Subscribe(async (o) => await EditMod());
             VMBgmSongs.WhenNewRequestToEditBgmEntry.Subscribe(async (o) => await EditBgmEntry(o));
             VMBgmSongs.WhenNewRequestToDeleteBgmEntry.Subscribe(async (o) => await DeleteBgmEntry(o));
+            VMBgmSongs.WhenNewRequestToDeleteBgmEntries.Subscribe(async (o) => await DeleteBgmEntries(o));
             VMBgmSongs.WhenNewRequestToReorderBgmEntry.Subscribe(async (o) => await _guiStateManager.ReorderSongs(o.Item1, o.Item2));
             VMBgmSongs.WhenNewRequestToReorderBgmEntries.Subscribe(async (o) => await _guiStateManager.ReorderSongs(o.Item1, o.Item2));
             VMBgmSongs.WhenNewRequestToRenameToneId.Subscribe(async (o) => await RenameToneId(o));
@@ -335,7 +337,7 @@ namespace Sma5hMusic.GUI.ViewModels
             var result = await _fileDialog.SaveFileCSVDialog();
             if (!string.IsNullOrEmpty(result))
             {
-                if(await _devTools.ExportToCSV(result))
+                if (await _devTools.ExportToCSV(result))
                     await _messageDialog.ShowError("Done", "The CSV export was completed.");
             }
         }
@@ -353,7 +355,7 @@ namespace Sma5hMusic.GUI.ViewModels
 
         public async Task ResetModOverrideFile(string file)
         {
-            if(await _guiStateManager.ResetModOverrideFile(file))
+            if (await _guiStateManager.ResetModOverrideFile(file))
                 await OnInitData();
         }
         #endregion
@@ -432,6 +434,30 @@ namespace Sma5hMusic.GUI.ViewModels
                 if (result)
                 {
                     if (vmBgmEntry != null)
+                    {
+                        await vmBgmEntry.StopPlay();
+
+                        _logger.LogInformation("Deleting {ToneId}...", vmBgmEntry.ToneId);
+
+                        //TODO - When supported more complex mods this needs to be updated 
+                        //Right now, it is tied to v2 mods
+                        var deleteMusicModEntries = new BgmEntryViewModel(vmBgmEntry).GetMusicModDeleteEntries();
+                        await _guiStateManager.RemoveMusicModEntries(deleteMusicModEntries, vmBgmEntry.MusicMod);
+
+                        _logger.LogInformation("{ToneId} deleted.", vmBgmEntry.ToneId);
+                    }
+                }
+            }
+        }
+
+        public async Task DeleteBgmEntries(List<BgmDbRootEntryViewModel> vmBgmEntries)
+        {
+            if (vmBgmEntries != null)
+            {
+                var result = await _messageDialog.ShowWarningConfirm($"Delete '{vmBgmEntries.Count}' bgms?", "Do you really want to remove the selected songs? This action cannot be reversed.");
+                if (result)
+                {
+                    foreach (var vmBgmEntry in vmBgmEntries)
                     {
                         await vmBgmEntry.StopPlay();
 
