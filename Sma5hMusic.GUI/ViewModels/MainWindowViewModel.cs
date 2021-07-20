@@ -525,13 +525,16 @@ namespace Sma5hMusic.GUI.ViewModels
                 await AddNewOrEditMod(parent, result);
         }
 
-        public async Task MoveToAnotherMod(BgmDbRootEntryViewModel vmBgmEntry)
+        public async Task MoveToAnotherMod(List<BgmDbRootEntryViewModel> vmBgmEntries)
         {
             var result = await _dialogModPicker.ShowPickerDialog(_rootDialog.Window);
             if (result != null)
             {
-                await vmBgmEntry.StopPlay();
-                await _guiStateManager.MoveMusicModEntrySetToAnotherMod(new BgmEntryViewModel(vmBgmEntry).GetMusicModEntries(), vmBgmEntry.MusicMod, result.MusicMod);
+                foreach (var vmBgmEntry in vmBgmEntries)
+                {
+                    await vmBgmEntry.StopPlay();
+                    await _guiStateManager.MoveMusicModEntrySetToAnotherMod(new BgmEntryViewModel(vmBgmEntry).GetMusicModEntries(), vmBgmEntry.MusicMod, result.MusicMod);
+                }
             }
         }
 
