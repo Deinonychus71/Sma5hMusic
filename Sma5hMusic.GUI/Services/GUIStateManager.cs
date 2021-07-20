@@ -911,6 +911,8 @@ namespace Sma5hMusic.GUI.Services
         public async Task<bool> FixUnknownValues()
         {
             bool confirm = false;
+            bool result = true;
+
             await Dispatcher.UIThread.InvokeAsync(async () =>
             {
                 confirm = await _messageDialog.ShowWarningConfirm("Fix Hidden Songs in Song Selector",
@@ -922,25 +924,39 @@ namespace Sma5hMusic.GUI.Services
 
             if (confirm && await BackupProject(false, false))
             {
-                foreach (var bgmDbRootEntry in _viewModelManager.GetBgmDbRootEntriesViewModels())
+                try
                 {
-                    if (bgmDbRootEntry.IsMod)
+                    foreach (var bgmDbRootEntry in _viewModelManager.GetBgmDbRootEntriesViewModels())
                     {
-                        if (!bgmDbRootEntry.IsSelectableOriginal || !bgmDbRootEntry.IsSelectableMovieEdit)
+                        if (bgmDbRootEntry.IsMod)
                         {
-                            bgmDbRootEntry.IsSelectableOriginal = true;
-                            bgmDbRootEntry.IsSelectableMovieEdit = true;
-                            bgmDbRootEntry.SaveChanges();
-                            if (!await bgmDbRootEntry.MusicMod.AddOrUpdateMusicModEntries(new ViewModels.BgmEntryViewModel(bgmDbRootEntry).GetMusicModEntries()))
+                            if (!bgmDbRootEntry.IsSelectableOriginal || !bgmDbRootEntry.IsSelectableMovieEdit)
                             {
-                                await Dispatcher.UIThread.InvokeAsync(async () =>
+                                bgmDbRootEntry.IsSelectableOriginal = true;
+                                bgmDbRootEntry.IsSelectableMovieEdit = true;
+                                bgmDbRootEntry.SaveChanges();
+                                if (!await bgmDbRootEntry.MusicMod.AddOrUpdateMusicModEntries(new ViewModels.BgmEntryViewModel(bgmDbRootEntry).GetMusicModEntries()))
                                 {
-                                    await _messageDialog.ShowError("Fix Hidden Songs in Song Selector", "There was an error while updating BGM values.");
-                                }, DispatcherPriority.Background);
-                                return true;
+                                    result = false;
+                                    break;
+                                }
                             }
                         }
                     }
+                }
+                catch (Exception e)
+                {
+                    _logger.LogError(e, "There was an error while updating BGM values. {Message}", e.Message);
+                    result = false;
+                }
+
+                if (!result)
+                {
+                    await Dispatcher.UIThread.InvokeAsync(async () =>
+                    {
+                        await _messageDialog.ShowError("Fix Hidden Songs in Song Selector", "There was an error while updating BGM values. Please check the logs.");
+                    }, DispatcherPriority.Background);
+                    return true;
                 }
 
                 await Dispatcher.UIThread.InvokeAsync(async () =>
@@ -958,6 +974,8 @@ namespace Sma5hMusic.GUI.Services
         public async Task UpdateBgmSelectorStages(bool enable)
         {
             bool confirm = false;
+            bool result = true;
+
             await Dispatcher.UIThread.InvokeAsync(async () =>
             {
                 string state = enable ? "enable" : "disable";
@@ -970,21 +988,31 @@ namespace Sma5hMusic.GUI.Services
 
             if (confirm && await BackupProject(false, false))
             {
-                var stages = _viewModelManager.GetStagesEntriesViewModels();
-                foreach (var stageEntryVm in _viewModelManager.GetStagesEntriesViewModels())
+                try
                 {
-                    if (stageEntryVm.UiStageId != "ui_stage_battle_field_s"
-                        && stageEntryVm.UiStageId != "ui_stage_battle_field"
-                        && stageEntryVm.UiStageId != "ui_stage_battle_field_l"
-                        && stageEntryVm.UiStageId != "ui_stage_end")
-                        stageEntryVm.BgmSelector = enable;
+                    var stages = _viewModelManager.GetStagesEntriesViewModels();
+                    foreach (var stageEntryVm in _viewModelManager.GetStagesEntriesViewModels())
+                    {
+                        if (stageEntryVm.UiStageId != "ui_stage_battle_field_s"
+                            && stageEntryVm.UiStageId != "ui_stage_battle_field"
+                            && stageEntryVm.UiStageId != "ui_stage_battle_field_l"
+                            && stageEntryVm.UiStageId != "ui_stage_end")
+                            stageEntryVm.BgmSelector = enable;
+                    }
+
+                    result = _sma5hMusicOverride.UpdateMusicStageOverride(stages.Select(p => _mapper.Map(p, p.GetStageEntryReference())).ToList());
+                }
+                catch (Exception e)
+                {
+                    _logger.LogError(e, "There was an error while updating Song Selector value. {Message}", e.Message);
+                    result = false;
                 }
 
-                if (!_sma5hMusicOverride.UpdateMusicStageOverride(stages.Select(p => _mapper.Map(p, p.GetStageEntryReference())).ToList()))
+                if (!result)
                 {
                     await Dispatcher.UIThread.InvokeAsync(async () =>
                     {
-                        await _messageDialog.ShowError("Update Song Selector Stages", "There was an error while updating Song Selector value.");
+                        await _messageDialog.ShowError("Update Song Selector Stages", "There was an error while updating Song Selector value. Please check the logs.");
                     }, DispatcherPriority.Background);
                     return;
                 }
@@ -994,6 +1022,62 @@ namespace Sma5hMusic.GUI.Services
                     await _messageDialog.ShowInformation("Update Song Selector Stages", "Done!");
                 }, DispatcherPriority.Background);
             }
+        }
+
+        public async Task<bool> ReorderSongsMod()
+        {
+            bool confirm = false;
+            bool result = true;
+
+            await Dispatcher.UIThread.InvokeAsync(async () =>
+            {
+                confirm = await _messageDialog.ShowWarningConfirm("Reorder Songs Mod",
+                    $"This script will reorder the songs in the metadata file of your mods according to the Sound Test order.\r\n" +
+                    "This can be useful before sharing mods.\r\n" +
+                    "A lite backup will be performed before running this script.\r\n" +
+                    "Continue?");
+            }, DispatcherPriority.Background);
+
+            if (confirm && await BackupProject(false, false))
+            {
+                try
+                {
+                    var allSongs = _audioState.GetBgmDbRootEntries().Where(p => p.MusicMod != null).OrderBy(p => p.TestDispOrder);
+                    foreach (var mod in _musicModManagerService.MusicMods)
+                    {
+                        var allModSongs = allSongs.Where(p => p.MusicMod.Id == mod.Id).Select(p => p.UiBgmId).ToList();
+                        if (!mod.ReorderSongs(allModSongs))
+                        {
+                            result = false;
+                            break;
+                        }
+                    }
+                }
+                catch (Exception e)
+                {
+                    _logger.LogError(e, "An error happened while reordering one or multiple mods. {Message}", e.Message);
+                    result = false;
+                }
+
+                if (!result)
+                {
+                    await Dispatcher.UIThread.InvokeAsync(async () =>
+                    {
+                        await _messageDialog.ShowError("Reorder Songs Mod", "An error happened while reordering one or multiple mods. You should restart the application. Please check the logs.");
+                    }, DispatcherPriority.Background);
+                    return false;
+                }
+
+                await Dispatcher.UIThread.InvokeAsync(async () =>
+                {
+                    await _messageDialog.ShowInformation("Reorder Songs Mod", "Done!");
+                }, DispatcherPriority.Background);
+                return true;
+            }
+
+            return false;
+
+
         }
 
         public async Task<bool> ResetModOverrideFile(string file)

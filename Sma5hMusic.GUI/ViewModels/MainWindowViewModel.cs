@@ -84,6 +84,7 @@ namespace Sma5hMusic.GUI.ViewModels
         public ReactiveCommand<Unit, Unit> ActionOpenLogsFolder { get; }
         public ReactiveCommand<Unit, Unit> ActionExportSongsCSV { get; }
         public ReactiveCommand<Unit, Unit> ActionFixUnknownValues { get; }
+        public ReactiveCommand<Unit, Unit> ActionReorderSongsMod { get; }
         public ReactiveCommand<bool, Unit> ActionUpdateBgmSelector { get; }
         public ReactiveCommand<string, Unit> ActionResetModOverrideFile { get; }
         public ReactiveCommand<bool, Unit> ActionBackupProject { get; }
@@ -201,6 +202,7 @@ namespace Sma5hMusic.GUI.ViewModels
             ActionOpenLogsFolder = ReactiveCommand.Create(() => _fileDialog.OpenFolder(_appSettings.CurrentValue.LogPath));
             ActionExportSongsCSV = ReactiveCommand.CreateFromTask(ExportSongsToCSV);
             ActionFixUnknownValues = ReactiveCommand.CreateFromTask(FixUnknownValues);
+            ActionReorderSongsMod = ReactiveCommand.CreateFromTask(ReorderSongsMod);
             ActionUpdateBgmSelector = ReactiveCommand.CreateFromTask<bool>((enabled) => UpdateBgmSelector(enabled));
             ActionResetModOverrideFile = ReactiveCommand.CreateFromTask<string>((file) => ResetModOverrideFile(file));
             ActionBackupProject = ReactiveCommand.CreateFromTask<bool>((fullBackup) => _guiStateManager.BackupProject(fullBackup));
@@ -345,6 +347,12 @@ namespace Sma5hMusic.GUI.ViewModels
         public async Task FixUnknownValues()
         {
             if (await _guiStateManager.FixUnknownValues())
+                await OnInitData();
+        }
+
+        public async Task ReorderSongsMod()
+        {
+            if (await _guiStateManager.ReorderSongsMod())
                 await OnInitData();
         }
 

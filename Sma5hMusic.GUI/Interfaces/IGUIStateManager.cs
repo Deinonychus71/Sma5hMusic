@@ -20,6 +20,7 @@ namespace Sma5hMusic.GUI.Interfaces
 
         #region Scripts
         Task UpdateBgmSelectorStages(bool enable);
+        Task<bool> ReorderSongsMod();
         Task<bool> ResetModOverrideFile(string file);
         #endregion
 

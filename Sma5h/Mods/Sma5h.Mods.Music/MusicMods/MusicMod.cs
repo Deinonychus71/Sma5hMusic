@@ -241,6 +241,42 @@ namespace Sma5h.Mods.Music.MusicMods
             return true;
         }
 
+        public bool ReorderSongs(List<string> orderedList)
+        {
+            //Sanity check
+            var allModSongsDict = _musicModConfig.Games.SelectMany(p => p.Bgms).OrderBy(p => p.DbRoot.UiBgmId).ToDictionary(p => p.DbRoot.UiBgmId, p => p);
+            if(!orderedList.OrderBy(p => p).SequenceEqual(allModSongsDict.Select(p => p.Key)))
+            {
+                _logger.LogError("The provider list of songs to reorder did not match the list of songs found in the mod. Aborting reorder...");
+                return false;
+            }
+
+            //Wipe all games
+            var gamesCache = _musicModConfig.Games.ToList();
+            _musicModConfig.Games.ForEach(p => p.Bgms.Clear());
+            _musicModConfig.Games.Clear();
+
+            //Reorder
+            foreach(var orderedSongId in orderedList)
+            {
+                var orderedSong = allModSongsDict[orderedSongId];
+                var game = gamesCache.FirstOrDefault(p => p.UiGameTitleId == orderedSong.DbRoot.UiGameTitleId);
+                if(game == null)
+                {
+                    _logger.LogError("A game wasn't found during reordering. Aborting reorder...");
+                    return false;
+                }
+                game.Bgms.Add(orderedSong);
+                if (!_musicModConfig.Games.Contains(game))
+                    _musicModConfig.Games.Add(game);
+            }
+
+            //Save
+            SaveMusicModConfig();
+
+            return true;
+        }
+
         public bool UpdateGameTitleEntry(GameTitleEntry gameTitleEntry)
         {
             if (_musicModConfig?.Games != null)

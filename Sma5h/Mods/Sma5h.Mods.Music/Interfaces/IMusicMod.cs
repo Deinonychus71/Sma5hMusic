@@ -1,4 +1,5 @@
 ﻿using Sma5h.Mods.Music.Models;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Sma5h.Mods.Music.Interfaces
@@ -14,6 +15,7 @@ namespace Sma5h.Mods.Music.Interfaces
         bool UpdateModInformation(MusicModInformation configBase);
         MusicModEntries GetMusicModEntries();
         Task<bool> AddOrUpdateMusicModEntries(MusicModEntries musicModEntries);
+        bool ReorderSongs(List<string> list);
         bool RemoveMusicModEntries(MusicModDeleteEntries musicModDeleteEntries);
     }
 }

@@ -62,6 +62,8 @@
             </MenuItem.CommandParameter>
           </MenuItem>
           <Separator></Separator>
+          <MenuItem Header="Reorder Songs in all Mods" ToolTip.Tip="Will reorder songs in every mods according to their order in Sound Test" Command="{Binding ActionReorderSongsMod}"></MenuItem>
+          <Separator></Separator>
           <MenuItem Header="Fix Hidden Songs in Song Selector" Command="{Binding ActionFixUnknownValues}"></MenuItem>
         </MenuItem>
         <Separator></Separator>
