@@ -1,11 +1,14 @@
 ﻿using Avalonia.Controls;
 using Avalonia.Input;
+using Avalonia.Threading;
 using DynamicData;
 using DynamicData.Binding;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
+using Sma5h.Mods.Music;
 using Sma5hMusic.GUI.Helpers;
 using System;
 using System.Collections.Generic;
@@ -29,6 +32,7 @@ namespace Sma5hMusic.GUI.ViewModels
         private readonly Subject<BgmDbRootEntryViewModel> _whenNewRequestToRenameToneId;
         private readonly Subject<BgmDbRootEntryViewModel> _whenNewRequestToMoveToOtherMod;
         private readonly Subject<Tuple<IEnumerable<string>, short>> _whenNewRequestToReorderBgmEntry;
+        private readonly IOptionsMonitor<ApplicationSettings> _config;
         private Action _postReorderSelection;
         private DataGrid _refBgmGrid;
 
@@ -58,12 +62,14 @@ namespace Sma5hMusic.GUI.ViewModels
         public ReactiveCommand<BgmDbRootEntryViewModel, Unit> ActionDeleteBgm { get; }
         public BgmPropertiesViewModel VMBgmProperties { get; }
 
-        public BgmSongsViewModel(IServiceProvider serviceProvider, ILogger<BgmSongsViewModel> logger,
+        public BgmSongsViewModel(IServiceProvider serviceProvider, IOptionsMonitor<ApplicationSettings> config, ILogger<BgmSongsViewModel> logger,
             IObservable<IChangeSet<BgmDbRootEntryViewModel, string>> observableBgmEntriesNonFilteredList,
             IObservable<IChangeSet<BgmDbRootEntryViewModel, string>> observableBgmEntriesFilteredList, ContextMenuViewModel vmContextMenu)
         {
             _logger = logger;
+            _config = config;
             VMContextMenu = vmContextMenu;
+            config.OnChange((p) => SetColumnsVisibility(p));
 
             //Initialize list
             _whenNewRequestToEditBgmEntry = new Subject<BgmDbRootEntryViewModel>();
@@ -130,6 +136,7 @@ namespace Sma5hMusic.GUI.ViewModels
             grid.AddHandler(DragDrop.DragOverEvent, DragOver);
             grid.AddHandler(DataGrid.KeyDownEvent, DeleteBgmEntries);
             _refBgmGrid = grid;
+            SetColumnsVisibility(_config.CurrentValue);
         }
 
         public async Task ReorderBgm(DataGridCellPointerPressedEventArgs e)
@@ -222,6 +229,17 @@ namespace Sma5hMusic.GUI.ViewModels
                 _postReorderSelection();
                 _postReorderSelection = null;
             }
+        }
+
+        private void SetColumnsVisibility(ApplicationSettings settings)
+        {
+            Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                _refBgmGrid.Columns[2].IsVisible = !settings.Sma5hMusicGUI.HideIndexColumn;
+                _refBgmGrid.Columns[3].IsVisible = !settings.Sma5hMusicGUI.HideSeriesColumn;
+                _refBgmGrid.Columns[6].IsVisible = !settings.Sma5hMusicGUI.HideRecordColumn;
+                _refBgmGrid.Columns[7].IsVisible = !settings.Sma5hMusicGUI.HideModColumn;
+            }, DispatcherPriority.Background);
         }
         #endregion
 

@@ -243,7 +243,7 @@ namespace Sma5h.Mods.Music
                         }
                         else
                         {
-                            _logger.LogInformation("Playlist {PlaylistId} wasn't found. Skipping...", mappingPlaylist);
+                            _logger.LogInformation("Playlist {PlaylistId} wasn't found. Skipping...", bgmplaylist);
                         }
                     }
                 }

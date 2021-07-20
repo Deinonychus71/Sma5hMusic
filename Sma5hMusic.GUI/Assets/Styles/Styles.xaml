@@ -235,9 +235,9 @@
     <Setter Property="Margin" Value="0,10,0,10"/>
   </Style>
   <Style Selector=".headerTitle > TextBlock">
-    <Setter Property="FontSize" Value="24"/>
+    <Setter Property="FontSize" Value="20"/>
     <Setter Property="FontWeight" Value="Bold"/>
-    <Setter Property="Margin" Value="13"/>
+    <Setter Property="Margin" Value="13,0,13,13"/>
     <Setter Property="HorizontalAlignment" Value="Center"/>
   </Style>
   <!-- END HEADER TITLE -->

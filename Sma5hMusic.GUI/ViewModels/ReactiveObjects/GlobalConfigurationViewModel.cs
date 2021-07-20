@@ -51,6 +51,15 @@ namespace Sma5hMusic.GUI.ViewModels
         public Dictionary<string, List<string>> PlaylistAutoMapping { get; set; }
         public PlaylistGeneration PlaylistGenerationMode { get; set; }
 
+        [Reactive]
+        public bool HideIndexColumn { get; set; }
+        [Reactive]
+        public bool HideSeriesColumn { get; set; }
+        [Reactive]
+        public bool HideRecordColumn { get; set; }
+        [Reactive]
+        public bool HideModColumn { get; set; }
+
         public ApplicationSettings GetReference()
         {
             return _applicationSettingsRef;

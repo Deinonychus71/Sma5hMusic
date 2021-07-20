@@ -19,7 +19,7 @@
     <!-- Properties -->
     <Grid>
       <Grid Classes="content" ColumnDefinitions="*,*,*" RowDefinitions="*">
-        <!-- General -->
+        <!-- UI -->
         <StackPanel Classes="content" Grid.Column="0" Grid.Row="0" HorizontalAlignment="Stretch">
           <Border Classes="contentTitle" DockPanel.Dock="Top">
             <TextBlock>UI</TextBlock>
@@ -54,6 +54,17 @@
             <fields:PropertyBooleanField Grid.Column="0" Label="Skip Cleanup Confirmation" IsChecked="{Binding SelectedItem.SkipOutputPathCleanupConfirmation}" ToolTip="If this is set to on, the program will automatically clean up your output path when building." />
             <fields:PropertyBooleanField Grid.Column="1" Label="Skip Warning Game Version" IsChecked="{Binding SelectedItem.SkipWarningGameVersion}" ToolTip="If this is set to on, the program will not show a warning to the user if their game resources don't match a version that the tool can recognize." />
           </Grid>
+          <fields:PropertyField Grid.Column="0" Label="BGM Columns Visibility" ToolTip="Choose to hide or display optional columns.">
+            <fields:PropertyField.FieldContent>
+              <Grid ColumnDefinitions="*,*" RowDefinitions="*,*">
+                <CheckBox Grid.Column="0" Grid.Row="0" IsChecked="{Binding SelectedItem.HideIndexColumn, Mode=TwoWay}" Content="Hide Index Column"/>
+                <CheckBox Grid.Column="1" Grid.Row="0" IsChecked="{Binding SelectedItem.HideSeriesColumn, Mode=TwoWay}" Content="Hide Series Column"/>
+                <CheckBox Grid.Column="0" Grid.Row="1" IsChecked="{Binding SelectedItem.HideRecordColumn, Mode=TwoWay}" Content="Hide Record Column"/>
+                <CheckBox Grid.Column="1" Grid.Row="1" IsChecked="{Binding SelectedItem.HideModColumn, Mode=TwoWay}" Content="Hide Mod Column"/>
+              </Grid>
+            </fields:PropertyField.FieldContent>
+          </fields:PropertyField>
+          <!-- MSBT -->
           <Border Classes="contentTitle" DockPanel.Dock="Top">
             <TextBlock>MSBT Automation</TextBlock>
           </Border>
