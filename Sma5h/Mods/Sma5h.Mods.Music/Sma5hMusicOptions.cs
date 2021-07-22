@@ -24,7 +24,7 @@ namespace Sma5h.Mods.Music
             [JsonConverter(typeof(StringEnumConverter))]
             public PlaylistGeneration GenerationMode { get; set; }
             public ushort AutoMappingIncidence { get; set; }
-            public Dictionary<string, string> Mapping { get; set; }
+            public Dictionary<string, string> AutoMapping { get; set; }
         }
 
         public enum PlaylistGeneration

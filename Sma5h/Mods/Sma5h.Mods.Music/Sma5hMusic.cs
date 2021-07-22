@@ -156,14 +156,14 @@ namespace Sma5h.Mods.Music
             if (generationMode == Sma5hMusicOptions.PlaylistGeneration.OnlyMissingSongs || generationMode == Sma5hMusicOptions.PlaylistGeneration.AllSongs)
             {
                 var configIncidence = _config.CurrentValue.Sma5hMusic.PlaylistMapping.AutoMappingIncidence;
-                var configMapping = _config.CurrentValue.Sma5hMusic.PlaylistMapping.Mapping.ToDictionary(p => p.Key, p => p.Value != null ? p.Value.Split(',', System.StringSplitOptions.RemoveEmptyEntries) : new string[0]);
+                var configMapping = _config.CurrentValue.Sma5hMusic.PlaylistMapping.AutoMapping.ToDictionary(p => p.Key, p => p.Value != null ? p.Value.Split(',', System.StringSplitOptions.RemoveEmptyEntries) : new string[0]);
                 var playlists = _audioStateService.GetPlaylists().ToDictionary(p => p.Id, p => p);
 
                 IEnumerable<BgmDbRootEntry> songsToProcess = null;
                 if (generationMode == Sma5hMusicOptions.PlaylistGeneration.AllSongs)
                 {
                     //Select all visible songs + clear all tracks
-                    var allAffectedPlaylists = configMapping.Values.SelectMany(p => p).Distinct().ToHashSet();
+                    var allAffectedPlaylists = configMapping.Keys.ToHashSet();
                     playlists.Where(p => allAffectedPlaylists.Contains(p.Key)).ToList().ForEach(p => p.Value.Tracks.Clear());
                     songsToProcess = _audioStateService.GetBgmDbRootEntries().Where(p => p.TestDispOrder >= 0).OrderBy(p => p.TestDispOrder);
                 }
@@ -176,29 +176,43 @@ namespace Sma5h.Mods.Music
 
                 //Get series from BGM
                 var gameToSeries = _audioStateService.GetGameTitleEntries().ToDictionary(p => p.UiGameTitleId, p => p.UiSeriesId);
-                foreach (var configMappingEntry in configMapping)
-                {
-                    //Filter songs per series/game
-                    IEnumerable<BgmDbRootEntry> songsToProcessMapping = null;
-                    if (configMappingEntry.Key.StartsWith(MusicConstants.InternalIds.GAME_SERIES_ID_PREFIX))
-                    {
-                        songsToProcessMapping = songsToProcess.Where(p => p.UiGameTitleId != null && gameToSeries.ContainsKey(p.UiGameTitleId) && configMappingEntry.Key == gameToSeries[p.UiGameTitleId]);
-                    }
-                    else if (configMappingEntry.Key.StartsWith(MusicConstants.InternalIds.GAME_TITLE_ID_PREFIX))
-                    {
-                        songsToProcessMapping = songsToProcess.Where(p => p.UiGameTitleId != null && configMappingEntry.Key == p.UiGameTitleId);
-                    }
-                    else
-                    {
-                        continue;
-                    }
 
-                    //Add to playlist
-                    foreach (var mappingPlaylist in configMappingEntry.Value)
+                //Enumerate playlist
+                foreach (var configMappingPlaylist in configMapping)
+                {
+                    var mappingPlaylist = configMappingPlaylist.Key;
+                    var bgmplaylist = playlists.ContainsKey(mappingPlaylist) ? playlists[mappingPlaylist] : null;
+
+                    if (bgmplaylist != null)
                     {
-                        var bgmplaylist = playlists.ContainsKey(mappingPlaylist) ? playlists[mappingPlaylist] : null;
-                        if (bgmplaylist != null)
+                        var songsToProcessPlaylist = songsToProcess.ToList();
+
+                        //Enumerate mapping
+                        foreach (var configMappingEntry in configMappingPlaylist.Value)
                         {
+                            var configMappingEntryTrim = configMappingEntry.Trim().ToLower();
+
+                            //Filter songs per series/game
+                            IEnumerable<BgmDbRootEntry> songsToProcessMapping = null;
+                            if (configMappingEntryTrim.StartsWith(MusicConstants.InternalIds.GAME_SERIES_ID_PREFIX))
+                            {
+                                songsToProcessMapping = songsToProcessPlaylist.Where(p => p.UiGameTitleId != null && gameToSeries.ContainsKey(p.UiGameTitleId) && configMappingEntryTrim == gameToSeries[p.UiGameTitleId]);
+                            }
+                            else if (configMappingEntryTrim.StartsWith(MusicConstants.InternalIds.GAME_TITLE_ID_PREFIX))
+                            {
+                                songsToProcessMapping = songsToProcessPlaylist.Where(p => p.UiGameTitleId != null && configMappingEntryTrim == p.UiGameTitleId);
+                            }
+                            else if (configMappingEntryTrim.StartsWith(MusicConstants.InternalIds.UI_BGM_ID_PREFIX))
+                            {
+                                songsToProcessMapping = songsToProcessPlaylist.Where(p => p.UiBgmId != null && configMappingEntryTrim == p.UiBgmId);
+                            }
+                            else
+                            {
+                                _logger.LogWarning($"Playlist Auto-Mapping: Mapping Entry {configMappingEntryTrim} is invalid. Skipping...");
+                                continue;
+                            }
+
+                            //Add to playlist
                             foreach (var songToProcessMapping in songsToProcessMapping)
                             {
                                 songToProcessMapping.IsSelectableOriginal = true;
@@ -240,11 +254,14 @@ namespace Sma5h.Mods.Music
                                 });
                                 _logger.LogInformation("Playlist Auto-Mapping: Added BGM {UiBgmId} to Playlist {BgmPlaylist}.", songToProcessMapping.UiBgmId, mappingPlaylist);
                             }
+
+                            //Remove processed songs from this playlist
+                            songsToProcessPlaylist.RemoveAll(p => songsToProcessMapping.Contains(p));
                         }
-                        else
-                        {
-                            _logger.LogInformation("Playlist {PlaylistId} wasn't found. Skipping...", bgmplaylist);
-                        }
+                    }
+                    else
+                    {
+                        _logger.LogInformation("Playlist Auto-Mapping: Playlist {PlaylistId} wasn't found. Skipping...", bgmplaylist);
                     }
                 }
 

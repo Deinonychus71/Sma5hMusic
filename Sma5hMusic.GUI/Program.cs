@@ -45,11 +45,14 @@ namespace Sma5hMusic.GUI
         {
             var services = new ServiceCollection();
 
-            var configuration = new ConfigurationBuilder()
+            var configurationBuilder = new ConfigurationBuilder()
                .SetBasePath(GetBasePath())
                .AddInMemoryCollection(GetDefaultConfiguration())
-               .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-               .Build();
+               .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
+            if (!configurationBuilder.Build().GetSection("Sma5hMusic:PlaylistMapping:AutoMapping").Exists())
+                configurationBuilder.AddInMemoryCollection(GetPlaylistMappingConfig());
+
+            var configuration = configurationBuilder.Build();
             Configuration = configuration;
 
             var loggerFactory = LoggerFactory.Create(builder => builder
@@ -143,60 +146,61 @@ namespace Sma5hMusic.GUI
                 { "Sma5hMusicOverride:ModPath", $"Mods{Path.DirectorySeparatorChar}MusicOverride" },
             };
 
-            var playlistMapping = GetPlaylistMappingConfig();
-
-            foreach (var playlistConfig in playlistMapping)
-                defaultConfig.Add($"Sma5hMusic:PlaylistMapping:Mapping:{playlistConfig.Key}", string.Join(",", playlistConfig.Value));
-
             return defaultConfig;
         }
 
-        private static Dictionary<string, string[]> GetPlaylistMappingConfig()
+        private static Dictionary<string, string> GetPlaylistMappingConfig()
         {
-            return new Dictionary<string, string[]>()
+            var playlistMapping = new Dictionary<string, string[]>()
             {
-                { "ui_series_none", new string[] { } },
-                { "ui_series_mario", new string[] { "bgmmario" } },
-                { "ui_series_mariokart", new string[] { "bgmmkart" } },
-                { "ui_series_wreckingcrew", new string[] { "bgmother" } },
-                { "ui_series_etc", new string[] { "bgmother" } },
-                { "ui_series_donkeykong", new string[] { "bgmdk" } },
-                { "ui_series_zelda", new string[] { "bgmzelda" } },
-                { "ui_series_metroid", new string[] { "bgmmetroid" } },
-                { "ui_series_yoshi", new string[] { "bgmyoshi" } },
-                { "ui_series_kirby", new string[] { "bgmkirby" } },
-                { "ui_series_starfox", new string[] { "bgmfox" } },
-                { "ui_series_pokemon", new string[] { "bgmpokemon" } },
-                { "ui_series_fzero", new string[] { "bgmfzero" } },
-                { "ui_series_mother", new string[] { "bgmmother" } },
-                { "ui_series_fireemblem", new string[] { "bgmfe", "bgmmaster" } },
-                { "ui_series_gamewatch", new string[] { "bgmgamewatch" } },
-                { "ui_series_palutena", new string[] { "bgmicaros" } },
-                { "ui_series_wario", new string[] { "bgmwario" } },
-                { "ui_series_pikmin", new string[] { "bgmpikmin" } },
-                { "ui_series_famicomrobot", new string[] { "bgmother" } },
-                { "ui_series_doubutsu", new string[] { "bgmanimal" } },
-                { "ui_series_wiifit", new string[] { "bgmwiifit" } },
-                { "ui_series_punchout", new string[] { "bgmpunchout" } },
-                { "ui_series_xenoblade", new string[] { "bgmxenoblade", "bgmelement" } },
-                { "ui_series_metalgear", new string[] { "bgmmetalgear" } },
-                { "ui_series_sonic", new string[] { "bgmsonic" } },
-                { "ui_series_rockman", new string[] { "bgmrockman" } },
-                { "ui_series_pacman", new string[] { "bgmpacman" } },
-                { "ui_series_streetfighter", new string[] { "bgmsf" } },
-                { "ui_series_finalfantasy", new string[] { "bgmff", "bgmedge" } },
-                { "ui_series_bayonetta", new string[] { "bgmbeyo" } },
-                { "ui_series_splatoon", new string[] { "bgmspla" } },
-                { "ui_series_castlevania", new string[] { "bgmdracula" } },
-                { "ui_series_smashbros", new string[] { "bgmsmashbtl" } },
-                { "ui_series_arms", new string[] { "bgmtantan" } },
-                { "ui_series_persona", new string[] { "bgmjack" } },
-                { "ui_series_dragonquest", new string[] { "bgmbrave" } },
-                { "ui_series_banjokazooie", new string[] { "bgmbuddy" } },
-                { "ui_series_fatalfury", new string[] { "bgmdolly" } },
-                { "ui_series_minecraft", new string[] { "bgmpickel" } },
-                { "ui_series_tekken", new string[] { "bgmdemon" } }
+                { "bgmsmashbtl", new string[] { "ui_series_smashbros" } },
+                { "bgmmario", new string[] { "ui_series_mario" } },
+                { "bgmmkart", new string[] { "ui_series_mariokart" } },
+                { "bgmdk", new string[] { "ui_series_donkeykong" } },
+                { "bgmzelda", new string[] { "ui_series_zelda" } },
+                { "bgmmetroid", new string[] { "ui_series_metroid" } },
+                { "bgmyoshi", new string[] { "ui_series_yoshi" } },
+                { "bgmkirby", new string[] { "ui_series_kirby" } },
+                { "bgmfox", new string[] { "ui_series_starfox" } },
+                { "bgmpokemon", new string[] { "ui_series_pokemon" } },
+                { "bgmfzero", new string[] { "ui_series_fzero" } },
+                { "bgmmother", new string[] { "ui_series_mother", "ui_series_wreckingcrew", "ui_series_famicomrobot" } },
+                { "bgmfe", new string[] { "ui_series_fireemblem" } },
+                { "bgmmaster", new string[] { "ui_gametitle_fire_emblem_three_houses_en", "ui_gametitle_fire_emblem_three_houses_jp", "ui_series_fireemblem" } },
+                { "bgmgamewatch", new string[] { "ui_series_gamewatch" } },
+                { "bgmicaros", new string[] { "ui_series_palutena" } },
+                { "bgmwario", new string[] { "ui_series_wario" } },
+                { "bgmpikmin", new string[] { "ui_series_pikmin" } },
+                { "bgmanimal", new string[] { "ui_series_doubutsu" } },
+                { "bgmwiifit", new string[] { "ui_series_wiifit" } },
+                { "bgmpunchout", new string[] { "ui_series_punchout" } },
+                { "bgmxenoblade", new string[] { "ui_series_xenoblade" } },
+                { "bgmelement", new string[] { "ui_gametitle_xenoblade2", "ui_series_xenoblade" } },
+                { "bgmmetalgear", new string[] { "ui_series_metalgear" } },
+                { "bgmsonic", new string[] { "ui_series_sonic" } },
+                { "bgmrockman", new string[] { "ui_series_rockman" } },
+                { "bgmpacman", new string[] { "ui_series_pacman" } },
+                { "bgmsf", new string[] { "ui_series_streetfighter" } },
+                { "bgmff", new string[] { "ui_series_finalfantasy" } },
+                { "bgmedge", new string[] { "ui_series_finalfantasy" } },
+                { "bgmbeyo", new string[] { "ui_series_bayonetta" } },
+                { "bgmspla", new string[] { "ui_series_splatoon" } },
+                { "bgmdracula", new string[] { "ui_series_castlevania" } },
+                { "bgmjack", new string[] { "ui_series_persona" } },
+                { "bgmbrave", new string[] { "ui_series_dragonquest" } },
+                { "bgmbuddy", new string[] { "ui_series_banjokazooie" } },
+                { "bgmdolly", new string[] { "ui_series_fatalfury" } },
+                { "bgmtantan", new string[] { "ui_series_arms" } },
+                { "bgmpickel", new string[] { "ui_series_minecraft" } },
+                { "bgmdemon", new string[] { "ui_series_tekken" } },
+                { "bgmother", new string[] { "ui_series_etc" } }
             };
+
+            var output = new Dictionary<string, string>();
+            foreach (var playlistConfig in playlistMapping)
+                output.Add($"Sma5hMusic:PlaylistMapping:AutoMapping:{playlistConfig.Key}", string.Join(",", playlistConfig.Value));
+
+            return output;
         }
     }
 }
