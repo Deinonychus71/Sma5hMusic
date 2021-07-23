@@ -18,7 +18,7 @@ namespace Sma5hMusic.GUI.ViewModels
         private readonly IFileDialog _fileDialog;
         private PlaylistGenerationItem _selectedPlaylistGenerationItem;
 
-        public List<string> UIThemes => new List<string>() { "Dark", "Light" };
+        public List<string> UIThemes => new List<string>() { "Dark", "Light" }; //, "WindowsDark", "WindowsLight" };
         public List<string> UIScales => new List<string>() { "Normal", "Small" };
         public List<string> ConversionFormats => new List<string>() { "lopus", "idsp" };
         public List<string> FallBackConversionFormats => new List<string>() { "lopus", "idsp" };

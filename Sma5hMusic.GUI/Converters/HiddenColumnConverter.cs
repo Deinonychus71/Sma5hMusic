@@ -10,7 +10,10 @@ namespace Sma5hMusic.GUI.Converters
     public class HiddenColumnConverter : IValueConverter
     {
         private readonly IBrush _grayBrush = Brushes.Gray;
-        private readonly IBrush _defaultBrush = Program.Configuration.GetValue<UITheme>("Sma5hMusicGUI:UITheme") == UITheme.Dark ? Brushes.White : Brushes.Black;
+        private readonly IBrush _defaultBrush = 
+            Program.Configuration.GetValue<UITheme>("Sma5hMusicGUI:UITheme") == UITheme.Dark ||
+            Program.Configuration.GetValue<UITheme>("Sma5hMusicGUI:UITheme") == UITheme.WindowsDark ? 
+            Brushes.White : Brushes.Black;
 
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
