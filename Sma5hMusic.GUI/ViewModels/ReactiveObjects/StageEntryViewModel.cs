@@ -9,7 +9,6 @@ namespace Sma5hMusic.GUI.ViewModels
     public class StageEntryViewModel : ReactiveObject
     {
         private readonly StageEntry _refStageEntry;
-        private readonly IViewModelManager _viewModelManager;
 
         public string UiStageId { get { return _refStageEntry.UiStageId; } }
 
@@ -28,8 +27,6 @@ namespace Sma5hMusic.GUI.ViewModels
 
         [Reactive]
         public sbyte DispOrder { get; set; }
-
-        public SeriesEntryViewModel Series { get { return _viewModelManager.GetSeriesViewModel(_refStageEntry.UiSeriesId); } }
 
         public bool Hidden { get { return DispOrder == -1 || Title.StartsWith("(H)"); } }
 
