@@ -32,7 +32,8 @@ namespace Sma5hMusic.GUI.Helpers
 
         public override void Write(string value)
         {
-            _queuedMessages.Enqueue($"{DateTime.Now:yyyy-MM-ddTHH\\:mm\\:ss}: {value}");
+            if(!string.IsNullOrWhiteSpace(value))
+                _queuedMessages.Enqueue($"{DateTime.Now:yyyy-MM-ddTHH\\:mm\\:ss}: {value}\r\n");
         }
 
         public override Encoding Encoding
