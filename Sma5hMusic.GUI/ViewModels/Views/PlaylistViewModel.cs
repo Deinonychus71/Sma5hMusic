@@ -78,6 +78,9 @@ namespace Sma5hMusic.GUI.ViewModels
         [Reactive]
         public string NbrBgmsPlaylist { get; private set; }
 
+        [Reactive]
+        public bool IsPlaylistAdvanced { get; set; }
+
         public ReactiveCommand<DataGridCellPointerPressedEventArgs, Unit> ActionReorderPlaylist { get; }
         public ReactiveCommand<DataGridCellPointerPressedEventArgs, Unit> ActionSendToPlaylist { get; }
         public ReactiveCommand<DataGrid, Unit> ActionInitializeDragAndDrop { get; }
@@ -100,6 +103,8 @@ namespace Sma5hMusic.GUI.ViewModels
             IObservable<IChangeSet<BgmDbRootEntryViewModel, string>> observableBgmEntries, ContextMenuViewModel vmContextMenu)
         {
             _config = config;
+            IsPlaylistAdvanced = _config.CurrentValue.Sma5hMusicGUI.PlaylistAdvanced;
+            config.OnChange((p) => { IsPlaylistAdvanced = p.Sma5hMusicGUI.PlaylistAdvanced; });
             _rootDialog = rootDialog;
             _messageDialog = messageDialog;
             VMContextMenu = vmContextMenu;
@@ -198,7 +203,7 @@ namespace Sma5hMusic.GUI.ViewModels
             ActionPasteIncidenceAll = ReactiveCommand.Create<PlaylistEntryValueViewModel>((o) => PasteIncidenceValueToAllOrderIds(o, false));
 
             //Trigger behavior subjets
-            _whenStageSelected = new BehaviorSubject<StageEntryViewModel>(_stages.FirstOrDefault());
+            _whenStageSelected = new BehaviorSubject<StageEntryViewModel>(Stages.FirstOrDefault());
             _whenPlaylistSelected = new BehaviorSubject<PlaylistEntryViewModel>(_playlists.FirstOrDefault());
             _whenPlaylistOrderSelected = new BehaviorSubject<ComboItem>(_orderMenu.FirstOrDefault());
         }

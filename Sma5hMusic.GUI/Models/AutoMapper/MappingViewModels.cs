@@ -36,6 +36,7 @@ namespace Sma5hMusic.GUI.Mods.Music.Models.AutoMapper
                     UIScale = Enum.Parse<Helpers.StylesHelper.UIScale>(p.UIScale, true),
                     UITheme = Enum.Parse<Helpers.StylesHelper.UITheme>(p.UITheme, true),
                     Advanced = p.Advanced,
+                    PlaylistAdvanced = p.PlaylistAdvanced,
                     DefaultGUILocale = p.DefaultGUILocale,
                     DefaultMSBTLocale = p.DefaultMSBTLocale,
                     CopyToEmptyLocales = p.CopyToEmptyLocales,
@@ -71,6 +72,7 @@ namespace Sma5hMusic.GUI.Mods.Music.Models.AutoMapper
                 .ForMember(i => i.UIScale, me => me.MapFrom(p => p.Sma5hMusicGUI.UIScale))
                 .ForMember(i => i.UITheme, me => me.MapFrom(p => p.Sma5hMusicGUI.UITheme))
                 .ForMember(i => i.Advanced, me => me.MapFrom(p => p.Sma5hMusicGUI.Advanced))
+                .ForMember(i => i.PlaylistAdvanced, me => me.MapFrom(p => p.Sma5hMusicGUI.PlaylistAdvanced))
                 .ForMember(i => i.DefaultGUILocale, me => me.MapFrom(p => p.Sma5hMusicGUI.DefaultGUILocale))
                 .ForMember(i => i.DefaultMSBTLocale, me => me.MapFrom(p => p.Sma5hMusicGUI.DefaultMSBTLocale))
                 .ForMember(i => i.CopyToEmptyLocales, me => me.MapFrom(p => p.Sma5hMusicGUI.CopyToEmptyLocales))

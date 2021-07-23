@@ -12,6 +12,7 @@ namespace Sma5h.Mods.Music
         public class Sma5hMusicGuiOptionsSection
         {
             public bool Advanced { get; set; }
+            public bool PlaylistAdvanced { get; set; }
             public UIScale UIScale { get; set; }
             public UITheme UITheme { get; set; }
             public string DefaultGUILocale { get; set; }

@@ -88,7 +88,7 @@
           <Border Classes="contentTitle" DockPanel.Dock="Top">
             <TextBlock>Playlists</TextBlock>
           </Border>
-          <Grid ColumnDefinitions="*,*">
+          <Grid ColumnDefinitions="*,*" RowDefinitions="*,*">
             <fields:PropertyField Grid.Column="0" Label="Playlist Generation Method" ToolTip="Determine how the program should build the playlists">
               <fields:PropertyField.FieldContent>
                 <ComboBox Items="{Binding PlaylistGenerationModes, Mode=OneWay}" SelectedItem="{Binding SelectedPlaylistGenerationItem}">
@@ -100,7 +100,8 @@
                 </ComboBox>
               </fields:PropertyField.FieldContent>
             </fields:PropertyField>
-            <fields:PropertyField Grid.Column="1" Label="Description" ToolTip="Description of the playlist building behavior.">
+            <fields:PropertyBooleanField Grid.Row="1" Label="Playlist Advanced" IsChecked="{Binding SelectedItem.PlaylistAdvanced, Mode=TwoWay}" ToolTip="If this is set to on, the playlist will display the set of Playlist/OrderID in lieu of the stage." />
+            <fields:PropertyField Grid.Column="1" Grid.RowSpan="2" Label="Description" ToolTip="Description of the playlist building behavior.">
               <fields:PropertyField.FieldContent>
                 <Grid>
                   <TextBlock TextWrapping="Wrap" IsVisible="{Binding IsPlaylistGenerationModeManual}" Text="At build time, the program will build the playlists exactly as configured by the user. If a bgm was not added as part of a playlist it may not be played in-game."/>

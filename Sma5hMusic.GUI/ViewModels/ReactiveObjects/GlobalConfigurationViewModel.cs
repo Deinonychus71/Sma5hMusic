@@ -11,6 +11,7 @@ namespace Sma5hMusic.GUI.ViewModels
         private readonly IMapper _mapper;
 
         public bool Advanced { get; set; }
+        public bool PlaylistAdvanced { get; set; }
         public string UIScale { get; set; }
         public string UITheme { get; set; }
         public bool SkipOutputPathCleanupConfirmation { get; set; }
