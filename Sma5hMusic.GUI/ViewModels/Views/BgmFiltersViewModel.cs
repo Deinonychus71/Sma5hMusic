@@ -82,6 +82,7 @@ namespace Sma5hMusic.GUI.ViewModels
 
             var modsChanged = observableBgmEntries.WhenValueChanged(mod => mod.MusicModViewModel.Name);
             observableBgmEntries
+                .Throttle(TimeSpan.FromMilliseconds(50))
                 .Filter(p => p.MusicMod != null)
                 .Group(p => p.ModId, modsChanged.Select(_ => Unit.Default))
                 .Transform(p => p.Cache.Items.First().MusicModViewModel)
@@ -94,6 +95,7 @@ namespace Sma5hMusic.GUI.ViewModels
 
             var seriesChanged = observableBgmEntries.WhenValueChanged(series => series.SeriesId);
             observableBgmEntries
+                .Throttle(TimeSpan.FromMilliseconds(50))
                 .Filter(p => p.SeriesId != null)
                 .Group(p => p.SeriesId, seriesChanged.Select(_ => Unit.Default))
                 .Transform(p => p.Cache.Items.First().SeriesViewModel)
@@ -106,6 +108,7 @@ namespace Sma5hMusic.GUI.ViewModels
 
             var gameChanged = observableBgmEntries.WhenValueChanged(game => game.UiGameTitleId);
             observableBgmEntries
+                .Throttle(TimeSpan.FromMilliseconds(50))
                 .AutoRefreshOnObservable(p => this.WhenAnyValue(p => p.SelectedSeries))
                 .Filter(p => p.SeriesId != null && p.UiGameTitleId != null && (SelectedSeries == null || SelectedSeries.AllFlag || p.SeriesId == SelectedSeries.SeriesId))
                 .Group(p => p.UiGameTitleId, gameChanged.Select(_ => Unit.Default))
