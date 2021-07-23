@@ -1,5 +1,6 @@
 ﻿using Avalonia.Controls;
 using Avalonia.Threading;
+using System;
 using System.Collections.Concurrent;
 using System.IO;
 using System.Text;
@@ -31,7 +32,7 @@ namespace Sma5hMusic.GUI.Helpers
 
         public override void Write(string value)
         {
-            _queuedMessages.Enqueue(value.ToString());
+            _queuedMessages.Enqueue($"{DateTime.Now:yyyy-MM-ddTHH\\:mm\\:ss}: {value}");
         }
 
         public override Encoding Encoding
