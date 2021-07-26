@@ -12,6 +12,7 @@ namespace Sma5h.Mods.Music
         public class Sma5hMusicGuiOptionsSection
         {
             public bool Advanced { get; set; }
+            public bool PlaylistAdvanced { get; set; }
             public UIScale UIScale { get; set; }
             public UITheme UITheme { get; set; }
             public string DefaultGUILocale { get; set; }
@@ -20,6 +21,11 @@ namespace Sma5h.Mods.Music
             public ushort PlaylistIncidenceDefault { get; set; }
             public bool SkipWarningGameVersion { get; set; }
             public bool InGameVolume { get; set; }
+            public bool HideIndexColumn { get; set; }
+            public bool HideSeriesColumn { get; set; }
+            public bool HideRecordColumn { get; set; }
+            public bool HideModColumn { get; set; }
+            
         }
     }
 }

@@ -10,15 +10,13 @@
   <Grid ColumnDefinitions="5*,5,*" RowDefinitions="30,*">
     <ContentControl Content="{Binding VMContextMenu}"></ContentControl>
     <Grid Grid.Row="1" Grid.Column="0" Classes="list">
-      <i:Interaction.Behaviors>
-        <ia:EventTriggerBehavior EventName="Initialized">
-          <ia:InvokeCommandAction Command="{Binding ActionInitializeDragAndDrop, Mode=OneWay}" CommandParameter="{Binding $parent[UserControl]}"/>
-        </ia:EventTriggerBehavior>
-      </i:Interaction.Behaviors>
       <DataGrid DragDrop.AllowDrop="True" SelectionMode="Extended" Classes="bgmList" SelectedItem="{Binding SelectedBgmEntry, Mode=TwoWay}" Items="{Binding Items, Mode=OneWay}">
         <i:Interaction.Behaviors>
           <ia:EventTriggerBehavior EventName="CellPointerPressed">
             <ia:InvokeCommandAction Command="{Binding ActionReorderBgm}"/>
+          </ia:EventTriggerBehavior>
+          <ia:EventTriggerBehavior EventName="Initialized">
+            <ia:InvokeCommandAction Command="{Binding ActionInitializeDragAndDrop, Mode=OneWay}" CommandParameter="{Binding $self}"/>
           </ia:EventTriggerBehavior>
         </i:Interaction.Behaviors>
         <DataGrid.Columns>
@@ -36,7 +34,22 @@
               </DataTemplate>
             </DataGridTemplateColumn.CellTemplate>
           </DataGridTemplateColumn>
-          <DataGridTemplateColumn Header="Series" Width="*">
+          <DataGridTemplateColumn Header="Index" Width="40">
+            <DataGridTemplateColumn.CellTemplate>
+              <DataTemplate>
+                <TextBlock Background="Transparent" Margin="0" Padding="0" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="9"
+                           IsVisible="{Binding !HiddenInSoundTest}" Text="{Binding TestDispOrder, Mode=OneWay}">
+                  <TextBlock.ContextMenu>
+                    <ContextMenu IsVisible="{Binding IsMod}">
+                      <MenuItem Header="[EXPERIMENTAL] Rename Tone ID..." Command="{Binding $parent[DataGrid].DataContext.ActionRenameToneId, Mode=OneWay}" CommandParameter="{Binding}"/>
+                      <MenuItem Header="[EXPERIMENTAL] Move to Another Mod..."  Command="{Binding $parent[DataGrid].DataContext.ActionMoveToOtherMod, Mode=OneWay}" CommandParameter="{Binding}"/>
+                    </ContextMenu>
+                  </TextBlock.ContextMenu>
+                </TextBlock>
+              </DataTemplate>
+            </DataGridTemplateColumn.CellTemplate>
+          </DataGridTemplateColumn>
+          <DataGridTemplateColumn Header="Series" Width="2*">
             <DataGridTemplateColumn.CellTemplate>
               <DataTemplate>
                 <TextBlock Background="Transparent" Margin="{StaticResource DataGridTextColumnCellTextBlockMargin}" VerticalAlignment="Center"
@@ -51,7 +64,7 @@
               </DataTemplate>
             </DataGridTemplateColumn.CellTemplate>
           </DataGridTemplateColumn>
-          <DataGridTemplateColumn MaxWidth="300" Width="3*" Header="Game">
+          <DataGridTemplateColumn Width="6*" Header="Game">
             <DataGridTemplateColumn.CellTemplate>
               <DataTemplate>
                 <TextBlock Background="Transparent" Margin="{StaticResource DataGridTextColumnCellTextBlockMargin}" VerticalAlignment="Center" 
@@ -66,7 +79,7 @@
               </DataTemplate>
             </DataGridTemplateColumn.CellTemplate>
           </DataGridTemplateColumn>
-          <DataGridTemplateColumn MaxWidth="400" Width="3*" Header="Title">
+          <DataGridTemplateColumn Width="7*" Header="Title">
             <DataGridTemplateColumn.CellTemplate>
               <DataTemplate>
                 <TextBlock Background="Transparent" Margin="{StaticResource DataGridTextColumnCellTextBlockMargin}" VerticalAlignment="Center"
@@ -81,7 +94,7 @@
               </DataTemplate>
             </DataGridTemplateColumn.CellTemplate>
           </DataGridTemplateColumn>
-          <DataGridTemplateColumn Header="Record" Width="*">
+          <DataGridTemplateColumn Header="Record" Width="2*">
             <DataGridTemplateColumn.CellTemplate>
               <DataTemplate>
                 <TextBlock Background="Transparent" Margin="{StaticResource DataGridTextColumnCellTextBlockMargin}" VerticalAlignment="Center" 
@@ -96,7 +109,7 @@
               </DataTemplate>
             </DataGridTemplateColumn.CellTemplate>
           </DataGridTemplateColumn>
-          <DataGridTemplateColumn Header="Mod Name" Width="2*">
+          <DataGridTemplateColumn Header="Mod Name" Width="4*">
             <DataGridTemplateColumn.CellTemplate>
               <DataTemplate>
                 <TextBlock Background="Transparent" Margin="{StaticResource DataGridTextColumnCellTextBlockMargin}" VerticalAlignment="Center" 

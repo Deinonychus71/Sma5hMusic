@@ -26,9 +26,9 @@ namespace Sma5hMusic.GUI.Mods.Music.Models.AutoMapper
                     ModPath = p.ModPath,
                     PlaylistMapping = new Sma5hMusicOptions.Sma5hMusicOptionsAutoPlaylistsSection()
                     {
-                        Enabled = p.PlaylistMappingEnabled,
-                        Incidence = p.PlaylistMappingIncidence,
-                        Mapping = p.PlaylistMapping.ToDictionary(k => k.Key, p => string.Join(",", p.Value))
+                        GenerationMode = (Sma5hMusicOptions.PlaylistGeneration)p.PlaylistGenerationMode,
+                        AutoMappingIncidence = p.PlaylistAutoMappingIncidence,
+                        AutoMapping = p.PlaylistAutoMapping.ToDictionary(k => k.Key, p => string.Join(",", p.Value))
                     }
                 }))
                 .ForMember(i => i.Sma5hMusicGUI, me => me.MapFrom(p => new ApplicationSettings.Sma5hMusicGuiOptionsSection()
@@ -36,12 +36,17 @@ namespace Sma5hMusic.GUI.Mods.Music.Models.AutoMapper
                     UIScale = Enum.Parse<Helpers.StylesHelper.UIScale>(p.UIScale, true),
                     UITheme = Enum.Parse<Helpers.StylesHelper.UITheme>(p.UITheme, true),
                     Advanced = p.Advanced,
+                    PlaylistAdvanced = p.PlaylistAdvanced,
                     DefaultGUILocale = p.DefaultGUILocale,
                     DefaultMSBTLocale = p.DefaultMSBTLocale,
                     CopyToEmptyLocales = p.CopyToEmptyLocales,
                     PlaylistIncidenceDefault = p.PlaylistIncidenceDefault,
                     SkipWarningGameVersion = p.SkipWarningGameVersion,
-                    InGameVolume = p.InGameVolume
+                    InGameVolume = p.InGameVolume,
+                    HideIndexColumn = p.HideIndexColumn,
+                    HideModColumn = p.HideModColumn,
+                    HideRecordColumn = p.HideRecordColumn,
+                    HideSeriesColumn = p.HideSeriesColumn
                 }))
                 .ForMember(i => i.Sma5hMusicOverride, me => me.MapFrom(p => new Sma5hMusicOverrideOptions.Sma5hMusicOverrideOptionsSection()
                 {
@@ -60,19 +65,24 @@ namespace Sma5hMusic.GUI.Mods.Music.Models.AutoMapper
                 .ForMember(i => i.CachePath, me => me.MapFrom(p => p.Sma5hMusic.CachePath))
                 .ForMember(i => i.DefaultSma5hMusicLocale, me => me.MapFrom(p => p.Sma5hMusic.DefaultLocale))
                 .ForMember(i => i.EnableAudioCaching, me => me.MapFrom(p => p.Sma5hMusic.EnableAudioCaching))
-                .ForMember(i => i.PlaylistMappingEnabled, me => me.MapFrom(p => p.Sma5hMusic.PlaylistMapping.Enabled))
-                .ForMember(i => i.PlaylistMappingIncidence, me => me.MapFrom(p => p.Sma5hMusic.PlaylistMapping.Incidence))
-                .ForMember(i => i.PlaylistMapping, me => me.MapFrom(p => p.Sma5hMusic.PlaylistMapping.Mapping.ToDictionary(k => k.Key, p => p.Value.Split(',', StringSplitOptions.RemoveEmptyEntries))))
+                .ForMember(i => i.PlaylistGenerationMode, me => me.MapFrom(p => p.Sma5hMusic.PlaylistMapping.GenerationMode))
+                .ForMember(i => i.PlaylistAutoMappingIncidence, me => me.MapFrom(p => p.Sma5hMusic.PlaylistMapping.AutoMappingIncidence))
+                .ForMember(i => i.PlaylistAutoMapping, me => me.MapFrom(p => p.Sma5hMusic.PlaylistMapping.AutoMapping.ToDictionary(k => k.Key, p => p.Value.Split(',', StringSplitOptions.RemoveEmptyEntries))))
                 .ForMember(i => i.ModPath, me => me.MapFrom(p => p.Sma5hMusic.ModPath))
                 .ForMember(i => i.UIScale, me => me.MapFrom(p => p.Sma5hMusicGUI.UIScale))
                 .ForMember(i => i.UITheme, me => me.MapFrom(p => p.Sma5hMusicGUI.UITheme))
                 .ForMember(i => i.Advanced, me => me.MapFrom(p => p.Sma5hMusicGUI.Advanced))
+                .ForMember(i => i.PlaylistAdvanced, me => me.MapFrom(p => p.Sma5hMusicGUI.PlaylistAdvanced))
                 .ForMember(i => i.DefaultGUILocale, me => me.MapFrom(p => p.Sma5hMusicGUI.DefaultGUILocale))
                 .ForMember(i => i.DefaultMSBTLocale, me => me.MapFrom(p => p.Sma5hMusicGUI.DefaultMSBTLocale))
                 .ForMember(i => i.CopyToEmptyLocales, me => me.MapFrom(p => p.Sma5hMusicGUI.CopyToEmptyLocales))
                 .ForMember(i => i.PlaylistIncidenceDefault, me => me.MapFrom(p => p.Sma5hMusicGUI.PlaylistIncidenceDefault))
                 .ForMember(i => i.SkipWarningGameVersion, me => me.MapFrom(p => p.Sma5hMusicGUI.SkipWarningGameVersion))
                 .ForMember(i => i.InGameVolume, me => me.MapFrom(p => p.Sma5hMusicGUI.InGameVolume))
+                .ForMember(i => i.HideIndexColumn, me => me.MapFrom(p => p.Sma5hMusicGUI.HideIndexColumn))
+                .ForMember(i => i.HideModColumn, me => me.MapFrom(p => p.Sma5hMusicGUI.HideModColumn))
+                .ForMember(i => i.HideRecordColumn, me => me.MapFrom(p => p.Sma5hMusicGUI.HideRecordColumn))
+                .ForMember(i => i.HideSeriesColumn, me => me.MapFrom(p => p.Sma5hMusicGUI.HideSeriesColumn))
                 .ForMember(i => i.ModOverridePath, me => me.MapFrom(p => p.Sma5hMusicOverride.ModPath))
                 .ForMember(i => i.TempPath, me => me.MapFrom(p => p.TempPath))
                 .ForMember(i => i.ToolsPath, me => me.MapFrom(p => p.ToolsPath));

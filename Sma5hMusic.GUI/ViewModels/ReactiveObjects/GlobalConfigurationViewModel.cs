@@ -11,6 +11,7 @@ namespace Sma5hMusic.GUI.ViewModels
         private readonly IMapper _mapper;
 
         public bool Advanced { get; set; }
+        public bool PlaylistAdvanced { get; set; }
         public string UIScale { get; set; }
         public string UITheme { get; set; }
         public bool SkipOutputPathCleanupConfirmation { get; set; }
@@ -47,11 +48,18 @@ namespace Sma5hMusic.GUI.ViewModels
         [Reactive]
         public bool SkipWarningGameVersion { get; set; }
         [Reactive]
-        public bool PlaylistMappingEnabled { get; set; }
-        [Reactive]
-        public ushort PlaylistMappingIncidence { get; set; }
-        public Dictionary<string, List<string>> PlaylistMapping { get; set; }
+        public ushort PlaylistAutoMappingIncidence { get; set; }
+        public Dictionary<string, List<string>> PlaylistAutoMapping { get; set; }
+        public PlaylistGeneration PlaylistGenerationMode { get; set; }
 
+        [Reactive]
+        public bool HideIndexColumn { get; set; }
+        [Reactive]
+        public bool HideSeriesColumn { get; set; }
+        [Reactive]
+        public bool HideRecordColumn { get; set; }
+        [Reactive]
+        public bool HideModColumn { get; set; }
 
         public ApplicationSettings GetReference()
         {
@@ -76,5 +84,34 @@ namespace Sma5hMusic.GUI.ViewModels
             _mapper.Map(this, _applicationSettingsRef);
             return this;
         }
+    }
+
+    public class PlaylistGenerationItem
+    {
+        public int Id { get; set; }
+        public string Label { get; set; }
+
+        public PlaylistGenerationItem(PlaylistGeneration id, string label)
+        {
+            Id = (int)id;
+            Label = label;
+        }
+
+        public override bool Equals(object obj)
+        {
+            return obj is PlaylistGenerationItem toCompare && toCompare.Id == Id;
+        }
+
+        public override int GetHashCode()
+        {
+            return Id;
+        }
+    }
+
+    public enum PlaylistGeneration
+    {
+        Manual = 0,
+        OnlyMissingSongs = 1,
+        AllSongs = 2
     }
 }

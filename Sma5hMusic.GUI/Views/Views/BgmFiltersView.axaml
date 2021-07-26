@@ -13,12 +13,17 @@
       <TextBlock>Filters</TextBlock>
     </Border>
     <StackPanel Classes="content" Margin="10">
-      <fields:PropertyField Label="Source" ToolTip="Select a source. 'Core' Songs are all the songs from the vanilla game. 'Mod' will also retrieve the songs from your mods.">
+      <fields:PropertyField Label="Search by Title, ID" ToolTip="Search by (current locale) title name or ID.">
         <fields:PropertyField.FieldContent>
-          <StackPanel>
-            <CheckBox IsChecked="{Binding SelectedCoreSongs, Mode=TwoWay}">Show Core Songs</CheckBox>
-            <CheckBox IsChecked="{Binding SelectedModSongs, Mode=TwoWay}">Show Mod Songs</CheckBox>
-          </StackPanel>
+          <TextBox Text="{Binding SearchText, Mode=TwoWay}"/>
+        </fields:PropertyField.FieldContent>
+      </fields:PropertyField>
+      <fields:PropertyField Label="Show Songs" ToolTip="Select a source. 'Core' Songs are all the songs from the vanilla game. 'Mod' will also retrieve the songs from your mods.">
+        <fields:PropertyField.FieldContent>
+          <Grid ColumnDefinitions="*,*">
+            <CheckBox Grid.Column="0" IsChecked="{Binding SelectedCoreSongs, Mode=TwoWay}">Core</CheckBox>
+            <CheckBox Grid.Column="1" IsChecked="{Binding SelectedModSongs, Mode=TwoWay}">Mod</CheckBox>
+          </Grid>
         </fields:PropertyField.FieldContent>
       </fields:PropertyField>
       <fields:PropertyField IsVisible="{Binding SelectedModSongs, Mode=OneWay}" Label="Mods" ToolTip="Only display songs from a mod folder.">

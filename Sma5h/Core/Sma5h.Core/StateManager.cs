@@ -73,6 +73,7 @@ namespace Sma5h
 
         public void ResetResource()
         {
+            //Cannot be used until JsonClone is restored
             _resources.Clear();
             foreach (var resource in _originalResources)
             {
@@ -130,7 +131,8 @@ namespace Sma5h
 
         private T JsonClone<T>(T input)
         {
-            return JsonConvert.DeserializeObject<T>(JsonConvert.SerializeObject(input));
+            //Removed for now because resources are not being reset through ResetResource
+            return input; // JsonConvert.DeserializeObject<T>(JsonConvert.SerializeObject(input));
         }
 
         private Dictionary<string, IResourceProvider> InitializeResourceProviders()

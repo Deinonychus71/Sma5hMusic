@@ -14,6 +14,7 @@ using Sma5hMusic.GUI.Helpers;
 using Sma5hMusic.GUI.Interfaces;
 using Sma5hMusic.GUI.Views;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reactive;
@@ -83,6 +84,7 @@ namespace Sma5hMusic.GUI.ViewModels
         public ReactiveCommand<Unit, Unit> ActionOpenLogsFolder { get; }
         public ReactiveCommand<Unit, Unit> ActionExportSongsCSV { get; }
         public ReactiveCommand<Unit, Unit> ActionFixUnknownValues { get; }
+        public ReactiveCommand<Unit, Unit> ActionReorderSongsMod { get; }
         public ReactiveCommand<bool, Unit> ActionUpdateBgmSelector { get; }
         public ReactiveCommand<string, Unit> ActionResetModOverrideFile { get; }
         public ReactiveCommand<bool, Unit> ActionBackupProject { get; }
@@ -116,21 +118,12 @@ namespace Sma5hMusic.GUI.ViewModels
 
             //Initialize Contextual Menu view
             VMContextMenu = ActivatorUtilities.CreateInstance<ContextMenuViewModel>(serviceProvider);
-            VMContextMenu.WhenLocaleChanged.Subscribe((locale) => _currentLocale = locale);
+            VMContextMenu.WhenLocaleChanged.Subscribe((locale) => { _currentLocale = locale; SetLanguage(); });
             var observableBgmDbRootEntriesList = viewModelManager.ObservableDbRootEntries.Connect()
                 .DeferUntilLoaded()
-                .Filter(p => p.UiBgmId != "ui_bgm_random")
-                .AutoRefreshOnObservable(p => VMContextMenu.WhenLocaleChanged)
-                .ForEachChange(o => o.Current.LoadLocalized(_currentLocale));
+                .Filter(p => p.UiBgmId != "ui_bgm_random");;
             var observableGameEntriesList = viewModelManager.ObservableGameTitles.Connect()
-                .DeferUntilLoaded()
-                .AutoRefreshOnObservable(p => VMContextMenu.WhenLocaleChanged)
-                .ForEachChange(o => o.Current.LoadLocalized(_currentLocale));
-            var observableSeriesList = viewModelManager.ObservableSeries.Connect()
-                .DeferUntilLoaded()
-                .AutoRefreshOnObservable(p => VMContextMenu.WhenLocaleChanged)
-                .ForEachChange(o => o.Current.LoadLocalized(_currentLocale))
-                .Subscribe(); //TOREMOVE
+                .DeferUntilLoaded();;
 
             //Initialize filters
             VMBgmFilters = ActivatorUtilities.CreateInstance<BgmFiltersViewModel>(serviceProvider, observableBgmDbRootEntriesList);
@@ -179,6 +172,7 @@ namespace Sma5hMusic.GUI.ViewModels
             VMContextMenu.WhenNewRequestToEditModEntry.Subscribe(async (o) => await EditMod());
             VMBgmSongs.WhenNewRequestToEditBgmEntry.Subscribe(async (o) => await EditBgmEntry(o));
             VMBgmSongs.WhenNewRequestToDeleteBgmEntry.Subscribe(async (o) => await DeleteBgmEntry(o));
+            VMBgmSongs.WhenNewRequestToDeleteBgmEntries.Subscribe(async (o) => await DeleteBgmEntries(o));
             VMBgmSongs.WhenNewRequestToReorderBgmEntry.Subscribe(async (o) => await _guiStateManager.ReorderSongs(o.Item1, o.Item2));
             VMBgmSongs.WhenNewRequestToReorderBgmEntries.Subscribe(async (o) => await _guiStateManager.ReorderSongs(o.Item1, o.Item2));
             VMBgmSongs.WhenNewRequestToRenameToneId.Subscribe(async (o) => await RenameToneId(o));
@@ -204,6 +198,7 @@ namespace Sma5hMusic.GUI.ViewModels
             ActionOpenLogsFolder = ReactiveCommand.Create(() => _fileDialog.OpenFolder(_appSettings.CurrentValue.LogPath));
             ActionExportSongsCSV = ReactiveCommand.CreateFromTask(ExportSongsToCSV);
             ActionFixUnknownValues = ReactiveCommand.CreateFromTask(FixUnknownValues);
+            ActionReorderSongsMod = ReactiveCommand.CreateFromTask(ReorderSongsMod);
             ActionUpdateBgmSelector = ReactiveCommand.CreateFromTask<bool>((enabled) => UpdateBgmSelector(enabled));
             ActionResetModOverrideFile = ReactiveCommand.CreateFromTask<string>((file) => ResetModOverrideFile(file));
             ActionBackupProject = ReactiveCommand.CreateFromTask<bool>((fullBackup) => _guiStateManager.BackupProject(fullBackup));
@@ -280,6 +275,7 @@ namespace Sma5hMusic.GUI.ViewModels
                 }
                 Title = $"Sma5hMusic - GUI v{Constants.GUIVersion}{(!Constants.IsStable ? "b" : "")} | Game v{_guiStateManager.GameVersion}";
 
+                SetLanguage();
                 IsLoading = false;
             }, (o) =>
             {
@@ -340,7 +336,7 @@ namespace Sma5hMusic.GUI.ViewModels
             var result = await _fileDialog.SaveFileCSVDialog();
             if (!string.IsNullOrEmpty(result))
             {
-                if(await _devTools.ExportToCSV(result))
+                if (await _devTools.ExportToCSV(result))
                     await _messageDialog.ShowError("Done", "The CSV export was completed.");
             }
         }
@@ -351,6 +347,12 @@ namespace Sma5hMusic.GUI.ViewModels
                 await OnInitData();
         }
 
+        public async Task ReorderSongsMod()
+        {
+            if (await _guiStateManager.ReorderSongsMod())
+                await OnInitData();
+        }
+
         public async Task UpdateBgmSelector(bool enable)
         {
             await _guiStateManager.UpdateBgmSelectorStages(enable);
@@ -358,7 +360,7 @@ namespace Sma5hMusic.GUI.ViewModels
 
         public async Task ResetModOverrideFile(string file)
         {
-            if(await _guiStateManager.ResetModOverrideFile(file))
+            if (await _guiStateManager.ResetModOverrideFile(file))
                 await OnInitData();
         }
         #endregion
@@ -452,6 +454,30 @@ namespace Sma5hMusic.GUI.ViewModels
                 }
             }
         }
+
+        public async Task DeleteBgmEntries(List<BgmDbRootEntryViewModel> vmBgmEntries)
+        {
+            if (vmBgmEntries != null)
+            {
+                var result = await _messageDialog.ShowWarningConfirm($"Delete '{vmBgmEntries.Count}' bgms?", "Do you really want to remove the selected songs? This action cannot be reversed.");
+                if (result)
+                {
+                    foreach (var vmBgmEntry in vmBgmEntries)
+                    {
+                        await vmBgmEntry.StopPlay();
+
+                        _logger.LogInformation("Deleting {ToneId}...", vmBgmEntry.ToneId);
+
+                        //TODO - When supported more complex mods this needs to be updated 
+                        //Right now, it is tied to v2 mods
+                        var deleteMusicModEntries = new BgmEntryViewModel(vmBgmEntry).GetMusicModDeleteEntries();
+                        await _guiStateManager.RemoveMusicModEntries(deleteMusicModEntries, vmBgmEntry.MusicMod);
+
+                        _logger.LogInformation("{ToneId} deleted.", vmBgmEntry.ToneId);
+                    }
+                }
+            }
+        }
         #endregion
 
         #region Game Operations
@@ -496,13 +522,16 @@ namespace Sma5hMusic.GUI.ViewModels
                 await AddNewOrEditMod(parent, result);
         }
 
-        public async Task MoveToAnotherMod(BgmDbRootEntryViewModel vmBgmEntry)
+        public async Task MoveToAnotherMod(List<BgmDbRootEntryViewModel> vmBgmEntries)
         {
             var result = await _dialogModPicker.ShowPickerDialog(_rootDialog.Window);
             if (result != null)
             {
-                await vmBgmEntry.StopPlay();
-                await _guiStateManager.MoveMusicModEntrySetToAnotherMod(new BgmEntryViewModel(vmBgmEntry).GetMusicModEntries(), vmBgmEntry.MusicMod, result.MusicMod);
+                foreach (var vmBgmEntry in vmBgmEntries)
+                {
+                    await vmBgmEntry.StopPlay();
+                    await _guiStateManager.MoveMusicModEntrySetToAnotherMod(new BgmEntryViewModel(vmBgmEntry).GetMusicModEntries(), vmBgmEntry.MusicMod, result.MusicMod);
+                }
             }
         }
 
@@ -545,6 +574,19 @@ namespace Sma5hMusic.GUI.ViewModels
                     _mapper.Map(vmStage, vmStage.GetStageEntryReference());
 
                 await _guiStateManager.PersistStageChanges();
+            }
+        }
+        #endregion
+
+        #region Language
+        private void SetLanguage()
+        {
+            if (!string.IsNullOrEmpty(_currentLocale))
+            {
+                foreach (var item in _viewModelManager.GetBgmDbRootEntriesViewModels())
+                    item.LoadLocalized(_currentLocale);
+                foreach (var item in _viewModelManager.GetGameTitlesViewModels())
+                    item.LoadLocalized(_currentLocale);
             }
         }
         #endregion

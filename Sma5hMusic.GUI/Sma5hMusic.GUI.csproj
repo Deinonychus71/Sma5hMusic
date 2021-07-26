@@ -24,10 +24,14 @@
     <None Remove="Assets\ModalStyles.xaml" />
     <None Remove="Assets\PropertiesStyles.xaml" />
     <None Remove="Assets\Styles.xaml" />
+    <None Remove="Assets\Themes\CustomFluentTheme.xaml" />
     <None Remove="Assets\Themes\CustomThemeDark.xaml" />
     <None Remove="Assets\Themes\CustomThemeLight.xaml" />
     <None Remove="Assets\Themes\CustomThemeNormalUI.xaml" />
     <None Remove="Assets\Themes\CustomThemeSmallUI.xaml" />
+    <None Remove="Assets\Themes\CustomThemeWindowsDark.xaml" />
+    <None Remove="Assets\Themes\CustomThemeWindowsLight.xaml" />
+    <None Remove="Assets\Themes\CustomWindowsTheme.xaml" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Avalonia" Version="0.10.0" />
@@ -50,6 +54,18 @@
     <ProjectReference Include="..\Sma5h\Mods\Sma5h.Mods.Music\Sma5h.Mods.Music.csproj" />
   </ItemGroup>
   <ItemGroup>
+    <AvaloniaResource Update="Assets\Themes\CustomWindowsTheme.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </AvaloniaResource>
+    <AvaloniaResource Update="Assets\Themes\CustomFluentTheme.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </AvaloniaResource>
+    <AvaloniaResource Update="Assets\Themes\CustomThemeWindowsLight.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </AvaloniaResource>
+    <AvaloniaResource Update="Assets\Themes\CustomThemeWindowsDark.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </AvaloniaResource>
     <AvaloniaResource Update="Assets\Themes\CustomThemeSmallUI.xaml">
       <Generator>MSBuild:Compile</Generator>
     </AvaloniaResource>

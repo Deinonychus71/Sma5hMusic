@@ -22,7 +22,10 @@ namespace Sma5hMusic.GUI.Dialogs
         {
             _logger = logger;
             _rootDialogWindow = rootDialogWindow;
-            _style = appSettings.CurrentValue.Sma5hMusicGUI.UITheme == Helpers.StylesHelper.UITheme.Dark ? Style.DarkMode : Style.Windows;
+            _style = 
+                appSettings.CurrentValue.Sma5hMusicGUI.UITheme == Helpers.StylesHelper.UITheme.WindowsDark ||
+                appSettings.CurrentValue.Sma5hMusicGUI.UITheme == Helpers.StylesHelper.UITheme.Dark  ? 
+                Style.DarkMode : Style.Windows;
         }
 
         public async Task<bool> ShowWarningConfirm(string title, string message)

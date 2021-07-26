@@ -18,8 +18,10 @@ namespace Sma5hMusic.GUI.Helpers
         [JsonConverter(typeof(StringEnumConverter))]
         public enum UITheme
         {
-            Dark = 0,
-            Light = 1
+            WindowsDark = 0,
+            WindowsLight = 1,
+            Dark = 2,
+            Light = 3
         }
 
         private static readonly Styles FluentDark = new Styles
@@ -28,17 +30,13 @@ namespace Sma5hMusic.GUI.Helpers
             {
                 Source = new Uri("avares://Avalonia.Themes.Fluent/FluentDark.xaml")
             },
-            /*new StyleInclude(new Uri("resm:Styles?assembly=Sma5hMusic.GUI"))
-            {
-                Source = new Uri("avares://Avalonia.Themes.Fluent/Accents/FluentDark.xaml")
-            },
-            new StyleInclude(new Uri("resm:Styles?assembly=Sma5hMusic.GUI"))
-            {
-                Source = new Uri("avares://Avalonia.Themes.Fluent/FluentTheme.xaml")
-            },*/
             new StyleInclude(new Uri("resm:Styles?assembly=Sma5hMusic.GUI"))
             {
                 Source = new Uri("avares://Avalonia.Controls.DataGrid/Themes/Fluent.xaml")
+            },
+            new StyleInclude(new Uri("resm:Styles?assembly=Sma5hMusic.GUI"))
+            {
+                Source = new Uri("avares://Sma5hMusic.GUI/Assets/Themes/CustomFluentTheme.xaml")
             },
             new StyleInclude(new Uri("resm:Styles?assembly=Sma5hMusic.GUI"))
             {
@@ -52,17 +50,13 @@ namespace Sma5hMusic.GUI.Helpers
             {
                 Source = new Uri("avares://Avalonia.Themes.Fluent/FluentLight.xaml")
             },
-            /*new StyleInclude(new Uri("resm:Styles?assembly=Sma5hMusic.GUI"))
-            {
-                Source = new Uri("avares://Avalonia.Themes.Fluent/Accents/FluentLight.xaml")
-            },
-            new StyleInclude(new Uri("resm:Styles?assembly=Sma5hMusic.GUI"))
-            {
-                Source = new Uri("avares://Avalonia.Themes.Fluent/FluentTheme.xaml")
-            },*/
             new StyleInclude(new Uri("resm:Styles?assembly=Sma5hMusic.GUI"))
             {
                 Source = new Uri("avares://Avalonia.Controls.DataGrid/Themes/Fluent.xaml")
+            },
+            new StyleInclude(new Uri("resm:Styles?assembly=Sma5hMusic.GUI"))
+            {
+                Source = new Uri("avares://Sma5hMusic.GUI/Assets/Themes/CustomFluentTheme.xaml")
             },
             new StyleInclude(new Uri("resm:Styles?assembly=Sma5hMusic.GUI"))
             {
@@ -91,6 +85,14 @@ namespace Sma5hMusic.GUI.Helpers
             new StyleInclude(new Uri("resm:Styles?assembly=Sma5hMusic.GUI"))
             {
                 Source = new Uri("avares://Avalonia.Controls.DataGrid/Themes/Default.xaml")
+            },
+            new StyleInclude(new Uri("resm:Styles?assembly=Sma5hMusic.GUI"))
+            {
+                Source = new Uri("avares://Sma5hMusic.GUI/Assets/Themes/CustomWindowsTheme.xaml")
+            },
+            new StyleInclude(new Uri("resm:Styles?assembly=Sma5hMusic.GUI"))
+            {
+                Source = new Uri("avares://Sma5hMusic.GUI/Assets/Themes/CustomThemeWindowsLight.xaml")
             }
         };
 
@@ -115,6 +117,14 @@ namespace Sma5hMusic.GUI.Helpers
             new StyleInclude(new Uri("resm:Styles?assembly=Sma5hMusic.GUI"))
             {
                 Source = new Uri("avares://Avalonia.Controls.DataGrid/Themes/Default.xaml")
+            },
+            new StyleInclude(new Uri("resm:Styles?assembly=Sma5hMusic.GUI"))
+            {
+                Source = new Uri("avares://Sma5hMusic.GUI/Assets/Themes/CustomWindowsTheme.xaml")
+            },
+            new StyleInclude(new Uri("resm:Styles?assembly=Sma5hMusic.GUI"))
+            {
+                Source = new Uri("avares://Sma5hMusic.GUI/Assets/Themes/CustomThemeWindowsDark.xaml")
             }
         };
 
@@ -138,6 +148,8 @@ namespace Sma5hMusic.GUI.Helpers
         {
             return themeStyle switch
             {
+                UITheme.WindowsDark => DefaultDark,
+                UITheme.WindowsLight => DefaultLight,
                 UITheme.Dark => FluentDark,
                 UITheme.Light => FluentLight,
                 _ => throw new NotImplementedException("Theme not implemented"),

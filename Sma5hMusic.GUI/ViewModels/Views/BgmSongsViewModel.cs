@@ -1,12 +1,16 @@
 ﻿using Avalonia.Controls;
 using Avalonia.Input;
+using Avalonia.Threading;
 using DynamicData;
 using DynamicData.Binding;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
+using Sma5h.Mods.Music;
 using Sma5hMusic.GUI.Helpers;
+using Sma5hMusic.GUI.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -25,10 +29,14 @@ namespace Sma5hMusic.GUI.ViewModels
         private readonly ReadOnlyObservableCollection<BgmDbRootEntryViewModel> _items;
         private readonly Subject<BgmDbRootEntryViewModel> _whenNewRequestToEditBgmEntry;
         private readonly Subject<BgmDbRootEntryViewModel> _whenNewRequestToDeleteBgmEntry;
+        private readonly Subject<List<BgmDbRootEntryViewModel>> _whenNewRequestToDeleteBgmEntries;
         private readonly Subject<BgmDbRootEntryViewModel> _whenNewRequestToRenameToneId;
-        private readonly Subject<BgmDbRootEntryViewModel> _whenNewRequestToMoveToOtherMod;
+        private readonly Subject<List<BgmDbRootEntryViewModel>> _whenNewRequestToMoveToOtherMod;
         private readonly Subject<Tuple<IEnumerable<string>, short>> _whenNewRequestToReorderBgmEntry;
+        private readonly IOptionsMonitor<ApplicationSettings> _config;
+        private readonly IMessageDialog _messageDialog;
         private Action _postReorderSelection;
+        private DataGrid _refBgmGrid;
 
         public ContextMenuViewModel VMContextMenu { get; }
 
@@ -37,8 +45,9 @@ namespace Sma5hMusic.GUI.ViewModels
 
         public IObservable<BgmDbRootEntryViewModel> WhenNewRequestToEditBgmEntry { get { return _whenNewRequestToEditBgmEntry; } }
         public IObservable<BgmDbRootEntryViewModel> WhenNewRequestToDeleteBgmEntry { get { return _whenNewRequestToDeleteBgmEntry; } }
+        public IObservable<List<BgmDbRootEntryViewModel>> WhenNewRequestToDeleteBgmEntries { get { return _whenNewRequestToDeleteBgmEntries; } }
         public IObservable<BgmDbRootEntryViewModel> WhenNewRequestToRenameToneId { get { return _whenNewRequestToRenameToneId; } }
-        public IObservable<BgmDbRootEntryViewModel> WhenNewRequestToMoveToOtherMod { get { return _whenNewRequestToMoveToOtherMod; } }
+        public IObservable<List<BgmDbRootEntryViewModel>> WhenNewRequestToMoveToOtherMod { get { return _whenNewRequestToMoveToOtherMod; } }
         public IObservable<Tuple<IEnumerable<string>, short>> WhenNewRequestToReorderBgmEntry { get { return _whenNewRequestToReorderBgmEntry; } }
         public IObservable<Tuple<IEnumerable<string>, short>> WhenNewRequestToReorderBgmEntries { get; private set; }
 
@@ -48,26 +57,30 @@ namespace Sma5hMusic.GUI.ViewModels
         public BgmDbRootEntryViewModel SelectedBgmEntry { get; private set; }
 
         public ReactiveCommand<DataGridCellPointerPressedEventArgs, Unit> ActionReorderBgm { get; }
-        public ReactiveCommand<UserControl, Unit> ActionInitializeDragAndDrop { get; }
+        public ReactiveCommand<DataGrid, Unit> ActionInitializeDragAndDrop { get; }
         public ReactiveCommand<BgmDbRootEntryViewModel, Unit> ActionEditBgm { get; }
         public ReactiveCommand<BgmDbRootEntryViewModel, Unit> ActionRenameToneId { get; }
         public ReactiveCommand<BgmDbRootEntryViewModel, Unit> ActionMoveToOtherMod { get; }
         public ReactiveCommand<BgmDbRootEntryViewModel, Unit> ActionDeleteBgm { get; }
         public BgmPropertiesViewModel VMBgmProperties { get; }
 
-        public BgmSongsViewModel(IServiceProvider serviceProvider, ILogger<BgmSongsViewModel> logger,
+        public BgmSongsViewModel(IServiceProvider serviceProvider, IMessageDialog messageDialog, IOptionsMonitor<ApplicationSettings> config, ILogger<BgmSongsViewModel> logger,
             IObservable<IChangeSet<BgmDbRootEntryViewModel, string>> observableBgmEntriesNonFilteredList,
             IObservable<IChangeSet<BgmDbRootEntryViewModel, string>> observableBgmEntriesFilteredList, ContextMenuViewModel vmContextMenu)
         {
             _logger = logger;
+            _config = config;
+            _messageDialog = messageDialog;
             VMContextMenu = vmContextMenu;
+            config.OnChange((p) => SetColumnsVisibility(p));
 
             //Initialize list
             _whenNewRequestToEditBgmEntry = new Subject<BgmDbRootEntryViewModel>();
             _whenNewRequestToDeleteBgmEntry = new Subject<BgmDbRootEntryViewModel>();
+            _whenNewRequestToDeleteBgmEntries = new Subject<List<BgmDbRootEntryViewModel>>();
             _whenNewRequestToReorderBgmEntry = new Subject<Tuple<IEnumerable<string>, short>>();
             _whenNewRequestToRenameToneId = new Subject<BgmDbRootEntryViewModel>();
-            _whenNewRequestToMoveToOtherMod = new Subject<BgmDbRootEntryViewModel>();
+            _whenNewRequestToMoveToOtherMod = new Subject<List<BgmDbRootEntryViewModel>>();
 
             observableBgmEntriesFilteredList
                 .Sort(SortExpressionComparer<BgmDbRootEntryViewModel>.Ascending(p => p.HiddenInSoundTest).ThenByAscending(p => p.TestDispOrder), SortOptimisations.None, 8000)
@@ -78,10 +91,10 @@ namespace Sma5hMusic.GUI.ViewModels
                 .Subscribe((o) => FocusAfterMove());
 
             ActionReorderBgm = ReactiveCommand.CreateFromTask<DataGridCellPointerPressedEventArgs>(ReorderBgm);
-            ActionInitializeDragAndDrop = ReactiveCommand.Create<UserControl>(InitializeDragAndDropHandlers);
+            ActionInitializeDragAndDrop = ReactiveCommand.Create<DataGrid>(InitializeDragAndDropHandlers);
             ActionEditBgm = ReactiveCommand.Create<BgmDbRootEntryViewModel>(EditBgmEntry);
             ActionDeleteBgm = ReactiveCommand.Create<BgmDbRootEntryViewModel>(DeleteBgmEntry);
-            ActionRenameToneId = ReactiveCommand.Create<BgmDbRootEntryViewModel>(RenameToneId);
+            ActionRenameToneId = ReactiveCommand.CreateFromTask<BgmDbRootEntryViewModel>(RenameToneId);
             ActionMoveToOtherMod = ReactiveCommand.Create<BgmDbRootEntryViewModel>(MoveToOtherMod);
 
             //Initialize properties
@@ -99,21 +112,62 @@ namespace Sma5hMusic.GUI.ViewModels
         {
             _whenNewRequestToDeleteBgmEntry.OnNext(bgmEntry);
         }
-        public void RenameToneId(BgmDbRootEntryViewModel bgmEntry)
+        public void DeleteBgmEntries(object sender, KeyEventArgs e)
         {
+            if (e.Key == Key.Delete && _refBgmGrid.SelectedItems.Count > 0)
+            {
+                var items = new List<BgmDbRootEntryViewModel>();
+                foreach (BgmDbRootEntryViewModel item in _refBgmGrid.SelectedItems)
+                    items.Add(item);
+                _whenNewRequestToDeleteBgmEntries.OnNext(items);
+            }
+        }
+        public async Task RenameToneId(BgmDbRootEntryViewModel bgmEntry)
+        {
+            if (_refBgmGrid.SelectedItems.Count > 1)
+            {
+                var items = new List<BgmDbRootEntryViewModel>();
+                foreach (BgmDbRootEntryViewModel item in _refBgmGrid.SelectedItems)
+                    items.Add(item);
+                if (items.Contains(bgmEntry))
+                {
+                    await Dispatcher.UIThread.InvokeAsync(async () =>
+                    {
+                        await _messageDialog.ShowError("Rename Tone Id", "You rename the Tone Id of one BGM at a time.");
+                    }, DispatcherPriority.Background);
+                    return;
+                }
+            }
+
             _whenNewRequestToRenameToneId.OnNext(bgmEntry);
         }
+
         public void MoveToOtherMod(BgmDbRootEntryViewModel bgmEntry)
         {
-            _whenNewRequestToMoveToOtherMod.OnNext(bgmEntry);
+            if (_refBgmGrid.SelectedItems.Count > 1)
+            {
+                var items = new List<BgmDbRootEntryViewModel>();
+                foreach (BgmDbRootEntryViewModel item in _refBgmGrid.SelectedItems)
+                        items.Add(item);
+                if (items.Contains(bgmEntry))
+                {
+                    _whenNewRequestToMoveToOtherMod.OnNext(items);
+                    return;
+                }
+            }
+
+            _whenNewRequestToMoveToOtherMod.OnNext(new List<BgmDbRootEntryViewModel>() { bgmEntry });
         }
         #endregion
 
         #region REORDER
-        public void InitializeDragAndDropHandlers(UserControl userControl)
+        public void InitializeDragAndDropHandlers(DataGrid grid)
         {
-            userControl.AddHandler(DragDrop.DropEvent, Drop);
-            userControl.AddHandler(DragDrop.DragOverEvent, DragOver);
+            grid.AddHandler(DragDrop.DropEvent, Drop);
+            grid.AddHandler(DragDrop.DragOverEvent, DragOver);
+            grid.AddHandler(DataGrid.KeyDownEvent, DeleteBgmEntries);
+            _refBgmGrid = grid;
+            SetColumnsVisibility(_config.CurrentValue);
         }
 
         public async Task ReorderBgm(DataGridCellPointerPressedEventArgs e)
@@ -197,8 +251,6 @@ namespace Sma5hMusic.GUI.ViewModels
                     }
                 }
             }
-
-
         }
 
         public void FocusAfterMove()
@@ -208,6 +260,17 @@ namespace Sma5hMusic.GUI.ViewModels
                 _postReorderSelection();
                 _postReorderSelection = null;
             }
+        }
+
+        private void SetColumnsVisibility(ApplicationSettings settings)
+        {
+            Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                _refBgmGrid.Columns[2].IsVisible = !settings.Sma5hMusicGUI.HideIndexColumn;
+                _refBgmGrid.Columns[3].IsVisible = !settings.Sma5hMusicGUI.HideSeriesColumn;
+                _refBgmGrid.Columns[6].IsVisible = !settings.Sma5hMusicGUI.HideRecordColumn;
+                _refBgmGrid.Columns[7].IsVisible = !settings.Sma5hMusicGUI.HideModColumn;
+            }, DispatcherPriority.Background);
         }
         #endregion
 

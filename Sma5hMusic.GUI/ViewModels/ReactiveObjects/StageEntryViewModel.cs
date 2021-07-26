@@ -2,6 +2,7 @@
 using ReactiveUI.Fody.Helpers;
 using Sma5h.Mods.Music.Models;
 using Sma5hMusic.GUI.Helpers;
+using Sma5hMusic.GUI.Interfaces;
 
 namespace Sma5hMusic.GUI.ViewModels
 {

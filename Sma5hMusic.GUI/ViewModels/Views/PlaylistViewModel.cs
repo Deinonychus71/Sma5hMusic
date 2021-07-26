@@ -1,6 +1,7 @@
 ﻿using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
+using Avalonia.Threading;
 using DynamicData;
 using DynamicData.Binding;
 using Microsoft.Extensions.DependencyInjection;
@@ -77,6 +78,9 @@ namespace Sma5hMusic.GUI.ViewModels
         [Reactive]
         public string NbrBgmsPlaylist { get; private set; }
 
+        [Reactive]
+        public bool IsPlaylistAdvanced { get; set; }
+
         public ReactiveCommand<DataGridCellPointerPressedEventArgs, Unit> ActionReorderPlaylist { get; }
         public ReactiveCommand<DataGridCellPointerPressedEventArgs, Unit> ActionSendToPlaylist { get; }
         public ReactiveCommand<DataGrid, Unit> ActionInitializeDragAndDrop { get; }
@@ -99,6 +103,8 @@ namespace Sma5hMusic.GUI.ViewModels
             IObservable<IChangeSet<BgmDbRootEntryViewModel, string>> observableBgmEntries, ContextMenuViewModel vmContextMenu)
         {
             _config = config;
+            IsPlaylistAdvanced = _config.CurrentValue.Sma5hMusicGUI.PlaylistAdvanced;
+            config.OnChange((p) => { IsPlaylistAdvanced = p.Sma5hMusicGUI.PlaylistAdvanced; });
             _rootDialog = rootDialog;
             _messageDialog = messageDialog;
             VMContextMenu = vmContextMenu;
@@ -192,12 +198,12 @@ namespace Sma5hMusic.GUI.ViewModels
             ActionDeletePlaylist = ReactiveCommand.Create(() => DeletePlaylist());
             ActionAssignPlaylistToStage = ReactiveCommand.Create(() => AssignPlaylistToStage());
             ActionSetIncidence = ReactiveCommand.CreateFromTask<PlaylistEntryValueViewModel>(SetIncidenceValue);
-            ActionCopyIncidence = ReactiveCommand.Create<PlaylistEntryValueViewModel>(CopyIncidenceValue);
+            ActionCopyIncidence = ReactiveCommand.CreateFromTask<PlaylistEntryValueViewModel>(CopyIncidenceValue);
             ActionPasteIncidence = ReactiveCommand.Create<PlaylistEntryValueViewModel>(PasteIncidenceValue);
-            ActionPasteIncidenceAll = ReactiveCommand.Create<PlaylistEntryValueViewModel>(PasteIncidenceValueToAllOrderIds);
+            ActionPasteIncidenceAll = ReactiveCommand.Create<PlaylistEntryValueViewModel>((o) => PasteIncidenceValueToAllOrderIds(o, false));
 
             //Trigger behavior subjets
-            _whenStageSelected = new BehaviorSubject<StageEntryViewModel>(_stages.FirstOrDefault());
+            _whenStageSelected = new BehaviorSubject<StageEntryViewModel>(Stages.FirstOrDefault());
             _whenPlaylistSelected = new BehaviorSubject<PlaylistEntryViewModel>(_playlists.FirstOrDefault());
             _whenPlaylistOrderSelected = new BehaviorSubject<ComboItem>(_orderMenu.FirstOrDefault());
         }
@@ -486,32 +492,81 @@ namespace Sma5hMusic.GUI.ViewModels
             var result = await incidenceModal.ShowDialog<IncidencePickerModalWindow>(_rootDialog.Window);
             if (result != null && vmIncidenceModalPicker.Incidence != ushort.MaxValue)
             {
+                if(_refGrid.SelectedItems.Count > 1)
+                {
+                    var items = GetPlaylistEntriesSelectedItems();
+                    if (items.Contains(vmPlaylistEntryValue))
+                    {
+                        items.ForEach(p => p.Incidence = vmIncidenceModalPicker.Incidence);
+                        return;
+                    }
+                }
                 vmPlaylistEntryValue.Incidence = vmIncidenceModalPicker.Incidence;
             }
         }
 
-        private void CopyIncidenceValue(PlaylistEntryValueViewModel vmPlaylistEntryValue)
+        private async Task CopyIncidenceValue(PlaylistEntryValueViewModel vmPlaylistEntryValue)
         {
+            if(_refGrid.SelectedItems.Count > 1)
+            {
+                var items = GetPlaylistEntriesSelectedItems();
+                if (items.Contains(vmPlaylistEntryValue))
+                {
+                    await Dispatcher.UIThread.InvokeAsync(async () =>
+                    {
+                        await _messageDialog.ShowError("Copy Incidence Value", "You can only copy the incidence value from one track at a time.");
+                    }, DispatcherPriority.Background);
+                    return;
+                }
+            }
+
             _incidenceCopy = vmPlaylistEntryValue.Incidence;
             CopyValueExists = true;
         }
 
         private void PasteIncidenceValue(PlaylistEntryValueViewModel vmPlaylistEntryValue)
         {
+            if (_refGrid.SelectedItems.Count > 1)
+            {
+                var items = GetPlaylistEntriesSelectedItems();
+                if (items.Contains(vmPlaylistEntryValue))
+                {
+                    items.ForEach(p => p.Incidence = _incidenceCopy);
+                    return;
+                }
+            }
+
             vmPlaylistEntryValue.Incidence = _incidenceCopy;
         }
 
-        private void PasteIncidenceValueToAllOrderIds(PlaylistEntryValueViewModel vmPlaylistEntryValue)
+        private void PasteIncidenceValueToAllOrderIds(PlaylistEntryValueViewModel vmPlaylistEntryValue, bool skipMultiple = false)
         {
+            if (!skipMultiple && _refGrid.SelectedItems.Count > 1)
+            {
+                var items = GetPlaylistEntriesSelectedItems();
+                if (items.Contains(vmPlaylistEntryValue))
+                {
+                    items.ForEach(p => PasteIncidenceValueToAllOrderIds(p, true));
+                    return;
+                }
+            }
+
             if (vmPlaylistEntryValue.Parent == null)
                 return;
-
             var parent = vmPlaylistEntryValue.Parent;
             for (short i = 0; i < 16; i++)
             {
                 var vmPlaylistEntryValueOrder = parent.Tracks[i].FirstOrDefault(p => p.UiBgmId == vmPlaylistEntryValue.UiBgmId);
                 PasteIncidenceValue(vmPlaylistEntryValueOrder);
             }
+        }
+
+        private List<PlaylistEntryValueViewModel> GetPlaylistEntriesSelectedItems()
+        {
+            var output = new List<PlaylistEntryValueViewModel>();
+            foreach (var item in _refGrid.SelectedItems)
+                output.Add((PlaylistEntryValueViewModel)item);
+            return output;
         }
         #endregion
 

@@ -44,6 +44,7 @@ namespace Sma5hMusic.GUI.ViewModels
             _expandedCache = new HashSet<string>();
 
             Items = new ObservableCollection<OrderItemTreeViewModel>();
+            Header = "Sound Test";
 
             observableBgmEntriesList
                 .DeferUntilLoaded()
