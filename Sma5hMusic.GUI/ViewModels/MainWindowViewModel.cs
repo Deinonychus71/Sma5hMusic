@@ -587,6 +587,8 @@ namespace Sma5hMusic.GUI.ViewModels
                     item.LoadLocalized(_currentLocale);
                 foreach (var item in _viewModelManager.GetGameTitlesViewModels())
                     item.LoadLocalized(_currentLocale);
+                foreach (var item in _viewModelManager.GetSeriesViewModels())
+                    item.LoadLocalized(_currentLocale);
             }
         }
         #endregion
