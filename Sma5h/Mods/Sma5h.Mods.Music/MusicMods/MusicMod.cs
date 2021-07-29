@@ -285,41 +285,26 @@ namespace Sma5h.Mods.Music.MusicMods
             return true;
         }
 
-        public bool ReorderSongs(List<string> orderedList)
+        public bool UpdateGameTitleEntry(GameTitleEntry gameTitleEntry)
         {
-            throw new Exception("TODO: NEED REWORK");
-
-            //Sanity check
-            var allModSongsDict = _musicModConfig.Games.SelectMany(p => p.Bgms).OrderBy(p => p.DbRoot.UiBgmId).ToDictionary(p => p.DbRoot.UiBgmId, p => p);
-            if(!orderedList.OrderBy(p => p).SequenceEqual(allModSongsDict.Select(p => p.Key)))
+            if (_musicModConfig?.Games != null)
             {
-                _logger.LogError("The provider list of songs to reorder did not match the list of songs found in the mod. Aborting reorder...");
-                return false;
-            }
+                bool change = false;
 
-            //Wipe all games
-            var gamesCache = _musicModConfig.Games.ToList();
-            _musicModConfig.Games.ForEach(p => p.Bgms.Clear());
-            _musicModConfig.Games.Clear();
-
-            //Reorder
-            foreach(var orderedSongId in orderedList)
-            {
-                var orderedSong = allModSongsDict[orderedSongId];
-                var game = gamesCache.FirstOrDefault(p => p.UiGameTitleId == orderedSong.DbRoot.UiGameTitleId);
-                if(game == null)
+                foreach (var game in _musicModConfig.Games)
                 {
-                    _logger.LogError("A game wasn't found during reordering. Aborting reorder...");
-                    return false;
+                    if (game.UiGameTitleId == gameTitleEntry.UiGameTitleId)
+                    {
+                        _mapper.Map(gameTitleEntry, game);
+                        change = true;
+                    }
                 }
-                game.Bgms.Add(orderedSong);
-                if (!_musicModConfig.Games.Contains(game))
-                    _musicModConfig.Games.Add(game);
+
+                if (change)
+                {
+                    return SaveMusicModConfig();
+                }
             }
-
-            //Save
-            SaveMusicModConfig();
-
             return true;
         }
 
