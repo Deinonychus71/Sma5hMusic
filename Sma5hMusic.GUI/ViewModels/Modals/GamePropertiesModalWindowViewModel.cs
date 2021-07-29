@@ -61,7 +61,7 @@ namespace Sma5hMusic.GUI.ViewModels
         public ReadOnlyObservableCollection<GameTitleEntryViewModel> Games { get { return _games; } }
 
         public GamePropertiesModalWindowViewModel(IOptionsMonitor<ApplicationSettings> config, ILogger<GamePropertiesModalWindowViewModel> logger, IViewModelManager viewModelManager, 
-            IGUIStateManager guiStateManager, IObservable<IChangeSet<GameTitleEntryViewModel, string>> observableGames)
+            IGUIStateManager guiStateManager)
         {
             _config = config;
             _logger = logger;
@@ -75,7 +75,7 @@ namespace Sma5hMusic.GUI.ViewModels
                .Bind(out _series)
                .DisposeMany()
                .Subscribe();
-            observableGames
+            viewModelManager.ObservableGameTitles.Connect()
                .ObserveOn(RxApp.MainThreadScheduler)
                .Bind(out _games)
                .DisposeMany()

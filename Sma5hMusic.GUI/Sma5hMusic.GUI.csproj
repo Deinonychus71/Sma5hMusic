@@ -113,6 +113,15 @@
     <Compile Update="Views\Modals\BgmAdvancedPropertiesModalWindow.axaml.cs">
       <DependentUpon>BgmAdvancedPropertiesModalWindow.axaml</DependentUpon>
     </Compile>
+    <Compile Update="Views\Modals\SeriesPropertiesModalWindow.axaml.cs">
+      <DependentUpon>SeriesPropertiesModalWindow.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\Modals\SeriesPickerModalWindow.axaml.cs">
+      <DependentUpon>SeriesPickerModalWindow.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\Modals\SeriesDeletePickerModalWindow.axaml.cs">
+      <DependentUpon>SeriesDeletePickerModalWindow.axaml</DependentUpon>
+    </Compile>
     <Compile Update="Views\Modals\GameDeletePickerModalWindow.axaml.cs">
       <DependentUpon>GameDeletePickerModalWindow.axaml</DependentUpon>
     </Compile>

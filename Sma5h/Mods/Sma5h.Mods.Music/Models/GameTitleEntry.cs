@@ -23,6 +23,7 @@ namespace Sma5h.Mods.Music.Models
             : base(source)
         {
             UiGameTitleId = uiGameTitleId;
+            UiSeriesId = MusicConstants.InternalIds.SERIES_ID_DEFAULT;
             MSBTTitle = new Dictionary<string, string>();
         }
     }

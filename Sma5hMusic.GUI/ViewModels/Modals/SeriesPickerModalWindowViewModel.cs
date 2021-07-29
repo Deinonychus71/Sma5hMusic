@@ -1,5 +1,7 @@
 ﻿using DynamicData;
 using ReactiveUI;
+using Sma5h.Mods.Music.Helpers;
+using Sma5hMusic.GUI.Interfaces;
 using System;
 using System.Collections.ObjectModel;
 using System.Reactive.Linq;
@@ -9,12 +11,13 @@ namespace Sma5hMusic.GUI.ViewModels
     public class SeriesPickerModalWindowViewModel : ModalBaseViewModel<SeriesEntryViewModel>
     {
         private readonly ReadOnlyObservableCollection<SeriesEntryViewModel> _series;
-        public ReadOnlyObservableCollection<SeriesEntryViewModel> Games { get { return _series; } }
+        public ReadOnlyObservableCollection<SeriesEntryViewModel> Series { get { return _series; } }
 
-        public SeriesPickerModalWindowViewModel(IObservable<IChangeSet<SeriesEntryViewModel, string>> observableSeries)
+        public SeriesPickerModalWindowViewModel(IViewModelManager viewModelManager)
         {
             //Bind observables
-            observableSeries
+            viewModelManager.ObservableSeries.Connect()
+               .Filter(p => p.UiSeriesId != MusicConstants.InternalIds.SERIES_ID_DEFAULT)
                .ObserveOn(RxApp.MainThreadScheduler)
                .Bind(out _series)
                .DisposeMany()

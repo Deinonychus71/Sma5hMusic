@@ -24,9 +24,12 @@ namespace Sma5hMusic.GUI.ViewModels
         private readonly BehaviorSubject<string> _whenLocaleChanged;
         private readonly Subject<ModEntryViewModel> _whenNewRequestToAddBgmEntry;
         private readonly Subject<Unit> _whenNewRequestToAddModEntry;
+        private readonly Subject<Unit> _whenNewRequestToAddSeriesEntry;
         private readonly Subject<Unit> _whenNewRequestToAddGameEntry;
         private readonly Subject<Unit> _whenNewRequestToEditModEntry;
+        private readonly Subject<Unit> _whenNewRequestToEditSeriesEntry;
         private readonly Subject<Unit> _whenNewRequestToEditGameEntry;
+        private readonly Subject<Unit> _whenNewRequestToDeleteSeriesEntry;
         private readonly Subject<Unit> _whenNewRequestToDeleteGameEntry;
 
         [Reactive]
@@ -37,15 +40,21 @@ namespace Sma5hMusic.GUI.ViewModels
         public ReadOnlyObservableCollection<LocaleViewModel> Locales { get { return _locales; } }
         public IObservable<ModEntryViewModel> WhenNewRequestToAddBgmEntry { get { return _whenNewRequestToAddBgmEntry; } }
         public IObservable<Unit> WhenNewRequestToAddModEntry { get { return _whenNewRequestToAddModEntry; } }
+        public IObservable<Unit> WhenNewRequestToAddSeriesEntry { get { return _whenNewRequestToAddSeriesEntry; } }
         public IObservable<Unit> WhenNewRequestToAddGameEntry { get { return _whenNewRequestToAddGameEntry; } }
         public IObservable<Unit> WhenNewRequestToEditModEntry { get { return _whenNewRequestToEditModEntry; } }
+        public IObservable<Unit> WhenNewRequestToEditSeriesEntry { get { return _whenNewRequestToEditSeriesEntry; } }
         public IObservable<Unit> WhenNewRequestToEditGameEntry { get { return _whenNewRequestToEditGameEntry; } }
+        public IObservable<Unit> WhenNewRequestToDeleteSeriesEntry { get { return _whenNewRequestToDeleteSeriesEntry; } }
         public IObservable<Unit> WhenNewRequestToDeleteGameEntry { get { return _whenNewRequestToDeleteGameEntry; } }
         public IObservable<string> WhenLocaleChanged { get { return _whenLocaleChanged; } }
         public ReactiveCommand<Unit, Unit> ActionNewMod { get; }
+        public ReactiveCommand<Unit, Unit> ActionNewSeries { get; }
         public ReactiveCommand<Unit, Unit> ActionNewGame { get; }
         public ReactiveCommand<Unit, Unit> ActionEditMod { get; }
+        public ReactiveCommand<Unit, Unit> ActionEditSeries { get; }
         public ReactiveCommand<Unit, Unit> ActionEditGame { get; }
+        public ReactiveCommand<Unit, Unit> ActionDeleteSeries { get; }
         public ReactiveCommand<Unit, Unit> ActionDeleteGame { get; }
         public ReactiveCommand<ModEntryViewModel, Unit> ActionAddNewBgm { get; }
 
@@ -55,9 +64,12 @@ namespace Sma5hMusic.GUI.ViewModels
             _whenNewRequestToAddBgmEntry = new Subject<ModEntryViewModel>();
             _whenLocaleChanged = new BehaviorSubject<string>(config.CurrentValue.Sma5hMusicGUI.DefaultGUILocale);
             _whenNewRequestToAddModEntry = new Subject<Unit>();
+            _whenNewRequestToAddSeriesEntry = new Subject<Unit>();
             _whenNewRequestToAddGameEntry = new Subject<Unit>();
             _whenNewRequestToEditModEntry = new Subject<Unit>();
+            _whenNewRequestToEditSeriesEntry = new Subject<Unit>();
             _whenNewRequestToEditGameEntry = new Subject<Unit>();
+            _whenNewRequestToDeleteSeriesEntry = new Subject<Unit>();
             _whenNewRequestToDeleteGameEntry = new Subject<Unit>();
 
             //List of mods
@@ -85,10 +97,13 @@ namespace Sma5hMusic.GUI.ViewModels
                 });
 
             ActionNewMod = ReactiveCommand.Create(AddNewMod);
+            ActionNewSeries = ReactiveCommand.Create(AddNewSeries);
             ActionNewGame = ReactiveCommand.Create(AddNewGame);
             ActionEditMod = ReactiveCommand.Create(EditMod);
+            ActionEditSeries = ReactiveCommand.Create(EditSeries);
             ActionEditGame = ReactiveCommand.Create(EditGame);
             ActionAddNewBgm = ReactiveCommand.Create<ModEntryViewModel>(AddNewBgmEntry);
+            ActionDeleteSeries = ReactiveCommand.Create(DeleteSeries);
             ActionDeleteGame = ReactiveCommand.Create(DeleteGame);
         }
 
@@ -104,16 +119,34 @@ namespace Sma5hMusic.GUI.ViewModels
             _whenNewRequestToAddBgmEntry.OnNext(vmMusicMod);
         }
 
+        public void AddNewSeries()
+        {
+            _logger.LogDebug("Clicked New Series");
+            _whenNewRequestToAddSeriesEntry.OnNext(Unit.Default);
+        }
+
         public void AddNewGame()
         {
             _logger.LogDebug("Clicked New Game");
             _whenNewRequestToAddGameEntry.OnNext(Unit.Default);
         }
 
+        public void EditSeries()
+        {
+            _logger.LogDebug("Clicked Edit Series");
+            _whenNewRequestToEditSeriesEntry.OnNext(Unit.Default);
+        }
+
         public void EditGame()
         {
             _logger.LogDebug("Clicked Edit Game");
             _whenNewRequestToEditGameEntry.OnNext(Unit.Default);
+        }
+
+        public void DeleteSeries()
+        {
+            _logger.LogDebug("Clicked Delete Series");
+            _whenNewRequestToDeleteSeriesEntry.OnNext(Unit.Default);
         }
 
         public void DeleteGame()
@@ -151,6 +184,11 @@ namespace Sma5hMusic.GUI.ViewModels
                 _whenNewRequestToAddModEntry?.OnCompleted();
                 _whenNewRequestToAddModEntry?.Dispose();
             }
+            if (_whenNewRequestToAddSeriesEntry != null)
+            {
+                _whenNewRequestToAddSeriesEntry?.OnCompleted();
+                _whenNewRequestToAddSeriesEntry?.Dispose();
+            }
             if (_whenNewRequestToAddGameEntry != null)
             {
                 _whenNewRequestToAddGameEntry?.OnCompleted();
@@ -161,10 +199,20 @@ namespace Sma5hMusic.GUI.ViewModels
                 _whenNewRequestToEditModEntry?.OnCompleted();
                 _whenNewRequestToEditModEntry?.Dispose();
             }
+            if (_whenNewRequestToEditSeriesEntry != null)
+            {
+                _whenNewRequestToEditSeriesEntry?.OnCompleted();
+                _whenNewRequestToEditSeriesEntry?.Dispose();
+            }
             if (_whenNewRequestToEditGameEntry != null)
             {
                 _whenNewRequestToEditGameEntry?.OnCompleted();
                 _whenNewRequestToEditGameEntry?.Dispose();
+            }
+            if (_whenNewRequestToDeleteSeriesEntry != null)
+            {
+                _whenNewRequestToDeleteSeriesEntry?.OnCompleted();
+                _whenNewRequestToDeleteSeriesEntry?.Dispose();
             }
             if (_whenNewRequestToDeleteGameEntry != null)
             {

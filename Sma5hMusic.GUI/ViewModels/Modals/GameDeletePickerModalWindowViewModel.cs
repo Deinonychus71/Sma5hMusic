@@ -2,6 +2,7 @@
 using ReactiveUI;
 using ReactiveUI.Validation.Extensions;
 using Sma5h.Mods.Music.Models;
+using Sma5hMusic.GUI.Interfaces;
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -15,18 +16,17 @@ namespace Sma5hMusic.GUI.ViewModels
         private readonly ReadOnlyObservableCollection<BgmDbRootEntryViewModel> _bgmEntries;
         public ReadOnlyObservableCollection<GameTitleEntryViewModel> Games { get { return _games; } }
 
-        public GameDeletePickerModalWindowViewModel(IObservable<IChangeSet<GameTitleEntryViewModel, string>> observableGames,
-            IObservable<IChangeSet<BgmDbRootEntryViewModel, string>> observableBgmEntries)
+        public GameDeletePickerModalWindowViewModel(IViewModelManager viewModelManager)
         {
             //Bind observables
-            observableGames
+            viewModelManager.ObservableGameTitles.Connect()
                .Filter(p => p.Source == EntrySource.Mod)
                .ObserveOn(RxApp.MainThreadScheduler)
                .Bind(out _games)
                .DisposeMany()
                .Subscribe();
 
-            observableBgmEntries
+            viewModelManager.ObservableDbRootEntries.Connect()
                .ObserveOn(RxApp.MainThreadScheduler)
                .Bind(out _bgmEntries)
                .DisposeMany()

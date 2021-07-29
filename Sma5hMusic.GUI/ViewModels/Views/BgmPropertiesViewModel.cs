@@ -16,12 +16,13 @@ using System.Reactive.Subjects;
 using System.Collections.Generic;
 using Sma5hMusic.GUI.ViewModels.ReactiveObjects;
 using Sma5hMusic.GUI.Helpers;
+using Sma5hMusic.GUI.Interfaces;
 
 namespace Sma5hMusic.GUI.ViewModels
 {
     public class BgmPropertiesViewModel : ViewModelBase
     {
-        private ReadOnlyObservableCollection<BgmDbRootEntryViewModel> _items;
+        private readonly ReadOnlyObservableCollection<BgmDbRootEntryViewModel> _items;
         private readonly Subject<Tuple<IEnumerable<string>, short>> _whenNewRequestToReorderBgmEntries;
         private readonly HashSet<string> _expandedCache;
         private TreeView _treeView;
@@ -38,7 +39,7 @@ namespace Sma5hMusic.GUI.ViewModels
         [Reactive]
         public BgmDbRootEntryViewModel SelectedBgmEntry { get; set; }
 
-        public BgmPropertiesViewModel(IObservable<IChangeSet<BgmDbRootEntryViewModel, string>> observableBgmEntriesList, IObservable<BgmDbRootEntryViewModel> observableBgmEntry)
+        public BgmPropertiesViewModel(IViewModelManager viewModelManager, IObservable<BgmDbRootEntryViewModel> observableBgmEntry)
         {
             _whenNewRequestToReorderBgmEntries = new Subject<Tuple<IEnumerable<string>, short>>();
             _expandedCache = new HashSet<string>();
@@ -46,7 +47,7 @@ namespace Sma5hMusic.GUI.ViewModels
             Items = new ObservableCollection<OrderItemTreeViewModel>();
             Header = "Sound Test";
 
-            observableBgmEntriesList
+            viewModelManager.ObservableDbRootEntries.Connect()
                 .DeferUntilLoaded()
                 .Filter(p => !p.HiddenInSoundTest)
                 .AutoRefresh(p => p.TestDispOrder, TimeSpan.FromMilliseconds(50))

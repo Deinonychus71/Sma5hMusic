@@ -71,7 +71,7 @@ namespace Sma5hMusic.GUI.ViewModels
         public ReadOnlyObservableCollection<SeriesEntryViewModel> Series { get { return _series; } }
 
         public SeriesPropertiesModalWindowViewModel(IOptionsMonitor<ApplicationSettings> config, ILogger<SeriesPropertiesModalWindowViewModel> logger, IViewModelManager viewModelManager, 
-            IGUIStateManager guiStateManager, IObservable<IChangeSet<SeriesEntryViewModel, string>> observableSeries)
+            IGUIStateManager guiStateManager)
         {
             _config = config;
             _logger = logger;
@@ -79,7 +79,7 @@ namespace Sma5hMusic.GUI.ViewModels
             _viewModelManager = viewModelManager;
 
             //Bind observables
-            observableSeries
+            viewModelManager.ObservableSeries.Connect()
                .ObserveOn(RxApp.MainThreadScheduler)
                .Bind(out _series)
                .DisposeMany()

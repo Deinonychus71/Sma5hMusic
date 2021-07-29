@@ -1,0 +1,31 @@
+﻿<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        Width="500" Height="400" MinWidth="500"  MinHeight="400"
+        WindowStartupLocation="CenterScreen" ShowInTaskbar="False"
+        x:Class="Sma5hMusic.GUI.Views.SeriesPickerModalWindow"
+        xmlns:fields="clr-namespace:Sma5hMusic.GUI.Views.Fields"
+        Title="Series Picker">
+  <DockPanel Classes="modal" LastChildFill="True" HorizontalAlignment="Stretch">
+    <Border Classes="headerTitle" DockPanel.Dock="Top">
+      <TextBlock>Pick Series to Edit</TextBlock>
+    </Border>
+    <StackPanel Classes="modalActions" DockPanel.Dock="Bottom">
+      <Button Content="Select" Command="{Binding ActionOK}" CommandParameter="{Binding $parent[Window]}"></Button>
+      <Button Content="Cancel" Command="{Binding ActionCancel}" CommandParameter="{Binding $parent[Window]}"></Button>
+    </StackPanel>
+
+    <StackPanel Classes="content">
+      <fields:PropertyField Label="Series" ToolTip="Pick an existing series to modify.">
+        <fields:PropertyField.FieldContent>
+          <StackPanel>
+            <AutoCompleteBox Items="{Binding Series}" ValueMemberBinding="{Binding Title}" IsTextCompletionEnabled="True" MinimumPrefixLength="2"
+                           MinimumPopulateDelay="0.5" SelectedItem="{Binding SelectedItem, Mode=TwoWay}" FilterMode="Contains"/>
+          </StackPanel>
+        </fields:PropertyField.FieldContent>
+      </fields:PropertyField>
+    </StackPanel>
+  </DockPanel>
+</Window>

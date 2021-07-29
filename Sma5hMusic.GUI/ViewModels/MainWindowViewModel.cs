@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using Avalonia.Controls;
 using Avalonia.Threading;
-using DynamicData;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -42,6 +41,9 @@ namespace Sma5hMusic.GUI.ViewModels
 
         private readonly ModalDialog<BgmPropertiesModalWindow, BgmPropertiesModalWindowViewModel, BgmEntryViewModel> _dialogSimpleBgmEditor;
         private readonly ModalDialog<BgmAdvancedPropertiesModalWindow, BgmPropertiesModalWindowViewModel, BgmEntryViewModel> _dialogAdvancedBgmEditor;
+        private readonly ModalDialog<SeriesPropertiesModalWindow, SeriesPropertiesModalWindowViewModel, SeriesEntryViewModel> _dialogSeriesEditor;
+        private readonly ModalDialog<SeriesPickerModalWindow, SeriesPickerModalWindowViewModel, SeriesEntryViewModel> _dialogSeriesPicker;
+        private readonly ModalDialog<SeriesDeletePickerModalWindow, SeriesDeletePickerModalWindowViewModel, SeriesEntryViewModel> _dialogSeriesDeletePicker;
         private readonly ModalDialog<GamePropertiesModalWindow, GamePropertiesModalWindowViewModel, GameTitleEntryViewModel> _dialogGameEditor;
         private readonly ModalDialog<GamePickerModalWindow, GamePickerModalWindowViewModel, GameTitleEntryViewModel> _dialogGamePicker;
         private readonly ModalDialog<GameDeletePickerModalWindow, GameDeletePickerModalWindowViewModel, GameTitleEntryViewModel> _dialogGameDeletePicker;
@@ -119,17 +121,12 @@ namespace Sma5hMusic.GUI.ViewModels
             //Initialize Contextual Menu view
             VMContextMenu = ActivatorUtilities.CreateInstance<ContextMenuViewModel>(serviceProvider);
             VMContextMenu.WhenLocaleChanged.Subscribe((locale) => { _currentLocale = locale; SetLanguage(); });
-            var observableBgmDbRootEntriesList = viewModelManager.ObservableDbRootEntries.Connect()
-                .DeferUntilLoaded()
-                .Filter(p => p.UiBgmId != "ui_bgm_random");
-            var observableGameEntriesList = viewModelManager.ObservableGameTitles.Connect()
-                .DeferUntilLoaded();
 
             //Initialize filters
-            VMBgmFilters = ActivatorUtilities.CreateInstance<BgmFiltersViewModel>(serviceProvider, observableBgmDbRootEntriesList);
+            VMBgmFilters = ActivatorUtilities.CreateInstance<BgmFiltersViewModel>(serviceProvider);
 
             //Initialize main views
-            VMBgmSongs = ActivatorUtilities.CreateInstance<BgmSongsViewModel>(serviceProvider, observableBgmDbRootEntriesList, VMBgmFilters.WhenFiltersAreApplied, VMContextMenu);
+            VMBgmSongs = ActivatorUtilities.CreateInstance<BgmSongsViewModel>(serviceProvider,VMBgmFilters.WhenFiltersAreApplied, VMContextMenu);
             VMPlaylists = ActivatorUtilities.CreateInstance<PlaylistViewModel>(serviceProvider, VMBgmFilters.WhenFiltersAreApplied, VMContextMenu);
 
             //Setup ModEditor
@@ -138,17 +135,25 @@ namespace Sma5hMusic.GUI.ViewModels
             _dialogModEditor = new ModalDialog<ModPropertiesModalWindow, ModPropertiesModalWindowViewModel, ModEntryViewModel>(vmModEditor);
             _dialogModPicker = new ModalDialog<ModPickerModalWindow, ModPickerModalWindowViewModel, ModEntryViewModel>(vmModPicker);
 
+            //Setup SeriesEditor
+            var vmSeriesEditor = ActivatorUtilities.CreateInstance<SeriesPropertiesModalWindowViewModel>(serviceProvider);
+            var vmSeriesPicker = ActivatorUtilities.CreateInstance<SeriesPickerModalWindowViewModel>(serviceProvider);
+            var vmSeriesDeletePicker = ActivatorUtilities.CreateInstance<SeriesDeletePickerModalWindowViewModel>(serviceProvider);
+            _dialogSeriesEditor = new ModalDialog<SeriesPropertiesModalWindow, SeriesPropertiesModalWindowViewModel, SeriesEntryViewModel>(vmSeriesEditor);
+            _dialogSeriesPicker = new ModalDialog<SeriesPickerModalWindow, SeriesPickerModalWindowViewModel, SeriesEntryViewModel>(vmSeriesPicker);
+            _dialogSeriesDeletePicker = new ModalDialog<SeriesDeletePickerModalWindow, SeriesDeletePickerModalWindowViewModel, SeriesEntryViewModel>(vmSeriesDeletePicker);
+
             //Setup GameEditor
-            var vmGameEditor = ActivatorUtilities.CreateInstance<GamePropertiesModalWindowViewModel>(serviceProvider, observableGameEntriesList);
-            var vmGamePicker = ActivatorUtilities.CreateInstance<GamePickerModalWindowViewModel>(serviceProvider, observableGameEntriesList);
-            var vmGameDeletePicker = ActivatorUtilities.CreateInstance<GameDeletePickerModalWindowViewModel>(serviceProvider, observableGameEntriesList, observableBgmDbRootEntriesList);
+            var vmGameEditor = ActivatorUtilities.CreateInstance<GamePropertiesModalWindowViewModel>(serviceProvider);
+            var vmGamePicker = ActivatorUtilities.CreateInstance<GamePickerModalWindowViewModel>(serviceProvider);
+            var vmGameDeletePicker = ActivatorUtilities.CreateInstance<GameDeletePickerModalWindowViewModel>(serviceProvider);
             _dialogGameEditor = new ModalDialog<GamePropertiesModalWindow, GamePropertiesModalWindowViewModel, GameTitleEntryViewModel>(vmGameEditor);
             _dialogGamePicker = new ModalDialog<GamePickerModalWindow, GamePickerModalWindowViewModel, GameTitleEntryViewModel>(vmGamePicker);
             _dialogGameDeletePicker = new ModalDialog<GameDeletePickerModalWindow, GameDeletePickerModalWindowViewModel, GameTitleEntryViewModel>(vmGameDeletePicker);
             _vmToneIdCreation = ActivatorUtilities.CreateInstance<ToneIdCreationModalWindowModel>(serviceProvider);
 
             //Setup BgmEditor
-            var vmBgmEditor = ActivatorUtilities.CreateInstance<BgmPropertiesModalWindowViewModel>(serviceProvider, observableGameEntriesList);
+            var vmBgmEditor = ActivatorUtilities.CreateInstance<BgmPropertiesModalWindowViewModel>(serviceProvider);
             vmBgmEditor.VMGamePropertiesModal = vmGameEditor;
             vmBgmEditor.WhenNewRequestToAddGameEntry.Subscribe(async (o) => await AddNewOrEditGame(o));
             _dialogSimpleBgmEditor = new ModalDialog<BgmPropertiesModalWindow, BgmPropertiesModalWindowViewModel, BgmEntryViewModel>(vmBgmEditor);
@@ -166,8 +171,11 @@ namespace Sma5hMusic.GUI.ViewModels
             //Listen to requests from children
             VMContextMenu.WhenNewRequestToAddBgmEntry.Subscribe(async (o) => await AddNewBgmEntry(o));
             VMContextMenu.WhenNewRequestToAddModEntry.Subscribe(async (o) => await AddNewOrEditMod());
+            VMContextMenu.WhenNewRequestToAddSeriesEntry.Subscribe(async (o) => await AddNewOrEditSeries());
             VMContextMenu.WhenNewRequestToAddGameEntry.Subscribe(async (o) => await AddNewOrEditGame());
+            VMContextMenu.WhenNewRequestToEditSeriesEntry.Subscribe(async (o) => await EditSeries());
             VMContextMenu.WhenNewRequestToEditGameEntry.Subscribe(async (o) => await EditGame());
+            VMContextMenu.WhenNewRequestToDeleteSeriesEntry.Subscribe(async (o) => await DeleteSeries());
             VMContextMenu.WhenNewRequestToDeleteGameEntry.Subscribe(async (o) => await DeleteGame());
             VMContextMenu.WhenNewRequestToEditModEntry.Subscribe(async (o) => await EditMod());
             VMBgmSongs.WhenNewRequestToEditBgmEntry.Subscribe(async (o) => await EditBgmEntry(o));
@@ -481,18 +489,55 @@ namespace Sma5hMusic.GUI.ViewModels
         #endregion
 
         #region Game Operations
+        public async Task AddNewOrEditSeries(Window parent = null, SeriesEntryViewModel vmSeriesEntry = null)
+        {
+            var result = await _dialogSeriesEditor.ShowDialog(parent ?? _rootDialog.Window, vmSeriesEntry);
+            if (result != null)
+            {
+                await _guiStateManager.PersistSeriesEntryChange(result.GetReferenceEntity());
+                result.LoadLocalized(_currentLocale);
+            }
+        }
+
         public async Task AddNewOrEditGame(Window parent = null, GameTitleEntryViewModel vmGameTitleEntry = null)
         {
             var result = await _dialogGameEditor.ShowDialog(parent ?? _rootDialog.Window, vmGameTitleEntry);
             if (result != null)
+            {
                 await _guiStateManager.PersistGameTitleEntryChange(result.GetReferenceEntity());
+                result.LoadLocalized(_currentLocale);
+            }
+        }
+
+        public async Task EditSeries(Window parent = null)
+        {
+            var result = await _dialogSeriesPicker.ShowPickerDialog(parent ?? _rootDialog.Window);
+            if (result != null)
+            {
+                await AddNewOrEditSeries(parent, result);
+                result.LoadLocalized(_currentLocale);
+            }
         }
 
         public async Task EditGame(Window parent = null)
         {
             var result = await _dialogGamePicker.ShowPickerDialog(parent ?? _rootDialog.Window);
             if (result != null)
+            {
                 await AddNewOrEditGame(parent, result);
+                result.LoadLocalized(_currentLocale);
+            }
+        }
+
+        public async Task DeleteSeries(Window parent = null)
+        {
+            var result = await _dialogSeriesDeletePicker.ShowPickerDialog(parent ?? _rootDialog.Window);
+            if (result != null)
+            {
+                var resultConfirm = await _messageDialog.ShowWarningConfirm($"Delete Series '{result.Title}'?", "Do you really want to remove this series?\r\nThis series should not be associated to any game or song or it will cause issues.");
+                if (resultConfirm)
+                    await _guiStateManager.RemoveSeriesEntry(result.UiSeriesId);
+            }
         }
 
         public async Task DeleteGame(Window parent = null)

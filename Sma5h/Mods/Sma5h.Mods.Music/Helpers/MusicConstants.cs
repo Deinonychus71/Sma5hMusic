@@ -76,6 +76,7 @@ namespace Sma5h.Mods.Music.Helpers
             public const string MSBT_BGM_AUTHOR = "bgm_author_{0}";
             public const string MSBT_BGM_COPYRIGHT = "bgm_copyright_{0}";
 
+            public const string BGM_ID_RANDOM = "ui_bgm_random";
             public const string SERIES_ID_DEFAULT = "ui_series_none";
             public const string GAME_TITLE_ID_DEFAULT = "ui_gametitle_none";
             public const string RECORD_TYPE_DEFAULT = "record_none";

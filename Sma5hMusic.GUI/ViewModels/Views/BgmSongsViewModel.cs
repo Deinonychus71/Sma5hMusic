@@ -65,7 +65,6 @@ namespace Sma5hMusic.GUI.ViewModels
         public BgmPropertiesViewModel VMBgmProperties { get; }
 
         public BgmSongsViewModel(IServiceProvider serviceProvider, IMessageDialog messageDialog, IOptionsMonitor<ApplicationSettings> config, ILogger<BgmSongsViewModel> logger,
-            IObservable<IChangeSet<BgmDbRootEntryViewModel, string>> observableBgmEntriesNonFilteredList,
             IObservable<IChangeSet<BgmDbRootEntryViewModel, string>> observableBgmEntriesFilteredList, ContextMenuViewModel vmContextMenu)
         {
             _logger = logger;
@@ -99,7 +98,7 @@ namespace Sma5hMusic.GUI.ViewModels
 
             //Initialize properties
             var whenSelectedBgmEntryChanged = this.WhenAnyValue(p => p.SelectedBgmEntry);
-            VMBgmProperties = ActivatorUtilities.CreateInstance<BgmPropertiesViewModel>(serviceProvider, observableBgmEntriesNonFilteredList, whenSelectedBgmEntryChanged);
+            VMBgmProperties = ActivatorUtilities.CreateInstance<BgmPropertiesViewModel>(serviceProvider, whenSelectedBgmEntryChanged);
             WhenNewRequestToReorderBgmEntries = VMBgmProperties.WhenNewRequestToReorderBgmEntries;
         }
 

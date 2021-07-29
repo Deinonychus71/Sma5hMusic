@@ -287,20 +287,20 @@ namespace Sma5h.Mods.Music.MusicMods
 
         public bool ReorderSongs(List<string> orderedList)
         {
-            throw new Exception("TODO: NEED REWORK");
-
             //Sanity check
-            var allModSongsDict = _musicModConfig.Games.SelectMany(p => p.Bgms).OrderBy(p => p.DbRoot.UiBgmId).ToDictionary(p => p.DbRoot.UiBgmId, p => p);
+            var allModSongsDict = _musicModConfig.Series.SelectMany(s => s.Games.SelectMany(p => p.Bgms).OrderBy(p => p.DbRoot.UiBgmId)).ToDictionary(p => p.DbRoot.UiBgmId, p => p);
             if (!orderedList.OrderBy(p => p).SequenceEqual(allModSongsDict.Select(p => p.Key)))
             {
                 _logger.LogError("The provider list of songs to reorder did not match the list of songs found in the mod. Aborting reorder...");
                 return false;
             }
 
-            //Wipe all games
-            var gamesCache = _musicModConfig.Games.ToList();
-            _musicModConfig.Games.ForEach(p => p.Bgms.Clear());
-            _musicModConfig.Games.Clear();
+            //Wipe all games & series
+            var seriesCache = _musicModConfig.Series.ToList();
+            var gamesCache = _musicModConfig.Series.SelectMany(s => s.Games).ToList();
+            gamesCache.ForEach(p => p.Bgms.Clear());
+            seriesCache.ForEach(p => p.Games.Clear());
+            _musicModConfig.Series.Clear();
 
             //Reorder
             foreach (var orderedSongId in orderedList)
@@ -312,9 +312,18 @@ namespace Sma5h.Mods.Music.MusicMods
                     _logger.LogError("A game wasn't found during reordering. Aborting reorder...");
                     return false;
                 }
+                var series = seriesCache.FirstOrDefault(p => p.UiSeriesId == game.UiSeriesId);
+                if (series == null)
+                {
+                    _logger.LogError("A series wasn't found during reordering. Aborting reorder...");
+                    return false;
+                }
+
                 game.Bgms.Add(orderedSong);
-                if (!_musicModConfig.Games.Contains(game))
-                    _musicModConfig.Games.Add(game);
+                if (!series.Games.Contains(game))
+                    series.Games.Add(game);
+                if (!_musicModConfig.Series.Contains(series))
+                    _musicModConfig.Series.Add(series);
             }
 
             //Save

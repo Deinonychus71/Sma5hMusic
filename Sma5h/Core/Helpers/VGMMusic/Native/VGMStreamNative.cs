@@ -25,7 +25,7 @@ namespace VGMMusic.Native
                 _vgmStreamLoaded = true;
                 return init_vgmstream(filename);
             }
-            catch (Exception e)
+            catch
             {
                 _vgmStreamLoaded = false;
             }
@@ -179,7 +179,6 @@ namespace VGMMusic.Native
         #region P/Invoke Methods
 
         private const string DllName = "libvgmstream";
-#pragma warning disable IDE1006 // Naming Styles
         [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
         private static extern IntPtr init_vgmstream(string filename);
 
@@ -240,7 +239,6 @@ namespace VGMMusic.Native
 
         [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
         private static extern int describe_vgmstream(IntPtr vgmstream, [In, Out] byte[] desc, int length);
-#pragma warning restore IDE1006 // Naming Styles
         #endregion
     }
 }

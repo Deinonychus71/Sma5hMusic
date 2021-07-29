@@ -1,0 +1,29 @@
+﻿<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        Width="500" Height="600" MinWidth="500"  MinHeight="600"
+        x:Class="Sma5hMusic.GUI.Views.SeriesPropertiesModalWindow"
+        WindowStartupLocation="CenterScreen" ShowInTaskbar="False"
+        xmlns:fields="clr-namespace:Sma5hMusic.GUI.Views.Fields"
+        Title="Series Properties">
+    <DockPanel Classes="modal">
+      <Border Classes="headerTitle" DockPanel.Dock="Top">
+        <TextBlock>Series Entry</TextBlock>
+      </Border>
+      <StackPanel Classes="content" DockPanel.Dock="Top">
+        <fields:PropertyField x:Name="Title" IsRequired="True" Label="Series Title" ToolTip="Enter the title of a series you wish to link to your music.">
+          <fields:PropertyField.FieldContent>
+            <ContentControl Content="{Binding MSBTTitleEditor}"/>
+          </fields:PropertyField.FieldContent>
+        </fields:PropertyField>
+        <fields:PropertyTextField x:Name="SeriesId" IsReadOnly="{Binding IsEdit}" IsRequired="True" Label="Series Id" Text="{Binding UiSeriesId, Mode=TwoWay}" ToolTip="The ID for the series generated in the background. This is mostly informational." />
+      </StackPanel>
+      <StackPanel Classes="modalActions" DockPanel.Dock="Bottom">
+        <Button IsVisible="{Binding !IsEdit}" Content="Create" Command="{Binding ActionOK}" CommandParameter="{Binding $parent[Window]}"></Button>
+        <Button IsVisible="{Binding IsEdit}" Content="Save Changes" Command="{Binding ActionOK}" CommandParameter="{Binding $parent[Window]}"></Button>
+        <Button Content="Cancel" Command="{Binding ActionCancel}" CommandParameter="{Binding $parent[Window]}"></Button>
+      </StackPanel>
+    </DockPanel>
+</Window>

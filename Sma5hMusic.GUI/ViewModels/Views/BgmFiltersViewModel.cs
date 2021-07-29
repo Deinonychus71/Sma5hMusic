@@ -2,8 +2,10 @@
 using DynamicData.Binding;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
+using Sma5h.Mods.Music.Helpers;
 using Sma5h.Mods.Music.Models;
 using Sma5hMusic.GUI.Helpers;
+using Sma5hMusic.GUI.Interfaces;
 using Sma5hMusic.GUI.Models;
 using System;
 using System.Collections.Generic;
@@ -55,12 +57,16 @@ namespace Sma5hMusic.GUI.ViewModels
         public IObservable<IChangeSet<BgmDbRootEntryViewModel, string>> WhenFiltersAreApplied { get; }
 
 
-        public BgmFiltersViewModel(IObservable<IChangeSet<BgmDbRootEntryViewModel, string>> observableBgmEntries)
+        public BgmFiltersViewModel(IViewModelManager viewModelManager)
         {
             _allModsChangeSet = GetAllModsChangeSet();
             _allSeriesChangeSet = GetAllSeriesChangeSet();
             _allGameTitleChangeSet = GetAllGameTitleChangeSet();
             _recordTypes = GetRecordTypes();
+
+            var observableBgmEntries = viewModelManager.ObservableDbRootEntries.Connect()
+                .DeferUntilLoaded()
+                .Filter(p => p.UiBgmId != MusicConstants.InternalIds.BGM_ID_RANDOM); ;
 
             var whenAnyPropertyChanged = this.WhenAnyPropertyChanged("SelectedSeries", "SelectedGame",
                 "SelectedRecordType", "SelectedMod", "SelectedShowInSoundTest", "SelectedShowHiddenSongs",
@@ -100,7 +106,7 @@ namespace Sma5hMusic.GUI.ViewModels
                 .Group(p => p.SeriesId, seriesChanged.Select(_ => Unit.Default))
                 .Transform(p => p.Cache.Items.First().SeriesViewModel)
                 .Prepend(_allSeriesChangeSet)
-                .Sort(SortExpressionComparer<SeriesEntryViewModel>.Descending(p => p.AllFlag).ThenByAscending(p => p.UiSeriesId), SortOptimisations.IgnoreEvaluates)
+                .Sort(SortExpressionComparer<SeriesEntryViewModel>.Descending(p => p.AllFlag).ThenByAscending(p => p.Title), SortOptimisations.IgnoreEvaluates)
                 .ObserveOn(RxApp.MainThreadScheduler)
                 .Bind(out _series)
                 .DisposeMany()
