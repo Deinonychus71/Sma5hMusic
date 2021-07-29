@@ -121,11 +121,9 @@ namespace Sma5hMusic.GUI.ViewModels
             VMContextMenu.WhenLocaleChanged.Subscribe((locale) => { _currentLocale = locale; SetLanguage(); });
             var observableBgmDbRootEntriesList = viewModelManager.ObservableDbRootEntries.Connect()
                 .DeferUntilLoaded()
-                .Filter(p => p.UiBgmId != "ui_bgm_random");;
+                .Filter(p => p.UiBgmId != "ui_bgm_random");
             var observableGameEntriesList = viewModelManager.ObservableGameTitles.Connect()
-                .DeferUntilLoaded()
-                .AutoRefreshOnObservable(p => VMContextMenu.WhenLocaleChanged)
-                .ForEachChange(o => o.Current.LoadLocalized(_currentLocale));
+                .DeferUntilLoaded();
 
             //Initialize filters
             VMBgmFilters = ActivatorUtilities.CreateInstance<BgmFiltersViewModel>(serviceProvider, observableBgmDbRootEntriesList);
@@ -588,6 +586,8 @@ namespace Sma5hMusic.GUI.ViewModels
                 foreach (var item in _viewModelManager.GetBgmDbRootEntriesViewModels())
                     item.LoadLocalized(_currentLocale);
                 foreach (var item in _viewModelManager.GetGameTitlesViewModels())
+                    item.LoadLocalized(_currentLocale);
+                foreach (var item in _viewModelManager.GetSeriesViewModels())
                     item.LoadLocalized(_currentLocale);
             }
         }

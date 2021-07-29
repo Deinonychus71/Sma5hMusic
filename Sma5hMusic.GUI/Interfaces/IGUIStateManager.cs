@@ -29,6 +29,7 @@ namespace Sma5hMusic.GUI.Interfaces
         Task<bool> PersistMusicModEntryChanges(MusicModEntries musicModEntries, IMusicMod musicMod = null);
         Task<bool> RemoveMusicModEntries(MusicModDeleteEntries musicModDeleteEntries, IMusicMod musicMod = null);
 
+        Task<string> CreateNewSeriesEntry(SeriesEntry seriesEntry);
         Task<string> CreateNewGameTitleEntry(GameTitleEntry gameTitleEntry);
         Task<bool> PersistGameTitleEntryChange(GameTitleEntry gameTitleEntry);
         Task<bool> RemoveGameTitleEntry(string gameTitleId);

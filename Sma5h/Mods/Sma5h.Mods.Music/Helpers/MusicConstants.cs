@@ -64,7 +64,7 @@ namespace Sma5h.Mods.Music.Helpers
             public const string STREAM_PREFIX = "stream_";
 
             public const string GAME_TITLE_ID_PREFIX = "ui_gametitle_";
-            public const string GAME_SERIES_ID_PREFIX = "ui_series_";
+            public const string SERIES_ID_PREFIX = "ui_series_";
             public const string RECORD_TYPE_PREFIX = "record_";
 
             public const string PLAYLIST_PREFIX = "bgm";

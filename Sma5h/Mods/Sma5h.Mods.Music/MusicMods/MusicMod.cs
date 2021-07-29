@@ -50,9 +50,9 @@ namespace Sma5h.Mods.Music.MusicMods
                 return output;
 
             //Process audio mods
-            _logger.LogInformation("Mod {MusicMod} by '{Author}' - {NbrSongs} song(s)", _musicModConfig.Name, _musicModConfig.Author, _musicModConfig.Series.Sum( s => s.Games.Sum(p => p.Bgms.Count)));
+            _logger.LogInformation("Mod {MusicMod} by '{Author}' - {NbrSongs} song(s)", _musicModConfig.Name, _musicModConfig.Author, _musicModConfig.Series.Sum(s => s.Games.Sum(p => p.Bgms.Count)));
 
-            foreach(var series in _musicModConfig.Series)
+            foreach (var series in _musicModConfig.Series)
             {
                 output.SeriesEntries.Add(_mapper.Map(series, new SeriesEntry(series.UiSeriesId, EntrySource.Mod)));
 
@@ -285,26 +285,41 @@ namespace Sma5h.Mods.Music.MusicMods
             return true;
         }
 
-        public bool UpdateGameTitleEntry(GameTitleEntry gameTitleEntry)
+        public bool ReorderSongs(List<string> orderedList)
         {
-            if (_musicModConfig?.Games != null)
+            throw new Exception("TODO: NEED REWORK");
+
+            //Sanity check
+            var allModSongsDict = _musicModConfig.Games.SelectMany(p => p.Bgms).OrderBy(p => p.DbRoot.UiBgmId).ToDictionary(p => p.DbRoot.UiBgmId, p => p);
+            if (!orderedList.OrderBy(p => p).SequenceEqual(allModSongsDict.Select(p => p.Key)))
             {
-                bool change = false;
-
-                foreach (var game in _musicModConfig.Games)
-                {
-                    if (game.UiGameTitleId == gameTitleEntry.UiGameTitleId)
-                    {
-                        _mapper.Map(gameTitleEntry, game);
-                        change = true;
-                    }
-                }
-
-                if (change)
-                {
-                    return SaveMusicModConfig();
-                }
+                _logger.LogError("The provider list of songs to reorder did not match the list of songs found in the mod. Aborting reorder...");
+                return false;
             }
+
+            //Wipe all games
+            var gamesCache = _musicModConfig.Games.ToList();
+            _musicModConfig.Games.ForEach(p => p.Bgms.Clear());
+            _musicModConfig.Games.Clear();
+
+            //Reorder
+            foreach (var orderedSongId in orderedList)
+            {
+                var orderedSong = allModSongsDict[orderedSongId];
+                var game = gamesCache.FirstOrDefault(p => p.UiGameTitleId == orderedSong.DbRoot.UiGameTitleId);
+                if (game == null)
+                {
+                    _logger.LogError("A game wasn't found during reordering. Aborting reorder...");
+                    return false;
+                }
+                game.Bgms.Add(orderedSong);
+                if (!_musicModConfig.Games.Contains(game))
+                    _musicModConfig.Games.Add(game);
+            }
+
+            //Save
+            SaveMusicModConfig();
+
             return true;
         }
 
@@ -439,7 +454,7 @@ namespace Sma5h.Mods.Music.MusicMods
                 _logger.LogDebug("Parsing {MusicModFile} Json File", metadataJsonFile);
                 var output = JsonConvert.DeserializeObject<MusicModConfig>(file);
                 _logger.LogDebug("Parsed {MusicModFile} Json File", metadataJsonFile);
-                if(output.Version == 2)
+                if (output.Version == 2)
                     output = ConvertFromV2Mod(output);
                 if (output.Version == 3)
                     output = ConvertFromV3Mod(output);
@@ -472,7 +487,7 @@ namespace Sma5h.Mods.Music.MusicMods
 
         private MusicModConfig ConvertFromV2Mod(MusicModConfig v2ModConfig)
         {
-            if(v2ModConfig != null)
+            if (v2ModConfig != null)
             {
                 _logger.LogWarning("Convert v2 Mod {ModName} to v3.", v2ModConfig.Name);
                 v2ModConfig.Version = 3;
@@ -508,7 +523,7 @@ namespace Sma5h.Mods.Music.MusicMods
 
         private BgmStreamSetConfig GetUpdatedStreamSetConfig(BgmStreamSetConfig bgmStreamSetConfig)
         {
-            if(!string.IsNullOrEmpty(bgmStreamSetConfig.SpecialCategory) && bgmStreamSetConfig.SpecialCategory.StartsWith("0x") &&
+            if (!string.IsNullOrEmpty(bgmStreamSetConfig.SpecialCategory) && bgmStreamSetConfig.SpecialCategory.StartsWith("0x") &&
                 MusicConstants.SPECIAL_CATEGORY_LABELS.ContainsKey(bgmStreamSetConfig.SpecialCategory))
             {
                 bgmStreamSetConfig.SpecialCategory = MusicConstants.SPECIAL_CATEGORY_LABELS[bgmStreamSetConfig.SpecialCategory];
@@ -782,7 +797,7 @@ namespace Sma5h.Mods.Music.MusicMods
                 return false;
             }
 
-            public bool ShouldSerializeUnk4 ()
+            public bool ShouldSerializeUnk4()
             {
                 return false;
             }
