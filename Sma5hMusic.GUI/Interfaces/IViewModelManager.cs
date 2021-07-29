@@ -46,6 +46,7 @@ namespace Sma5hMusic.GUI.Interfaces
         BgmPropertyEntryViewModel GetBgmPropertyViewModel(string nameId);
         PlaylistEntryViewModel GetPlaylistViewModel(string playlistId);
 
+        void RemoveSeriesView(string uiSeriesId);
         void RemoveGameTitleView(string uiGameTitleId);
         void RemoveBgmDbRootView(string uiBgmId);
         void RemoveBgmStreamSetView(string streamSetId);
@@ -56,6 +57,7 @@ namespace Sma5hMusic.GUI.Interfaces
         void RemoveBgmInAllPlaylists(string uiBgmId);
 
         bool AddNewModEntryViewModel(IMusicMod musicMod);
+        bool AddNewSeriesEntryViewModel(SeriesEntry seriesEntry);
         bool AddNewGameTitleEntryViewModel(GameTitleEntry gameTitleEntry);
         bool AddNewBgmDbRootEntryViewModel(BgmDbRootEntry bgmDbRootEntry);
         bool AddNewBgmStreamSetEntryViewModel(BgmStreamSetEntry bgmStreamSetEntry);

@@ -595,6 +595,101 @@ namespace Sma5hMusic.GUI.Services
         }
         #endregion
 
+        #region Series
+        public async Task<string> CreateNewSeriesEntry(SeriesEntry seriesEntry)
+        {
+            bool result = false;
+
+            try
+            {
+                _logger.LogInformation("Create New Series {SeriesId}, Mod: {ModId}, Source: {Source}", seriesEntry?.UiSeriesId, seriesEntry?.ModId, seriesEntry?.Source);
+
+                if (_audioState.AddSeriesEntry(seriesEntry))
+                {
+                    result = _viewModelManager.AddNewSeriesEntryViewModel(seriesEntry);
+                }
+                await PersistSeriesEntryChange(seriesEntry);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "Error while creating new series");
+                result = false;
+            }
+
+            if (!result)
+            {
+                await Dispatcher.UIThread.InvokeAsync(async () =>
+                {
+                    await _messageDialog.ShowError("Create Series Entry Error", "There was an error while creating a series entry. Please check the logs.");
+                }, DispatcherPriority.Background);
+            }
+
+            return seriesEntry.UiSeriesId;
+        }
+
+        public async Task<bool> RemoveSeriesEntry(string seriesId)
+        {
+            bool result = false;
+
+            try
+            {
+                _logger.LogInformation("Remove Series {SeriesId}", seriesId);
+
+                _viewModelManager.RemoveSeriesView(seriesId);
+                result = _sma5hMusicOverride.DeleteSeriesEntry(seriesId);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "Error while deleting series entry");
+                result = false;
+            }
+
+            if (!result)
+            {
+                await Dispatcher.UIThread.InvokeAsync(async () =>
+                {
+                    await _messageDialog.ShowError("Delete Series Entry Error", "There was an error while deleting a series entry. Please check the logs.");
+                }, DispatcherPriority.Background);
+            }
+
+            return result;
+        }
+
+        public async Task<bool> PersistSeriesEntryChange(SeriesEntry seriesEntry)
+        {
+            bool result;
+            try
+            {
+                _logger.LogInformation("Persist Series Changes for {SeriesId}, Mod: {ModId}, Source: {Source}", seriesEntry?.UiSeriesId, seriesEntry?.ModId, seriesEntry?.Source);
+
+                if (seriesEntry.Source == EntrySource.Mod)
+                {
+                    result = await _musicModManagerService.UpdateSeriesEntry(seriesEntry);
+                }
+                //We save in CoreGameTitle no matter what so it gets loaded
+                //else
+                //{
+                result = _sma5hMusicOverride.UpdateSeriesEntry(seriesEntry);
+                //}
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "Error while updating series entry");
+                result = false;
+            }
+
+            if (!result)
+            {
+                await Dispatcher.UIThread.InvokeAsync(async () =>
+                {
+                    await _messageDialog.ShowError("Update Series Entry Error", "There was an error while persisting a series entry. Please check the logs.");
+                }, DispatcherPriority.Background);
+            }
+
+            return result;
+        }
+        #endregion
+
         #region Game
         public async Task<string> CreateNewGameTitleEntry(GameTitleEntry gameTitleEntry)
         {

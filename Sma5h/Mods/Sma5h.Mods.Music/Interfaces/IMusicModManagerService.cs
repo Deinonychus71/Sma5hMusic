@@ -9,6 +9,7 @@ namespace Sma5h.Mods.Music.Interfaces
         IEnumerable<IMusicMod> MusicMods { get; }
         IEnumerable<IMusicMod> RefreshMusicMods();
         IMusicMod AddMusicMod(MusicModInformation configBase, string modPath);
+        Task<bool> UpdateSeriesEntry(SeriesEntry seriesEntry);
         Task<bool> UpdateGameEntry(GameTitleEntry gameTitleEntry);
     }
 }

@@ -102,6 +102,21 @@ namespace Sma5h.Mods.Music.Services
             }
         }
 
+        public async Task<bool> UpdateSeriesEntry(SeriesEntry seriesEntry)
+        {
+            if (_musicMods != null)
+            {
+                foreach (var musicMod in _musicMods)
+                {
+                    var newMusicModEntries = new MusicModEntries();
+                    newMusicModEntries.SeriesEntries.Add(seriesEntry);
+                    if (!await musicMod.AddOrUpdateMusicModEntries(newMusicModEntries))
+                        return false;
+                }
+            }
+            return true;
+        }
+
         public async Task<bool> UpdateGameEntry(GameTitleEntry gameTitleEntry)
         {
             if (_musicMods != null)

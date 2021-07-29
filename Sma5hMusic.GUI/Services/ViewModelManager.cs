@@ -308,6 +308,15 @@ namespace Sma5hMusic.GUI.Services
         #endregion
 
         #region REMOVE
+        public void RemoveSeriesView(string uiSeriesId)
+        {
+            if (_vmDictSeriesEntries.ContainsKey(uiSeriesId))
+            {
+                _vmObsvSeriesEntries.Remove(_vmDictSeriesEntries[uiSeriesId]);
+                _vmDictSeriesEntries.Remove(uiSeriesId);
+            }
+        }
+
         public void RemoveGameTitleView(string uiGameTitleId)
         {
             if (_vmDictGameTitlesEntries.ContainsKey(uiGameTitleId))
@@ -386,6 +395,14 @@ namespace Sma5hMusic.GUI.Services
             var newVM = new ModEntryViewModel(this, _mapper, musicMod);
             _vmDictModsEntries.Add(newVM.Id, newVM);
             _vmObsvModsEntries.AddOrUpdate(newVM);
+            return true;
+        }
+
+        public bool AddNewSeriesEntryViewModel(SeriesEntry seriesEntry)
+        {
+            var newVM = _mapper.Map(seriesEntry, new SeriesEntryViewModel(this, _mapper, seriesEntry));
+            _vmDictSeriesEntries.Add(newVM.UiSeriesId, newVM);
+            _vmObsvSeriesEntries.AddOrUpdate(newVM);
             return true;
         }
 

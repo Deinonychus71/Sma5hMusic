@@ -28,6 +28,7 @@ namespace Sma5h.Mods.Music.Models
             : base(source)
         {
             UiSeriesId = uiSeriesId;
+            SaveNo = -1;
             MSBTTitle = new Dictionary<string, string>();
         }
     }

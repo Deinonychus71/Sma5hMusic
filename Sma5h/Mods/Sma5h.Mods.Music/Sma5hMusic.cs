@@ -196,7 +196,7 @@ namespace Sma5h.Mods.Music
 
                             //Filter songs per series/game
                             IEnumerable<BgmDbRootEntry> songsToProcessMapping = null;
-                            if (configMappingEntryTrim.StartsWith(MusicConstants.InternalIds.GAME_SERIES_ID_PREFIX))
+                            if (configMappingEntryTrim.StartsWith(MusicConstants.InternalIds.SERIES_ID_PREFIX))
                             {
                                 songsToProcessMapping = songsToProcessPlaylist.Where(p => p.UiGameTitleId != null && gameToSeries.ContainsKey(p.UiGameTitleId) && configMappingEntryTrim == gameToSeries[p.UiGameTitleId]);
                             }

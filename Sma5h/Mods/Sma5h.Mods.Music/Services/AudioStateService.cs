@@ -466,6 +466,7 @@ namespace Sma5h.Mods.Music.Services
                 //Ensure that the game needs to be added - If no song is using the game, there is no need to compile it.
                 if (series.Source == EntrySource.Mod)
                 {
+                    series.SaveNo = 0;
                     if (_gameTitleEntries.Values.Count(p => p.UiSeriesId == series.UiSeriesId) == 0)
                         continue;
                 }
