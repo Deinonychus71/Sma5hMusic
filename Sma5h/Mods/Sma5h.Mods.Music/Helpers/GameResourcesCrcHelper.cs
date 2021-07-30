@@ -87,6 +87,45 @@ namespace Sma5h.Mods.Music.Helpers
             },
             new GameCrcSet()
             {
+                Version = 11.0,
+                CrcResources = new Dictionary<string, uint>()
+                {
+                    { BgmPropertyFileConstants.BGM_PROPERTY_PATH, 0xBA5AA485 },
+                    { PrcExtConstants.PRC_UI_BGM_DB_PATH, 0x8C9C8CFA },
+                    { PrcExtConstants.PRC_UI_GAMETITLE_DB_PATH, 0xD8DF6BB7 },
+                    { PrcExtConstants.PRC_UI_STAGE_DB_PATH, 0x166F5A24 },
+                    { string.Format(MsbtExtConstants.MSBT_BGM, "eu_de"), 0x2B7F6EFC },
+                    { string.Format(MsbtExtConstants.MSBT_BGM, "eu_en"), 0x0523E68A },
+                    { string.Format(MsbtExtConstants.MSBT_BGM, "eu_es"), 0x0952278B },
+                    { string.Format(MsbtExtConstants.MSBT_BGM, "eu_fr"), 0x1633E38E },
+                    { string.Format(MsbtExtConstants.MSBT_BGM, "eu_it"), 0x35C08CC7 },
+                    { string.Format(MsbtExtConstants.MSBT_BGM, "eu_nl"), 0x66B153D0 },
+                    { string.Format(MsbtExtConstants.MSBT_BGM, "eu_ru"), 0x5A5FDC42 },
+                    { string.Format(MsbtExtConstants.MSBT_BGM, "jp_ja"), 0x91A3C495 },
+                    { string.Format(MsbtExtConstants.MSBT_BGM, "kr_ko"), 0xABA748D1 },
+                    { string.Format(MsbtExtConstants.MSBT_BGM, "us_en"), 0xA928A9A2 },
+                    { string.Format(MsbtExtConstants.MSBT_BGM, "us_es"), 0x34B84DCB },
+                    { string.Format(MsbtExtConstants.MSBT_BGM, "us_fr"), 0xB52AB6BA },
+                    { string.Format(MsbtExtConstants.MSBT_BGM, "zh_cn"), 0x8DB138DC },
+                    { string.Format(MsbtExtConstants.MSBT_BGM, "zh_tw"), 0x68E1C851 },
+                    { string.Format(MsbtExtConstants.MSBT_TITLE, "eu_de"), 0x9691CD0B },
+                    { string.Format(MsbtExtConstants.MSBT_TITLE, "eu_en"), 0xE92A0719 },
+                    { string.Format(MsbtExtConstants.MSBT_TITLE, "eu_es"), 0x9A71A59C },
+                    { string.Format(MsbtExtConstants.MSBT_TITLE, "eu_fr"), 0xB4A176A9 },
+                    { string.Format(MsbtExtConstants.MSBT_TITLE, "eu_it"), 0xF2E9436F },
+                    { string.Format(MsbtExtConstants.MSBT_TITLE, "eu_nl"), 0xB3079C50 },
+                    { string.Format(MsbtExtConstants.MSBT_TITLE, "eu_ru"), 0xC3CF90AC },
+                    { string.Format(MsbtExtConstants.MSBT_TITLE, "jp_ja"), 0x942D6AD1 },
+                    { string.Format(MsbtExtConstants.MSBT_TITLE, "kr_ko"), 0x3C424CE3 },
+                    { string.Format(MsbtExtConstants.MSBT_TITLE, "us_en"), 0xB2F1BD5E },
+                    { string.Format(MsbtExtConstants.MSBT_TITLE, "us_es"), 0x42EC88D6 },
+                    { string.Format(MsbtExtConstants.MSBT_TITLE, "us_fr"), 0xA9C3A0FC },
+                    { string.Format(MsbtExtConstants.MSBT_TITLE, "zh_cn"), 0xB4E54C6C },
+                    { string.Format(MsbtExtConstants.MSBT_TITLE, "zh_tw"), 0xEFEABC47 }
+                }
+            },
+            new GameCrcSet()
+            {
                 Version = 12.0,
                 CrcResources = new Dictionary<string, uint>()
                 {
@@ -94,6 +133,7 @@ namespace Sma5h.Mods.Music.Helpers
                     { PrcExtConstants.PRC_UI_BGM_DB_PATH, 0x3320B289 },
                     { PrcExtConstants.PRC_UI_GAMETITLE_DB_PATH, 0x533664E1 },
                     { PrcExtConstants.PRC_UI_STAGE_DB_PATH, 0x7084D2D8 },
+                    { PrcExtConstants.PRC_UI_SERIES_DB_PATH, 0x1E6D7052 },
                     { string.Format(MsbtExtConstants.MSBT_BGM, "eu_de"), 0x84016BE6 },
                     { string.Format(MsbtExtConstants.MSBT_BGM, "eu_en"), 0xF1571085 },
                     { string.Format(MsbtExtConstants.MSBT_BGM, "eu_es"), 0xDED83EC6 },
