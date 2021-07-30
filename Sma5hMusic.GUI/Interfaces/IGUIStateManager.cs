@@ -57,5 +57,7 @@ namespace Sma5hMusic.GUI.Interfaces
         string GameVersion { get; }
 
         bool IsGameVersionFound { get; }
+
+        short GetNewHighestSoundTestOrderValue();
     }
 }
