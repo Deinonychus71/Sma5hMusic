@@ -123,6 +123,7 @@ namespace Sma5hMusic.GUI.Mods.Music.Models.AutoMapper
                 .ForMember(i => i.UiSeriesId, me => me.MapFrom(p => p.UiSeriesId))
                 .ForMember(i => i.Unk1, me => me.MapFrom(p => p.Unk1));
             CreateMap<GameTitleEntry, GUI.ViewModels.GameTitleEntryViewModel>()
+                .ForMember(i => i.Title, me => me.Ignore())
                 .ForMember(i => i.Source, me => me.MapFrom(p => p.Source))
                 .ForMember(i => i.MSBTTitle, me => me.MapFrom(p => p.MSBTTitle))
                 .ForMember(i => i.NameId, me => me.MapFrom(p => p.NameId))
@@ -185,6 +186,9 @@ namespace Sma5hMusic.GUI.Mods.Music.Models.AutoMapper
                 .ForMember(i => i.Author, me => me.MapFrom(p => p.MSBTAuthor))
                 .ForMember(i => i.Copyright, me => me.MapFrom(p => p.MSBTCopyright));
             CreateMap<BgmDbRootEntry, ViewModels.BgmDbRootEntryViewModel>()
+                .ForMember(i => i.Title, me => me.Ignore())
+                .ForMember(i => i.Author, me => me.Ignore())
+                .ForMember(i => i.Copyright, me => me.Ignore())
                 .ForMember(i => i.CountTarget, me => me.MapFrom(p => p.CountTarget))
                 .ForMember(i => i.IsDlc, me => me.MapFrom(p => p.IsDlc))
                 .ForMember(i => i.IsPatch, me => me.MapFrom(p => p.IsPatch))
