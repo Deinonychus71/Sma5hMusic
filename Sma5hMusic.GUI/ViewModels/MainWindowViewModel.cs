@@ -126,7 +126,7 @@ namespace Sma5hMusic.GUI.ViewModels
             VMBgmFilters = ActivatorUtilities.CreateInstance<BgmFiltersViewModel>(serviceProvider);
 
             //Initialize main views
-            VMBgmSongs = ActivatorUtilities.CreateInstance<BgmSongsViewModel>(serviceProvider,VMBgmFilters.WhenFiltersAreApplied, VMContextMenu);
+            VMBgmSongs = ActivatorUtilities.CreateInstance<BgmSongsViewModel>(serviceProvider, VMBgmFilters.WhenFiltersAreApplied, VMContextMenu);
             VMPlaylists = ActivatorUtilities.CreateInstance<PlaylistViewModel>(serviceProvider, VMBgmFilters.WhenFiltersAreApplied, VMContextMenu);
 
             //Setup ModEditor
@@ -504,6 +504,7 @@ namespace Sma5hMusic.GUI.ViewModels
             var result = await _dialogGameEditor.ShowDialog(parent ?? _rootDialog.Window, vmGameTitleEntry);
             if (result != null)
             {
+                await _guiStateManager.PersistSeriesEntryChange(result.SeriesViewModel.GetReferenceEntity());
                 await _guiStateManager.PersistGameTitleEntryChange(result.GetReferenceEntity());
                 result.LoadLocalized(_currentLocale);
             }

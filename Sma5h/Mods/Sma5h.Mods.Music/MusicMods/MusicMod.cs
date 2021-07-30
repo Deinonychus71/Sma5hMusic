@@ -240,6 +240,8 @@ namespace Sma5h.Mods.Music.MusicMods
                             Games = new List<GameConfig>()
                         };
                     }
+                    if (series.Games == null)
+                        series.Games = new List<GameConfig>();
                 }
                 else
                     series = _mapper.Map(seriesEntry, series);

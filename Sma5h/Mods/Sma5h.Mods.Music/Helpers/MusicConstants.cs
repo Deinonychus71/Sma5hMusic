@@ -86,6 +86,13 @@ namespace Sma5h.Mods.Music.Helpers
             public const string PLAYLIST_AUTO_BGM_SELECTOR = "bgmhiddenselector";
         }
 
+        public static string[] INVALID_SERIES = new string[]
+        {
+            "ui_series_random",
+            "ui_series_mymusic",
+            "ui_series_all"
+        };
+
         public static string[] VALID_RECORD_TYPES = new string[]
         {
             "record_arrange",

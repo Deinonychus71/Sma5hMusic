@@ -66,7 +66,7 @@ namespace Sma5hMusic.GUI.ViewModels
 
             var observableBgmEntries = viewModelManager.ObservableDbRootEntries.Connect()
                 .DeferUntilLoaded()
-                .Filter(p => p.UiBgmId != MusicConstants.InternalIds.BGM_ID_RANDOM); ;
+                .Filter(p => p.UiBgmId != MusicConstants.InternalIds.BGM_ID_RANDOM);
 
             var whenAnyPropertyChanged = this.WhenAnyPropertyChanged("SelectedSeries", "SelectedGame",
                 "SelectedRecordType", "SelectedMod", "SelectedShowInSoundTest", "SelectedShowHiddenSongs",
@@ -103,10 +103,12 @@ namespace Sma5hMusic.GUI.ViewModels
             observableBgmEntries
                 .Throttle(TimeSpan.FromMilliseconds(50))
                 .Filter(p => p.SeriesId != null)
+                .AutoRefresh(p => p.GameTitleViewModel.UiSeriesId, TimeSpan.FromMilliseconds(50))
                 .Group(p => p.SeriesId, seriesChanged.Select(_ => Unit.Default))
                 .Transform(p => p.Cache.Items.First().SeriesViewModel)
+                .AutoRefresh(p => p.Title, TimeSpan.FromMilliseconds(50))
                 .Prepend(_allSeriesChangeSet)
-                .Sort(SortExpressionComparer<SeriesEntryViewModel>.Descending(p => p.AllFlag).ThenByAscending(p => p.Title), SortOptimisations.IgnoreEvaluates)
+                .Sort(SortExpressionComparer<SeriesEntryViewModel>.Descending(p => p.AllFlag).ThenByAscending(p => p.Title), SortOptimisations.ComparesImmutableValuesOnly)
                 .ObserveOn(RxApp.MainThreadScheduler)
                 .Bind(out _series)
                 .DisposeMany()
@@ -119,8 +121,9 @@ namespace Sma5hMusic.GUI.ViewModels
                 .Filter(p => p.SeriesId != null && p.UiGameTitleId != null && (SelectedSeries == null || SelectedSeries.AllFlag || p.SeriesId == SelectedSeries.UiSeriesId))
                 .Group(p => p.UiGameTitleId, gameChanged.Select(_ => Unit.Default))
                 .Transform(p => p.Cache.Items.First().GameTitleViewModel)
+                .AutoRefresh(p => p.Title, TimeSpan.FromMilliseconds(50))
                 .Prepend(_allGameTitleChangeSet)
-                .Sort(SortExpressionComparer<GameTitleEntryViewModel>.Descending(p => p.AllFlag).ThenByAscending(p => p.Title), SortOptimisations.IgnoreEvaluates)
+                .Sort(SortExpressionComparer<GameTitleEntryViewModel>.Descending(p => p.AllFlag).ThenByAscending(p => p.Title), SortOptimisations.ComparesImmutableValuesOnly)
                 .ObserveOn(RxApp.MainThreadScheduler)
                 .Bind(out _games)
                 .DisposeMany()

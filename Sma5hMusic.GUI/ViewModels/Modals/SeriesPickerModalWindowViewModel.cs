@@ -4,6 +4,7 @@ using Sma5h.Mods.Music.Helpers;
 using Sma5hMusic.GUI.Interfaces;
 using System;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Reactive.Linq;
 
 namespace Sma5hMusic.GUI.ViewModels
@@ -17,7 +18,7 @@ namespace Sma5hMusic.GUI.ViewModels
         {
             //Bind observables
             viewModelManager.ObservableSeries.Connect()
-               .Filter(p => p.UiSeriesId != MusicConstants.InternalIds.SERIES_ID_DEFAULT)
+               .Filter(p => p.UiSeriesId != MusicConstants.InternalIds.SERIES_ID_DEFAULT && !MusicConstants.INVALID_SERIES.Contains(p.UiSeriesId))
                .ObserveOn(RxApp.MainThreadScheduler)
                .Bind(out _series)
                .DisposeMany()

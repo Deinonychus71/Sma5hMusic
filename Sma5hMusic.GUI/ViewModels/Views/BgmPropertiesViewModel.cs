@@ -51,7 +51,7 @@ namespace Sma5hMusic.GUI.ViewModels
                 .DeferUntilLoaded()
                 .Filter(p => !p.HiddenInSoundTest)
                 .AutoRefresh(p => p.TestDispOrder, TimeSpan.FromMilliseconds(50))
-                .Sort(SortExpressionComparer<BgmDbRootEntryViewModel>.Ascending(p => p.TestDispOrder), SortOptimisations.ComparesImmutableValuesOnly, 1)
+                .Sort(SortExpressionComparer<BgmDbRootEntryViewModel>.Ascending(p => p.TestDispOrder), SortOptimisations.ComparesImmutableValuesOnly, 100)
                 .TreatMovesAsRemoveAdd()
                 .Throttle(TimeSpan.FromMilliseconds(50))
                 .ObserveOn(RxApp.MainThreadScheduler)
