@@ -485,7 +485,10 @@ namespace Sma5hMusic.GUI.ViewModels
         {
             var result = await _dialogGameEditor.ShowDialog(parent ?? _rootDialog.Window, vmGameTitleEntry);
             if (result != null)
+            {
                 await _guiStateManager.PersistGameTitleEntryChange(result.GetReferenceEntity());
+                result.LoadLocalized(_currentLocale);
+            }
         }
 
         public async Task EditGame(Window parent = null)
