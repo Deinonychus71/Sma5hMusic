@@ -4,7 +4,7 @@ namespace Sma5hMusic.GUI.Helpers
 {
     public static class Constants
     {
-        public const double GUIVersion = 1.56;
+        public const double GUIVersion = 1.57;
         public const bool IsStable = false;
 
         public const float DefaultVolume = 0.8f;
