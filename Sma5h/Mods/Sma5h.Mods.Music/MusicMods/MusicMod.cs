@@ -200,7 +200,6 @@ namespace Sma5h.Mods.Music.MusicMods
                 }
 
                 //Attempt to retrieve, create none if needed
-                //var series = _musicModConfig.Series.Where(p => p.UiSeriesId == game);
                 var game = _musicModConfig.Series.SelectMany(s => s.Games.Where(p => p.UiGameTitleId == dbRoot.UiGameTitleId)).FirstOrDefault();
                 if (game == null)
                 {
@@ -219,7 +218,7 @@ namespace Sma5h.Mods.Music.MusicMods
                     if (game.Bgms == null)
                         game.Bgms = new List<BgmConfig>();
                 }
-                else
+                else if(gameTitle != null)
                     game = _mapper.Map(gameTitle, game);
 
                 //Remove game from previous series location
@@ -243,8 +242,9 @@ namespace Sma5h.Mods.Music.MusicMods
                     }
                     if (series.Games == null)
                         series.Games = new List<GameConfig>();
+                    _musicModConfig.Series.Add(series);
                 }
-                else
+                else if(seriesEntry != null)
                     series = _mapper.Map(seriesEntry, series);
                 series.Games.Add(game);
 
@@ -275,6 +275,7 @@ namespace Sma5h.Mods.Music.MusicMods
                 game.Bgms.Add(bgmConfig);
 
                 //Remove potential empty groups
+                _musicModConfig.Series.ForEach(s => s.Games.RemoveAll(g => g.Bgms == null || g.Bgms.Count == 0));
                 _musicModConfig.Series.RemoveAll(p => p.Games.Count == 0);
 
                 _logger.LogInformation("Added {Filename} file to Mod {ModName}", filename, _musicModConfig.Name);
