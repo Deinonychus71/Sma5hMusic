@@ -1286,6 +1286,12 @@ namespace Sma5hMusic.GUI.Services
             return result;
         }
 
+        public short GetNewHighestSoundTestOrderValue()
+        {
+            var orderId = _viewModelManager.GetBgmDbRootEntriesViewModels().Max(p => p.TestDispOrder);
+            return orderId == short.MaxValue ? short.MaxValue : (short)(orderId + 1);
+        }
+
         private MusicModEntries DuplicateMusicModEntriesSet(MusicModEntries musicModEntries, string toneId, string filename, IMusicMod musicMod)
         {
             if (musicModEntries.BgmDbRootEntries.Count != 1 ||
@@ -1343,6 +1349,7 @@ namespace Sma5hMusic.GUI.Services
             var newBgmAssignedInfoEntry = new BgmAssignedInfoEntry($"{MusicConstants.InternalIds.INFO_ID_PREFIX}{toneId}", musicMod) { StreamId = newBgmStreamPropertyEntry.StreamId };
             var newBgmStreamSetEntry = new BgmStreamSetEntry($"{MusicConstants.InternalIds.STREAM_SET_PREFIX}{toneId}", musicMod) { Info0 = newBgmAssignedInfoEntry.InfoId };
             var newBgmDbRootEntry = new BgmDbRootEntry($"{MusicConstants.InternalIds.UI_BGM_ID_PREFIX}{toneId}", musicMod) { StreamSetId = newBgmStreamSetEntry.StreamSetId };
+            newBgmDbRootEntry.TestDispOrder = GetNewHighestSoundTestOrderValue();
 
             //Create mod
             var musicModEntries = new MusicModEntries();

@@ -277,7 +277,7 @@ namespace Sma5hMusic.GUI.ViewModels
 
             _originalFilename = BgmPropertyViewModel.Filename;
 
-            DbRootViewModel.TestDispOrder = (short)(IsInSoundTest ? DbRootViewModel.TestDispOrder > -1 ? DbRootViewModel.TestDispOrder : short.MaxValue : -1);
+            DbRootViewModel.TestDispOrder = (short)(IsInSoundTest ? DbRootViewModel.TestDispOrder > -1 ? DbRootViewModel.TestDispOrder : _guiStateManager.GetNewHighestSoundTestOrderValue() : -1);
             if (SelectedRecordType != null)
                 DbRootViewModel.RecordType = SelectedRecordType.Id;
             MSBTTitleEditor.SaveValueToRecent();
