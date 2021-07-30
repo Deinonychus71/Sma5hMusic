@@ -395,6 +395,7 @@ namespace Sma5hMusic.GUI.ViewModels
                     if (!string.IsNullOrEmpty(uiBgmId))
                     {
                         var vmBgmDbRootEntry = _viewModelManager.GetBgmDbRootViewModel(uiBgmId);
+                        vmBgmDbRootEntry.LoadLocalized(_currentLocale);
                         await EditBgmEntry(vmBgmDbRootEntry);
                     }
                 }
