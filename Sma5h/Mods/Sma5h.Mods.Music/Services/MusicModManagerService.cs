@@ -117,7 +117,7 @@ namespace Sma5h.Mods.Music.Services
             return true;
         }
 
-        public async Task<bool> UpdateGameEntry(GameTitleEntry gameTitleEntry)
+        public async Task<bool> UpdateGameEntry(SeriesEntry seriesEntry, GameTitleEntry gameTitleEntry)
         {
             if (_musicMods != null)
             {
@@ -125,6 +125,7 @@ namespace Sma5h.Mods.Music.Services
                 {
                     var newMusicModEntries = new MusicModEntries();
                     newMusicModEntries.GameTitleEntries.Add(gameTitleEntry);
+                    newMusicModEntries.SeriesEntries.Add(seriesEntry);
                     if (!await musicMod.AddOrUpdateMusicModEntries(newMusicModEntries))
                         return false;
                 }

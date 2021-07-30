@@ -91,8 +91,11 @@ namespace Sma5h.Mods.Music
         {
             _logger.LogInformation("Starting Build...");
 
-            //AutoAddToBgmSelector - To Optimize :-)
+            //AutoAddToBgmSelector - TODO Optimize :-)
             ProcessPlaylistAutoMapping();
+
+            //Sort Series by Sound Test - TODO Allow for manual ordering
+            ProcessSeriesOrderAutoMapping();
 
             //Persist DB changes
             _audioStateService.SaveBgmEntriesToStateManager();
@@ -275,6 +278,33 @@ namespace Sma5h.Mods.Music
                     var emptyPlaylist = playlists.Where(p => allAffectedPlaylists.Contains(p.Key) && p.Value.Tracks.Count == 0).ToList();
                     if (emptyPlaylist != null && emptyPlaylist.Count > 0)
                         throw new Exception($"Playlist '{emptyPlaylist[0]}' had no tracks after running playlist auto-mapping. This could cause an issue in game");
+                }
+            }
+
+            return true;
+        }
+
+        private bool ProcessSeriesOrderAutoMapping()
+        {
+            var series = _audioStateService.GetSeriesEntries().Where(s => s.DispOrderSound > -1).ToDictionary(p => p.UiSeriesId, p => p);
+            sbyte i = 0;
+
+            var sortedGames = _audioStateService.GetBgmDbRootEntries()
+                .Where(p => p.TestDispOrder >= 0)
+                .OrderBy(p => p.TestDispOrder)
+                .GroupBy(p => p.UiGameTitleId)
+                .Select(p => p.First().UiGameTitleId).ToList();
+            foreach (var sortedSeries in _audioStateService.GetGameTitleEntries()
+                .Where(g => sortedGames.Contains(g.UiGameTitleId))
+                .OrderBy(g => sortedGames.IndexOf(g.UiGameTitleId))
+                .GroupBy(g => g.UiSeriesId)
+                .Select(p => p.First().UiSeriesId))
+            {
+                if (series.ContainsKey(sortedSeries))
+                {
+                    series[sortedSeries].DispOrderSound = i;
+                    if (i != sbyte.MaxValue)
+                        i++;
                 }
             }
 

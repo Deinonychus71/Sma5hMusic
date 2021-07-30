@@ -114,10 +114,11 @@ namespace Sma5h.Mods.Music.MusicMods
                musicModEntries.BgmStreamSetEntries.Count == 0 &&
                musicModEntries.BgmStreamPropertyEntries.Count == 0 &&
                musicModEntries.BgmPropertyEntries.Count == 0 &&
-               musicModEntries.SeriesEntries.Count == 0 &&
+               musicModEntries.SeriesEntries.Count == 1 &&
                musicModEntries.GameTitleEntries.Count == 1)
             {
-                return UpdateGameTitleEntry(musicModEntries.GameTitleEntries.FirstOrDefault());
+                return UpdateGameTitleEntry(musicModEntries.SeriesEntries.FirstOrDefault(),
+                    musicModEntries.GameTitleEntries.FirstOrDefault());
             }
 
             //For this specific mod, we want 1 entry of everything
@@ -379,47 +380,46 @@ namespace Sma5h.Mods.Music.MusicMods
         {
             if (_musicModConfig?.Series != null)
             {
-                bool change = false;
-
-                foreach (var series in _musicModConfig.Series)
+                var series = _musicModConfig.Series.FirstOrDefault(p => p.UiSeriesId == seriesEntry.UiSeriesId);
+                if(series != null)
                 {
-                    if (series.UiSeriesId == seriesEntry.UiSeriesId)
-                    {
-                        _mapper.Map(seriesEntry, series);
-                        change = true;
-                    }
-                }
-
-                if (change)
-                {
+                    _mapper.Map(seriesEntry, series);
                     return SaveMusicModConfig();
                 }
             }
             return true;
         }
 
-        public bool UpdateGameTitleEntry(GameTitleEntry gameTitleEntry)
+        public bool UpdateGameTitleEntry(SeriesEntry seriesEntry, GameTitleEntry gameTitleEntry)
         {
             if (_musicModConfig?.Series != null)
             {
-                var games = _musicModConfig.Series.FirstOrDefault(p => p.UiSeriesId == gameTitleEntry.UiSeriesId)?.Games;
-                if (games != null)
+                var game = _musicModConfig.Series.SelectMany(s => s.Games.Where(p => p.UiGameTitleId == gameTitleEntry.UiGameTitleId))?.FirstOrDefault();
+                if (game != null)
                 {
-                    bool change = false;
+                    var oldSeries = game.UiSeriesId;
+                    _mapper.Map(gameTitleEntry, game);
 
-                    foreach (var game in games)
+                    if(oldSeries != game.UiSeriesId)
                     {
-                        if (game.UiGameTitleId == gameTitleEntry.UiGameTitleId)
+                        var series = _musicModConfig.Series.FirstOrDefault(p => p.UiSeriesId == seriesEntry.UiSeriesId);
+                        if (series != null)
                         {
-                            _mapper.Map(gameTitleEntry, game);
-                            change = true;
+                            _mapper.Map(seriesEntry, series);
                         }
-                    }
+                        else
+                        {
+                            series = _mapper.Map<SeriesConfig>(seriesEntry);
+                            series.Games = new List<GameConfig>();
+                            _musicModConfig.Series.Add(series);
+                        }
 
-                    if (change)
-                    {
-                        return SaveMusicModConfig();
+                        _musicModConfig.Series.ForEach(s => s.Games.RemoveAll(g => g.UiGameTitleId == game.UiGameTitleId));
+                        series.Games.Add(game);
+                        _musicModConfig.Series.RemoveAll(s => s.Games == null || s.Games.Count == 0);
                     }
+                        
+                    return SaveMusicModConfig();
                 }
             }
             return true;

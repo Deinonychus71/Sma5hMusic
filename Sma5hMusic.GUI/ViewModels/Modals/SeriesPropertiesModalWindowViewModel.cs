@@ -68,9 +68,12 @@ namespace Sma5hMusic.GUI.ViewModels
         [Reactive]
         public bool IsEdit { get; set; }
 
+        [Reactive]
+        public bool IsInSoundTest { get; set; }
+
         public ReadOnlyObservableCollection<SeriesEntryViewModel> Series { get { return _series; } }
 
-        public SeriesPropertiesModalWindowViewModel(IOptionsMonitor<ApplicationSettings> config, ILogger<SeriesPropertiesModalWindowViewModel> logger, IViewModelManager viewModelManager, 
+        public SeriesPropertiesModalWindowViewModel(IOptionsMonitor<ApplicationSettings> config, ILogger<SeriesPropertiesModalWindowViewModel> logger, IViewModelManager viewModelManager,
             IGUIStateManager guiStateManager)
         {
             _config = config;
@@ -147,10 +150,13 @@ namespace Sma5hMusic.GUI.ViewModels
                 _refSelectedItem = _viewModelManager.GetSeriesViewModel(UiSeriesId);
             }
 
+            var soundTestValue = IsInSoundTest ? 0 : -1;
+            _refSelectedItem.DispOrder = (sbyte)soundTestValue;
+            if (_refSelectedItem.IsMod)
+                _refSelectedItem.DispOrderSound = (sbyte)soundTestValue;
+
             _refSelectedItem.MSBTTitle = SaveMSBTValues(MSBTTitleEditor.MSBTValues);
             _refSelectedItem.NameId = UiSeriesId.TrimStart(MusicConstants.InternalIds.SERIES_ID_PREFIX);
-            _refSelectedItem.DispOrder = DispOrder;
-            _refSelectedItem.DispOrderSound = DispOrderSound;
             _refSelectedItem.Unk1 = Unk1;
             _refSelectedItem.IsDlc = IsDlc;
             _refSelectedItem.IsPatch = IsPatch;
@@ -184,6 +190,7 @@ namespace Sma5hMusic.GUI.ViewModels
 
             if (item == null)
             {
+                IsInSoundTest = true;
                 IsEdit = false;
                 UiSeriesId = string.Empty;
                 NameId = string.Empty;
@@ -198,6 +205,7 @@ namespace Sma5hMusic.GUI.ViewModels
             }
             else
             {
+                IsInSoundTest = item.DispOrderSound > -1;
                 IsEdit = true;
                 UiSeriesId = item.UiSeriesId;
                 NameId = item.NameId;

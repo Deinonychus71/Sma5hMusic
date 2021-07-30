@@ -759,7 +759,8 @@ namespace Sma5hMusic.GUI.Services
 
                 if (gameTitleEntry.Source == EntrySource.Mod)
                 {
-                    result = await _musicModManagerService.UpdateGameEntry(gameTitleEntry);
+                    var seriesEntry = _viewModelManager.GetSeriesViewModel(gameTitleEntry.UiSeriesId).GetReferenceEntity();
+                    result = await _musicModManagerService.UpdateGameEntry(seriesEntry, gameTitleEntry);
                 }
                 //We save in CoreGameTitle no matter what so it gets loaded
                 //else

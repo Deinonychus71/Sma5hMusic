@@ -19,6 +19,7 @@
           </fields:PropertyField.FieldContent>
         </fields:PropertyField>
         <fields:PropertyTextField x:Name="SeriesId" IsReadOnly="{Binding IsEdit}" IsRequired="True" Label="Series Id" Text="{Binding UiSeriesId, Mode=TwoWay}" ToolTip="The ID for the series generated in the background. This is mostly informational." />
+        <fields:PropertyBooleanField Label="Show in Sound Test/BGM Selector" IsChecked="{Binding IsInSoundTest, Mode=TwoWay}" ToolTip="Check to indicate that this series should appear in Sound Test / BGM Selector" />
       </StackPanel>
       <StackPanel Classes="modalActions" DockPanel.Dock="Bottom">
         <Button IsVisible="{Binding !IsEdit}" Content="Create" Command="{Binding ActionOK}" CommandParameter="{Binding $parent[Window]}"></Button>
