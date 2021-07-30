@@ -128,6 +128,7 @@ namespace Sma5hMusic.GUI.Mods.Music.Models.AutoMapper
                 .ForMember(i => i.DlcCharaId, me => me.MapFrom(p => p.DlcCharaId))
                 .ForMember(i => i.IsUseAmiiboBg, me => me.MapFrom(p => p.IsUseAmiiboBg));
             CreateMap<SeriesEntry, GUI.ViewModels.SeriesEntryViewModel>()
+                .ForMember(i => i.Title, me => me.Ignore())
                 .ForMember(i => i.Source, me => me.MapFrom(p => p.Source))
                 .ForMember(i => i.MSBTTitle, me => me.MapFrom(p => p.MSBTTitle))
                 .ForMember(i => i.UiSeriesId, me => me.MapFrom(p => p.UiSeriesId))
@@ -150,6 +151,7 @@ namespace Sma5hMusic.GUI.Mods.Music.Models.AutoMapper
                 .ForMember(i => i.UiSeriesId, me => me.MapFrom(p => p.UiSeriesId))
                 .ForMember(i => i.Unk1, me => me.MapFrom(p => p.Unk1));
             CreateMap<GameTitleEntry, GUI.ViewModels.GameTitleEntryViewModel>()
+                .ForMember(i => i.Title, me => me.Ignore())
                 .ForMember(i => i.Source, me => me.MapFrom(p => p.Source))
                 .ForMember(i => i.MSBTTitle, me => me.MapFrom(p => p.MSBTTitle))
                 .ForMember(i => i.NameId, me => me.MapFrom(p => p.NameId))
@@ -215,6 +217,9 @@ namespace Sma5hMusic.GUI.Mods.Music.Models.AutoMapper
                 .ForMember(i => i.CountTarget, me => me.MapFrom(p => p.CountTarget))
                 .ForMember(i => i.IsDlc, me => me.MapFrom(p => p.IsDlc))
                 .ForMember(i => i.IsPatch, me => me.MapFrom(p => p.IsPatch))
+                .ForMember(i => i.Title, me => me.Ignore())
+                .ForMember(i => i.Author, me => me.Ignore())
+                .ForMember(i => i.Copyright, me => me.Ignore())
                 .ForMember(i => i.IsSelectableStageMake, me => me.MapFrom(p => p.IsSelectableStageMake))
                 .ForMember(i => i.IsSelectableMovieEdit, me => me.MapFrom(p => p.IsSelectableMovieEdit))
                 .ForMember(i => i.IsSelectableOriginal, me => me.MapFrom(p => p.IsSelectableOriginal))
