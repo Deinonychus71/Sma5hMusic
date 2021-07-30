@@ -513,20 +513,14 @@ namespace Sma5hMusic.GUI.ViewModels
         {
             var result = await _dialogSeriesPicker.ShowPickerDialog(parent ?? _rootDialog.Window);
             if (result != null)
-            {
                 await AddNewOrEditSeries(parent, result);
-                result.LoadLocalized(_currentLocale);
-            }
         }
 
         public async Task EditGame(Window parent = null)
         {
             var result = await _dialogGamePicker.ShowPickerDialog(parent ?? _rootDialog.Window);
             if (result != null)
-            {
                 await AddNewOrEditGame(parent, result);
-                result.LoadLocalized(_currentLocale);
-            }
         }
 
         public async Task DeleteSeries(Window parent = null)
