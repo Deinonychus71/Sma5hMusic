@@ -214,6 +214,9 @@ namespace Sma5hMusic.GUI.Mods.Music.Models.AutoMapper
                 .ForMember(i => i.Author, me => me.MapFrom(p => p.MSBTAuthor))
                 .ForMember(i => i.Copyright, me => me.MapFrom(p => p.MSBTCopyright));
             CreateMap<BgmDbRootEntry, ViewModels.BgmDbRootEntryViewModel>()
+                .ForMember(i => i.Title, me => me.Ignore())
+                .ForMember(i => i.Author, me => me.Ignore())
+                .ForMember(i => i.Copyright, me => me.Ignore())
                 .ForMember(i => i.CountTarget, me => me.MapFrom(p => p.CountTarget))
                 .ForMember(i => i.IsDlc, me => me.MapFrom(p => p.IsDlc))
                 .ForMember(i => i.IsPatch, me => me.MapFrom(p => p.IsPatch))
