@@ -451,6 +451,7 @@ namespace Sma5hMusic.GUI.Services
         }
         #endregion
 
+        #region REORDER
         public void ReorderSongs()
         {
             short i = 0;
@@ -461,8 +462,7 @@ namespace Sma5hMusic.GUI.Services
                 i++;
             }
         }
-
-        #region REORDER
+        
         public void ReorderSongs(IEnumerable<string> bgmEntriesToReorder, short newPosition)
         {
             var minAffected = newPosition;
