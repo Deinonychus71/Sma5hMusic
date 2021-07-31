@@ -37,7 +37,6 @@ namespace Sma5hMusic.GUI.ViewModels
         private readonly IOptionsMonitor<ApplicationSettings> _appSettings;
         private readonly ILogger _logger;
         private readonly IMapper _mapper;
-        private string _currentLocale;
 
         private readonly ModalDialog<BgmPropertiesModalWindow, BgmPropertiesModalWindowViewModel, BgmEntryViewModel> _dialogSimpleBgmEditor;
         private readonly ModalDialog<BgmAdvancedPropertiesModalWindow, BgmPropertiesModalWindowViewModel, BgmEntryViewModel> _dialogAdvancedBgmEditor;
@@ -120,7 +119,7 @@ namespace Sma5hMusic.GUI.ViewModels
 
             //Initialize Contextual Menu view
             VMContextMenu = ActivatorUtilities.CreateInstance<ContextMenuViewModel>(serviceProvider);
-            VMContextMenu.WhenLocaleChanged.Subscribe((locale) => { _currentLocale = locale; SetLanguage(); });
+            VMContextMenu.WhenLocaleChanged.Subscribe((locale) => { _viewModelManager.CurrentLocale = locale; });
 
             //Initialize filters
             VMBgmFilters = ActivatorUtilities.CreateInstance<BgmFiltersViewModel>(serviceProvider);
@@ -263,13 +262,14 @@ namespace Sma5hMusic.GUI.ViewModels
             {
                 _viewModelManager.Init();
                 var locales = _viewModelManager.GetLocalesViewModels();
-                var defaultLocaleFound = locales.FirstOrDefault(p => p.Id == _currentLocale) != null;
+                var currentLocale = _viewModelManager.CurrentLocale;
+                var defaultLocaleFound = locales.FirstOrDefault(p => p.Id == currentLocale) != null;
                 if (!defaultLocaleFound)
                 {
                     var newDefaultLanguage = locales.FirstOrDefault();
                     await Dispatcher.UIThread.InvokeAsync(async () =>
                     {
-                        await _messageDialog.ShowError("Locale error", $"The default locale {Constants.GetLocaleDisplayName(_currentLocale)} was not properly loaded.\r\nVerify that msbt_bgm+{_currentLocale}.msbt is in your resource files or change the defaut locale.\r\nThe GUI locale will be changed to {Constants.GetLocaleDisplayName(newDefaultLanguage?.Id)}.");
+                        await _messageDialog.ShowError("Locale error", $"The default locale {Constants.GetLocaleDisplayName(currentLocale)} was not properly loaded.\r\nVerify that msbt_bgm+{currentLocale}.msbt is in your resource files or change the defaut locale.\r\nThe GUI locale will be changed to {Constants.GetLocaleDisplayName(newDefaultLanguage?.Id)}.");
                     }, DispatcherPriority.Background);
                     VMContextMenu.ChangeLocale(newDefaultLanguage);
                 }
@@ -283,7 +283,7 @@ namespace Sma5hMusic.GUI.ViewModels
                 }
                 Title = $"Sma5hMusic - GUI v{Constants.GUIVersion}{(!Constants.IsStable ? "b" : "")} | Game v{_guiStateManager.GameVersion}";
 
-                SetLanguage();
+                _viewModelManager.RefreshLanguage();
                 IsLoading = false;
             }, (o) =>
             {
@@ -403,7 +403,6 @@ namespace Sma5hMusic.GUI.ViewModels
                     if (!string.IsNullOrEmpty(uiBgmId))
                     {
                         var vmBgmDbRootEntry = _viewModelManager.GetBgmDbRootViewModel(uiBgmId);
-                        vmBgmDbRootEntry.LoadLocalized(_currentLocale);
                         await EditBgmEntry(vmBgmDbRootEntry);
                     }
                 }
@@ -496,7 +495,6 @@ namespace Sma5hMusic.GUI.ViewModels
             if (result != null)
             {
                 await _guiStateManager.PersistSeriesEntryChange(result.GetReferenceEntity());
-                result.LoadLocalized(_currentLocale);
             }
         }
 
@@ -506,7 +504,6 @@ namespace Sma5hMusic.GUI.ViewModels
             if (result != null)
             {
                 await _guiStateManager.PersistGameTitleEntryChange(result.GetReferenceEntity());
-                result.LoadLocalized(_currentLocale);
             }
         }
 
@@ -614,21 +611,6 @@ namespace Sma5hMusic.GUI.ViewModels
                     _mapper.Map(vmStage, vmStage.GetStageEntryReference());
 
                 await _guiStateManager.PersistStageChanges();
-            }
-        }
-        #endregion
-
-        #region Language
-        private void SetLanguage()
-        {
-            if (!string.IsNullOrEmpty(_currentLocale))
-            {
-                foreach (var item in _viewModelManager.GetBgmDbRootEntriesViewModels())
-                    item.LoadLocalized(_currentLocale);
-                foreach (var item in _viewModelManager.GetGameTitlesViewModels())
-                    item.LoadLocalized(_currentLocale);
-                foreach (var item in _viewModelManager.GetSeriesViewModels())
-                    item.LoadLocalized(_currentLocale);
             }
         }
         #endregion

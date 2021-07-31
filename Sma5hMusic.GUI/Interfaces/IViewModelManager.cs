@@ -2,13 +2,14 @@
 using Sma5h.Mods.Music.Interfaces;
 using Sma5h.Mods.Music.Models;
 using Sma5hMusic.GUI.ViewModels;
-using System;
 using System.Collections.Generic;
 
 namespace Sma5hMusic.GUI.Interfaces
 {
     public interface IViewModelManager
     {
+        string CurrentLocale { get; set; }
+
         void Init();
         void ReorderSongs();
         void ReorderSongs(IEnumerable<string> bgmEntriesToReorder, short newPosition);
@@ -65,5 +66,7 @@ namespace Sma5hMusic.GUI.Interfaces
         bool AddNewBgmStreamPropertyEntryViewModel(BgmStreamPropertyEntry bgmStreamPropertyEntry);
         bool AddNewBgmPropertyEntryViewModel(BgmPropertyEntry bgmPropertyEntry);
         bool AddNewPlaylistEntryViewModel(PlaylistEntry playlistEntry);
+
+        void RefreshLanguage();
     }
 }

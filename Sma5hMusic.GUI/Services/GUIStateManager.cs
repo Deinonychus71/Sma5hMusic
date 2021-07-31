@@ -160,6 +160,7 @@ namespace Sma5hMusic.GUI.Services
                         musicModEntries.BgmStreamPropertyEntries.Count != 1 ||
                         musicModEntries.BgmPropertyEntries.Count != 1 ||
                         musicModEntries.GameTitleEntries.Count != 1 ||
+                        musicModEntries.SeriesEntries.Count != 1 ||
                         fromMusicMod == null || toMusicMod == null)
                 {
                     await Dispatcher.UIThread.InvokeAsync(async () =>
@@ -250,7 +251,10 @@ namespace Sma5hMusic.GUI.Services
                         {
                             var gameTitle = musicModEntries.GameTitleEntries.FirstOrDefault();
                             gameTitle.MusicMod = gameTitle.MusicMod != null ? toMusicMod : null;
+                            var series = musicModEntries.SeriesEntries.FirstOrDefault();
+                            series.MusicMod = series.MusicMod != null ? toMusicMod : null;
                             newMusicModEntries.GameTitleEntries.Add(gameTitle);
+                            newMusicModEntries.SeriesEntries.Add(series);
                             result = await PersistMusicModEntryChanges(newMusicModEntries, toMusicMod);
                         }
 
@@ -281,8 +285,8 @@ namespace Sma5hMusic.GUI.Services
 
             try
             {
-                _logger.LogInformation("Create Music Mod Entries: Game: {Game}, DbRoot: {DbRoot}, StreamSet: {StreamSet}, AssignedInfo: {AssignedInfo}, StreamProperty: {StreamProperty}, BgmProperty: {BgmProperty}, Mod: {ModId}",
-                        musicModEntries.GameTitleEntries.Count, musicModEntries.BgmDbRootEntries.Count, musicModEntries.BgmStreamSetEntries.Count,
+                _logger.LogInformation("Create Music Mod Entries: Series: {Series}, Game: {Game}, DbRoot: {DbRoot}, StreamSet: {StreamSet}, AssignedInfo: {AssignedInfo}, StreamProperty: {StreamProperty}, BgmProperty: {BgmProperty}, Mod: {ModId}",
+                        musicModEntries.SeriesEntries.Count, musicModEntries.GameTitleEntries.Count, musicModEntries.BgmDbRootEntries.Count, musicModEntries.BgmStreamSetEntries.Count,
                         musicModEntries.BgmAssignedInfoEntries.Count, musicModEntries.BgmStreamPropertyEntries.Count, musicModEntries.BgmPropertyEntries.Count, musicMod?.Id);
 
                 //Check if exists
@@ -382,6 +386,15 @@ namespace Sma5hMusic.GUI.Services
                         throw new Exception("GameTitle ID already exists");
                     }
                 }
+
+                foreach (var seriesEntry in musicModEntries.SeriesEntries)
+                {
+                    if (!_audioState.CanAddSeriesEntry(seriesEntry.UiSeriesId))
+                    {
+                        _logger.LogError("Series ID {SeriesId} was found in the database", seriesEntry.UiSeriesId);
+                        throw new Exception("Series ID already exists");
+                    }
+                }
                 return true;
             }
             catch (Exception e)
@@ -399,6 +412,15 @@ namespace Sma5hMusic.GUI.Services
         {
             try
             {
+                foreach (var seriesEntry in musicModEntries.SeriesEntries)
+                {
+                    _logger.LogDebug("Adding Series {SeriesId}, Mod: {ModId}, Source: {Source}", seriesEntry?.UiSeriesId, seriesEntry?.ModId, seriesEntry?.Source);
+                    if (string.IsNullOrEmpty(await CreateNewSeriesEntry(seriesEntry)))
+                    {
+                        throw new Exception("Series Add Error");
+                    }
+                }
+
                 foreach (var gameTitleEntry in musicModEntries.GameTitleEntries)
                 {
                     _logger.LogDebug("Adding GameTitle {GameTitleId}, Mod: {ModId}, Source: {Source}", gameTitleEntry?.UiGameTitleId, gameTitleEntry?.ModId, gameTitleEntry?.Source);
@@ -481,8 +503,8 @@ namespace Sma5hMusic.GUI.Services
             {
                 try
                 {
-                    _logger.LogInformation("Update Music Mod Entries: Game: {Game}, DbRoot: {DbRoot}, StreamSet: {StreamSet}, AssignedInfo: {AssignedInfo}, StreamProperty: {StreamProperty}, BgmProperty: {BgmProperty}, Mod: {ModId}",
-                        musicModEntries.GameTitleEntries.Count, musicModEntries.BgmDbRootEntries.Count, musicModEntries.BgmStreamSetEntries.Count,
+                    _logger.LogInformation("Update Music Mod Entries: Series: {Series}, Game: {Game}, DbRoot: {DbRoot}, StreamSet: {StreamSet}, AssignedInfo: {AssignedInfo}, StreamProperty: {StreamProperty}, BgmProperty: {BgmProperty}, Mod: {ModId}",
+                        musicModEntries.SeriesEntries.Count, musicModEntries.GameTitleEntries.Count, musicModEntries.BgmDbRootEntries.Count, musicModEntries.BgmStreamSetEntries.Count,
                         musicModEntries.BgmAssignedInfoEntries.Count, musicModEntries.BgmStreamPropertyEntries.Count, musicModEntries.BgmPropertyEntries.Count, musicMod?.Id);
 
                     if (musicMod != null)
