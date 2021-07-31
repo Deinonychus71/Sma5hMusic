@@ -292,8 +292,9 @@ namespace Sma5h.Mods.Music.MusicMods
         public bool ReorderSongs(List<string> orderedList)
         {
             //Sanity check
-            var allModSongsDict = _musicModConfig.Series.SelectMany(s => s.Games.SelectMany(p => p.Bgms).OrderBy(p => p.DbRoot.UiBgmId)).ToDictionary(p => p.DbRoot.UiBgmId, p => p);
-            if (!orderedList.OrderBy(p => p).SequenceEqual(allModSongsDict.Select(p => p.Key)))
+            var allModSongsDict = _musicModConfig.Series.SelectMany(s => s.Games.SelectMany(p => p.Bgms)).OrderBy(p => p.DbRoot.UiBgmId);
+            var dictAllModSongsDict = allModSongsDict.ToDictionary(p => p.DbRoot.UiBgmId, p => p);
+            if (!orderedList.OrderBy(p => p).SequenceEqual(allModSongsDict.Select(p => p.DbRoot.UiBgmId)))
             {
                 _logger.LogError("The provider list of songs to reorder did not match the list of songs found in the mod. Aborting reorder...");
                 return false;
@@ -309,7 +310,7 @@ namespace Sma5h.Mods.Music.MusicMods
             //Reorder
             foreach (var orderedSongId in orderedList)
             {
-                var orderedSong = allModSongsDict[orderedSongId];
+                var orderedSong = dictAllModSongsDict[orderedSongId];
                 var game = gamesCache.FirstOrDefault(p => p.UiGameTitleId == orderedSong.DbRoot.UiGameTitleId);
                 if (game == null)
                 {
