@@ -9,6 +9,8 @@ namespace Sma5hMusic.GUI.Interfaces
 {
     public interface IViewModelManager
     {
+        string CurrentLocale { get; set; }
+
         void Init();
         void ReorderSongs();
         void ReorderSongs(IEnumerable<string> bgmEntriesToReorder, short newPosition);
@@ -63,5 +65,7 @@ namespace Sma5hMusic.GUI.Interfaces
         bool AddNewBgmStreamPropertyEntryViewModel(BgmStreamPropertyEntry bgmStreamPropertyEntry);
         bool AddNewBgmPropertyEntryViewModel(BgmPropertyEntry bgmPropertyEntry);
         bool AddNewPlaylistEntryViewModel(PlaylistEntry playlistEntry);
+
+        void RefreshLanguage();
     }
 }

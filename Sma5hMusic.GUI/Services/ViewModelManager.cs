@@ -22,6 +22,7 @@ namespace Sma5hMusic.GUI.Services
         private readonly IMusicModManagerService _musicModManager;
         private readonly IVGMMusicPlayer _vgmMusicPlayer;
         private readonly bool _inGameVolume;
+        private string _currentLocale;
         private readonly Dictionary<string, LocaleViewModel> _vmDictLocalesEntries;
         private readonly Dictionary<string, SeriesEntryViewModel> _vmDictSeriesEntries;
         private readonly Dictionary<string, GameTitleEntryViewModel> _vmDictGameTitlesEntries;
@@ -45,6 +46,8 @@ namespace Sma5hMusic.GUI.Services
         private readonly SourceCache<PlaylistEntryViewModel, string> _vmObsvPlaylistsEntries;
         private readonly SourceCache<StageEntryViewModel, string> _vmObsvStagesEntries;
         private readonly SourceCache<ModEntryViewModel, string> _vmObsvModsEntries;
+
+        public string CurrentLocale { get { return _currentLocale; } set { _currentLocale = value; RefreshLanguage(); } }
 
         public ViewModelManager(IOptionsMonitor<ApplicationSettings> config, IAudioStateService audioStateService, IMusicModManagerService musicModManager, IVGMMusicPlayer vgmMusicPlayer, IMapper mapper, ILogger<IViewModelManager> logger)
         {
@@ -394,6 +397,7 @@ namespace Sma5hMusic.GUI.Services
             var newVM = _mapper.Map(gameTitleEntry, new GameTitleEntryViewModel(this, _mapper, gameTitleEntry));
             _vmDictGameTitlesEntries.Add(newVM.UiGameTitleId, newVM);
             _vmObsvGameTitlesEntries.AddOrUpdate(newVM);
+            newVM.LoadLocalized(CurrentLocale);
             return true;
         }
 
@@ -402,6 +406,7 @@ namespace Sma5hMusic.GUI.Services
             var newVM = _mapper.Map(bgmDbRootEntry, new BgmDbRootEntryViewModel(this, _mapper, bgmDbRootEntry));
             _vmDictBgmDbRootEntries.Add(newVM.UiBgmId, newVM);
             _vmObsvBgmDbRootEntries.AddOrUpdate(newVM);
+            newVM.LoadLocalized(CurrentLocale);
             return true;
         }
 
@@ -457,6 +462,7 @@ namespace Sma5hMusic.GUI.Services
             }
         }
 
+        #region REORDER
         public void ReorderSongs(IEnumerable<string> bgmEntriesToReorder, short newPosition)
         {
             var minAffected = newPosition;
@@ -516,5 +522,19 @@ namespace Sma5hMusic.GUI.Services
             vmBgmEntry.TestDispOrder = position;
             vmBgmEntry.GetReferenceEntity().TestDispOrder = position;
         }
+        #endregion
+
+        #region LANGUAGE
+        public void RefreshLanguage()
+        {
+            if (!string.IsNullOrEmpty(_currentLocale))
+            {
+                foreach (var item in GetBgmDbRootEntriesViewModels())
+                    item.LoadLocalized(_currentLocale);
+                foreach (var item in GetGameTitlesViewModels())
+                    item.LoadLocalized(_currentLocale);
+            }
+        }
+        #endregion
     }
 }
