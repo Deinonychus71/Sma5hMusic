@@ -138,6 +138,7 @@ namespace Sma5hMusic.GUI
                 { "Sma5hMusicGUI:DefaultMSBTLocale", "us_en" },
                 { "Sma5hMusicGUI:PlaylistIncidenceDefault", "0" },
                 { "Sma5hMusicGUI:SkipWarningGameVersion", "false" },
+                { "Sma5hMusicGUI:AutoBackupAtStart", "true" },
                 { "Sma5hMusicGUI:InGameVolume", "false" },
                 { "Sma5hMusicGUI:HideIndexColumn", "false" },
                 { "Sma5hMusicGUI:HideSeriesColumn", "false" },

@@ -42,6 +42,7 @@ namespace Sma5hMusic.GUI.Mods.Music.Models.AutoMapper
                     CopyToEmptyLocales = p.CopyToEmptyLocales,
                     PlaylistIncidenceDefault = p.PlaylistIncidenceDefault,
                     SkipWarningGameVersion = p.SkipWarningGameVersion,
+                    AutoBackupAtStart = p.AutoBackupAtStart,
                     InGameVolume = p.InGameVolume,
                     HideIndexColumn = p.HideIndexColumn,
                     HideModColumn = p.HideModColumn,
@@ -78,6 +79,7 @@ namespace Sma5hMusic.GUI.Mods.Music.Models.AutoMapper
                 .ForMember(i => i.CopyToEmptyLocales, me => me.MapFrom(p => p.Sma5hMusicGUI.CopyToEmptyLocales))
                 .ForMember(i => i.PlaylistIncidenceDefault, me => me.MapFrom(p => p.Sma5hMusicGUI.PlaylistIncidenceDefault))
                 .ForMember(i => i.SkipWarningGameVersion, me => me.MapFrom(p => p.Sma5hMusicGUI.SkipWarningGameVersion))
+                .ForMember(i => i.AutoBackupAtStart, me => me.MapFrom(p => p.Sma5hMusicGUI.AutoBackupAtStart))
                 .ForMember(i => i.InGameVolume, me => me.MapFrom(p => p.Sma5hMusicGUI.InGameVolume))
                 .ForMember(i => i.HideIndexColumn, me => me.MapFrom(p => p.Sma5hMusicGUI.HideIndexColumn))
                 .ForMember(i => i.HideModColumn, me => me.MapFrom(p => p.Sma5hMusicGUI.HideModColumn))

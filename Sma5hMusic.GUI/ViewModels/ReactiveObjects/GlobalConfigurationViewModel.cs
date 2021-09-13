@@ -48,6 +48,8 @@ namespace Sma5hMusic.GUI.ViewModels
         [Reactive]
         public bool SkipWarningGameVersion { get; set; }
         [Reactive]
+        public bool AutoBackupAtStart { get; set; }
+        [Reactive]
         public ushort PlaylistAutoMappingIncidence { get; set; }
         public Dictionary<string, List<string>> PlaylistAutoMapping { get; set; }
         public PlaylistGeneration PlaylistGenerationMode { get; set; }

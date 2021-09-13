@@ -54,6 +54,10 @@
             <fields:PropertyBooleanField Grid.Column="0" Label="Skip Cleanup Confirmation" IsChecked="{Binding SelectedItem.SkipOutputPathCleanupConfirmation}" ToolTip="If this is set to on, the program will automatically clean up your output path when building." />
             <fields:PropertyBooleanField Grid.Column="1" Label="Skip Warning Game Version" IsChecked="{Binding SelectedItem.SkipWarningGameVersion}" ToolTip="If this is set to on, the program will not show a warning to the user if their game resources don't match a version that the tool can recognize." />
           </Grid>
+          <Grid ColumnDefinitions="*,*">
+            <fields:PropertyBooleanField Grid.Column="0" Label="Auto-backup at start" IsChecked="{Binding SelectedItem.AutoBackupAtStart}" ToolTip="If this is set to on, the program will automatically run a soft backup at the start of the program." />
+           
+          </Grid>
           <fields:PropertyField Grid.Column="0" Label="BGM Columns Visibility" ToolTip="Choose to hide or display optional columns.">
             <fields:PropertyField.FieldContent>
               <Grid ColumnDefinitions="*,*" RowDefinitions="*,*">
