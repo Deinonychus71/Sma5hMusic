@@ -523,6 +523,8 @@ namespace Sma5h.Mods.Music.MusicMods
             {
                 _logger.LogWarning("Convert v3 Mod {ModName} to v4.", v3ModConfig.Name);
                 v3ModConfig.Version = 4;
+                if(v3ModConfig.Games == null)
+                    v3ModConfig.Games = new List<GameConfig>();
                 v3ModConfig.Series = v3ModConfig.Games.GroupBy(p => p.UiSeriesId).Select(p => new SeriesConfig()
                 {
                     UiSeriesId = p.Key,
@@ -531,6 +533,7 @@ namespace Sma5h.Mods.Music.MusicMods
                 }).ToList();
                 v3ModConfig.Games = null;
             }
+            SaveMusicModConfig(v3ModConfig);
             return v3ModConfig;
         }
 
@@ -771,12 +774,12 @@ namespace Sma5h.Mods.Music.MusicMods
 
             [JsonProperty("dlc_mii_body_motif_id")]
             public string DlcMiiBodyMotifId { get; set; }
-            [JsonProperty("title")]
+            [JsonIgnore]
             public Dictionary<string, string> Title { get; set; }
 
-            [JsonProperty("copyright")]
+            [JsonIgnore]
             public Dictionary<string, string> Copyright { get; set; }
-            [JsonProperty("author")]
+            [JsonIgnore]
             public Dictionary<string, string> Author { get; set; }
 
             //Field here to handle older json version that did not have the discovered name

@@ -193,7 +193,7 @@ namespace Sma5hMusic.GUI.ViewModels
             ActionExit = ReactiveCommand.Create(OnExit);
             ActionBuild = ReactiveCommand.CreateFromTask(OnBuild);
             ActionBuildNoCache = ReactiveCommand.CreateFromTask(OnBuildNoCache);
-            ActionRefreshData = ReactiveCommand.CreateFromTask(OnInitData);
+            ActionRefreshData = ReactiveCommand.CreateFromTask(() => OnInitData());
             ActionToggleAdvanced = ReactiveCommand.Create(OnAdvancedToggle);
             ActionToggleConsole = ReactiveCommand.Create(OnConsoleToggle);
             ActionOpenThanks = ReactiveCommand.CreateFromTask(OnThanksOpen);
@@ -255,11 +255,14 @@ namespace Sma5hMusic.GUI.ViewModels
             });
         }
 
-        public async Task OnInitData()
+        public async Task OnInitData(bool backupData = false)
         {
             IsLoading = true;
             await _buildDialog.Init(async (o) =>
             {
+                if (backupData)
+                    await _guiStateManager.BackupProject(false, false);
+
                 _viewModelManager.Init();
                 var locales = _viewModelManager.GetLocalesViewModels();
                 var currentLocale = _viewModelManager.CurrentLocale;

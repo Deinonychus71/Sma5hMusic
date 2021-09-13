@@ -14,7 +14,7 @@
         Title="{Binding Title}">
   <i:Interaction.Behaviors>
     <ia:EventTriggerBehavior EventName="Opened">
-      <ia:InvokeCommandAction Command="{Binding OnInitData}"/>
+      <ia:InvokeCommandAction Command="{Binding OnInitData}" CommandParameter="True"/>
     </ia:EventTriggerBehavior>
   </i:Interaction.Behaviors>
   <Grid RowDefinitions="20,65,*,Auto" ColumnDefinitions="*">
