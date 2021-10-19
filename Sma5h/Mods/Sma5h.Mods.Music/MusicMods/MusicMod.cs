@@ -74,9 +74,6 @@ namespace Sma5h.Mods.Music.MusicMods
 
                         _logger.LogInformation("Mod {MusicMod}: Adding song {Song} ({ToneId})", _musicModConfig.Name, filename, bgm.ToneId);
                         var bgmDbRootEntry = _mapper.Map(bgm.DbRoot, new BgmDbRootEntry(bgm.DbRoot.UiBgmId, this));
-                        bgmDbRootEntry.Title = bgm.MSBTLabels.Title;
-                        bgmDbRootEntry.Author = bgm.MSBTLabels.Author;
-                        bgmDbRootEntry.Copyright = bgm.MSBTLabels.Copyright;
                         bgmDbRootEntry.UiGameTitleId = game.UiGameTitleId; //Enforce
                         output.BgmDbRootEntries.Add(bgmDbRootEntry);
                         output.BgmStreamSetEntries.Add(_mapper.Map(bgm.StreamSet, new BgmStreamSetEntry(bgm.StreamSet.StreamSetId, this)));
@@ -257,12 +254,6 @@ namespace Sma5h.Mods.Music.MusicMods
                     BgmProperties = _mapper.Map<BgmPropertyEntryConfig>(bgmProperty),
                     Filename = filenameWithoutPath,
                     ToneId = bgmProperty.NameId,
-                    MSBTLabels = new MSBTLabelsConfig()
-                    {
-                        Author = dbRoot.Author,
-                        Title = dbRoot.Title,
-                        Copyright = dbRoot.Copyright
-                    },
                     NUS3BankConfig = new NUS3BankConfig()
                     {
                         AudioVolume = bgmProperty.AudioVolume
@@ -471,6 +462,8 @@ namespace Sma5h.Mods.Music.MusicMods
                     output = ConvertFromV2Mod(output);
                 if (output.Version == 3)
                     output = ConvertFromV3Mod(output);
+                if (output.Version == 4)
+                    output = ConvertFromV4Mod(output);
                 return output;
             }
             else
@@ -537,6 +530,30 @@ namespace Sma5h.Mods.Music.MusicMods
             return v3ModConfig;
         }
 
+        private MusicModConfig ConvertFromV4Mod(MusicModConfig v4ModConfig)
+        {
+            if (v4ModConfig != null)
+            {
+                _logger.LogWarning("Convert v4 Mod {ModName} to v5.", v4ModConfig.Name);
+                v4ModConfig.Version = 5;
+                v4ModConfig.Series.ForEach(s =>
+                {
+                    s.Games.ForEach(g =>
+                    {
+                        g.Bgms.ForEach(bgm =>
+                        {
+                            bgm.DbRoot.Title = bgm.MSBTLabels.Title;
+                            bgm.DbRoot.Author = bgm.MSBTLabels.Author;
+                            bgm.DbRoot.Copyright = bgm.MSBTLabels.Copyright;
+                            bgm.MSBTLabels = null;
+                        });
+                    });
+                });
+            }
+            SaveMusicModConfig(v4ModConfig);
+            return v4ModConfig;
+        }
+
         private BgmStreamSetConfig GetUpdatedStreamSetConfig(BgmStreamSetConfig bgmStreamSetConfig)
         {
             if (!string.IsNullOrEmpty(bgmStreamSetConfig.SpecialCategory) && bgmStreamSetConfig.SpecialCategory.StartsWith("0x") &&
@@ -579,7 +596,7 @@ namespace Sma5h.Mods.Music.MusicMods
             public MusicModConfig(string id)
             {
                 Id = id;
-                Version = 4;
+                Version = 5;
             }
 
             public bool ShouldSerializeGames()
@@ -671,6 +688,11 @@ namespace Sma5h.Mods.Music.MusicMods
             public BgmStreamSetConfig StreamSet { get; set; }
             [JsonProperty("stream_property")]
             public BgmStreamPropertyConfig StreamProperty { get; set; }
+
+            public bool ShouldSerializeMSBTLabels()
+            {
+                return false;
+            }
         }
 
         public class MSBTLabelsConfig
@@ -774,12 +796,14 @@ namespace Sma5h.Mods.Music.MusicMods
 
             [JsonProperty("dlc_mii_body_motif_id")]
             public string DlcMiiBodyMotifId { get; set; }
-            [JsonIgnore]
+
+            [JsonProperty("msbt_title")]
             public Dictionary<string, string> Title { get; set; }
 
-            [JsonIgnore]
+            [JsonProperty("msbt_copyright")]
             public Dictionary<string, string> Copyright { get; set; }
-            [JsonIgnore]
+
+            [JsonProperty("msbt_author")]
             public Dictionary<string, string> Author { get; set; }
 
             //Field here to handle older json version that did not have the discovered name
@@ -800,6 +824,30 @@ namespace Sma5h.Mods.Music.MusicMods
 
             [JsonProperty("0x0e6b57e593")]
             public bool Unk6 { get; set; }
+
+            [JsonProperty("title")]
+            public Dictionary<string, string> OldTitle { get; set; }
+
+            [JsonProperty("copyright")]
+            public Dictionary<string, string> OldCopyright { get; set; }
+
+            [JsonProperty("author")]
+            public Dictionary<string, string> OldAuthor { get; set; }
+
+            public bool ShouldSerializeOldTitle()
+            {
+                return false;
+            }
+
+            public bool ShouldSerializeOldCopyright()
+            {
+                return false;
+            }
+
+            public bool ShouldSerializeOldAuthor()
+            {
+                return false;
+            }
 
             public bool ShouldSerializeUnk1()
             {

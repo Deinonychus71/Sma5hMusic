@@ -265,6 +265,7 @@ namespace Sma5h.Mods.Music
             }
             else
                 _logger.LogInformation("File {MusicOverrideFile} does not exist.", overrideCoreJsonFile);
+            CheckToUpdateOldFormat(_musicOverrideConfig.CoreBgmOverrides.CoreBgmDbRootOverrides);
 
             //Override Core Game
             var overrideCoreGameJsonFile = Path.Combine(_config.CurrentValue.Sma5hMusicOverride.ModPath, MusicConstants.MusicModFiles.MUSIC_OVERRIDE_CORE_GAME_JSON_FILE);
@@ -455,6 +456,22 @@ namespace Sma5h.Mods.Music
             }
 
             
+        }
+
+        private void CheckToUpdateOldFormat(Dictionary<string, BgmDbRootConfig> dbRootDict)
+        {
+            if (dbRootDict.Count > 0 && dbRootDict.First().Value.OldTitle != null)
+            {
+                foreach(var dbRootEntry in dbRootDict)
+                {
+                    if(dbRootEntry.Value.OldTitle != null)
+                        dbRootEntry.Value.Title = dbRootEntry.Value.OldTitle;
+                    if (dbRootEntry.Value.OldAuthor != null)
+                        dbRootEntry.Value.Author = dbRootEntry.Value.OldAuthor;
+                    if (dbRootEntry.Value.OldCopyright != null)
+                        dbRootEntry.Value.Copyright = dbRootEntry.Value.OldCopyright;
+                }
+            }
         }
     }
 }

@@ -77,7 +77,7 @@ namespace Sma5h.Mods.Music.Services
             if (File.Exists(jsonBaseFilename))
             {
                 var modBase = LoadJsonBaseMod(jsonBaseFilename);
-                if (modBase.Version == 2 || modBase.Version == 3 || modBase.Version == 4)
+                if (modBase.Version == 2 || modBase.Version == 3 || modBase.Version == 4 || modBase.Version == 5)
                 {
                     musicMod = ActivatorUtilities.CreateInstance<MusicMod>(_serviceProvider, musicModFolder);
                 }
