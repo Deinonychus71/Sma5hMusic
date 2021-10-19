@@ -798,6 +798,9 @@ namespace Sma5h.Mods.Music.MusicMods
             [JsonProperty("0x1560c0949b")]
             public string Unk5 { get; set; }
 
+            [JsonProperty("0x0e6b57e593")]
+            public bool Unk6 { get; set; }
+
             public bool ShouldSerializeUnk1()
             {
                 return false;

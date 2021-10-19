@@ -83,7 +83,8 @@ namespace Sma5h.Mods.Music.Models.AutoMapper
                 .ForMember(i => i.UiGameTitleId4, me => me.MapFrom(p => p.UiGameTitleId4))
                 .ForMember(i => i.DlcUiCharaId, me => me.MapFrom(p => p.DlcUiCharaId))
                 .ForMember(i => i.DlcMiiHatMotifId, me => me.MapFrom(p => p.DlcMiiHatMotifId))
-                .ForMember(i => i.DlcMiiBodyMotifId, me => me.MapFrom(p => p.DlcMiiBodyMotifId));
+                .ForMember(i => i.DlcMiiBodyMotifId, me => me.MapFrom(p => p.DlcMiiBodyMotifId))
+                .ForMember(i => i.Unk6, me => me.MapFrom(p => p.Unk6));
             CreateMap<BgmDbRootEntry, Sma5h.Data.Ui.Param.Database.PrcUiBgmDatabaseModels.PrcBgmDbRootEntry>()
                 .ForMember(i => i.CountTarget, me => me.MapFrom(p => p.CountTarget))
                 .ForMember(i => i.IsDlc, me => me.MapFrom(p => p.IsDlc))
@@ -112,7 +113,8 @@ namespace Sma5h.Mods.Music.Models.AutoMapper
                 .ForMember(i => i.UiGameTitleId4, me => me.MapFrom(p => p.UiGameTitleId4))
                 .ForMember(i => i.DlcUiCharaId, me => me.MapFrom(p => p.DlcUiCharaId))
                 .ForMember(i => i.DlcMiiHatMotifId, me => me.MapFrom(p => p.DlcMiiHatMotifId))
-                .ForMember(i => i.DlcMiiBodyMotifId, me => me.MapFrom(p => p.DlcMiiBodyMotifId));
+                .ForMember(i => i.DlcMiiBodyMotifId, me => me.MapFrom(p => p.DlcMiiBodyMotifId))
+                .ForMember(i => i.Unk6, me => me.MapFrom(p => p.Unk6));
 
             CreateMap<Sma5h.Data.Ui.Param.Database.PrcUiBgmDatabaseModels.PrcBgmStreamSetEntry, BgmStreamSetEntry>()
                 .ForMember(i => i.Info0, me => me.MapFrom(p => p.Info0))

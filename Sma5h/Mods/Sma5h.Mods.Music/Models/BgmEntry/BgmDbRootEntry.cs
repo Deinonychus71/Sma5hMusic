@@ -35,6 +35,7 @@ namespace Sma5h.Mods.Music.Models
         public string DlcUiCharaId { get; set; }
         public string DlcMiiHatMotifId { get; set; }
         public string DlcMiiBodyMotifId { get; set; }
+        public bool Unk6 { get; set; }
 
         public Dictionary<string, string> Title { get; set; }
         public Dictionary<string, string> Copyright { get; set; }

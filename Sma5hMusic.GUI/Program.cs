@@ -194,6 +194,7 @@ namespace Sma5hMusic.GUI
                 { "bgmtantan", new string[] { "ui_series_arms" } },
                 { "bgmpickel", new string[] { "ui_series_minecraft" } },
                 { "bgmdemon", new string[] { "ui_series_tekken" } },
+                { "bgmtrail", new string[] { "ui_series_kingdomhearts" } },
                 { "bgmother", new string[] { "ui_series_etc" } }
             };
 

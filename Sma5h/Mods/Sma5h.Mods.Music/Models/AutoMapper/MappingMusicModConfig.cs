@@ -113,6 +113,7 @@ namespace Sma5h.Mods.Music.Models.AutoMapper
                 .ForMember(i => i.DlcUiCharaId, me => me.MapFrom(p => p.DlcUiCharaId))
                 .ForMember(i => i.DlcMiiHatMotifId, me => me.MapFrom(p => p.DlcMiiHatMotifId))
                 .ForMember(i => i.DlcMiiBodyMotifId, me => me.MapFrom(p => p.DlcMiiBodyMotifId))
+                .ForMember(i => i.Unk6, me => me.MapFrom(p => p.Unk6))
                 .ForMember(i => i.Title, me => me.MapFrom(p => p.Title))
                 .ForMember(i => i.Author, me => me.MapFrom(p => p.Author))
                 .ForMember(i => i.Copyright, me => me.MapFrom(p => p.Copyright));
@@ -144,6 +145,7 @@ namespace Sma5h.Mods.Music.Models.AutoMapper
                 .ForMember(i => i.DlcUiCharaId, me => me.MapFrom(p => p.DlcUiCharaId))
                 .ForMember(i => i.DlcMiiHatMotifId, me => me.MapFrom(p => p.DlcMiiHatMotifId))
                 .ForMember(i => i.DlcMiiBodyMotifId, me => me.MapFrom(p => p.DlcMiiBodyMotifId))
+                .ForMember(i => i.Unk6, me => me.MapFrom(p => p.Unk6))
                 .ForMember(i => i.Title, me => me.MapFrom(p => p.Title))
                 .ForMember(i => i.Author, me => me.MapFrom(p => p.Author))
                 .ForMember(i => i.Copyright, me => me.MapFrom(p => p.Copyright));

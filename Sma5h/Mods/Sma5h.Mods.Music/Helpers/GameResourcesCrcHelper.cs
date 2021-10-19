@@ -164,6 +164,46 @@ namespace Sma5h.Mods.Music.Helpers
                     { string.Format(MsbtExtConstants.MSBT_TITLE, "zh_tw"), 0x87F06A90 }
                 }
             },
+            new GameCrcSet()
+            {
+                Version = 13.0,
+                CrcResources = new Dictionary<string, uint>()
+                {
+                    { BgmPropertyFileConstants.BGM_PROPERTY_PATH, 0xD95C529B },
+                    { PrcExtConstants.PRC_UI_BGM_DB_PATH, 0x999B0AFC },
+                    { PrcExtConstants.PRC_UI_GAMETITLE_DB_PATH, 0xF5B95066 },
+                    { PrcExtConstants.PRC_UI_STAGE_DB_PATH, 0x95DCFF54 },
+                    { PrcExtConstants.PRC_UI_SERIES_DB_PATH, 0xC35A799D },
+                    { string.Format(MsbtExtConstants.MSBT_BGM, "eu_de"), 0x816DA5AC },
+                    { string.Format(MsbtExtConstants.MSBT_BGM, "eu_en"), 0x94D88B7D },
+                    { string.Format(MsbtExtConstants.MSBT_BGM, "eu_es"), 0x7BD75E39 },
+                    { string.Format(MsbtExtConstants.MSBT_BGM, "eu_fr"), 0xEC7F0D74 },
+                    { string.Format(MsbtExtConstants.MSBT_BGM, "eu_it"), 0xB35791BE },
+                    { string.Format(MsbtExtConstants.MSBT_BGM, "eu_nl"), 0xC0149FF8 },
+                    { string.Format(MsbtExtConstants.MSBT_BGM, "eu_ru"), 0xD416E5DF },
+                    { string.Format(MsbtExtConstants.MSBT_BGM, "jp_ja"), 0x7755B5F9 },
+                    { string.Format(MsbtExtConstants.MSBT_BGM, "kr_ko"), 0x43FD6168 },
+                    { string.Format(MsbtExtConstants.MSBT_BGM, "us_en"), 0x4F66309E },
+                    { string.Format(MsbtExtConstants.MSBT_BGM, "us_es"), 0xD029F688 },
+                    { string.Format(MsbtExtConstants.MSBT_BGM, "us_fr"), 0x63E79504 },
+                    { string.Format(MsbtExtConstants.MSBT_BGM, "zh_cn"), 0xB6692316 },
+                    { string.Format(MsbtExtConstants.MSBT_BGM, "zh_tw"), 0x841AA125 },
+                    { string.Format(MsbtExtConstants.MSBT_TITLE, "eu_de"), 0x4496DD8A },
+                    { string.Format(MsbtExtConstants.MSBT_TITLE, "eu_en"), 0xAC43B630 },
+                    { string.Format(MsbtExtConstants.MSBT_TITLE, "eu_es"), 0x0BA6A604 },
+                    { string.Format(MsbtExtConstants.MSBT_TITLE, "eu_fr"), 0x7E5579D7 },
+                    { string.Format(MsbtExtConstants.MSBT_TITLE, "eu_it"), 0xBEF19135 },
+                    { string.Format(MsbtExtConstants.MSBT_TITLE, "eu_nl"), 0x2D42AA73 },
+                    { string.Format(MsbtExtConstants.MSBT_TITLE, "eu_ru"), 0x7FEDB6E3 },
+                    { string.Format(MsbtExtConstants.MSBT_TITLE, "jp_ja"), 0x737CC7B1 },
+                    { string.Format(MsbtExtConstants.MSBT_TITLE, "kr_ko"), 0xCB00E1B9 },
+                    { string.Format(MsbtExtConstants.MSBT_TITLE, "us_en"), 0x8E3C7217 },
+                    { string.Format(MsbtExtConstants.MSBT_TITLE, "us_es"), 0x83C0455D },
+                    { string.Format(MsbtExtConstants.MSBT_TITLE, "us_fr"), 0x91FBF596 },
+                    { string.Format(MsbtExtConstants.MSBT_TITLE, "zh_cn"), 0xEDEFE529 },
+                    { string.Format(MsbtExtConstants.MSBT_TITLE, "zh_tw"), 0x92B2DDBB }
+                }
+            },
         };
     }
 

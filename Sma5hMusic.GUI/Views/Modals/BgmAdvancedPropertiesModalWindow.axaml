@@ -178,7 +178,7 @@
               <fields:PropertyTextField Label="name_id" Text="{Binding DbRootViewModel.NameId, Mode=OneWay}" ToolTip="[String] ID for MSBT. Will be regenerated automatically." IsReadOnly="True" />
               <fields:PropertyShortField Label="save_no" Value="{Binding DbRootViewModel.SaveNo, Mode=TwoWay}" ToolTip="[Short] Seems to be an index. Setting it to -1 or above the highest known value will cause the song not to show up in SoundTest or work." />
               <fields:PropertyShortField Label="test_disp_order" Value="{Binding DbRootViewModel.TestDispOrder, Mode=TwoWay}" ToolTip="[Read-Only][Short] Order index in SoundTest. This value gets overriden automatically when using the GUI." IsReadOnly="True" />
-              <fields:PropertyIntField Label="menu_value" Value="{Binding DbRootViewModel.MenuValue, Mode=TwoWay}" ToolTip="[Int32] To figure out." />
+              <fields:PropertyIntField Label="menu_value" Value="{Binding DbRootViewModel.MenuValue, Mode=TwoWay}" ToolTip="[Int32] Order index when sorting the songs by release date." />
               <StackPanel Orientation="Horizontal">
                 <fields:PropertyBooleanField Label="jp_region" IsChecked="{Binding DbRootViewModel.JpRegion, Mode=TwoWay}" ToolTip="[Boolean]" />
                 <fields:PropertyBooleanField Label="other_region" IsChecked="{Binding DbRootViewModel.OtherRegion, Mode=TwoWay}" ToolTip="[Boolean]" />
@@ -200,6 +200,7 @@
               <fields:PropertyTextField Label="dlc_ui_chara_id" Text="{Binding DbRootViewModel.DlcUiCharaId, Mode=TwoWay}" ToolTip="[Hash40]" />
               <fields:PropertyTextField Label="dlc_mii_hat_motif_id" Text="{Binding DbRootViewModel.DlcMiiHatMotifId, Mode=TwoWay}" ToolTip="[Hash40]" />
               <fields:PropertyTextField Label="dlc_mii_body_motif_id" Text="{Binding DbRootViewModel.DlcMiiBodyMotifId, Mode=TwoWay}" ToolTip="[Hash40]" />
+              <fields:PropertyBooleanField Label="0x0e6b57e593" IsChecked="{Binding DbRootViewModel.Unk6, Mode=TwoWay}" ToolTip="[Boolean] Boolean that locks the BGM Dearly Beloved behind Kingdom Hearts: Melody of Memory save file." />
             </StackPanel>
           </Grid>
         </TabItem>

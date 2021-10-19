@@ -123,6 +123,9 @@ namespace Sma5h.Data.Ui.Param.Database
             [PrcHexMapping("dlc_mii_body_motif_id", true)]
             public string DlcMiiBodyMotifId { get; set; }
 
+            [PrcHexMapping(0x0e6b57e593)]
+            public bool Unk6 { get; set; }
+
             public override string ToString()
             {
                 return UiBgmId.ToString();

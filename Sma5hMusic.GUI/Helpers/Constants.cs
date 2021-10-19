@@ -4,7 +4,7 @@ namespace Sma5hMusic.GUI.Helpers
 {
     public static class Constants
     {
-        public const double GUIVersion = 1.59;
+        public const double GUIVersion = 1.60;
         public const bool IsStable = false;
 
         public const float DefaultVolume = 0.8f;
@@ -75,7 +75,8 @@ namespace Sma5hMusic.GUI.Helpers
             { "ui_series_banjokazooie", "Banjo-Kazooie" },
             { "ui_series_fatalfury", "Fatal Fury" },
             { "ui_series_minecraft", "Minecraft" },
-            { "ui_series_tekken", "Tekken" }
+            { "ui_series_tekken", "Tekken" },
+            { "ui_series_kingdomhearts", "Kingdom Hearts" }
         };
 
         public readonly static Dictionary<string, string> CONVERTER_RECORD_TYPE = new Dictionary<string, string>()
@@ -152,6 +153,7 @@ namespace Sma5hMusic.GUI.Helpers
             {"bgmedge", "Final Fantasy (Sephiroth)" },
             {"bgmelement", "Xenoblade 2 (Pyra & Mythra)" },
             {"bgmdemon", "Tekken" },
+            {"bgmtrail", "Kingdom Hearts" },
             {"bgmplaylist", "Playlist" },
         };
 
@@ -292,6 +294,7 @@ namespace Sma5hMusic.GUI.Helpers
             {"ui_stage_ff_cave","Northern Cave"},
             {"ui_stage_xeno_alst","Cloud Sea of Alrest"},
             {"ui_stage_demon_dojo","Mishima Dojo"},
+            {"ui_stage_trail_castle","Hollow Bastion"},
             {"ui_stage_battle_field_s", "Small Battlefield"}
         };
 

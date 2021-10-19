@@ -54,6 +54,7 @@ namespace Sma5hMusic.GUI.ViewModels
         public string DlcUiCharaId { get; set; }
         public string DlcMiiHatMotifId { get; set; }
         public string DlcMiiBodyMotifId { get; set; }
+        public bool Unk6 { get; set; }
         public Dictionary<string, string> MSBTTitle { get; set; }
         public Dictionary<string, string> MSBTAuthor { get; set; }
         public Dictionary<string, string> MSBTCopyright { get; set; }

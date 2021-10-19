@@ -599,6 +599,16 @@ k12_mtr2_smileandtears
 k13_mtr2_onettnotheme
 k14_mtr_magicant
 k15_mtr2_fourside
+kh01_kh15_nightoffate
+kh02_kh15_destinysforce
+kh03_kh15_shroudingdarkcloud
+kh04_kh15_handinhand
+kh05_kh15_blastaway_gummiship2
+kh06_kh15_hollowbastion
+kh07_kh15_scherzodinotte
+kh08_kh25_fragmentsofsorrow
+kh09_kh1_destati
+kh10_khmm_dearlybeloved
 l01_pik2_worldmap
 l02_pik_kibounomori
 l03_pik_kankyouon
@@ -1231,3 +1241,4 @@ zz05_f_edge
 zz05a_f_edge_challenge
 zz06_f_element
 zz07_f_demon
+zz08_f_trail
