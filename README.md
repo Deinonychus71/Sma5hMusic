@@ -5,7 +5,6 @@ This tool is highly experimental and may not always work as expected.
 * **Always keep backups of your files and savegames.**
 * **This mod is not safe online!**
 * Suggestions are welcome. Please create an issue for it.
-* For bugs please provide reproducible steps. Issues that are not well detailed might be ignored/closed.
 
 ## Thanks & Repos of the different tools
 1.  Research: soneek
@@ -20,3 +19,14 @@ This tool is highly experimental and may not always work as expected.
 10.  vgmstream: https://github.com/vgmstream/vgmstream - bnnm, kode54, NicknineTheEagle, bxaimc, Thealexbarney
 All contributors: https://github.com/vgmstream/vgmstream/graphs/contributors
 11. CrossArc: https://github.com/Ploaj/ArcCross Ploaj, ScanMountGoat, BenHall-7, shadowninja108, jam1garner, M-1-RLG
+
+## How to create an issue - bug ##
+* Please do not create an issue if you're having trouble with the setup. I will not provide the resource files as this would be piracy. You need to extract them yourself from your own backup.
+* Please check the wiki for troubleshooting, it may contain an answer to your question already. I will try to keep it updated.
+* At the very least you should make sure you are using latest with unmodified files and no other mods enabled as first troubleshooting steps.
+* I have limited time so issues such as 'it's not working please help' will be ignored / closed. 
+* Please provide the following :
+- Version detected by the program (should be software latest and game latest)
+- Provide a sample of the log where the issue is found or a screenshot
+- Provide reproducible steps. (such as "I launched the software, did this, clicked there, and then this happened")
+- If relevant please provide the metadata_mod.json files or override json files (from /Mods) that you think might have an issue. If you're having issues to start the program you can link the appsettings.json (Root folder) file too.
