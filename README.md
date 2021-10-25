@@ -30,3 +30,6 @@ All contributors: https://github.com/vgmstream/vgmstream/graphs/contributors
 - Provide a sample of the log where the issue is found or a screenshot
 - Provide reproducible steps. (such as "I launched the software, did this, clicked there, and then this happened")
 - If relevant please provide the metadata_mod.json files or override json files (from /Mods) that you think might have an issue. If you're having issues to start the program you can link the appsettings.json (Root folder) file too.
+
+## How to create an issue - enhancements ##
+* Enhancement requests are welcome! But it may take a while for me to answer back on them.
