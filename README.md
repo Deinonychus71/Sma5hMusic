@@ -21,11 +21,11 @@ All contributors: https://github.com/vgmstream/vgmstream/graphs/contributors
 11. CrossArc: https://github.com/Ploaj/ArcCross Ploaj, ScanMountGoat, BenHall-7, shadowninja108, jam1garner, M-1-RLG
 
 ## How to create an issue - bug ##
-* Please do not create an issue if you're having trouble with the setup. I will not provide the resource files as this would be piracy. You need to extract them yourself from your own backup.
-* Please check the wiki for troubleshooting, it may contain an answer to your question already. I will try to keep it updated.
-* At the very least you should make sure you are using latest with unmodified files and no other mods enabled as first troubleshooting steps.
-* I have limited time so issues such as 'it's not working please help' will be ignored / closed. 
-* Please provide the following :
+1. Please do not create an issue if you're having trouble with the setup. I will not provide the resource files as this would be piracy. You need to extract them yourself from your own backup.
+2. Please check the wiki for troubleshooting, it may contain an answer to your question already. I will try to keep it updated.
+3. At the very least you should make sure you are using latest with unmodified files and no other mods enabled as first troubleshooting steps.
+4. I have limited time so issues such as 'it's not working please help' will be ignored / closed. 
+5. Please provide the following :
 - Version detected by the program (should be software latest and game latest)
 - Provide a sample of the log where the issue is found or a screenshot
 - Provide reproducible steps. (such as "I launched the software, did this, clicked there, and then this happened")
