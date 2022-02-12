@@ -50,7 +50,7 @@ namespace Sma5h.Mods.Music.Helpers
             public const int GameTitleMinimumSize = 14; //TO VERIFY
             public const int GameTitleMaximumSize = 62; //TO VERIFY
 
-            public const int SeriesMinimumSize = 14; //TO VERIFY
+            public const int SeriesMinimumSize = 13; //TO VERIFY
             public const int SeriesMaximumSize = 62; //TO VERIFY
         }
 
