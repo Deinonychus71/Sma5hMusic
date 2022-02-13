@@ -16,7 +16,7 @@
             <ia:InvokeCommandAction Command="{Binding ActionInitializeDragAndDropBgm, Mode=OneWay}" CommandParameter="{Binding $self}"/>
           </ia:EventTriggerBehavior>
           <ia:EventTriggerBehavior EventName="CellPointerPressed">
-            <ia:InvokeCommandAction Command="{Binding ActionSendToPlaylist}"/>
+            <ia:InvokeCommandAction Command="{Binding ActionSendToPlaylist}" PassEventArgsToCommand="True"/>
           </ia:EventTriggerBehavior>
         </i:Interaction.Behaviors>
         <DataGrid.Columns>
@@ -120,7 +120,7 @@
       <DataGrid Background="Transparent" SelectionMode="Extended" DragDrop.AllowDrop="True" Classes="bgmList" SelectedItem="{Binding SelectedPlaylistValueEntry, Mode=TwoWay}" Items="{Binding SelectedPlaylistOrderedEntry}">
         <i:Interaction.Behaviors>
           <ia:EventTriggerBehavior EventName="CellPointerPressed">
-            <ia:InvokeCommandAction Command="{Binding ActionReorderPlaylist}"/>
+            <ia:InvokeCommandAction Command="{Binding ActionReorderPlaylist}" PassEventArgsToCommand="True"/>
           </ia:EventTriggerBehavior>
           <ia:EventTriggerBehavior EventName="Initialized">
             <ia:InvokeCommandAction Command="{Binding ActionInitializeDragAndDrop, Mode=OneWay}" CommandParameter="{Binding $self}"/>

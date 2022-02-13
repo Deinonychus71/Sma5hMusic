@@ -13,7 +13,7 @@
       <DataGrid DragDrop.AllowDrop="True" SelectionMode="Extended" Classes="bgmList" SelectedItem="{Binding SelectedBgmEntry, Mode=TwoWay}" Items="{Binding Items, Mode=OneWay}">
         <i:Interaction.Behaviors>
           <ia:EventTriggerBehavior EventName="CellPointerPressed">
-            <ia:InvokeCommandAction Command="{Binding ActionReorderBgm}"/>
+            <ia:InvokeCommandAction Command="{Binding ActionReorderBgm}" PassEventArgsToCommand="True"/>
           </ia:EventTriggerBehavior>
           <ia:EventTriggerBehavior EventName="Initialized">
             <ia:InvokeCommandAction Command="{Binding ActionInitializeDragAndDrop, Mode=OneWay}" CommandParameter="{Binding $self}"/>
