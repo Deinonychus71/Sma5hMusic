@@ -155,6 +155,8 @@ namespace Sma5hMusic.GUI.Services
             foreach (var vmStage in stagesList)
                 _vmDictStagesEntries.Add(vmStage.UiStageId, vmStage);
 
+            RefreshLanguage();
+
             _vmObsvModsEntries.AddOrUpdate(modsList);
             _logger.LogInformation("Music Mods List Loaded.");
             _vmObsvLocalesEntries.AddOrUpdate(vmLocalesList);
@@ -413,18 +415,18 @@ namespace Sma5hMusic.GUI.Services
         public bool AddNewGameTitleEntryViewModel(GameTitleEntry gameTitleEntry)
         {
             var newVM = _mapper.Map(gameTitleEntry, new GameTitleEntryViewModel(this, _mapper, gameTitleEntry));
+            newVM.LoadLocalized(CurrentLocale);
             _vmDictGameTitlesEntries.Add(newVM.UiGameTitleId, newVM);
             _vmObsvGameTitlesEntries.AddOrUpdate(newVM);
-            newVM.LoadLocalized(CurrentLocale);
             return true;
         }
 
         public bool AddNewBgmDbRootEntryViewModel(BgmDbRootEntry bgmDbRootEntry)
         {
             var newVM = _mapper.Map(bgmDbRootEntry, new BgmDbRootEntryViewModel(this, _mapper, bgmDbRootEntry));
+            newVM.LoadLocalized(CurrentLocale);
             _vmDictBgmDbRootEntries.Add(newVM.UiBgmId, newVM);
             _vmObsvBgmDbRootEntries.AddOrUpdate(newVM);
-            newVM.LoadLocalized(CurrentLocale);
             return true;
         }
 

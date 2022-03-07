@@ -281,12 +281,11 @@ namespace Sma5hMusic.GUI.ViewModels
                 {
                     await Dispatcher.UIThread.InvokeAsync(async () =>
                     {
-                        await _messageDialog.ShowInformation("Game version not found", $"The version of your game could not be identified. It might be that you are using a version that is unsupported or that your game files are customized.");
+                        await _messageDialog.ShowInformation("Game version not found", $"The version of your game could not be identified.\r\nIt might be that you are using a version that is unsupported or that your game files are customized.\r\nThis is known to cause some issues, such as silent files or wrong text information.\r\nBefore asking for support please make sure that the proper version of the files is recognized.");
                     }, DispatcherPriority.Background);
                 }
                 Title = $"Sma5hMusic - GUI v{Constants.GUIVersion}{(!Constants.IsStable ? "b" : "")} | Game v{_guiStateManager.GameVersion}";
 
-                _viewModelManager.RefreshLanguage();
                 IsLoading = false;
             }, (o) =>
             {
