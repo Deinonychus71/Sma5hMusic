@@ -24,6 +24,7 @@ namespace Sma5hMusic.GUI.ViewModels
 
         [Reactive]
         public string StartPoint0 { get; set; }
+        [Reactive]
         public string StartPoint1 { get; set; }
         [Reactive]
         public string StartPoint2 { get; set; }
