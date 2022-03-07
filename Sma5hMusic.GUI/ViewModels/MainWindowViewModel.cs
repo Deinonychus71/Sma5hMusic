@@ -272,7 +272,7 @@ namespace Sma5hMusic.GUI.ViewModels
                     var newDefaultLanguage = locales.FirstOrDefault();
                     await Dispatcher.UIThread.InvokeAsync(async () =>
                     {
-                        await _messageDialog.ShowError("Locale error", $"The default locale {Constants.GetLocaleDisplayName(currentLocale)} was not properly loaded.\r\nVerify that msbt_bgm+{currentLocale}.msbt is in your resource files or change the defaut locale.\r\nThe GUI locale will be changed to {Constants.GetLocaleDisplayName(newDefaultLanguage?.Id)}.");
+                        await _messageDialog.ShowError("Locale error", $"The default locale {Constants.GetLocaleDisplayName(currentLocale)} was not properly loaded.\r\nVerify that msg_bgm+{currentLocale}.msbt is in your resource files or change the defaut locale.\r\nThe GUI locale will be changed to {Constants.GetLocaleDisplayName(newDefaultLanguage?.Id)}.");
                     }, DispatcherPriority.Background);
                     VMContextMenu.ChangeLocale(newDefaultLanguage);
                 }
