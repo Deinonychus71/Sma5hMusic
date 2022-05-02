@@ -219,6 +219,7 @@ namespace Sma5hMusic.GUI.ViewModels
         public void InitializeDragAndDropBgmHandlers(DataGrid grid)
         {
             _refBgmGrid = grid;
+            grid.AddHandler(DataGrid.KeyDownEvent, AddMultiSelect);
         }
 
         public async Task ReorderPlaylist(DataGridCellPointerPressedEventArgs e)
@@ -371,6 +372,18 @@ namespace Sma5hMusic.GUI.ViewModels
             };
             SelectedPlaylistEntry.ReorderSongs(SelectedPlaylistOrder);
             _whenNewRequestToUpdatePlaylistsInternal.OnNext(Unit.Default);
+        }
+
+        public void AddMultiSelect(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.OemTilde)
+            {
+                List<BgmDbRootEntryViewModel> sourceBgmObjs = _refBgmGrid.SelectedItems.Cast<BgmDbRootEntryViewModel>().ToList();
+                if (SelectedPlaylistEntry != null && sourceBgmObjs.Count > 0)
+                {
+                    AddToPlaylist(sourceBgmObjs, _refGrid, 9999, _config.CurrentValue.Sma5hMusicGUI.PlaylistIncidenceDefault);
+                }
+            }
         }
 
         public void ReorderPlaylist(List<PlaylistEntryValueViewModel> sourceObjs, PlaylistEntryValueViewModel destinationObj, DataGrid datagrid, short newPosition)
