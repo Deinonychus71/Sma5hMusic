@@ -521,7 +521,7 @@ namespace Sma5h.Mods.Music.MusicMods
                 v3ModConfig.Series = v3ModConfig.Games.GroupBy(p => p.UiSeriesId).Select(p => new SeriesConfig()
                 {
                     UiSeriesId = p.Key,
-                    SaveNo = short.MinValue,
+                    SaveNo = sbyte.MinValue,
                     Games = p.ToList()
                 }).ToList();
                 v3ModConfig.Games = null;
