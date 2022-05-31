@@ -15,7 +15,7 @@ namespace Sma5hMusic.GUI.ViewModels
         public string NameId { get; set; }
         public sbyte DispOrder { get; set; }
         public sbyte DispOrderSound { get; set; }
-        public short SaveNo { get; set; }
+        public sbyte SaveNo { get; set; }
         public bool Unk1 { get; set; }
         public bool IsDlc { get; set; }
         public bool IsPatch { get; set; }
