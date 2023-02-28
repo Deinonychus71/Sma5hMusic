@@ -165,7 +165,7 @@ namespace Sma5hMusic.GUI
                 { "bgmfox", new string[] { "ui_series_starfox" } },
                 { "bgmpokemon", new string[] { "ui_series_pokemon" } },
                 { "bgmfzero", new string[] { "ui_series_fzero" } },
-                { "bgmmother", new string[] { "ui_series_mother", "ui_series_wreckingcrew", "ui_series_famicomrobot" } },
+                { "bgmmother", new string[] { "ui_series_mother" } },
                 { "bgmfe", new string[] { "ui_series_fireemblem" } },
                 { "bgmmaster", new string[] { "ui_gametitle_fire_emblem_three_houses_en", "ui_gametitle_fire_emblem_three_houses_jp", "ui_series_fireemblem" } },
                 { "bgmgamewatch", new string[] { "ui_series_gamewatch" } },
@@ -195,7 +195,7 @@ namespace Sma5hMusic.GUI
                 { "bgmpickel", new string[] { "ui_series_minecraft" } },
                 { "bgmdemon", new string[] { "ui_series_tekken" } },
                 { "bgmtrail", new string[] { "ui_series_kingdomhearts" } },
-                { "bgmother", new string[] { "ui_series_etc" } }
+                { "bgmother", new string[] { "ui_series_etc", "ui_series_wreckingcrew", "ui_series_famicomrobot" } }
             };
 
             var output = new Dictionary<string, string>();
